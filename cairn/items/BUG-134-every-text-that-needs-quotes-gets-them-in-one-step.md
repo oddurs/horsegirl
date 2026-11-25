@@ -32,10 +32,14 @@ ADR-119 says that a name or a value that needs quotes and lacks them is correcte
 
 ## Acceptance criteria
 
-- [ ] `Sensors: wind, B -> Hub` gives E0004 with a fix, and the fixed line parses with no diagnostic.
-- [ ] `api { note: GET /users/{id}, list }` gives one E0004 whose fix is `"GET /users/{id}, list"`, and the fixed line parses with no diagnostic.
-- [ ] A text that holds a double quote gives a message that says to remove the double quote, and no message that says to add quotes.
-- [ ] The fuzz test asserts that a fixed source has no E0004 at the place of the fix.
-- [ ] `A -> GET /users/{id}` gives E0004 whose fix is `A -> "GET /users/{id}"`, and the fixed line parses with no diagnostic.
-- [ ] `G{ A, B } -> C` and `Team@x{ A }` get no fix that puts a group inside quotes, and a test states this.
-- [ ] The language reference or a comment in the parser states when braces before an arrow are characters of a name and when they are a group, and a test holds one input for each case.
+- [x] `Sensors: wind, B -> Hub` gives E0004 with a fix, and the fixed line parses with no diagnostic.
+- [x] `api { note: GET /users/{id}, list }` gives one E0004 whose fix is `"GET /users/{id}, list"`, and the fixed line parses with no diagnostic.
+- [x] A text that holds a double quote gives a message that says to remove the double quote, and no message that says to add quotes.
+- [x] The fuzz test asserts that a fixed source has no E0004 at the place of the fix.
+- [x] `A -> GET /users/{id}` gives E0004 whose fix is `A -> "GET /users/{id}"`, and the fixed line parses with no diagnostic.
+- [x] `G{ A, B } -> C` and `Team@x{ A }` get no fix that puts a group inside quotes, and a test states this.
+- [x] The language reference or a comment in the parser states when braces before an arrow are characters of a name and when they are a group, and a test holds one input for each case.
+
+## 2026-11-25
+
+Evidence. horsegirl check --json printed: 'Sensors: wind, B -> Hub' E0004 fix '"Sensors: wind"'; 'api { note: GET /users/{id}, list }' one E0004 fix '"GET /users/{id}, list"'; 'A -> GET /users/{id}' E0004 fix '"GET /users/{id}"' at columns 6-21; 'G{ A, B } -> C' E0001 at the arrow, fix null; 'Team@x{ A }' E0004 fix '"Team@x"' only. tests/syntax.rs asserts each fixed line parses with no diagnostic (a_name_or_a_value_that_needs_quotes_gets_them_from_the_fix, a_group_or_an_open_block_is_never_quoted_into_a_name), a_text_that_holds_a_double_quote_is_told_to_remove_it (message holds 'Remove each double quote', not 'Write the', no fix), braces_before_an_arrow_are_characters_only_around_one_word (A {x} -> B, GET /users/{id} -> B quoted; Services { Orders } -> Postgres and four others E0001 at the arrow). tests/fuzz.rs asserts no E0004 starts inside a fixed text; HORSEGIRL_FUZZ_ROUNDS=400000 cargo test --release --test fuzz printed 'test result: ok. 1 passed' in 700 s. docs/reference.md rule 1 and the doc comment of Parser::extent state the brace rule. scripts/task check: 314 tests run: 314 passed, exit 0.
