@@ -1,0 +1,7 @@
+# Converted from corpus/flowcharts/0209.mmd by corpus/convert.py.
+Create feature branch -> Write tests first
+Write tests first -> Implement changes
+Implement changes -> Run lint & deadcode
+Run lint & deadcode -> Run tests with -race
+Run tests with -race -> Update docs if needed
+Update docs if needed -> Open pull request

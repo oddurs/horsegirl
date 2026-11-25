@@ -1,0 +1,18 @@
+# Converted from corpus/flowcharts/0178.mmd by corpus/convert.py.
+CHA -> Relay /50
+Relay /50 -> "Gain: 4051"
+"Gain: 4051" -> 3PA1030
+SGM3157 -> Output
+Output -> GEN
+Scope -> GD32F427VGT6: "PB0..PB9, PC6 clock, PC4 rail"
+Touch -> GD32F427VGT6: I2C2
+Debug UART -> GD32F427VGT6: PA2 / PA3
+SWD -> GD32F427VGT6: PA13 / PA14
+GD32F427VGT6 -> ILI9488: FSMC
+GD32F427VGT6 -> W25Q128JV: SPI1
+GD32F427VGT6 -> Jieli BT: UART4
+GD32F427VGT6 -> Buzzer: TIM14 PA7
+GD32F427VGT6 -> Generator: "DAC0 PA4, TIM12 PB14"
+
+Scope { CHA, Relay /50, "Gain: 4051", 3PA1030 }
+Generator { SGM3157, Output, GEN }

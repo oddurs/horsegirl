@@ -1,0 +1,8 @@
+# Converted from corpus/flowcharts/0198.mmd by corpus/convert.py.
+Request A -> await LLM
+await LLM -> Event loop: yield control
+Event loop -> Request B
+Request B -> Request C
+Request C -> Request D
+Request D -> Request E
+Request E -> Resume each task when its response arrives: all tasks waiting for I/O

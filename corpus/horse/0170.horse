@@ -1,0 +1,8 @@
+# Converted from corpus/flowcharts/0170.mmd by corpus/convert.py.
+HTML Template / render Function -> vDOM Build
+Proxy Reactive Data -> vDOM Build: "Change, 300ms Debounce"
+i18n Locale Data -> vDOM Build
+vDOM Build -> Diff to Patches
+Diff to Patches -> Real DOM: requestAnimationFrame
+Lifecycle Hooks -> vDOM Build
+Real DOM -> Lazyload / SVG Listeners

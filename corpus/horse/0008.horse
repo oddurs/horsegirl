@@ -1,0 +1,13 @@
+# Converted from corpus/flowcharts/0008.mmd by corpus/convert.py.
+checkpoints//zeroshot.pt -> "TaskVector: finetuned - pretrained"
+"TaskVector: finetuned - pretrained" -> WUDI decompose (linear layers)
+WUDI decompose (linear layers) -> "Apply merged vector -> new encoder"
+"Apply merged vector -> new encoder" -> Evaluate across 8 datasets
+pretrained roberta-base -> "MergingMethod (task arithmetic, ties, DARE, WUDI)"
+"MergingMethod (task arithmetic, ties, DARE, WUDI)" -> Evaluate on GLUE
+Finetuned heads/models per GLUE task -> "MergingMethod (task arithmetic, ties, DARE, WUDI)"
+Finetuned heads/models per GLUE task -> Optional Router (Twin-Merge)
+Optional Router (Twin-Merge) -> "MergingMethod (task arithmetic, ties, DARE, WUDI)"
+
+Vision (vit/) { checkpoints//zeroshot.pt, Fine-tuned per task checkpoints, "TaskVector: finetuned - pretrained", WUDI decompose (linear layers), "Apply merged vector -> new encoder", Evaluate across 8 datasets }
+NLP (nlp_roberta/) { pretrained roberta-base, Finetuned heads/models per GLUE task, "MergingMethod (task arithmetic, ties, DARE, WUDI)", Optional Router (Twin-Merge), Evaluate on GLUE }

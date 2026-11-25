@@ -1,0 +1,11 @@
+# Converted from corpus/flowcharts/0017.mmd by corpus/convert.py.
+'a' -> node a
+'b' -> node b
+'c' -> node c
+head (most recent) -> node a
+node a -> node b
+node b -> node c
+node c -> "tail (least recent, next to evict)"
+
+"hash map: key -> node pointer" { 'a', node a, 'b', node b, 'c', node c }
+"doubly linked list, ordered by recency" { head (most recent), "tail (least recent, next to evict)" }

@@ -1,0 +1,7 @@
+# Converted from corpus/flowcharts/0072.mmd by corpus/convert.py.
+icons -> react-drylus
+drylus-style-vars -> react-drylus
+react-drylus -> extract-emotion: JS
+react-drylus -> styleguide: JS
+vanilla-drylus -> styleguide: "CSS, JS"
+extract-emotion -> vanilla-drylus: CSS

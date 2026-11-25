@@ -1,0 +1,6 @@
+# Converted from corpus/flowcharts/0108.mmd by corpus/convert.py.
+Start -> Kondisi?
+Kondisi? -> Aksi 1: Ya
+Kondisi? -> Aksi 2: Tidak
+Aksi 1 -> End
+Aksi 2 -> End

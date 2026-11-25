@@ -1,0 +1,9 @@
+# Converted from corpus/flowcharts/0131.mmd by corpus/convert.py.
+FurnaceWorker -> handle_furnace_data()
+Main Thread -> MainWindow
+Main Thread -> StageWidget (several)
+MainWindow -> handle_furnace_data()
+MainWindow -> plot_timer (QTimer)
+MainWindow -> elapsed_timer (QTimer)
+plot_timer (QTimer) -> update_temperature_plot()
+elapsed_timer (QTimer) -> update_elapsed_time()

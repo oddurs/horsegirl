@@ -1,0 +1,9 @@
+# Converted from corpus/flowcharts/0083.mmd by corpus/convert.py.
+Raw Dataset -> Remove Invalid Rows
+Remove Invalid Rows -> Handle Missing Values
+Handle Missing Values -> Replace Infinite Values
+Replace Infinite Values -> Select Numerical Features
+Select Numerical Features -> Remove Constant Features
+Remove Constant Features -> Feature Alignment
+Feature Alignment -> StandardScaler - fit on benign-train only
+StandardScaler - fit on benign-train only -> PCA

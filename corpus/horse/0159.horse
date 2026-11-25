@@ -1,0 +1,18 @@
+# Converted from corpus/flowcharts/0159.mmd by corpus/convert.py.
+Your Ruby Application -> parquet.rb
+Your Ruby Application -> schema.rb
+parquet.rb -> Magnus FFI
+schema.rb -> Magnus FFI
+Magnus FFI -> adapter_ffi.rs
+adapter_ffi.rs -> Type Converters
+Type Converters -> parquet-core
+Type Converters -> parquet-ruby-adapter
+parquet-core -> Apache Arrow
+parquet-ruby-adapter -> Apache Arrow
+Apache Arrow -> Parquet Files
+
+Your Ruby Code { Your Ruby Application }
+Ruby Layer { parquet.rb, schema.rb }
+FFI Bridge Layer { Magnus FFI, adapter_ffi.rs, Type Converters }
+Core Rust Layer { parquet-core, parquet-ruby-adapter, Apache Arrow }
+Storage { Parquet Files }

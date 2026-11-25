@@ -1,0 +1,4 @@
+# Converted from corpus/flowcharts/0191.mmd by corpus/convert.py.
+Service A -> Sidecar Proxy
+Sidecar Proxy -> Sidecar Proxy
+Sidecar Proxy -> Service B

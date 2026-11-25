@@ -1,0 +1,5 @@
+# Converted from corpus/flowcharts/0148.mmd by corpus/convert.py.
+OMNI allocation/search control -> Cannot promote
+Cannot promote -> Cannot bypass evidence
+Cannot bypass evidence -> Cannot override baselines
+Cannot override baselines -> Cannot authorize deployment

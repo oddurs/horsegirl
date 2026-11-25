@@ -1,0 +1,10 @@
+# Converted from corpus/flowcharts/0185.mmd by corpus/convert.py.
+Input feature map -> 1x1 conv
+Input feature map -> 3x3 conv
+Input feature map -> 5x5 conv
+Input feature map -> 3x3 max pool
+1x1 conv -> Concatenate
+3x3 conv -> Concatenate
+5x5 conv -> Concatenate
+3x3 max pool -> Concatenate
+Concatenate -> Next block

@@ -1,0 +1,11 @@
+# Converted from corpus/flowcharts/0028.mmd by corpus/convert.py.
+患者输入 -> Intake Agent
+Intake Agent -> Diagnosis Agent: 结构化病历
+Diagnosis Agent -> Treatment Agent: 鉴别诊断列表
+Treatment Agent -> Coding Agent: 治疗方案
+Coding Agent -> Audit Agent: ICD-10/DRGs
+Audit Agent -> 最终输出: 合规报告
+医学知识图谱 -> Diagnosis Agent
+药物数据库 -> Treatment Agent
+ICD-10编码库 -> Coding Agent
+HIPAA合规规则 -> Audit Agent

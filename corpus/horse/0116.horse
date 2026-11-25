@@ -1,0 +1,9 @@
+# Converted from corpus/flowcharts/0116.mmd by corpus/convert.py.
+User -> Client: WhatsApp / Postman / curl
+Client -> Local VoiceMonkey Proxy: "POST to 127.0.0.1:18793 X-Proxy-Key"
+Local VoiceMonkey Proxy -> VoiceMonkey Trigger API: GET /trigger
+Local VoiceMonkey Proxy -> VoiceMonkey Announcement API: GET /announcement UTF-8 encoded query
+VoiceMonkey Trigger API -> Alexa / Echo: Routine executes
+VoiceMonkey Announcement API -> Alexa / Echo: Announcement spoken voice + language
+
+Local machine { Local VoiceMonkey Proxy }

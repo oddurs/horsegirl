@@ -1,0 +1,4 @@
+# Converted from corpus/flowcharts/0049.mmd by corpus/convert.py.
+Client -> symmetric_key
+Server -> asymmetric_pub_key
+Server -> asymmetric_pri_key

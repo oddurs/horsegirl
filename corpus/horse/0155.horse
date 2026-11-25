@@ -1,0 +1,22 @@
+# Converted from corpus/flowcharts/0155.mmd by corpus/convert.py.
+Автор -> WordRibbonBar.vue: "Клик по кнопке 'Ориентация: Альбомная'"
+WordRibbonBar.vue -> RkWordEditor.vue: setOrientation('landscape')
+RkWordEditor.vue -> PageLayout & Section Extensions: WordEditor.setPageLayout(landscape)
+PageLayout & Section Extensions -> "Pagination Extension: DecorationSet": trigger recompute
+"Pagination Extension: DecorationSet" -> RkWordEditor.vue: Виртуальные разрывы (794px h)
+RkWordEditor.vue -> WordRuler.vue: Событие layout-changed (1123px w)
+WordRuler.vue -> Автор: Растягивание шкалы до 25.2 см
+Автор -> WordEditor Instance: Ввод текста и формул
+WordEditor Instance -> ASTAdapter.ts: "onUpdate: ProseMirror JSON"
+ASTAdapter.ts -> Pinia document.store: Обновленный Semantic AST
+Pinia document.store -> NumberingEngine.ts: "Расчет номеров (Рис. 1, Табл. 1)"
+Pinia document.store -> Tauri IPC Commands: AutoSave AST
+Tauri IPC Commands -> "SurrealDB: chapters": Сохранение JSON
+Автор -> WordRibbonBar.vue: Экспорт в DOCX
+WordRibbonBar.vue -> DOCX / Print Engines: Команда экспорта DOCX
+DOCX / Print Engines -> Папка Downloads: Файл с сохранением альбомных листов
+
+Слой представления (Vue 3) { EditorCoreTiptap.vue, RkWordEditor.vue, WordRuler.vue, WordRibbonBar.vue }
+"Ядро RK Word Editor (@raazkhnl/rk-editor-core)" { WordEditor Instance, "Pagination Extension: DecorationSet", PageLayout & Section Extensions, DOCX / Print Engines }
+Семантическое ядро WorldWiki { ASTAdapter.ts, NumberingEngine.ts, Pinia document.store }
+Бэкенд и Хранение { Tauri IPC Commands, "SurrealDB: chapters", Папка Downloads }

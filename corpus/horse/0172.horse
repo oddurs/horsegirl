@@ -1,0 +1,12 @@
+# Converted from corpus/flowcharts/0172.mmd by corpus/convert.py.
+Backend -> buf_table hash
+buf_table hash -> buffer 1: "hit: pin, bump usagecount"
+buf_table hash -> clock-sweep strategy: miss
+clock-sweep strategy -> buffer 0: pick victim
+clock-sweep strategy -> data files on disk: load
+data files on disk -> buffer 0: page in
+buffer 1 -> "each descriptor: tag · buf_id ·": described by
+checkpointer / bgwriter -> data files on disk: flush dirty
+
+Buffer manager — bufmgr.c { buf_table hash, clock-sweep strategy }
+Buffer cache in shared memory — NBuffers slots of 32KB { buffer 0, buffer 1, buffer N-1 }

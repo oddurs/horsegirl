@@ -1,0 +1,36 @@
+# Converted from corpus/flowcharts/0122.mmd by corpus/convert.py.
+peit/__init__.py -> peit/schema.py
+peit/__init__.py -> peit/ledger.py
+peit/__init__.py -> peit/dashboard.py
+peit/__init__.py -> peit/server.py
+peit/cli.py -> peit/core.py
+peit/cli.py -> peit/ledger.py
+peit/cli.py -> peit/dashboard.py
+peit/cli.py -> peit/server.py
+peit/cli.py -> peit/schema.py
+peit/core.py -> peit/schema.py
+peit/ledger.py -> peit/core.py
+peit/ledger.py -> peit/schema.py
+peit/dashboard.py -> peit/core.py
+peit/dashboard.py -> peit/ledger.py
+peit/server.py -> peit/core.py
+peit/server.py -> peit/ledger.py
+peit/server.py -> peit/schema.py
+peit/server.py -> peit/auth.py
+peit/ocr/parser.py -> peit/ocr/models.py
+peit/ocr/canvas.py -> peit/ocr/models.py
+peit/ocr/benchmark.py -> peit/ocr/parser.py
+peit/ocr/benchmark.py -> peit/ocr/models.py
+peit/profiler/cli.py -> peit/profiler/profile.py
+peit/profiler/cli.py -> peit/profiler/market.py
+peit/profiler/cli.py -> peit/profiler/generator.py
+peit/profiler/generator.py -> peit/profiler/profile.py
+peit/profiler/generator.py -> peit/profiler/market.py
+peit/profiler/generator.py -> peit/schema.py
+peit/profiler/cli.py -> peit/ledger.py
+peit/profiler/cli.py -> peit/ocr/canvas.py
+
+Entry points and interfaces { peit/__init__.py, peit/cli.py, peit/server.py, peit/dashboard.py }
+Receipt data and accounting { peit/schema.py, peit/core.py, peit/ledger.py }
+Receipt OCR support { peit/ocr/models.py, peit/ocr/parser.py, peit/ocr/canvas.py, peit/ocr/benchmark.py }
+Synthetic data generation { peit/profiler/profile.py, peit/profiler/market.py, peit/profiler/generator.py, peit/profiler/cli.py }

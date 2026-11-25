@@ -1,0 +1,8 @@
+# Converted from corpus/flowcharts/0082.mmd by corpus/convert.py.
+Register Service -> Fable Instance
+Fable Instance -> _Fable.Meadow
+Fable Instance -> _Fable.Orator
+Fable Instance -> _Fable.MyCustomService
+
+Fable Instance { Service Registry, .settings .log .getUUID() }
+Service Registry { Meadow, Orator, MyCustomService }

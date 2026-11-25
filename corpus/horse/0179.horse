@@ -1,0 +1,7 @@
+# Converted from corpus/flowcharts/0179.mmd by corpus/convert.py.
+SNR = -10 dB -> SNR = 0 dB
+SNR = 0 dB -> SNR = 10 dB
+SNR = 10 dB -> SNR = 20 dB
+SNR = 20 dB -> SNR = 30 dB
+
+Spectral Efficiency vs SNR { SNR = -10 dB, SNR = 0 dB, SNR = 10 dB, SNR = 20 dB, SNR = 30 dB }

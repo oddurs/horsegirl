@@ -1,0 +1,5 @@
+# Converted from corpus/flowcharts/0110.mmd by corpus/convert.py.
+Extractor -> Legal Auditor
+Legal Auditor -> Verifier
+Verifier -> Extractor: Hallucination Found
+Verifier -> Final Output: Verified

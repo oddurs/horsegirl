@@ -1,0 +1,9 @@
+# Converted from corpus/flowcharts/0078.mmd by corpus/convert.py.
+sso-admin + identitystore adapter -> Client
+Client -> Scanner.Scan
+Scanner.Scan -> aws_resource
+Scanner.Scan -> aws_relationship
+Scanner.Scan -> aws_warning
+aws_resource -> facts.Envelope
+aws_relationship -> facts.Envelope
+aws_warning -> facts.Envelope

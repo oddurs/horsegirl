@@ -12,7 +12,7 @@ named for gaits: Walk, Trot, Canter, Gallop.
 
 ## v0.1 — Walk
 
-`··········` 0% · 0 of 27 done · due 2027-01-31
+`··········` 0% · 0 of 26 done · due 2027-01-31
 
 An agent writes a horsegirl file, checks it, applies the fixes, and draws a flow diagram as SVG, from the command line or over MCP.
 
@@ -35,7 +35,6 @@ An agent writes a horsegirl file, checks it, applies the fixes, and draws a flow
 - [ ] [`BUG-152`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/BUG-152-a-link-label-stays-legible-where-it-sits-on-its-own-line.md) A link label stays legible where it sits on its own line <sup>bug · p2 · render</sup>
 - [ ] [`BUG-158`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/BUG-158-a-label-keeps-the-white-space-that-its-measured-width-counts.md) A label keeps the white space that its measured width counts <sup>bug · p1 · render</sup>
 - [ ] [`0159`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0159-draw-names-a-lens-it-cannot-draw-with-a-diagnostic-code.md) draw names a lens it cannot draw with a diagnostic code <sup>feature · p2 · cli</sup>
-- [ ] [`0040`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0040-draw-the-corpus-in-ci-and-count-overlaps.md) Draw the corpus in CI and count overlaps <sup>chore · p0 · bench</sup>
 - [ ] [`0041`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0041-the-first-benchmark-can-a-model-write-it-from-the-card.md) The first benchmark: can a model write it from the card? <sup>feature · p1 · bench</sup>
 - [ ] [`0042`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0042-release-binaries-with-checksums-and-an-install-script.md) Release binaries with checksums and an install script <sup>chore · p0 · release</sup>
 - [ ] [`0043`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0043-quickstart-and-language-reference-for-v0-1.md) Quickstart and language reference for v0.1 <sup>docs · p1 · language</sup>

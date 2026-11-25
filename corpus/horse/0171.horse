@@ -1,0 +1,11 @@
+# Converted from corpus/flowcharts/0171.mmd by corpus/convert.py.
+Incoming SMTP -> Stalwart rules + ClamAV
+External IMAP mailboxes -> 6 incremental collectors
+6 incremental collectors -> External IMAP mailboxes: "verdict missing: defer"
+Stalwart rules + ClamAV -> Shared PostgreSQL mailbox store: accepted / Junk
+6 incremental collectors -> Shared PostgreSQL mailbox store: UID checkpoints + delivery receipts
+IMAP / JMAP via Stalwart -> Shared PostgreSQL mailbox store
+Authenticated submission -> Shared persistent queue
+Shared PostgreSQL mailbox store -> Shared persistent queue: forwarding / server-generated mail
+Shared persistent queue -> Amazon SES
+Shared persistent queue -> Direct MX over IPv4

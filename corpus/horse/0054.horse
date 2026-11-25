@@ -1,0 +1,17 @@
+# Converted from corpus/flowcharts/0054.mmd by corpus/convert.py.
+1. trigger_detector -> 2. policy_gate
+2. policy_gate -> 3. identity_selector
+3. identity_selector -> 4. plan_resolver
+4. plan_resolver -> 5. realization_selector
+semantic_snapshot -> 1. trigger_detector
+semantic_snapshot -> 3. identity_selector
+semantic_snapshot -> 4. plan_resolver
+trigger_tables -> 1. trigger_detector
+SRP_tables -> 4. plan_resolver
+SRP_tables -> 5. realization_selector
+GB / policy -> 2. policy_gate
+5. realization_selector -> exec_plan +
+OuB artifact -> 6. imr_interface
+6. imr_interface -> CorrectionTrigger queue
+
+Unified Discourse Manager — Phase 2 { 1. trigger_detector, 2. policy_gate, 3. identity_selector, 4. plan_resolver, 5. realization_selector, 6. imr_interface }

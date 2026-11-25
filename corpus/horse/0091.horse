@@ -1,0 +1,18 @@
+# Converted from corpus/flowcharts/0091.mmd by corpus/convert.py.
+monthy data -> most_recent_only
+most_recent_only -> stations_snapshot
+stations_snapshot -> fct_stations
+monthy data -> montly_prices
+weekly data -> prices
+prices -> table_wide_prices
+montly_prices -> table_wide_prices
+fct_stations -> table_wide_prices
+table_wide_prices -> stations with outdated data
+table_wide_prices -> display prices of active stations
+
+Big Query { monthy data, weekly data }
+dbt { staging, snapshot, mart }
+staging { fct_stations, montly_prices, prices }
+snapshot { stations_snapshot }
+mart { table_wide_prices }
+activation_layer { stations with outdated data, display prices of active stations }

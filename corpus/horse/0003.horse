@@ -1,0 +1,18 @@
+# Converted from corpus/flowcharts/0003.mmd by corpus/convert.py.
+📡 IoT Sensors & GPS -> Redpanda Broker: Streaming Pub/Sub
+🏛️ FDA NDC & CMS Datasets -> Staged JSON Datasets: Batch Clean & Stage
+Redpanda Broker -> Apache Cassandra: Batch Writes
+Redpanda Broker -> Redis: State Updates
+Staged JSON Datasets -> MongoDB: Document Ingest
+Staged JSON Datasets -> Neo4j: Topology Ingest
+Apache Cassandra -> FastAPI Backend Engine: Rollup Queries
+Redis -> FastAPI Backend Engine: Sub-ms Lookups
+MongoDB -> FastAPI Backend Engine: Catalog Searches
+Neo4j -> FastAPI Backend Engine: Cypher Path Traversals
+FastAPI Backend Engine -> ML & Graph Analytics Engine
+FastAPI Backend Engine -> Operational Command Dashboard: REST / JSON
+
+Ingestion Tier { 📡 IoT Sensors & GPS, Redpanda Broker, 🏛️ FDA NDC & CMS Datasets, Staged JSON Datasets }
+Polyglot Storage Layer { Apache Cassandra, Redis, MongoDB, Neo4j }
+API & Analytics Tier { FastAPI Backend Engine, ML & Graph Analytics Engine }
+User Presentation Tier { Operational Command Dashboard }

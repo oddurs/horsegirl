@@ -1,0 +1,4 @@
+# Converted from corpus/flowcharts/0080.mmd by corpus/convert.py.
+Domain-specific agents and product shells -> Policies hooks skills commands
+Policies hooks skills commands -> Generic coding-agent runtime
+Generic coding-agent runtime -> Model and tool SDKs

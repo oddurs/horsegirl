@@ -1,0 +1,13 @@
+# Converted from corpus/flowcharts/0092.mmd by corpus/convert.py.
+Dealer -> Party 1: key shares (Paillier)
+Dealer -> Party 2: key shares
+Dealer -> Party 3: key shares
+Client 1 -> Party 1: gRPC (mTLS)
+Client 2 -> Party 2: gRPC
+Client 3 -> Party 3: gRPC
+Party 1 -> Party 2: star + ring topology
+Party 2 -> Party 3
+Party 3 -> Party 1
+
+Service Layer { Dealer, Party 1, Party 2, Party 3 }
+Clients { Client 1, Client 2, Client 3 }

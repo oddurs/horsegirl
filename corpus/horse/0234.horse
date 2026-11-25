@@ -1,0 +1,8 @@
+# Converted from corpus/flowcharts/0234.mmd by corpus/convert.py.
+__start__ -> react
+__start__ -> summarize
+react -> finish
+react -> tools
+summarize -> react
+tools -> react
+finish -> __end__

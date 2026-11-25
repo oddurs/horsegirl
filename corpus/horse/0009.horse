@@ -1,0 +1,6 @@
+# Converted from corpus/flowcharts/0009.mmd by corpus/convert.py.
+Load base model (RoBERTa) -> Filter parameters (regex)
+Load task-specific finetuned models -> Filter parameters (regex)
+Filter parameters (regex) -> MergingMethod(...)
+MergingMethod(...) -> Assign merged params to base clone
+Assign merged params to base clone -> Evaluate on GLUE via HF Trainer

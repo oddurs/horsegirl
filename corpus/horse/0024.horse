@@ -1,0 +1,14 @@
+# Converted from corpus/flowcharts/0024.mmd by corpus/convert.py.
+refil -> generator: every 3 days 103 gal capacity
+55 gallon -> generator
+generator -> grounding_rod: copper wire
+generator -> distributor: cam to pins 50ft
+distributor -> L5-30 to TT-30: L5-30 30 Amp
+L5-30 to TT-30 -> RVs_x3: extension cable 30 Amp 25ft
+distributor -> unknown_1_x2: L5-30 30 Amp 25ft
+distributor -> Group3ShiftPods_x5: L21-20 20 Amp 25ft
+Group3ShiftPods_x5 -> ShiftPods_x3: each extension cable 20 Amp 75ft
+distributor -> BigTrailer: X type 50 Amp XX ft
+distributor -> SpiderBox_x2: X type 50 Amp XX ft
+distributor -> TBD: X type 50 Amp XX ft
+distributor -> TBD: X type 30 Amp XX ft

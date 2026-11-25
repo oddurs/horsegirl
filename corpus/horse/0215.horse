@@ -1,0 +1,8 @@
+# Converted from corpus/flowcharts/0215.mmd by corpus/convert.py.
+Mail table -> Messages/: PathToDataFile →
+Mail_OwnedBlocks -> Message Sources/: links message to source
+Blocks table -> Message Sources/: stores source paths
+Mail_OwnedBlocks -> Message Attachments/: BlockTag=1098151011
+
+Outlook.sqlite { Mail table, Blocks table, Mail_OwnedBlocks }
+File System { Messages/, Message Sources/, Message Attachments/ }

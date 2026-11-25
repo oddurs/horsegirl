@@ -1,0 +1,7 @@
+# Converted from corpus/flowcharts/0058.mmd by corpus/convert.py.
+Write the post -> Preview and character count
+Preview and character count -> View
+View -> Copy and open the social: Simple
+Copy and open the social -> You press Publish
+View -> "Draft, schedule or publish now": Advanced
+"Draft, schedule or publish now" -> Queue sends via API at the set time

@@ -1,0 +1,7 @@
+# Converted from corpus/flowcharts/0154.mmd by corpus/convert.py.
+Автор / Студент / Писатель -> WorldWiki Document Engine v2.0: "1. Ввод текста, формул, выбор ориентации (Portrait/Landscape)"
+WorldWiki Document Engine v2.0 -> Автор / Студент / Писатель: "2. Отображение А4 с зазорами, линейка, автонумерация"
+WorldWiki Document Engine v2.0 -> "SurrealDB: Семантический AST": "3. Debounced сохранение Semantic AST JSON (schemaVersion: 1)"
+"SurrealDB: Семантический AST" -> WorldWiki Document Engine v2.0: 4. Загрузка структуры документа
+Автор / Студент / Писатель -> WorldWiki Document Engine v2.0: "5. Запрос экспорта (DOCX с сохранением ориентации, PDF, EPUB, FB2)"
+WorldWiki Document Engine v2.0 -> Папка Загрузки / Downloads: 6. Нативная генерация файла на диск

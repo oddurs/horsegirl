@@ -1,0 +1,8 @@
+# Converted from corpus/flowcharts/0018.mmd by corpus/convert.py.
+Section -> Division
+Division -> Group
+Group -> Class
+Section -> Description: contains
+Division -> Description: contains
+Group -> Description: contains
+Class -> Description: contains

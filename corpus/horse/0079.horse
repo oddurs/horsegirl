@@ -1,0 +1,15 @@
+# Converted from corpus/flowcharts/0079.mmd by corpus/convert.py.
+Client sensor snapshot + episode/request ID -> Request serialization + network transport: timestamped request
+Request serialization + network transport -> Policy server queue + inference: uplink + server queue
+Policy server queue + inference -> Response transport + timestamps: policy result
+Response transport + timestamps -> Episode / generation / age / deadline gate: response + IDs + times
+Episode / generation / age / deadline gate -> Chunk connection + command queue: accepted fresh result
+Episode / generation / age / deadline gate -> Rejected / timeout local fallback: reject stale / late / wrong episode
+Chunk connection + command queue -> Accepted command controller path: scheduled commands
+Rejected / timeout local fallback -> Accepted command controller path: hold / retract / stop
+Accepted command controller path -> Physical robot / environment: servo execution
+Request serialization + network transport -> Latency + age telemetry: request transport time
+Policy server queue + inference -> Latency + age telemetry: queue + inference time
+Response transport + timestamps -> Latency + age telemetry: response transport time
+Physical robot / environment -> Next timestamped client snapshot: physical feedback
+Next timestamped client snapshot -> Client sensor snapshot + episode/request ID: next request cycle

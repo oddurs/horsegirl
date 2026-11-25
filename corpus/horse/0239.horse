@@ -1,0 +1,5 @@
+# Converted from corpus/flowcharts/0239.mmd by corpus/convert.py.
+Module A -> Module B
+Module A -> Module C
+Module B -> Module D
+Module C -> Module D

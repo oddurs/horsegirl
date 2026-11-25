@@ -1,0 +1,9 @@
+# Converted from corpus/flowcharts/0105.mmd by corpus/convert.py.
+示范轨迹：五相机同步采集（SO-101） -> 逐时间步用 InstantSplat++ 重建 3D Gaussian Splatting
+逐时间步用 InstantSplat++ 重建 3D Gaussian Splatting -> 在工作空间周围采样虚拟相机位姿 c_k
+在工作空间周围采样虚拟相机位姿 c_k -> "渲染新视角观测 ô_t^k = R(G_t, c_k)"
+"渲染新视角观测 ô_t^k = R(G_t, c_k)" -> 沿用原语言指令 l 与动作标签 a_t，无需重标注
+沿用原语言指令 l 与动作标签 a_t，无需重标注 -> 组合为虚拟 episode：保留腕部相机与动作，
+组合为虚拟 episode：保留腕部相机与动作， -> D_train = D ∪ D_nv
+D_train = D ∪ D_nv -> SmolVLA 模仿学习训练
+SmolVLA 模仿学习训练 -> 推理：仅需当前观测 + 语言指令，不需要重建模块

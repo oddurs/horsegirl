@@ -1,0 +1,22 @@
+# Converted from corpus/flowcharts/0014.mmd by corpus/convert.py.
+Incoming Tx -> Validation
+Validation -> All Transactions: insert
+All Transactions -> Blob: if ready + blobfee too low
+All Transactions -> Pending: if ready
+All Transactions -> Basefee: if ready + basfee too low
+All Transactions -> Queued: nonce gap or lack of funds
+All Transactions -> All Transactions: update
+Pending -> Block Production: best
+Basefee -> discard: worst
+Queued -> discard: worst
+Blob -> discard: worst
+Pending -> Blob: increased blob fee
+Blob -> Pending: decreased blob fee
+Pending -> Basefee: increased base fee
+Basefee -> Pending: decreased base fee
+Queued -> Pending: promote
+Queued -> Basefee: promote
+New Block -> All Transactions: apply state changes
+
+TxPool { Subpools, All Transactions }
+Subpools { Queued, Pending, Basefee, Blob }

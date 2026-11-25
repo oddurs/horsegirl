@@ -1,0 +1,14 @@
+# Converted from corpus/flowcharts/0164.mmd by corpus/convert.py.
+Publisher 1 -> "Topic: orders"
+Publisher 2 -> "Topic: orders"
+Publisher 3 -> "Topic: notifications"
+"Topic: orders" -> "Subscription: order-processor"
+"Topic: orders" -> "Subscription: order-analytics"
+"Topic: notifications" -> "Subscription: email-sender"
+"Subscription: order-processor" -> Order Service
+"Subscription: order-analytics" -> Analytics Service
+"Subscription: email-sender" -> Email Service
+
+Publishers { Publisher 1, Publisher 2, Publisher 3 }
+Google Cloud Pub/Sub { "Topic: orders", "Topic: notifications", "Subscription: order-processor", "Subscription: order-analytics", "Subscription: email-sender" }
+Subscribers { Order Service, Analytics Service, Email Service }

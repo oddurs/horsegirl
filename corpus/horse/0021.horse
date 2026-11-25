@@ -1,0 +1,13 @@
+# Converted from corpus/flowcharts/0021.mmd by corpus/convert.py.
+pages/ (routes) -> "components/ ui, forms, layout, domain, data"
+pages/ (routes) -> "composables/ useApiData, useAction, useApi"
+"components/ ui, forms, layout, domain, data" -> "composables/ useApiData, useAction, useApi"
+"composables/ useApiData, useAction, useApi" -> utils/apiCache (client only)
+"composables/ useApiData, useAction, useApi" -> "stores/ auth, onboarding, ui"
+"composables/ useApiData, useAction, useApi" -> /api/v1
+"stores/ auth, onboarding, ui" -> /api/v1
+"stores/ auth, onboarding, ui" -> Firebase Auth (optional)
+middleware/access.global -> "stores/ auth, onboarding, ui"
+constants/*.json -> pages/ (routes)
+constants/*.json -> "components/ ui, forms, layout, domain, data"
+utils/notify (toasts) -> "composables/ useApiData, useAction, useApi"

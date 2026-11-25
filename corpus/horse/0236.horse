@@ -1,0 +1,31 @@
+# Converted from corpus/flowcharts/0236.mmd by corpus/convert.py.
+Incoming Packet -> pf Rule
+pf Rule -> CARP/pfsync: "Anchor: aifw-ha"
+pf Rule -> Geo-IP: "Anchor: aifw-geoip"
+pf Rule -> Rate Limit: "Anchor: aifw-ratelimit"
+pf Rule -> VPN: "Anchor: aifw-vpn"
+pf Rule -> TLS: "Anchor: aifw-tls"
+pf Rule -> Firewall Rules: "Anchor: aifw"
+pf Rule -> NAT Rules: NAT Anchor
+Firewall Rules -> pf State Table: Pass
+Firewall Rules -> Drop/Return: Block
+pf State Table -> Connection Tracker
+Connection Tracker -> Feature Extraction
+Feature Extraction -> AI Detectors
+AI Detectors -> Threat Detected: Port Scan
+AI Detectors -> Threat Detected: DDoS
+AI Detectors -> Threat Detected: Brute Force
+AI Detectors -> Threat Detected: C2 Beacon
+AI Detectors -> Threat Detected: DNS Tunnel
+Threat Detected -> Score >= Threshold?
+Score >= Threshold? -> Permanent Block: >= 0.95
+Score >= Threshold? -> Temporary Block: >= 0.7
+Score >= Threshold? -> Rate Limit: >= 0.5
+Score >= Threshold? -> Alert Only: >= 0.3
+Permanent Block -> pf Table Update
+Temporary Block -> pf Table Update
+Rate Limit -> pf Table Update
+Threat Detected -> Plugin Hooks
+Plugin Hooks -> pf Table Update: IP Reputation
+Plugin Hooks -> External Notification: Webhook
+Plugin Hooks -> Log Buffer: Logger

@@ -1,0 +1,7 @@
+# Converted from corpus/flowcharts/0238.mmd by corpus/convert.py.
+Project Root -> src/
+Project Root -> Configuration
+Project Root -> tests/
+src/ -> core/
+src/ -> utils/
+src/ -> types/

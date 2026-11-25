@@ -1,0 +1,7 @@
+# Converted from corpus/flowcharts/0217.mmd by corpus/convert.py.
+PostgreSQL -> Backend bootstrap: persisted historical/latest data
+Backend bootstrap -> React dashboard state: initial snapshot + polling
+MQTT WebSocket -> React dashboard state: live topic updates
+React dashboard state -> Device cards
+React dashboard state -> Charts
+React dashboard state -> "Event, log, help,"

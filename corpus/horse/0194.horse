@@ -1,0 +1,25 @@
+# Converted from corpus/flowcharts/0194.mmd by corpus/convert.py.
+🌐 Browser / PWA -> Next.js 16 App Router
+Next.js 16 App Router -> Spring Cloud Gateway: REST API
+Spring Cloud Gateway -> 🔐 auth-service
+Spring Cloud Gateway -> 👤 user-service
+Spring Cloud Gateway -> 📚 content-service
+Spring Cloud Gateway -> 📊 progress-service
+Spring Cloud Gateway -> 🏆 gamification-service
+🔐 auth-service -> PostgreSQL 16
+🔐 auth-service -> Redis 7
+👤 user-service -> PostgreSQL 16
+👤 user-service -> Kafka
+📚 content-service -> PostgreSQL 16
+📚 content-service -> Redis 7
+📊 progress-service -> PostgreSQL 16
+📊 progress-service -> Kafka
+🏆 gamification-service -> PostgreSQL 16
+🏆 gamification-service -> Redis 7
+🏆 gamification-service -> Kafka
+
+Client Layer { 🌐 Browser / PWA }
+Frontend { Next.js 16 App Router }
+API Gateway { Spring Cloud Gateway }
+Microservices { 🔐 auth-service, 👤 user-service, 📚 content-service, 📊 progress-service, 🏆 gamification-service }
+Data Layer { PostgreSQL 16, Redis 7, Kafka }

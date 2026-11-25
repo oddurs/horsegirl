@@ -1,0 +1,16 @@
+# Converted from corpus/flowcharts/0046.mmd by corpus/convert.py.
+synthetic-data-kit -> ingest
+synthetic-data-kit -> create
+synthetic-data-kit -> curate
+synthetic-data-kit -> save-as
+synthetic-data-kit -> system-check
+ingest -> PDF File
+ingest -> HTML File
+ingest -> YouTube URL
+create -> QA Pairs
+create -> Summary
+curate -> Filter by Quality
+save-as -> JSONL Format
+save-as -> Alpaca Format
+save-as -> Fine-Tuning Format
+save-as -> ChatML Format

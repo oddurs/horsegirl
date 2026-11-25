@@ -1,0 +1,6 @@
+# Converted from corpus/flowcharts/0186.mmd by corpus/convert.py.
+Input x -> F(x)
+Input x -> +: identity skip
+F(x) -> +
++ -> ReLU
+ReLU -> y

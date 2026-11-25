@@ -1,0 +1,9 @@
+# Converted from corpus/flowcharts/0160.mmd by corpus/convert.py.
+"Ruby: Parquet.each_row" -> "FFI: parse arguments"
+"FFI: parse arguments" -> "Adapter: create reader"
+"Adapter: create reader" -> "Core: read batches"
+"Core: read batches" -> "Core: convert to ParquetValue"
+"Core: convert to ParquetValue" -> "Adapter: convert to Ruby"
+"Adapter: convert to Ruby" -> "Ruby: yield rows"
+
+"Example: Reading a Parquet file" { "Ruby: Parquet.each_row", "FFI: parse arguments", "Adapter: create reader", "Core: read batches", "Core: convert to ParquetValue", "Adapter: convert to Ruby", "Ruby: yield rows" }

@@ -1,0 +1,6 @@
+# Converted from corpus/flowcharts/0037.mmd by corpus/convert.py.
+Tag -> Assemble
+Assemble -> Validate
+Validate -> Deliver
+Deliver -> Deploy
+Validate -> Deploy

@@ -1,0 +1,6 @@
+# Converted from corpus/flowcharts/0151.mmd by corpus/convert.py.
+Agent -> MAP Server
+Client -> MAP Server
+Agent -> MAP Server
+
+MAP Server { EventBus, Agents, Scopes, Sessions, Subscriptions, Messages }

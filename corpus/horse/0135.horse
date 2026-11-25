@@ -1,0 +1,32 @@
+# Converted from corpus/flowcharts/0135.mmd by corpus/convert.py.
+VSCode Extension -> MarkdownEditorProvider
+MarkdownEditorProvider -> Webview Panel
+Webview Panel -> VSCodeMarkdownEditor
+VSCodeMarkdownEditor -> App Component
+App Component -> TipTap Editor
+TipTap Editor -> Extensions
+TipTap Editor -> Components
+Extensions -> BubbleMenuExtension
+Extensions -> CodeBlockExtension
+Extensions -> MermaidExtension
+Extensions -> MathematicsExtension
+Extensions -> ImageExtension
+Components -> FloatingToolbar
+Components -> SlashCommand
+Components -> MermaidComponent
+Components -> FormulaDialog
+Components -> TOC
+MarkdownEditorProvider -> extension.ts
+MarkdownEditorProvider -> webview.tsx
+MarkdownEditorProvider -> messageTypes.ts
+TipTap Editor -> debounce.ts
+TipTap Editor -> markdownUtils.ts
+TipTap Editor -> suggestionItems.ts
+TipTap Editor -> utils.ts
+
+VSCode Extension Host { VSCode Extension, MarkdownEditorProvider, Webview Panel }
+Webview (React App) { VSCodeMarkdownEditor, App Component, TipTap Editor, Extensions, Components }
+Extensions 模块 { BubbleMenuExtension, CodeBlockExtension, MermaidExtension, MathematicsExtension, ImageExtension }
+Components 模块 { FloatingToolbar, SlashCommand, MermaidComponent, FormulaDialog, TOC }
+Core 模块 { extension.ts, webview.tsx, messageTypes.ts }
+Utils 模块 { debounce.ts, markdownUtils.ts, suggestionItems.ts, utils.ts }

@@ -1,0 +1,17 @@
+# Converted from corpus/flowcharts/0114.mmd by corpus/convert.py.
+__start__ -> chat_input
+chat_input -> supervisor
+chatbot -> __end__
+verificacao_tickets -> chat_input
+verificacao_tickets -> supervisor
+analise_investimento -> supervisor
+fundamentals -> supervisor
+sentimental -> supervisor
+valuation -> supervisor
+technical -> supervisor
+supervisor -> fundamentals
+supervisor -> technical
+supervisor -> sentimental
+supervisor -> valuation
+supervisor -> analise_investimento
+supervisor -> chatbot

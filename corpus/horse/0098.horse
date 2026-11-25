@@ -1,0 +1,12 @@
+# Converted from corpus/flowcharts/0098.mmd by corpus/convert.py.
+Raw Text -> Normalize
+Normalize -> Split paragraphs
+Split paragraphs -> Split sentences
+Split sentences -> Assemble chunks
+Assemble chunks -> Generate embeddings
+Generate embeddings -> Batch upsert
+Batch upsert -> Pinecone
+Assemble chunks -> Extract entities
+Extract entities -> Write to Neo4j
+Raw Text -> Save to MongoDB
+Batch upsert -> Update chunkCount

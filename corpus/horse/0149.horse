@@ -1,0 +1,9 @@
+# Converted from corpus/flowcharts/0149.mmd by corpus/convert.py.
+Generate random -> Convert to
+Convert to -> Serialize via
+Serialize via -> Parse back via
+Parse back via -> Convert back to
+Convert back to -> Original ==
+Original == -> Pass: Yes
+Original == -> Shrink & retry: No
+Shrink & retry -> Generate random

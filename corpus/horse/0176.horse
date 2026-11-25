@@ -1,0 +1,7 @@
+# Converted from corpus/flowcharts/0176.mmd by corpus/convert.py.
+.env per DB -> telegraf db1..db4
+telegraf db1..db4 -> PostgreSQL 17
+telegraf db1..db4 -> InfluxDB 1.8
+Python SDK -> dashboard JSON
+dashboard JSON -> Grafana 11
+Grafana 11 -> InfluxDB 1.8

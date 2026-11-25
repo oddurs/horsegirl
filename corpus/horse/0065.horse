@@ -1,0 +1,33 @@
+# Converted from corpus/flowcharts/0065.mmd by corpus/convert.py.
+Admin IAM User -> Deploy IAM User: Creates
+Deploy IAM User -> CloudFormation: Uses
+"Bucket: Main Storage" -> review/
+"Bucket: Main Storage" -> staging/
+"Bucket: Main Storage" -> output/
+"Bucket: Main Storage" -> aggregations/
+EKS (3 Workers) -> Dask Dashboard Service: Exposes
+Elastic Container Registry -> EKS (3 Workers): Serves images
+CloudFormation -> Amazon S3 (Data Storage): Creates
+CloudFormation -> EKS Cluster: Creates
+CloudFormation -> CloudWatch: Creates
+CloudFormation -> Elastic Container Registry: Creates
+EKS (3 Workers) -> Amazon S3 (Data Storage): Data flow
+EKS (3 Workers) -> CloudWatch: Logs & metrics
+Staging Table -> Reporting Table: Aggregation
+Amazon S3 (Data Storage) -> Snowflake (Data Warehousing): Copy data
+EKS (3 Workers) -> Snowflake (Data Warehousing): Write partitions
+End User -> Dask Dashboard Service: Logs in and monitors
+Developer -> Git Repository: Commits changes
+Git Repository -> CI/CD Pipeline: Triggers
+CI/CD Pipeline -> Elastic Container Registry: "Build, Test, Push"
+CI/CD Pipeline -> EKS (3 Workers): Update
+
+US East (N. Virginia) Region { AWS Services, Snowflake (Data Warehousing), Legend, End User }
+AWS Services { IAM, Amazon S3 (Data Storage), EKS Cluster, CloudWatch, CloudFormation, Elastic Container Registry }
+IAM { Admin IAM User, Deploy IAM User }
+Amazon S3 (Data Storage) { "Bucket: Main Storage", review/, staging/, output/, aggregations/ }
+EKS Cluster { EKS (3 Workers), Dask Dashboard Service }
+CloudWatch { Logs, Metrics, Alarms }
+Snowflake (Data Warehousing) { Staging Table, Reporting Table }
+Legend { "EKS: Main cost consideration" }
+External Deployment { Git Repository, CI/CD Pipeline, Developer }

@@ -1,0 +1,55 @@
+# Converted from corpus/flowcharts/0182.mmd by corpus/convert.py.
+clap Parser -> Command Router
+Command Router -> init.rs
+Command Router -> check.rs
+Command Router -> build.rs
+Command Router -> deploy.rs
+Command Router -> watch.rs
+base.rs -> base/: include_str!()
+obby.rs -> obby/: include_str!()
+simulator.rs -> simulator/: include_str!()
+rpg.rs -> rpg/: include_str!()
+tycoon.rs -> tycoon/: include_str!()
+init.rs -> mod.rs: get_template_files()
+mod.rs -> base.rs
+mod.rs -> obby.rs
+mod.rs -> simulator.rs
+mod.rs -> rpg.rs
+mod.rs -> tycoon.rs
+init.rs -> Toolchain (src/toolchain/): detect + run
+check.rs -> Toolchain (src/toolchain/): detect + run
+build.rs -> Toolchain (src/toolchain/): detect + run
+watch.rs -> Toolchain (src/toolchain/): detect
+runner.rs -> rojo
+runner.rs -> wally
+runner.rs -> selene
+runner.rs -> stylua
+runner.rs -> rokit
+runner.rs -> git
+detect.rs -> External Tools (PATH): "which::which()"
+deploy.rs -> build.rs: build first
+deploy.rs -> auth.rs
+deploy.rs -> publish.rs
+auth.rs -> ROBLOX_API_KEY
+auth.rs -> .env file
+publish.rs -> Roblox Open Cloud API: POST .rbxl bytes x-api-key header retry on 429/5xx
+Commands (src/commands/) -> style.rs
+init.rs -> fs.rs
+init.rs -> Project Config Files: writes
+check.rs -> default.project.json: reads
+build.rs -> default.project.json: reads
+deploy.rs -> rblx-dev.toml: reads
+build.rs -> .rbxl file: rojo build -o
+deploy.rs -> .rbxl file: uploads
+
+CLI Entry Point (src/main.rs) { clap Parser, Command Router }
+Commands (src/commands/) { init.rs, check.rs, build.rs, deploy.rs, watch.rs }
+Template System (src/templates/) { mod.rs, base.rs, obby.rs, simulator.rs, rpg.rs, tycoon.rs }
+Embedded Files (templates/) { base/, obby/, simulator/, rpg/, tycoon/ }
+Toolchain (src/toolchain/) { detect.rs, runner.rs }
+External Tools (PATH) { rojo, wally, selene, stylua, rokit, git }
+Open Cloud (src/cloud/) { auth.rs, publish.rs }
+API Key Sources { ROBLOX_API_KEY, .env file }
+Utilities (src/util/) { style.rs, fs.rs }
+Project Config Files { default.project.json, wally.toml, rblx-dev.toml }
+Build Output { .rbxl file }

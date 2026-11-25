@@ -1,0 +1,15 @@
+# Converted from corpus/flowcharts/0057.mmd by corpus/convert.py.
+gps_node -> Perception
+imu_node -> Perception
+lidar_node -> Perception
+Perception -> Planning
+Planning -> vehicle_control
+vehicle_bringup -> Drivers
+vehicle_bringup -> Perception
+vehicle_bringup -> Planning
+vehicle_bringup -> vehicle_control
+
+Drivers { gps_node, imu_node, lidar_node }
+Perception { obstacle_detector, road_detector, traffic_sign_detector }
+Planning { global_planner, local_planner }
+Control { vehicle_control }

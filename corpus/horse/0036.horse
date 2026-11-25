@@ -1,0 +1,9 @@
+# Converted from corpus/flowcharts/0036.mmd by corpus/convert.py.
+.jupk -> .jupk
+InstallAppLog.f -> InstallAppLog.f
+.jspk -> .jspk
+MainIndex.json -> MainIndex.json
+
+OpenJuOS { .jupk, InstallAppLog.f }
+ProperOS { .jupk, .jspk, InstallAppLog.f, MainIndex.json }
+ProperOS2 { .jspk, .pjspk, MainIndex.json }

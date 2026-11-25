@@ -1,0 +1,24 @@
+# Converted from corpus/flowcharts/0174.mmd by corpus/convert.py.
+📱 Android App -> Routes & API Layer: REST / HTTPS
+Routes & API Layer -> Profile
+Routes & API Layer -> DigiLocker
+Routes & API Layer -> Farmer
+Routes & API Layer -> Eligibility
+Routes & API Layer -> Document
+Routes & API Layer -> Explanation
+Profile -> DigiLocker
+Profile -> Farmer
+Profile -> Eligibility
+Profile -> Document
+DigiLocker -> 🇮🇳 DigiLocker Partner API: OAuth 2.0 / Pull API
+Farmer -> 🌾 PM-KISAN & State Land Portals: Beneficiary API
+Eligibility -> Scheme
+Document -> Document
+Explanation -> AIProvider
+AIProvider -> OpenAI
+AIProvider -> RuleBased
+Scheme -> PostgreSQL / Embedded H2
+Document -> PostgreSQL / Embedded H2
+
+Citizen Frontend { 📱 Android App }
+JanSaarthi Ktor Backend (Port 8080) { Routes & API Layer, Profile, DigiLocker, Farmer, Eligibility, Document, Explanation, 🇮🇳 DigiLocker Partner API, 🌾 PM-KISAN & State Land Portals, Scheme, Document, AIProvider, OpenAI, RuleBased, PostgreSQL / Embedded H2 }

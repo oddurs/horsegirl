@@ -1,0 +1,8 @@
+# Converted from corpus/flowcharts/0064.mmd by corpus/convert.py.
+"Lead text: notes, email" -> Sentence-BERT
+Sentence-BERT -> 384-dim embedding
+"lead_features table:" -> Feature vector
+384-dim embedding -> Concatenate
+Feature vector -> Concatenate
+Concatenate -> XGBoost classifier
+XGBoost classifier -> Conversion probability 0-1

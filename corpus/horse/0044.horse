@@ -1,0 +1,14 @@
+# Converted from corpus/flowcharts/0044.mmd by corpus/convert.py.
+User -> UI Layer: audio stream
+UI Layer -> gpt-realtime API: audio stream
+gpt-realtime API -> Motion Control: audio stream
+gpt-realtime API -> Tool Handlers: tool calls
+Tool Handlers -> Motion Control: movement requests
+Tool Handlers -> Camera Worker: "camera frames, face tracking"
+Tool Handlers -> gpt-realtime API: image for analysis
+Camera Worker -> Motion Control: face tracking
+Camera Worker -> Vision Processor: frames
+Vision Processor -> Tool Handlers: description
+reachy_mini -> Camera Worker: camera frames
+Motion Control -> reachy_mini: commands
+Tool Handlers -> gpt-realtime API: results

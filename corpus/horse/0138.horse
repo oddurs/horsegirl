@@ -1,0 +1,8 @@
+# Converted from corpus/flowcharts/0138.mmd by corpus/convert.py.
+Miner -> Blockchain
+Operator -> Blockchain
+Node -> Blockchain
+HTTP Server -> Miner
+HTTP Server -> Blockchain
+HTTP Server -> Operator
+HTTP Server -> Node

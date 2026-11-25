@@ -1,0 +1,7 @@
+# Converted from corpus/flowcharts/0166.mmd by corpus/convert.py.
+DPU or IPU -> DHCP Proxy or Relay*
+DHCP Proxy or Relay* -> DHCPServer*
+DHCP Proxy or Relay* -> BootstrapServer
+DHCP Proxy or Relay* -> FileServer*
+DHCP Proxy or Relay* -> DNSServer*
+DHCP Proxy or Relay* -> SyslogServer*

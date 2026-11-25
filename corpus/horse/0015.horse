@@ -1,0 +1,13 @@
+# Converted from corpus/flowcharts/0015.mmd by corpus/convert.py.
+Deduplication -> AI Enrichment
+AI Enrichment -> Vector Embedding
+Input Modules -> Processing Modules
+Processing Modules -> Storage Module
+Storage Module -> Output Modules
+Paper Discovery -> Reliability Module: Errors
+
+Input Modules { Topic Registration, Paper Discovery }
+Processing Modules { Deduplication, AI Enrichment, Vector Embedding }
+Storage Module { Relational & Vector }
+Output Modules { Semantic RAG Search, Digest Generation & }
+Reliability Module { Dead Letter Queue }

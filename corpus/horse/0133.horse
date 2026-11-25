@@ -1,0 +1,19 @@
+# Converted from corpus/flowcharts/0133.mmd by corpus/convert.py.
+CLI Source -> Ingress
+Feishu IM -> Ingress
+GitHub -> Ingress
+Ingress -> Engine — sole writer: Trigger
+Engine — sole writer -> Store SQLite
+Engine — sole writer -> Spill objects
+Engine — sole writer -> Harness Router Session
+Engine — sole writer -> Harness Worker Session
+Harness Worker Session -> LocalEnv sandbox
+Engine — sole writer -> Watchdog Session
+Replies Outbox -> Channels norms
+Channels norms -> Sources
+Memory Inline+Spill -> Harness Router Session
+Memory Inline+Spill -> Harness Worker Session
+Speculate deliver gate -> Assignments
+
+Sources { CLI Source, Feishu IM, GitHub }
+Engine — sole writer { Intake, Evals Gate+Assessment, Tickets, Assignments, Replies Outbox, Subscribe fan-out }

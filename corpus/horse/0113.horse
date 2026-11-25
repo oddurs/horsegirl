@@ -1,0 +1,4 @@
+# Converted from corpus/flowcharts/0113.mmd by corpus/convert.py.
+Define your goal -> Check connection needs
+Check connection needs -> Complete PipMCP setup
+Complete PipMCP setup -> Try an available

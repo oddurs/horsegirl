@@ -1,0 +1,14 @@
+# Converted from corpus/flowcharts/0233.mmd by corpus/convert.py.
+User Device -> Vercel Edge Network: HTTPS/PWA
+Vercel Edge Network -> React Frontend: Serves
+React Frontend -> Supabase (Backend-as-a-Service): Data Sync
+React Frontend -> Zustand Store: State
+React Frontend -> React Query: Caching
+React Frontend -> React Router: Routing
+React Frontend -> AI Service Module: AI
+Supabase (Backend-as-a-Service) -> GoTrue: Auth
+Supabase (Backend-as-a-Service) -> PostgreSQL: DB
+Supabase (Backend-as-a-Service) -> WebSockets: Realtime
+
+Frontend Logic { React Frontend, Zustand Store, React Query, React Router, AI Service Module }
+Backend Services { Supabase (Backend-as-a-Service), GoTrue, PostgreSQL, WebSockets }

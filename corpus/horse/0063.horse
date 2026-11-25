@@ -1,0 +1,23 @@
+# Converted from corpus/flowcharts/0063.mmd by corpus/convert.py.
+Web Client -> Ingress / TLS
+Ingress / TLS -> SalesPipe Spring Boot App
+SalesPipe Spring Boot App -> PostgreSQL - managed / StatefulSet
+SalesPipe Spring Boot App -> Redis
+SalesPipe Spring Boot App -> Kafka Cluster: produce domain events
+Kafka Cluster -> Activity Timeline Consumer
+Kafka Cluster -> Notification Consumer
+Kafka Cluster -> Lead Score Recompute Consumer
+Kafka Cluster -> Email Event Consumer
+Activity Timeline Consumer -> PostgreSQL - managed / StatefulSet
+Notification Consumer -> PostgreSQL - managed / StatefulSet
+Email Event Consumer -> PostgreSQL - managed / StatefulSet
+Lead Score Recompute Consumer -> Lead Scoring Service - FastAPI: feature vector
+Lead Scoring Service - FastAPI -> Lead Score Recompute Consumer: score
+Lead Score Recompute Consumer -> PostgreSQL - managed / StatefulSet
+SalesPipe Spring Boot App -> Lead Scoring Service - FastAPI: sync scoring call optional
+
+Client { Web Client }
+K8s Cluster { Monolith Pods - HPA 3-10 replicas, ML Service Pods, Ingress / TLS, Redis, PostgreSQL - managed / StatefulSet, Kafka Cluster }
+Monolith Pods - HPA 3-10 replicas { SalesPipe Spring Boot App }
+ML Service Pods { Lead Scoring Service - FastAPI }
+Async Consumers in-process { Activity Timeline Consumer, Notification Consumer, Lead Score Recompute Consumer, Email Event Consumer }

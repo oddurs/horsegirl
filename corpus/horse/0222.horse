@@ -1,0 +1,8 @@
+# Converted from corpus/flowcharts/0222.mmd by corpus/convert.py.
+NB-IoT -> In-band
+NB-IoT -> Guard-band
+NB-IoT -> Standalone
+eMTC -> In-band
+
+3GPP LPWAN Family { NB-IoT, eMTC, EC-GSM-IoT }
+Network Modes { In-band, Guard-band, Standalone }

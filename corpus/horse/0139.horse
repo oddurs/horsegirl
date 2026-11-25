@@ -1,0 +1,8 @@
+# Converted from corpus/flowcharts/0139.mmd by corpus/convert.py.
+Request from a grantee -> Owner-only?
+Owner-only? -> "Refused: only the owner": yes
+Owner-only? -> Size and hourly limit: no
+Size and hourly limit -> "Refused: try later": over
+Size and hourly limit -> Classifier: ok
+Classifier -> Runs like the owner's: allow
+Classifier -> Refused: deny or error
