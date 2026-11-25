@@ -156,6 +156,10 @@ fn quotes_stay_only_where_a_name_needs_them() {
         ("A -> \"-x\"", "A -> \"-x\"\n"),
         ("A -> \"B ?\"", "A -> \"B ?\"\n"),
         ("A -x \"B\"", "A -x B\n"),
+        (
+            "A { owner: X ?, kind: y }",
+            "A { kind: y, owner: \"X ?\" }\n",
+        ),
         ("\"  a   b \"", "a b\n"),
         (
             "A -> B: \"GET /users/{id}\"",
@@ -199,7 +203,8 @@ fn every_horse_file_in_the_repository_keeps_its_model() {
 /// failure repeats. Many of the files have errors, and the test skips those.
 #[test]
 fn random_files_keep_their_model_and_settle() {
-    const PIECES: [&str; 35] = [
+    const PIECES: [&str; 36] = [
+        "owner: X ?, kind: y",
         "A",
         "B",
         "Web app",

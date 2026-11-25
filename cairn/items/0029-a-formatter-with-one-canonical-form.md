@@ -48,3 +48,7 @@ Model property (criterion 2): tests/format.rs projects each tree to its facts (n
 ## 2026-11-25
 
 Criterion 3: crates/horsegirl/tests/cli.rs fmt::check_exits_1_when_the_file_would_change and check_exits_0_for_a_formatted_file passed in scripts/task check (cargo nextest, 46 tests).
+
+## 2026-11-25
+
+Fix round 1: a bare fact value that ends in ' ?' is now quoted, so the fact sort cannot turn it into a guess. Test: quotes_stay_only_where_a_name_needs_them and a generator piece.

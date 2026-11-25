@@ -296,7 +296,9 @@ fn name(node: &Node<'_>) -> String {
     // starts a comment there. `hides_a_comment` has dealt with a name that
     // quotes cannot hold.
     let bare_name = squeeze(node);
-    if bare_name.starts_with('#') {
+    // A trailing `?` in a fact value would become a guess when the fact sort
+    // moves the value to the end of the line.
+    if bare_name.starts_with('#') || (node.kind == NodeKind::Value && bare_name.ends_with(" ?")) {
         return format!("\"{bare_name}\"");
     }
     bare_name
