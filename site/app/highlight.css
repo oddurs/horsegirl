@@ -1,0 +1,18 @@
+/* Colours for the spans that lib/highlight.ts writes. The docs pages and the
+   landing page both show highlighted horsegirl source. */
+.hg-keyword {
+  color: var(--code-k);
+  font-weight: 600;
+}
+.hg-arrow {
+  color: var(--code-w);
+}
+.hg-key {
+  color: var(--code-s);
+}
+.hg-evidence {
+  color: var(--muted);
+}
+.hg-punct {
+  color: var(--muted);
+}

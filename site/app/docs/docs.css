@@ -55,22 +55,6 @@
 .docs .anchor:focus-visible {
   opacity: 1;
 }
-.hg-keyword {
-  color: var(--code-k);
-  font-weight: 600;
-}
-.hg-arrow {
-  color: var(--code-w);
-}
-.hg-key {
-  color: var(--code-s);
-}
-.hg-evidence {
-  color: var(--muted);
-}
-.hg-punct {
-  color: var(--muted);
-}
 @media (max-width: 40rem) {
   .docs {
     grid-template-columns: minmax(0, 1fr);

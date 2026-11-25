@@ -3,8 +3,10 @@ id: 46
 uid: 0571aefb-6bf0-4e14-855d-b275981004f5
 title: The landing page
 type: feature
-status: planned
+status: doing
 milestone: v0.1
+assignee: Oddur Sigurdsson
+claimed: 2026-11-25
 depends_on:
 - 45
 created: 2026-11-25
