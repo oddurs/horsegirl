@@ -18,7 +18,6 @@ An agent writes a horsegirl file, checks it, applies the fixes, and draws a flow
 
 - [ ] [`0115`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0115-reserve-the-horsegirl-name-on-crates-io-and-npm.md) Reserve the horsegirl name on crates.io and npm <sup>chore · p2 · release</sup>
 - [ ] [`0117`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0117-the-mcp-tool-schemas-are-a-reviewed-contract-in-both-protocol-eras.md) The MCP tool schemas are a reviewed contract in both protocol eras <sup>feature · p2 · mcp</sup>
-- [ ] [`0118`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0118-hold-each-svg-label-to-its-measured-width-in-any-font.md) Hold each SVG label to its measured width in any font <sup>feature · p0 · render</sup>
 - [ ] [`0122`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0122-fewer-crossings-in-the-layered-layout-measured-against-a-reference.md) Fewer crossings in the layered layout, measured against a reference <sup>feature · p2 · layout</sup>
 - [ ] [`0123`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0123-draw-a-link-that-starts-or-ends-at-a-group.md) Draw a link that starts or ends at a group <sup>feature · p2 · layout</sup>
 - [ ] [`0124`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0124-reserve-room-for-link-labels-in-the-layered-layout.md) Reserve room for link labels in the layered layout <sup>feature · p2 · layout</sup>
@@ -39,6 +38,7 @@ An agent writes a horsegirl file, checks it, applies the fixes, and draws a flow
 - [ ] [`0145`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0145-each-golden-case-that-draws-holds-its-svg.md) Each golden case that draws holds its SVG <sup>chore · p2 · render</sup>
 - [ ] [`0146`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0146-no-link-passes-through-a-group-that-holds-neither-of-its-ends.md) No link passes through a group that holds neither of its ends <sup>feature · p0 · layout</sup>
 - [ ] [`BUG-152`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/BUG-152-a-link-label-stays-legible-where-it-sits-on-its-own-line.md) A link label stays legible where it sits on its own line <sup>bug · p2 · render</sup>
+- [ ] [`BUG-158`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/BUG-158-a-label-keeps-the-white-space-that-its-measured-width-counts.md) A label keeps the white space that its measured width counts <sup>bug · p1 · render</sup>
 - [ ] [`0037`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0037-the-command-line-check-fix-fmt-draw-spec.md) The command line: check, fix, fmt, draw, spec <sup>feature · p0 · cli</sup>
 - [ ] [`0038`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0038-an-mcp-server-with-spec-check-fix-and-draw.md) An MCP server with spec, check, fix and draw <sup>feature · p0 · mcp</sup>
 - [ ] [`0040`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0040-draw-the-corpus-in-ci-and-count-overlaps.md) Draw the corpus in CI and count overlaps <sup>chore · p0 · bench</sup>
