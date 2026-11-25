@@ -3,8 +3,10 @@ id: 145
 uid: 26b13352-a413-4e79-ae07-ec84222ed506
 title: Each golden case that draws holds its SVG
 type: chore
-status: backlog
+status: doing
 milestone: v0.1
+assignee: Oddur Sigurdsson
+claimed: 2026-11-25
 depends_on:
 - 32
 - 34

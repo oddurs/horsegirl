@@ -1,6 +1,6 @@
 //! The SVG backend, held by a snapshot of the reference flow.
 //!
-//! The placement comes from the stand-in for the layout in `support`. To
+//! The placement comes from the layered layout, through the flow lens. To
 //! accept a change to `checkout.svg`, run:
 //!
 //! ```sh
@@ -9,12 +9,22 @@
 //!
 //! Then open the file in a browser and look at it before you commit it.
 
-mod support;
-
-use horsegirl_core::scene::Role;
+use horsegirl_core::lens::{self, FLOW};
+use horsegirl_core::model::{Model, lower};
+use horsegirl_core::scene::{Role, Scene};
 use horsegirl_core::svg::draw;
-use horsegirl_core::text::measure;
-use support::{STYLE, model, scene};
+use horsegirl_core::syntax::parse;
+use horsegirl_core::text::{Style, measure};
+
+const STYLE: Style = Style { size: 12.0 };
+
+fn model(source: &str) -> Model {
+    lower(&parse(source).tree)
+}
+
+fn scene(source: &str) -> Scene {
+    lens::draw(&model(source), &FLOW, STYLE)
+}
 
 const CHECKOUT: &str = include_str!("../../../examples/checkout.horse");
 const CHECKOUT_SVG: &str = include_str!("checkout.svg");

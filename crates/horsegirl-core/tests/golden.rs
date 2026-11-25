@@ -2,7 +2,8 @@
 //! that hold what it must give.
 //!
 //! A case is one `.horse` file. Beside it, `<case>.tree` holds the tree that
-//! the parser reads and `<case>.diagnostics.json` holds the diagnostics. The
+//! the parser reads and `<case>.diagnostics.json` holds the diagnostics. A case
+//! with no error also has `<case>.svg`, its picture through the flow lens. The
 //! expectations are text with one fact on each line, so a change to the parser
 //! or to a diagnostic shows as a line diff in review.
 //!
@@ -24,22 +25,36 @@ use std::fmt::Write as _;
 use std::fs;
 use std::path::{Path, PathBuf};
 
+use horsegirl_core::lens::{self, FLOW};
+use horsegirl_core::model::lower;
+use horsegirl_core::svg;
 use horsegirl_core::syntax::{Diagnostic, parse};
+use horsegirl_core::text::Style;
 
 const CASES: &str = concat!(env!("CARGO_MANIFEST_DIR"), "/tests/golden");
 const BLESS: &str = "HORSEGIRL_BLESS=1 cargo test -p horsegirl-core --test golden";
 
 /// The extensions of the expectations, in the order that a case writes them.
-const OUTPUTS: [&str; 2] = ["tree", "diagnostics.json"];
+const OUTPUTS: [&str; 3] = ["tree", "diagnostics.json", "svg"];
 
-/// Each expectation of `source`, with the extension of its file.
-fn outputs(source: &str) -> [(&'static str, String); 2] {
+/// The size of the type in a golden picture.
+const STYLE: Style = Style { size: 14.0 };
+
+/// Each expectation of `source`, with the extension of its file. `title` names
+/// the picture. A source with an error gives no picture, because the model of
+/// a broken file is a guess.
+fn outputs(source: &str, title: &str) -> Vec<(&'static str, String)> {
     let parse = parse(source);
     assert_eq!(parse.tree.to_string(), source, "the tree lost a byte");
-    [
+    let mut found = vec![
         (OUTPUTS[0], format!("{:?}", parse.tree)),
         (OUTPUTS[1], diagnostics_json(source, &parse.diagnostics)),
-    ]
+    ];
+    if !parse.diagnostics.iter().any(|d| d.code.starts_with('E')) {
+        let scene = lens::draw(&lower(&parse.tree), &FLOW, STYLE);
+        found.push((OUTPUTS[2], svg::draw(&scene, title)));
+    }
+    found
 }
 
 /// The diagnostics as JSON, one field on each line.
@@ -153,7 +168,7 @@ fn first_difference(expected: &str, actual: &str) -> String {
 }
 
 #[test]
-fn every_case_gives_its_expected_tree_and_diagnostics() {
+fn every_case_gives_its_expected_tree_diagnostics_and_picture() {
     let bless = std::env::var_os("HORSEGIRL_BLESS").is_some_and(|v| v == "1");
     let mut files: Vec<PathBuf> = fs::read_dir(CASES)
         .unwrap()
@@ -171,7 +186,8 @@ fn every_case_gives_its_expected_tree_and_diagnostics() {
     let mut expected_files = BTreeSet::new();
     for case in &cases {
         let source = fs::read_to_string(case).unwrap();
-        for (extension, actual) in outputs(&source) {
+        let title = case.file_stem().unwrap().to_string_lossy();
+        for (extension, actual) in outputs(&source, &title) {
             let path = expectation(case, extension);
             expected_files.insert(path.clone());
             if bless {
