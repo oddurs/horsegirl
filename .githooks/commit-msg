@@ -3,7 +3,7 @@
 set -eu
 root=$(git rev-parse --show-toplevel)
 subject=$(sed -n '/^#/!{p;q;}' "$1")
-re='^(feat|fix|chore|docs|perf|refactor|test|build|ci|revert)(\([a-z0-9._/-]+\))?!?: [^ ].*[^. ]$'
+re=$(cat "$root/scripts/commit-pattern")
 if ! printf '%s\n' "$subject" | grep -Eq "$re"; then
   echo "commit-msg: '$subject' is not a Conventional Commit." >&2
   echo "commit-msg: write '<type>(<scope>): <subject>' with no trailing period, for example:" >&2

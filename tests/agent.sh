@@ -22,7 +22,7 @@ cd "$tmp/repo"
 git config user.name test
 git config user.email test@example.invalid
 mkdir scripts
-cp "$src/scripts/agent" "$src/scripts/attribution-patterns" scripts/
+cp "$src/scripts/agent" "$src/scripts/attribution-patterns" "$src/scripts/commit-pattern" scripts/
 echo tracked >TRACKED
 git add -A
 git commit -q -m "chore: initial commit"
@@ -148,5 +148,22 @@ reject "Added the parser"
 reject "feat: ends with a period."
 reject "feat: $(printf 'x%.0s' $(seq 1 80))"
 reject "feat: add the parser\n\nCo-authored-by: Claude <noreply@anthropic.com>"
+
+title_check=$src/scripts/check-pr-title
+title_accept() {
+  PR_TITLE=$1 PR_BODY=${2:-} sh "$title_check" >/dev/null 2>&1 || fail "rejected a valid title: $1"
+}
+title_reject() {
+  PR_TITLE=$1 PR_BODY=${2:-} sh "$title_check" >/dev/null 2>&1 && fail "accepted an invalid title: $1 / ${2:-}"
+  return 0
+}
+title_accept "feat(parser): read fan-out links"
+title_accept "fix: a plain title" "A body with no credit line."
+title_reject "Update stuff"
+title_reject "feat: ends with a period."
+title_reject "feat: $(printf 'x%.0s' $(seq 1 80))"
+title_reject "feat: add the parser" "Generated with Claude"
+title_reject "feat: add the parser" "Co-authored-by: Claude <noreply@anthropic.com>"
+title_reject "" ""
 
 echo "tests/agent.sh: ok"

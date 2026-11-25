@@ -22,7 +22,7 @@ fmt_check() { cargo fmt --all -- --check; }
 lint() {
   cargo clippy --workspace --all-targets --locked -- -D warnings
   if optional shellcheck; then
-    shellcheck scripts/task scripts/agent scripts/setup .githooks/* tests/agent.sh
+    shellcheck scripts/task scripts/agent scripts/setup scripts/check-pr-title .githooks/* tests/agent.sh
   fi
   # The backlog is part of the tree: an invalid item or a stale roadmap is a lint error.
   if [ -f cairn.toml ] && optional cairn; then

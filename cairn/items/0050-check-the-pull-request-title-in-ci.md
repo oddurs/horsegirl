@@ -3,8 +3,10 @@ id: 50
 uid: 492c4fe5-8ab1-4dac-9331-1dd7d872491e
 title: Check the pull request title in CI
 type: feature
-status: planned
+status: doing
 milestone: v0.1
+assignee: Oddur Sigurdsson
+claimed: 2026-11-25
 created: 2026-11-25
 updated: 2026-11-25
 priority: p1
