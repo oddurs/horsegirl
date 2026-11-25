@@ -1,0 +1,13 @@
+graph LR
+    A[Wake up] --> B{Is it before 10am?}
+    B -- Yes --> C[Make coffee]
+    B -- No --> D[Stare into the void]
+    C --> E{Feeling productive?}
+    D --> E
+    E -- Yes --> F[Start coding]
+    E -- No --> G[Binge cat videos]
+    F --> H{Did it compile?}
+    H -- Yes --> I[Deploy to production 🚀]
+    H -- No --> J[Blame it on the intern]
+    G --> J
+    J --> K[Take a break. Try again later.]

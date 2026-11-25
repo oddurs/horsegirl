@@ -1,0 +1,19 @@
+graph TD;
+  subgraph EmojiVoto
+    VoteBot --REST--> EmojiUI
+    EmojiUI --gRPC--> EmojiSvc
+    EmojiUI --gRPC--> EmojiVoting
+  end
+  subgraph Monitoring
+    Console
+  end
+  EmojiUI -.logs.-> Console;
+  EmojiSvc -.logs.-> Console;
+  EmojiVoting -.logs.-> Console;
+  VoteBot -.logs.-> Console;
+
+  style VoteBot fill:#fcba03,color:#000
+  style EmojiUI fill:#03fc28,color:#000
+  style EmojiSvc fill:#03fc28,color:#000
+  style EmojiVoting fill:#03fc28,color:#000
+  style Console fill:#0356fc,color:#000

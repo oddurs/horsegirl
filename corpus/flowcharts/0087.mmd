@@ -1,0 +1,17 @@
+flowchart TB
+    A(("Start")) --> B["Prioritize<br/>(Highest-Priority Subexpression)"]
+    B --> C["Simplify<br/>(Use Truth Table)"]
+    C --> D["Substitute<br/>(Replace with Atomic Value)"]
+    D --> E{"Is Expression<br/>Single Atomic Value?"}
+    E -->|No| B
+    E -->|Yes| F(("Done!"))
+
+    classDef start fill:#e3f2fd20,stroke:#1976d2,stroke-width:2px
+    classDef process fill:#fff3e020,stroke:#f57c00,stroke-width:2px
+    classDef decision fill:#e8eaf620,stroke:#3f51b5,stroke-width:3px
+    classDef terminal fill:#fce4ec20,stroke:#c2185b,stroke-width:2px
+
+    class A start
+    class B,C,D process
+    class E decision
+    class F terminal

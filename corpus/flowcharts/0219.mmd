@@ -1,0 +1,9 @@
+graph TD
+    Client[使用者瀏覽器] -->|HTTP 請求| WebServer[Spring Boot Web 伺服器]
+    WebServer -->|Thymeleaf 渲染| Client
+    WebServer -->|API 請求| Controller[控制器層]
+    Controller -->|調用| Service[服務層]
+    Service -->|連接| MQ[IBM MQ 伺服器]
+    Service -->|調用| Scheduler[排程器]
+    Scheduler -->|定期檢查| MQ
+    Service -->|生成| PDF[PDF 報表]

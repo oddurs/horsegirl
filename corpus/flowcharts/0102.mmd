@@ -1,0 +1,26 @@
+graph TB
+    subgraph "App Mesh"
+        VG[Virtual Gateway]
+        VR[Virtual Router]
+        VS[Virtual Service]
+        
+        subgraph "Backend Services"
+            VN1[Backend Node<br/>90% Traffic]
+            VN2[Canary Node<br/>10% Traffic]
+        end
+        
+        VN3[Frontend Node]
+        VN4[DB Proxy Node]
+    end
+    
+    Client[Client] -->|mTLS| VG
+    VG --> VR
+    VR -->|Weighted Routing| VN1
+    VR -->|Weighted Routing| VN2
+    VN1 -->|Circuit Breaker| VN4
+    VN2 -->|Circuit Breaker| VN4
+    VN3 --> VR
+    VN4 -->|Connection Pool| DB[(Database)]
+    
+    VN1 -.->|Traces| XRay[X-Ray]
+    VN2 -.->|Traces| XRay

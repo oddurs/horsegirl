@@ -1,0 +1,32 @@
+flowchart LR
+    subgraph git["📦 Git"]
+        direction TB
+        PHOTON((🎯))
+        T0[🔧 status]
+        PHOTON --> T0
+        T1[🔧 log]
+        PHOTON --> T1
+        T2[🔧 diff]
+        PHOTON --> T2
+        T3[🔧 branches]
+        PHOTON --> T3
+        T4[🔧 branch]
+        PHOTON --> T4
+        T5[✅ checkout]
+        PHOTON --> T5
+        T6[🗑️ delete]
+        PHOTON --> T6
+        T7[✏️ add]
+        PHOTON --> T7
+        T8[🔧 commit]
+        PHOTON --> T8
+        T9[📤 push]
+        PHOTON --> T9
+        T10[🔧 pull]
+        PHOTON --> T10
+    end
+
+    subgraph deps["Dependencies"]
+        direction TB
+        NPM0[📚 simple-git]
+    end

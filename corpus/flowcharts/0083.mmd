@@ -1,0 +1,9 @@
+flowchart TD
+    A[Raw Dataset] --> B[Remove Invalid Rows]
+    B --> C[Handle Missing Values]
+    C --> D[Replace Infinite Values]
+    D --> E[Select Numerical Features]
+    E --> F[Remove Constant Features]
+    F --> G[Feature Alignment]
+    G --> H[StandardScaler - fit on benign-train only]
+    H --> I[PCA]

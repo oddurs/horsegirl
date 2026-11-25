@@ -1,0 +1,75 @@
+graph TB
+    %% Input Stage
+    Input["📄 Raw Musical Score<br/>(ABC/MusicXML)"]
+    
+    %% Parsing Stage
+    Parser["🔍 Score Parser<br/><i>music21 Engine</i>"]
+    
+    %% Core Analysis
+    Piece["🎵 AnalyzedMusicPiece<br/><i>Structured Representation</i>"]
+    
+    %% Knowledge Base - The Truth
+    subgraph Truth["🌟 The Verifiable Truth"]
+        MKB["🧠 Music Knowledge Base (MKB)<br/>━━━━━━━━━━━━━━━━━━━━━<br/>• Polyrhythms<br/>• Counterpoint<br/>• Harmony Analysis<br/>• Texture Patterns<br/>• Syncopation Events"]
+    end
+    
+    %% Synthesis Stage
+    subgraph Synthesis["⚙️ Synthesis Layer"]
+        Generator["💭 QA Generator<br/><i>Chain-of-Thought Logic</i>"]
+        Renderer["🎨 Multi-Modal Renderer<br/><i>Format Conversion</i>"]
+    end
+    
+    %% Generated Outputs
+    subgraph Logic["📝 Logical Output (Invariant)"]
+        Q["❓ Question<br/><i>What rhythm pattern appears<br/>in measure 3?</i>"]
+        A["✅ Answer + CoT<br/><i>It is a Polyrhythm because<br/>3 notes over 2 beats...</i>"]
+    end
+    
+    subgraph Modalities["🌈 Multi-Modal Contexts (Variants)"]
+        Txt["📋 Modality 1: Text<br/><i>ABC Notation Code</i>"]
+        Img["🖼️ Modality 2: Image<br/><i>Sheet Music PNG</i>"]
+        Aud["🔊 Modality 3: Audio<br/><i>MIDI/WAV File</i>"]
+    end
+    
+    %% Final Dataset
+    Dataset["📦 Training Dataset"]
+    Final["💾 JSON Output<br/>━━━━━━━━━━━━━<br/>{<br/>  input_modality: [...],<br/>  question: '...',<br/>  answer: '...',<br/>  reasoning: '...'<br/>}"]
+    
+    %% Flow Connections
+    Input --> Parser
+    Parser -->|"Ingest"| Piece
+    Piece -->|"Analyze"| MKB
+    
+    MKB -.->|"Extract Logic"| Generator
+    Piece -.->|"Raw Score Data"| Renderer
+    
+    Generator -->|"Generate"| Q
+    Generator -->|"Generate"| A
+    
+    Renderer -->|"Render"| Txt
+    Renderer -->|"Render"| Img
+    Renderer -->|"Render"| Aud
+    
+    Q --> Dataset
+    A --> Dataset
+    Txt --> Dataset
+    Img --> Dataset
+    Aud --> Dataset
+    
+    Dataset --> Final
+    
+    %% Styling
+    classDef inputStyle fill:#e1f5ff,stroke:#0288d1,stroke-width:3px,color:#01579b
+    classDef processStyle fill:#fff3e0,stroke:#f57c00,stroke-width:2px,color:#e65100
+    classDef truthStyle fill:#f3e5f5,stroke:#7b1fa2,stroke-width:3px,color:#4a148c
+    classDef logicStyle fill:#e8f5e9,stroke:#388e3c,stroke-width:2px,color:#1b5e20
+    classDef modalStyle fill:#fff9c4,stroke:#f9a825,stroke-width:2px,color:#f57f17
+    classDef outputStyle fill:#fce4ec,stroke:#c2185b,stroke-width:3px,color:#880e4f
+    
+    class Input inputStyle
+    class Parser,Piece processStyle
+    class MKB truthStyle
+    class Generator,Renderer processStyle
+    class Q,A logicStyle
+    class Txt,Img,Aud modalStyle
+    class Dataset,Final outputStyle

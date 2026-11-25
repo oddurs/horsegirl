@@ -1,0 +1,52 @@
+graph TB
+    subgraph Client["Citizen Frontend"]
+        A["📱 Android App<br/>Kotlin + Jetpack Compose"]
+    end
+
+    A -->|"REST / HTTPS"| API
+
+    subgraph Backend["JanSaarthi Ktor Backend (Port 8080)"]
+        API["Routes & API Layer"]
+
+        API --> PS["Profile<br/>Service"]
+        API --> DLS["DigiLocker<br/>Service"]
+        API --> FS["Farmer<br/>Service"]
+        API --> ES["Eligibility<br/>Service"]
+        API --> DS["Document<br/>Service"]
+        API --> EXS["Explanation<br/>Service"]
+
+        PS --> DLS
+        PS --> FS
+        PS --> ES
+        PS --> DS
+
+        DLS -.->|"OAuth 2.0 / Pull API"| DLAPI["🇮🇳 DigiLocker Partner API<br/>(eAadhaar, Caste, Income Certs)"]
+        FS -.->|"Beneficiary API"| PMK["🌾 PM-KISAN & State Land Portals<br/>(7/12 Extract, KCC, DBT)"]
+
+        ES --> SR["Scheme<br/>Repository"]
+        DS --> DR["Document<br/>Repository"]
+
+        EXS --> AIP["AIProvider<br/>«interface»"]
+        AIP --> OAI["OpenAI<br/>Provider"]
+        AIP --> RBP["RuleBased<br/>Provider"]
+
+        SR --> DB[("PostgreSQL / Embedded H2")]
+        DR --> DB
+    end
+
+    style A fill:#1a73e8,color:#fff,stroke:none
+    style API fill:#34a853,color:#fff,stroke:none
+    style PS fill:#0288d1,color:#fff,stroke:none
+    style DLS fill:#512da8,color:#fff,stroke:none
+    style FS fill:#388e3c,color:#fff,stroke:none
+    style ES fill:#ea4335,color:#fff,stroke:none
+    style DS fill:#fbbc04,color:#000,stroke:none
+    style EXS fill:#ea4335,color:#fff,stroke:none
+    style SR fill:#4285f4,color:#fff,stroke:none
+    style DR fill:#4285f4,color:#fff,stroke:none
+    style AIP fill:#9334e6,color:#fff,stroke:none
+    style OAI fill:#7b1fa2,color:#fff,stroke:none
+    style RBP fill:#7b1fa2,color:#fff,stroke:none
+    style DB fill:#0d652d,color:#fff,stroke:none
+    style DLAPI fill:#455a64,color:#fff,stroke:none
+    style PMK fill:#2e7d32,color:#fff,stroke:none

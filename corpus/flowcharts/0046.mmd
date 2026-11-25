@@ -1,0 +1,20 @@
+graph LR
+    SDK[synthetic-data-kit] --> Ingest[ingest]
+    SDK --> Create[create]
+    SDK --> Curate[curate]
+    SDK --> SaveAs[save-as]
+    SDK --> SystemCheck[system-check]
+    
+    Ingest --> PDFFile[PDF File]
+    Ingest --> HTMLFile[HTML File]
+    Ingest --> YouTubeURL[YouTube URL]
+    
+    Create --> QA[QA Pairs]
+    Create --> Summary[Summary]
+    
+    Curate --> Filter[Filter by Quality]
+    
+    SaveAs --> JSONL[JSONL Format]
+    SaveAs --> Alpaca[Alpaca Format]
+    SaveAs --> FT[Fine-Tuning Format]
+    SaveAs --> ChatML[ChatML Format]

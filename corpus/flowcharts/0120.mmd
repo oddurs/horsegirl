@@ -1,0 +1,46 @@
+graph LR
+    shijian[shijian-renshilun] -->|depends-on| maodun[maodun-fenxi]
+    maodun -->|depends-on| maodunt[maodun-techuxing]
+    maodun -->|depends-on| neiyin[neiyin-juedinglun]
+    maodun -->|composes-with| chijiu[chijiuzhan-san-jieduan]
+    maodun -->|composes-with| jianmie[jianmiezhan-jizhong-bingli]
+    maodun -->|composes-with| goutong[youxiao-goutong-wenti-jiuej]
+
+    shijian -->|composes-with| maodun
+    shijian -->|composes-with| shishi[shishiqiushi-sigao]
+    shijian -->|composes-with| congzz[cong-zhanzheng-xuexi-zhanzheng]
+
+    shishi -->|composes-with| diaocha[diaocha-yanjiu]
+    diaocha -->|composes-with| qunzhong[qunzhong-luxian]
+    qunzhong -->|composes-with| yiban[yiban-gebie-zhidao]
+
+    chijiu -->|depends-on| maodun
+    chijiu -->|composes-with| zhanlue[zhanlue-zhanshu-bianzheng]
+    chijiu -->|composes-with| miaoshi[zhanlue-miaoshi-zhanshu-zhongshi]
+
+    budui[buduicheng-zhanlue] -->|composes-with| shiliu[shiliuzijue]
+    budui -->|composes-with| zhanlue
+    budui -->|composes-with| xingxing[xingxingzhihuo-genjudi]
+    budui -.->|contrasts-with| tongyi[tongyi-zhanxian-duli]
+
+    shiliu -->|composes-with| zhudong[zhudongxing-linghuoxing-jihuaxing]
+    shiliu -->|composes-with| zhanlue
+
+    zhanlue -->|composes-with| jianmie
+    zhanlue -->|composes-with| miaoshi
+    zhanlue -->|composes-with| zhudong
+
+    miaoshi -->|composes-with| xingxing
+
+    jianmie -.->|contrasts-with| xingxing
+    jianmie -.->|contrasts-with| bianzheng[bianzheng-pingheng]
+    jianmie -->|composes-with| zhanlue
+
+    lianglei[lianglei-maodun] -->|composes-with| chengqian[chengqianbihou-zhibing-jiuren]
+    chengqian -->|composes-with| zuzhi[zuzhi-jiupian-zhenduan]
+
+    fangxia[fangxia-baofu-kaidong-jiqi] -->|composes-with| congzz
+    fangxia -->|composes-with| maodunt
+
+    tan[tan-gangqin] -->|composes-with| maodun
+    tongyi -.->|contrasts-with| budui

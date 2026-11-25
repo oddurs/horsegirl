@@ -1,0 +1,46 @@
+graph TD
+    classDef default fill:#ffffff,stroke:#334155,stroke-width:1.5px,color:#0f172a,rx:4px,ry:4px;
+    classDef module fill:#f8fafc,stroke:#94a3b8,stroke-width:2px;
+
+    subgraph IN ["Input Modules"]
+        direction LR
+        TR["Topic Registration<br/>(Webhook)"]:::module
+        PD["Paper Discovery<br/>(Scheduled API Harvest)"]:::module
+    end
+
+    subgraph PROC ["Processing Modules"]
+        direction TB
+        DD["Deduplication<br/>(SHA-256 Constraint)"]:::module
+        AIE["AI Enrichment<br/>(Summary, Keywords & Research Analysis)"]:::module
+        VEC["Vector Embedding<br/>(384-dimensional)"]:::module
+        
+        DD --> AIE
+        AIE --> VEC
+    end
+
+    subgraph STORE ["Storage Module"]
+        DB[("Relational & Vector<br/>Database Store")]:::module
+    end
+
+    subgraph OUT ["Output Modules"]
+        direction LR
+        RS["Semantic RAG Search<br/>(Cosine Similarity)"]:::module
+        DG["Digest Generation &<br/>Human Approval"]:::module
+    end
+
+    subgraph REL ["Reliability Module"]
+        DLQ["Dead Letter Queue<br/>& Health Monitoring"]:::module
+    end
+
+    IN --> PROC
+    PROC --> STORE
+    STORE --> OUT
+    
+    %% Error handling connection
+    PD -. "Errors" .-> REL
+
+    style IN fill:#f1f5f9,stroke:#cbd5e1
+    style PROC fill:#f1f5f9,stroke:#cbd5e1
+    style STORE fill:#f1f5f9,stroke:#cbd5e1
+    style OUT fill:#f1f5f9,stroke:#cbd5e1
+    style REL fill:#fef2f2,stroke:#fca5a5

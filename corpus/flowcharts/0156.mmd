@@ -1,0 +1,7 @@
+flowchart TD
+    A[Feature PR opened] -->|CI: full run| B[Squash-merge to master]
+    B -->|CI: full run, live acceptance skipped if the PR already passed it on this exact tree| C[Versioning opens/updates Release PR]
+    C -->|CI: gate skips all test jobs| D[Maintainer merges Release PR]
+    D -->|CI: gate skips all test jobs| E[Versioning creates vX.Y.Z tag]
+    E -->|Release workflow| F[GoReleaser publishes signed binaries]
+    F --> G[Terraform Registry indexes the version]

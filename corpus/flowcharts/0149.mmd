@@ -1,0 +1,9 @@
+flowchart LR
+    A[Generate random\nSimpleDocument] --> B[Convert to\nTomlValue]
+    B --> C[Serialize via\nto_string]
+    C --> D[Parse back via\n@toml.parse]
+    D --> E[Convert back to\nSimpleDocument]
+    E --> F{Original ==\nRoundtripped?}
+    F -->|Yes| G[Pass]
+    F -->|No| H[Shrink & retry]
+    H --> A

@@ -1,0 +1,11 @@
+flowchart LR
+    accTitle: Yielding control to the event loop while awaiting I/O
+    accDescr: Request A yields control while waiting for the LLM API, allowing the event loop to start requests B through E
+
+    A1["Request A"] --> A2["await LLM"]
+    A2 -. "yield control" .-> L["Event loop"]
+    L --> B["Request B"]
+    B --> C["Request C"]
+    C --> D["Request D"]
+    D --> E["Request E"]
+    E -. "all tasks waiting for I/O" .-> R["Resume each task when its response arrives"]

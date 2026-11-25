@@ -1,0 +1,24 @@
+graph LR
+    A[Source Code]:::source --> B[TypeScript Compilation]:::compilation
+    B --> C[Vite Build]:::build
+    C --> D[Custom Build Script]:::build
+    D --> E[Dist Directory]:::output
+
+    subgraph "Build Steps"
+        F[Move compiled files]:::buildstep
+        G[Fix import paths]:::buildstep
+        H[Update package.json]:::buildstep
+        I[Copy CSS files]:::buildstep
+    end
+
+    D --> F
+    F --> G
+    G --> H
+    H --> I
+    I --> E
+
+    classDef source fill:#e8f5e8,stroke:#2e7d32,stroke-width:2px
+    classDef compilation fill:#fff3e0,stroke:#ef6c00,stroke-width:2px
+    classDef build fill:#e3f2fd,stroke:#1565c0,stroke-width:2px
+    classDef output fill:#fce4ec,stroke:#c2185b,stroke-width:2px
+    classDef buildstep fill:#f3e5f5,stroke:#7b1fa2,stroke-width:2px

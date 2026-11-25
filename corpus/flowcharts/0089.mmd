@@ -1,0 +1,11 @@
+flowchart LR
+  A["Level Start\nInit kaiju, load city, seed RNG, reset HUD"] --> B["Scroll World\nLock kaiju near right, move tilemap left"]
+  B --> C["Spawn System\nBuildings, cars/people, tanks/helis by timers and threat"]
+  C --> D["Input System\nRead keys/gamepad; queue intents"]
+  D --> E["Physics and Collision\nResolve terrain, projectiles, stomp, hits"]
+  E --> F["Combat System\nApply damage, emit particles, SFX"]
+  F --> G["Scoring System\nDollar per object; combos; streaks"]
+  G --> H["HUD and News\nUpdate health, ticker, headlines"]
+  H --> I{Health <= 0?}
+  I -- No --> B
+  I -- Yes --> J["Level End → Score Scene"]

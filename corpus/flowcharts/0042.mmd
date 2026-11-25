@@ -1,0 +1,17 @@
+graph TD
+    InputText[Input Text] --> Preprocessing[Text Preprocessing]
+    Preprocessing --> Chunking[Split into Chunks]
+    
+    Chunking --> GenerateSummary[Generate Summary]
+    Chunking --> GenerateQA[Generate QA Pairs]
+    
+    GenerateSummary --> ModelInference1[LLM Inference]
+    GenerateQA --> ModelInference2[LLM Inference]
+    
+    ModelInference1 --> Summary[Document Summary]
+    ModelInference2 --> QAPairs[QA Pairs]
+    
+    Summary --> Results[Results Object]
+    QAPairs --> Results
+    
+    Results --> SaveResults[Save to JSON]

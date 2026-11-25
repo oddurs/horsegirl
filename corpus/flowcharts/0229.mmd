@@ -1,0 +1,13 @@
+graph LR
+    A[User Config<br/>devices.yaml]
+    B[AIP Registration<br/>Service Manifest]
+    C[Device Telemetry<br/>DeviceInfoProvider]
+    
+    A -->|device_id, server_url<br/>capabilities, metadata| D[AgentProfile]
+    B -->|platform, registration_time| D
+    C -->|system_info, features| D
+    
+    style A fill:#e1f5ff
+    style B fill:#fff4e1
+    style C fill:#e8f5e9
+    style D fill:#f3e5f5

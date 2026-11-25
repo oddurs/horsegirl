@@ -1,0 +1,20 @@
+flowchart TD
+    subgraph "Key Generators"
+        BK[bare_key_gen\na-z, 0-9, -, _] --> SK[simple_key_gen]
+        CK[complex_key_gen\nspaces, dots, quotes, etc.] --> SK
+    end
+
+    subgraph "Value Generators"
+        SV[string_value_gen]
+        IV[integer_value_gen]
+        BV[boolean_value_gen]
+        SA[string_array_value_gen]
+        IA[integer_array_value_gen]
+        BA[boolean_array_value_gen]
+        TV[table_value_gen]
+    end
+
+    SV & IV & BV & SA & IA & BA --> SOAV[scalar_or_array_value_gen]
+    SOAV & TV --> SVG[simple_value_gen]
+    SK & SVG --> EG[simple_entry_gen]
+    EG --> DG[simple_document_gen]

@@ -1,0 +1,15 @@
+flowchart TB
+    accTitle: Comparing the WSGI and ASGI communication models
+    accDescr: WSGI returns a response from one function call, while ASGI exchanges events through receive and send for the lifetime of a connection
+
+    subgraph W["WSGI: one request = one function call"]
+        direction LR
+        WS["Server"] -->|"environ and start_response"| WA["sync application"]
+        WA -->|"response iterable"| WS
+    end
+
+    subgraph A["ASGI: one connection = events over time"]
+        direction LR
+        AS["Server"] -->|"receive()"| AA["async application"]
+        AA -->|"send()"| AS
+    end

@@ -1,0 +1,7 @@
+graph LR
+    A[Create feature branch] --> B[Write tests first]
+    B --> C[Implement changes]
+    C --> D[Run lint & deadcode]
+    D --> E[Run tests with -race]
+    E --> F[Update docs if needed]
+    F --> G[Open pull request]

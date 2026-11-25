@@ -1,0 +1,12 @@
+flowchart TD
+    A[Full Dataset] --> B{Traffic Label}
+    B -->|BENIGN| C[Normal Training Pool]
+    B -->|ATTACK| D[Attack Test Pool]
+    C --> E[Train/Test Split]
+    E --> F[Train Normal]
+    E --> G[Test Normal]
+    F --> H[Fit Scaler]
+    H --> I[Train PCA]
+    I --> J[Normal Error Distribution]
+    G --> K[Evaluation]
+    D --> K

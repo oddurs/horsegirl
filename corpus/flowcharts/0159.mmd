@@ -1,0 +1,48 @@
+graph TB
+    subgraph "Your Ruby Code"
+        USER[Your Ruby Application]
+    end
+
+    subgraph "Ruby Layer"
+        A[parquet.rb<br/>Main Entry Point]
+        B[schema.rb<br/>Schema DSL]
+    end
+
+    subgraph "FFI Bridge Layer"
+        D[Magnus FFI<br/>Ruby-Rust Bridge]
+        E[adapter_ffi.rs<br/>Argument Parsing]
+        F[Type Converters<br/>Ruby ↔ Parquet]
+    end
+
+    subgraph "Core Rust Layer"
+        G[parquet-core<br/>Core Logic]
+        H[parquet-ruby-adapter<br/>Ruby-specific Logic]
+        I[Apache Arrow<br/>& parquet-rs]
+    end
+
+    subgraph "Storage"
+        FILE[Parquet Files]
+    end
+
+    USER --> A
+    USER --> B
+    A --> D
+    B --> D
+    D --> E
+    E --> F
+    F --> G
+    F --> H
+    G --> I
+    H --> I
+    I --> FILE
+
+    style USER fill:#e1f5e1,stroke:#333,stroke-width:2px
+    style A fill:#f9f,stroke:#333,stroke-width:2px
+    style B fill:#f9f,stroke:#333,stroke-width:2px
+    style D fill:#9ff,stroke:#333,stroke-width:2px
+    style E fill:#9ff,stroke:#333,stroke-width:2px
+    style F fill:#9ff,stroke:#333,stroke-width:2px
+    style G fill:#ff9,stroke:#333,stroke-width:2px
+    style H fill:#ff9,stroke:#333,stroke-width:2px
+    style I fill:#ff9,stroke:#333,stroke-width:2px
+    style FILE fill:#ccc,stroke:#333,stroke-width:2px

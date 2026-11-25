@@ -1,0 +1,15 @@
+graph LR
+    A[Human] --> B[Markdown]
+    B --> C[MAM Parser]
+    C --> D[MAM AST]
+    D --> E[Compiler]
+    E --> F[Runtime]
+    F --> G[Execution]
+    
+    subgraph "Human Identity"
+        B
+    end
+    
+    subgraph "System Identity"
+        D
+    end

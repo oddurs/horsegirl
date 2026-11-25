@@ -1,0 +1,8 @@
+flowchart LR
+    A[Base model\n16 GB HuggingFace] --> B[merge_adapter.py\nmerge LoRA into base]
+    B --> C[Merged model\n16 GB]
+    G[LoRA adapter\n~80 MB] --> B
+    C --> D[convert_hf_to_gguf.py\nllama.cpp conversion]
+    D --> E[model.gguf\n16 GB F16]
+    E --> F[quantize\nQ4_K_M]
+    F --> G2[model-q4_k_m.gguf\n4.5 GB ✓]

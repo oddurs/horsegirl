@@ -1,0 +1,6 @@
+flowchart LR
+    CFG["📝 config.yml<br/><sub>paths + hostnames</sub>"]
+    DET["🔍 detect<br/><sub>framework · port · db</sub>"]
+    GEN["🏗️ generate<br/><sub>~/.roost/build/*</sub>"]
+    RUN["🚀 runner<br/><sub>docker compose -p roost</sub>"]
+    CFG --> DET --> GEN --> RUN

@@ -1,0 +1,14 @@
+flowchart TD
+A[用户操作] --> B{主题模式}
+B --> |自动| C[系统偏好]
+B --> |亮色| D[toggleCssDarkMode(false)]
+B --> |暗色| E[toggleCssDarkMode(true)]
+C --> F[usePreferredColorScheme]
+F --> G[返回系统主题]
+G --> H{系统主题}
+H --> |暗色| E
+H --> |亮色| D
+D --> I[移除html的dark类]
+E --> J[添加html的dark类]
+I --> K[UnoCSS应用亮色样式]
+J --> L[UnoCSS应用暗色样式]

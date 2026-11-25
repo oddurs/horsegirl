@@ -1,0 +1,8 @@
+flowchart LR
+  draft[Draft] --> watch{Right?}
+  watch -->|no| change[Change the file]
+  change --> draft
+  watch -->|yes| ratify[Ratify]
+  ratify --> record[Record]
+  record --> final[Final build]
+  final --> approve[Approve]

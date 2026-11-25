@@ -1,0 +1,54 @@
+graph TB
+    subgraph "VSCode Extension Host"
+        A[VSCode Extension]:::vscode --> B[MarkdownEditorProvider]:::vscode
+        B --> C[Webview Panel]:::vscode
+    end
+
+    subgraph "Webview (React App)"
+        C --> D[VSCodeMarkdownEditor]:::editor
+        D --> E[App Component]:::editor
+        E --> F[TipTap Editor]:::editor
+        F --> G[Extensions]:::extensions
+        F --> H[Components]:::components
+    end
+
+    subgraph "Extensions 模块"
+        G --> I[BubbleMenuExtension]:::extensions
+        G --> J[CodeBlockExtension]:::extensions
+        G --> K[MermaidExtension]:::extensions
+        G --> L[MathematicsExtension]:::extensions
+        G --> M[ImageExtension]:::extensions
+    end
+
+    subgraph "Components 模块"
+        H --> N[FloatingToolbar]:::components
+        H --> O[SlashCommand]:::components
+        H --> P[MermaidComponent]:::components
+        H --> Q[FormulaDialog]:::components
+        H --> R[TOC]:::components
+    end
+
+    subgraph "Core 模块"
+        B --> S[extension.ts]:::core
+        B --> T[webview.tsx]:::core
+        B --> U[messageTypes.ts]:::core
+    end
+
+    subgraph "Utils 模块"
+        V[debounce.ts]:::utils
+        W[markdownUtils.ts]:::utils
+        X[suggestionItems.ts]:::utils
+        Y[utils.ts]:::utils
+    end
+
+    F -.-> V
+    F -.-> W
+    F -.-> X
+    F -.-> Y
+
+    classDef vscode fill:#e1f5fe,stroke:#01579b,stroke-width:2px
+    classDef editor fill:#f3e5f5,stroke:#4a148c,stroke-width:2px
+    classDef extensions fill:#e8f5e8,stroke:#1b5e20,stroke-width:2px
+    classDef components fill:#fff3e0,stroke:#e65100,stroke-width:2px
+    classDef core fill:#fce4ec,stroke:#880e4f,stroke-width:2px
+    classDef utils fill:#e0f2f1,stroke:#004d40,stroke-width:2px

@@ -1,0 +1,17 @@
+flowchart TD
+  S(["visit a page"]) --> Q{"page access"}
+  Q -->|"public"| OK(["show"])
+  Q -->|"guest"| G{"signed in?"}
+  G -->|"no"| OK
+  G -->|"yes"| D["go to destination"]
+  Q -->|"student / admin / onboarding"| B{"blocked?"}
+  B -->|"yes"| BL["/auth/blocked"]
+  B -->|"no"| L{"signed in?"}
+  L -->|"no"| LG["/auth/login?redirect=…"]
+  L -->|"yes"| V{"email verified?"}
+  V -->|"no"| VE["/auth/verify-email"]
+  V -->|"yes"| O{"onboarded?"}
+  O -->|"no"| ON["/onboarding/1"]
+  O -->|"yes"| R{"role matches page?"}
+  R -->|"no"| H["role home"]
+  R -->|"yes"| OK

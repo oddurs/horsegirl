@@ -1,0 +1,21 @@
+graph LR
+    subgraph clients["Your network"]
+        A["Internal server<br/>certbot"]
+        B["IoT device<br/>acme.sh"]
+        C["Traefik / Caddy"]
+    end
+
+    P{{"acme-proxy"}}
+
+    subgraph backends["One of these actually signs"]
+        LOCAL["Embedded CA<br/>key on disk or in an HSM"]
+        UP["Upstream ACME CA<br/>Let's Encrypt, ZeroSSL, commercial"]
+        SCRIPT["Your script<br/>legacy PKI, internal API"]
+    end
+
+    A --> P
+    B --> P
+    C --> P
+    P --> LOCAL
+    P --> UP
+    P --> SCRIPT

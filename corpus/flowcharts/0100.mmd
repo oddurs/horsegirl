@@ -1,0 +1,20 @@
+flowchart TD
+    A[User Message] --> B[classifyIntent]
+    B --> C{Intent Classified?}
+    C -->|Yes| D[buildExecutionPlan]
+    C -->|No, fallback| D2[Default to greeting intent]
+    D2 --> D
+    D --> E{Budget Check}
+    E -->|Over budget| F[optimizePlanForBudget]
+    E -->|Within budget| G[executePlan]
+    F --> G
+    G --> H[topologicalLevels]
+    H --> I[Execute Level 0 in parallel]
+    I --> J[Execute Level 1 in parallel]
+    J --> K[Execute Level N in parallel]
+    K --> L[synthesizeResponse]
+    L --> M[SupervisorResult]
+
+    style B fill:#d4e5ff,stroke:#333
+    style G fill:#d4f1d4,stroke:#333
+    style L fill:#ffd4d4,stroke:#333

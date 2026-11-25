@@ -1,0 +1,4 @@
+flowchart LR
+    E[Editor event] --> R[hook_runner.py]
+    R --> C{Snoozed, debounced<br/>or filtered out?}
+    C -->|no| O([Sound · toast · speech · webhook])

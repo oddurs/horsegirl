@@ -1,0 +1,23 @@
+graph TD
+    Root["spring83/"] --> Server["server/"]
+    Root --> Client["client/"]
+    Root --> Deploy["deploy/"]
+    Root --> GitHub[".github/workflows/ci.yml"]
+    Root --> License["LICENSE (MIT)"]
+    Root --> Readme["README.md"]
+    
+    Server --> ServerPy["spring83_server.py"]
+    Server --> ServiceDir["service/spring83.service"]
+    Server --> ServerTests["tests/"]
+    Server --> Boards["boards/ (git-ignored)"]
+    
+    Client --> ClientPy["spring83_client.py"]
+    
+    Deploy --> Caddyfile["Caddyfile"]
+    Deploy --> LXCSetup["lxc_setup.sh"]
+    Deploy --> Cron["cron/cleanup.sh"]
+    
+    style Root fill:#f9f,stroke:#333
+    style Server fill:#bbf,stroke:#333
+    style Client fill:#bbf,stroke:#333
+    style Deploy fill:#bbf,stroke:#333

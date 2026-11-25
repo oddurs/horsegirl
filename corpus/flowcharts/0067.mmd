@@ -1,0 +1,15 @@
+graph LR
+    MC["module-completion.md<br/>Path Completion Celebration"]
+    ER["export-results<br/>(if available)"]
+    GW["graduation.md"]
+    BP["bootcamp_preferences.yaml"]
+    PD["bootcamp_progress.json"]
+    SI["steering-index.yaml"]
+    PM["POWER.md"]
+
+    MC -->|"offer after export"| GW
+    ER -->|"include graduation report"| GW
+    BP -->|"language, track, platform"| GW
+    PD -->|"modules completed"| GW
+    SI -->|"keyword: graduate"| GW
+    PM -->|"listed in steering files"| GW

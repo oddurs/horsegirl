@@ -1,0 +1,7 @@
+graph LR
+    A["Push/Merge to main"] --> B["CI: ShellCheck + Docker Build"]
+    B --> C{"CI Pass?"}
+    C -- Yes --> D["CD: Build & Push to GHCR"]
+    D --> E["Deploy EC2 #1"]
+    D --> F["Deploy EC2 #2"]
+    C -- No --> G["Stop ✗"]

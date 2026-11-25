@@ -1,0 +1,17 @@
+graph TB
+    subgraph "3GPP LPWAN Family"
+        A[NB-IoT<br/>Cat-NB1/NB2<br/>180 kHz<br/>Release 13/14]
+        B[eMTC<br/>Cat-M1/M2<br/>1.4 MHz<br/>Release 13/14]
+        C[EC-GSM-IoT<br/>200 kHz<br/>Release 13<br/>Limited deployment]
+    end
+    
+    subgraph "Network Modes"
+        D[In-band<br/>Within LTE carrier]
+        E[Guard-band<br/>LTE guard band]
+        F[Standalone<br/>Dedicated carrier<br/>e.g. refarmed GSM]
+    end
+    
+    A --> D
+    A --> E
+    A --> F
+    B --> D

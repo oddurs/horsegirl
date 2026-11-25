@@ -1,0 +1,17 @@
+flowchart LR
+    subgraph SQLite["Outlook.sqlite"]
+        Mail["Mail table\n(PathToDataFile, headers,\nMessage-ID, thread_id)"]
+        Blocks["Blocks table\n(file paths, content)"]
+        MOB["Mail_OwnedBlocks\n(join table)"]
+    end
+
+    subgraph Files["File System"]
+        Msg["Messages/\n*.olk15Message\n(body only)"]
+        Src["Message Sources/\n*.olk15MsgSource\n(full MIME)"]
+        Att["Message Attachments/\n*.olk15MsgAttachment"]
+    end
+
+    Mail -->|"PathToDataFile →"| Msg
+    MOB -->|"links message to source"| Src
+    Blocks -->|"stores source paths"| Src
+    MOB -->|"BlockTag=1098151011"| Att

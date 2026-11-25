@@ -1,0 +1,14 @@
+graph TB
+refil-->|every 3 days<br/>103 gal capacity|generator
+tank["55 gallon<br/>diesel tank"]-->generator
+generator -->|copper wire|grounding_rod
+generator -->|"cam to pins<br/>50ft"|distributor
+distributor -->|L5-30<br/>30 Amp|a1["L5-30 to TT-30<br/>adapter"]
+a1 -->|extension cable<br/>30 Amp<br/>25ft|RVs_x3
+distributor -->|L5-30<br/>30 Amp<br/>25ft|unknown_1_x2
+distributor -->|L21-20<br/>20 Amp<br/>25ft|Group3ShiftPods_x5
+Group3ShiftPods_x5 -->|each<br/>extension cable<br/>20 Amp<br/>75ft|ShiftPods_x3
+distributor -->|X type<br/>50 Amp<br/>XX ft|BigTrailer
+distributor -->|X type<br/>50 Amp<br/>XX ft|SpiderBox_x2
+distributor -->|X type<br/>50 Amp<br/>XX ft|TBD
+distributor -->|X type<br/>30 Amp<br/>XX ft|TBD

@@ -1,0 +1,11 @@
+graph TB
+    Password[加密密码]
+    Password --> D1[设备 A]
+    Password --> D2[设备 B]
+    Password --> D3[设备 C]
+    
+    D1 <-->|加密数据| Server[云端服务器]
+    D2 <-->|加密数据| Server
+    D3 <-->|加密数据| Server
+    
+    style Password fill:#f96,stroke:#333,stroke-width:2px

@@ -1,0 +1,7 @@
+graph LR
+ENV[.env per DB] --> T1[telegraf db1..db4]
+T1 --> PG[(PostgreSQL 17)]
+T1 --> IF[(InfluxDB 1.8)]
+PY[Python SDK] --> JSON[dashboard JSON]
+JSON --> GF[Grafana 11]
+GF --> IF

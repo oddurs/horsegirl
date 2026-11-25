@@ -1,0 +1,46 @@
+graph TB
+    subgraph Client Layer
+        Browser["🌐 Browser / PWA"]
+    end
+
+    subgraph Frontend
+        NextJS["Next.js 16 App Router<br/>React Server Components<br/>Serwist Service Worker"]
+    end
+
+    subgraph API Gateway
+        Gateway["Spring Cloud Gateway<br/>JWT Validation · Rate Limiting · Routing"]
+    end
+
+    subgraph Microservices
+        AuthService["🔐 auth-service<br/>Registration · Login · OAuth2<br/>JWT Issue/Refresh"]
+        UserService["👤 user-service<br/>Profiles · Preferences · Follows<br/>Push Notifications · Email"]
+        ContentService["📚 content-service<br/>Lessons · Modules · Flashcards<br/>Auto Data Seeding"]
+        ProgressService["📊 progress-service<br/>Lesson Completion · Quiz Scores<br/>SM-2 SRS Scheduling"]
+        GamificationService["🏆 gamification-service<br/>XP · Streaks · Badges<br/>Leaderboards"]
+    end
+
+    subgraph Data Layer
+        PostgreSQL[("PostgreSQL 16<br/>Schema-per-service isolation")]
+        Redis[("Redis 7<br/>Sessions · SRS Queue<br/>Leaderboards · Cache")]
+        Kafka["Kafka<br/>Event Streaming"]
+    end
+
+    Browser --> NextJS
+    NextJS -->|"REST API"| Gateway
+    Gateway --> AuthService
+    Gateway --> UserService
+    Gateway --> ContentService
+    Gateway --> ProgressService
+    Gateway --> GamificationService
+
+    AuthService --> PostgreSQL
+    AuthService --> Redis
+    UserService --> PostgreSQL
+    UserService --> Kafka
+    ContentService --> PostgreSQL
+    ContentService --> Redis
+    ProgressService --> PostgreSQL
+    ProgressService --> Kafka
+    GamificationService --> PostgreSQL
+    GamificationService --> Redis
+    GamificationService --> Kafka

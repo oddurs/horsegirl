@@ -1,0 +1,33 @@
+flowchart TB
+  subgraph Sources
+    CLI[CLI Source]
+    FIM[Feishu IM]
+    FGH[GitHub]
+  end
+
+  CLI --> ING
+  FIM --> ING
+  FGH --> ING
+
+  ING[Ingress<br/>Fast Path + Slow Path] -->|Trigger| ENG
+
+  subgraph ENG[Engine — sole writer]
+    INT[Intake]
+    EV[Evals Gate+Assessment]
+    TK[Tickets]
+    AS[Assignments]
+    RP[Replies Outbox]
+    SUB[Subscribe fan-out]
+  end
+
+  ENG --> STORE[(Store SQLite)]
+  ENG --> SPILL[(Spill objects)]
+  ENG --> H_R[Harness Router Session<br/>轻量模型 / Sequence Point]
+  ENG --> H_W[Harness Worker Session<br/>强模型 / 无直接用户 I/O]
+  H_W --> ENV[LocalEnv sandbox]
+  ENG --> WD[Watchdog Session<br/>timer Control Loop]
+  RP --> CH[Channels norms]
+  CH --> Sources
+  MEM[Memory Inline+Spill<br/>read_object Chain of Recall] --> H_R
+  MEM --> H_W
+  SPEC[Speculate deliver gate] --> AS

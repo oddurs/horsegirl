@@ -1,0 +1,23 @@
+graph LR
+    sales-not-art -->|foundation| guide-desire
+    sales-not-art -->|foundation| feature-to-benefit
+    sales-not-art -->|foundation| headline-four-functions
+
+    feature-to-benefit -->|depends-on| five-stage-sales
+    feature-to-benefit -->|depends-on| usp-extraction
+    feature-to-benefit -->|depends-on| bfd-formula
+    feature-to-benefit -->|depends-on| pseudo-logic-persuasion
+    feature-to-benefit -->|depends-on| long-vs-short-copy
+
+    headline-four-functions -->|depends-on| headline-eight-types
+    headline-four-functions -->|depends-on| headline-four-formulas
+    headline-four-functions -->|depends-on| five-stage-sales
+
+    guide-desire -.->|composes-with| bfd-formula
+    bfd-formula -.->|composes-with| five-stage-sales
+    pseudo-logic-persuasion -.->|composes-with| five-stage-sales
+    long-vs-short-copy -.->|composes-with| five-stage-sales
+    usp-extraction -.->|composes-with| headline-four-functions
+    headline-eight-types -.->|composes-with| headline-four-formulas
+    research-four-steps -.->|composes-with| feature-to-benefit
+    research-four-steps -.->|composes-with| bfd-formula

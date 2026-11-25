@@ -1,0 +1,36 @@
+flowchart TB
+    subgraph ERP["1C:ERP 2.5 — зона управления"]
+        direction TB
+        Order["Заказ клиента<br/>(создан, зарезервирован)"]
+        Pick["Сборка заказа<br/>(Задание на отбор)"]
+        RO["Расходный ордер<br/>(Передача курьеру)"]
+        ML["Маршрутный лист<br/>(Задание на доставку)"]
+        Status["Получение статусов<br/>от DMS"]
+        Return["Обработка возврата<br/>(при недоставке)"]
+    end
+
+    subgraph DMS["Delivery Management System — внешняя"]
+        direction TB
+        Dispatch["Диспетчеризация<br/>(назначение курьера)"]
+        Route["Оптимизация маршрута<br/>(алгоритм)"]
+        Track["GPS-трекинг<br/>курьера"]
+        Push["Push-уведомления<br/>клиенту"]
+        CSI["Сбор CSI<br/>после доставки"]
+    end
+
+    subgraph App["Мобильное приложение курьера"]
+        direction TB
+        AppTask["Список заданий"]
+        AppScan["Сканирование заказа"]
+        AppStatus["Смена статуса<br/>(Выехал/Доставил/Не застал)"]
+    end
+
+    style ERP fill:#dceeff,color:#1a1a1a
+    style DMS fill:#4C8C8F,color:#fff
+    style App fill:#C9A84C,color:#000
+
+    ML -->|"API / XML-обмен"| DMS
+    DMS -->|"Статусы доставки"| Status
+    Dispatch --> App
+    App --> Track
+    AppStatus -->|"Webhook"| Status

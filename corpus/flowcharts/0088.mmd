@@ -1,0 +1,33 @@
+flowchart LR
+  B["Browser (Player)"] -->|"Requests static files"| CDN["CDN (Static Hosting)\n'index.html', JS/CSS, Atlases, Audio, JSON Packs"]
+
+  subgraph APP["Static App (React + TypeScript)"]
+    UI["UI Screens\n'Create', 'Select City', 'Level', 'Score', 'High Scores'"]
+    SM["Scene Manager"]
+    RDR["Renderer\nPixiJS / @pixi/react"]
+    ECS["ECS\n'bitecs' (Entities/Components)"]
+    SYS["Systems\n'Input', 'Physics', 'AI', 'Combat', 'Scroll', 'Particles', 'Audio', 'HUD'"]
+    ST["Client State\nZustand (GameMeta, Settings, KaijuConfig)"]
+    REG["Parts Registry\n'Arms', 'Legs', 'Weapons' — pluggable via JSON/TS packs"]
+    PERS["Persistence\nLocalStorage / IndexedDB"]
+    ASSET["Asset Loader\nSprite Atlases, Audio, Fonts"]
+    PACKS["Content Packs (JSON/TS)\nDefinitions, Balancing, Metadata"]
+
+    UI --> SM
+    SM --> ECS
+    ECS --> SYS
+    SYS --> RDR
+
+    ST <--> UI
+    ST --> ECS
+
+    REG --> UI
+    REG --> ECS
+
+    PERS <--> ST
+
+    ASSET --> RDR
+    PACKS --> REG
+  end
+
+  CDN -->|"Serves app & assets"| APP

@@ -1,0 +1,16 @@
+flowchart LR
+    OB(["👁️ observation<br/><i>measured</i>"]) -->|record_signal| SG["📡 signal<br/><small>dedupe_key · law I</small>"]
+    SG -->|read| FD["🔬 finding<br/><small>severity ⟂ confidence · law V</small>"]
+    FD -->|decide_finding| AC["✅ accepted<br/><small>a rejection needs a note · law VI</small>"]
+    AC -->|assign_task| TK["🛠️ task<br/><small>ready only when blockers succeed · law IV</small>"]
+    TK -->|submit_plan| GT["🧑 approve_plan<br/><b>the human gate</b><br/><small>law III</small>"]
+    GT -->|log_result| RS["🧾 result<br/><small>appended, never replaced · law II</small>"]
+    SG -.->|evidence_signal_ids| FD
+
+    style OB fill:#e2e8f0,stroke:#475569,stroke-width:2px,color:#0f172a
+    style SG fill:#d1fae5,stroke:#059669,stroke-width:2px,color:#0f172a
+    style FD fill:#fee2e2,stroke:#dc2626,stroke-width:2px,color:#0f172a
+    style AC fill:#fee2e2,stroke:#dc2626,stroke-width:2px,color:#0f172a
+    style TK fill:#fef3c7,stroke:#d97706,stroke-width:2px,color:#0f172a
+    style GT fill:#fce7f3,stroke:#be185d,stroke-width:3px,color:#0f172a
+    style RS fill:#dbeafe,stroke:#2563eb,stroke-width:2px,color:#0f172a

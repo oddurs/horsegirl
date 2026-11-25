@@ -1,0 +1,27 @@
+graph TB
+    classDef typeNode fill:#E69F0020,stroke:#2B4162,stroke-width:2px
+    classDef behaviorNode fill:#56B4E920,stroke:#2B4162,stroke-width:2px
+    classDef resultNode fill:#009E7320,stroke:#2B4162,stroke-width:1px
+
+    Input1[/"Boolean × Boolean → Boolean"/]
+
+    subgraph AND["AND"]
+        A1["true, true"] -->|"returns"| AT((true))
+        A2["true, false"] -->|"returns"| AF1((false))
+        A3["false, true"] -->|"returns"| AF2((false))
+        A4["false, false"] -->|"returns"| AF3((false))
+    end
+
+    subgraph OR["OR"]
+        O1["true, true"] -->|"returns"| OT1((true))
+        O2["true, false"] -->|"returns"| OT2((true))
+        O3["false, true"] -->|"returns"| OT3((true))
+        O4["false, false"] -->|"returns"| OF((false))
+    end
+
+    Input1 -.->|"implemented as"| AND
+    Input1 -.->|"implemented as"| OR
+
+    class Input1 typeNode
+    class A1,A2,A3,A4,O1,O2,O3,O4 behaviorNode
+    class AT,AF1,AF2,AF3,OT1,OT2,OT3,OF resultNode

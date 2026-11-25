@@ -1,0 +1,12 @@
+flowchart TD
+    Start([Client requests POST /analyze]) --> GetContext[Retrieve Top-K vectors]
+    GetContext --> Prompt[Build LLM Prompt]
+    Prompt --> Infer[Ollama Inference]
+    Infer --> Validate{Pydantic Valid?}
+    Validate -->|No| Refine{Max Stages Hit?}
+    Refine -->|No| Prompt
+    Refine -->|Yes| Fallback[Return partial/error result]
+    Validate -->|Yes| GoalCheck{Goal Validated?}
+    GoalCheck -->|No| Refine
+    GoalCheck -->|Yes| Save[Save AnalysisResult]
+    Save --> End([Return Analysis])

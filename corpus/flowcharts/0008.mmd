@@ -1,0 +1,22 @@
+flowchart LR
+  subgraph Vision [Vision (vit/)]
+    A0[checkpoints/<model>/zeroshot.pt]
+    A1[Fine-tuned per task checkpoints]
+    A2[TaskVector: finetuned - pretrained]
+    A3[WUDI decompose (linear layers)]
+    A4[Apply merged vector -> new encoder]
+    A5[Evaluate across 8 datasets]
+  end
+
+  subgraph NLP [NLP (nlp_roberta/)]
+    B0[pretrained roberta-base]
+    B1[Finetuned heads/models per GLUE task]
+    B2[MergingMethod (task arithmetic, ties, DARE, WUDI)]
+    B3[Optional Router (Twin-Merge)]
+    B4[Evaluate on GLUE]
+  end
+
+  A0 --> A2 --> A3 --> A4 --> A5
+  B0 --> B2 --> B4
+  B1 --> B2
+  B1 --> B3 --> B2

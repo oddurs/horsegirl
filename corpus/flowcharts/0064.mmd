@@ -1,0 +1,8 @@
+flowchart LR
+    A[Lead text: notes, email\nthreads, job title] --> B[Sentence-BERT\nall-MiniLM-L6-v2]
+    B --> C[384-dim embedding]
+    D[lead_features table:\nengagement + firmographic] --> E[Feature vector]
+    C --> F[Concatenate]
+    E --> F
+    F --> G[XGBoost classifier\ntrained on won/lost deals]
+    G --> H[Conversion probability 0-1]

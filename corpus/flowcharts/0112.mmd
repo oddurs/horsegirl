@@ -1,0 +1,14 @@
+flowchart LR
+    FI[FoodItems<br/>nutrition per 100 g]
+    RI[RecipeIngredients<br/>food + portion + order]
+    CR[CustomRecipes<br/>reusable definition]
+    FE[FoodEntries<br/>date + meal type + total]
+    EI[FoodEntryItems<br/>consumed portions]
+    FP[FoodPhotos<br/>optional evidence and AI result]
+
+    FI --> RI
+    RI --> CR
+    CR -. copied as recipe snapshot .-> EI
+    FI --> EI
+    EI --> FE
+    FP --> FE

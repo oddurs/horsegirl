@@ -1,0 +1,15 @@
+flowchart LR
+  A["Raw Text<br/>(file or paste)"] --> B["Normalize<br/>line endings + whitespace"]
+  B --> C["Split paragraphs<br/>(double newline)"]
+  C --> D["Split sentences<br/>regex: /(?<=[.!?])\\s+(?=[A-Z0-9])/"]
+  D --> E["Assemble chunks<br/>240-900 chars + 160 overlap"]
+
+  E --> F["Generate embeddings<br/>768-d per chunk"]
+  F --> G["Batch upsert<br/>50 vectors per batch"]
+  G --> H["Pinecone<br/>'knowledge' namespace"]
+
+  E --> I["Extract entities<br/>Gemini (batched, 5 chunks/call)"]
+  I --> J["Write to Neo4j<br/>Document + Chunk + Entity nodes"]
+
+  A --> K["Save to MongoDB<br/>KnowledgeSource"]
+  G --> L["Update chunkCount"]

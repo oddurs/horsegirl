@@ -1,0 +1,17 @@
+graph TD
+    User[User Device] -->|HTTPS/PWA| CDN[Vercel Edge Network]
+    CDN -->|Serves| FE[React Frontend]
+    FE -->|Data Sync| SB[Supabase (Backend-as-a-Service)]
+
+    subgraph Frontend Logic
+        FE -->|State| Z[Zustand Store]
+        FE -->|Caching| RQ[React Query]
+        FE -->|Routing| RR[React Router]
+        FE -->|AI| AI[AI Service Module]
+    end
+
+    subgraph Backend Services
+        SB -->|Auth| Auth[GoTrue]
+        SB -->|DB| PG[PostgreSQL]
+        SB -->|Realtime| WS[WebSockets]
+    end

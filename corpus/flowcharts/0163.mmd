@@ -1,0 +1,25 @@
+graph LR
+    subgraph User Request
+        kubectl[kubectl apply]
+    end
+    
+    subgraph API Server
+        AS[API Server]
+        AW[Admission Webhook]
+    end
+    
+    subgraph Gatekeeper
+        GK[Gatekeeper Controller]
+        CT[Constraint Templates]
+        C[Constraints]
+        OPA[OPA Engine]
+    end
+    
+    kubectl --> AS
+    AS --> AW
+    AW --> GK
+    GK --> OPA
+    CT --> OPA
+    C --> OPA
+    OPA -->|Allow/Deny| AW
+    AW -->|Allow/Deny| AS

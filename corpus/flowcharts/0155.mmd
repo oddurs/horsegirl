@@ -1,0 +1,47 @@
+flowchart TD
+    Author((Автор))
+
+    subgraph UI_Layer ["Слой представления (Vue 3)"]
+        EditorCore[EditorCoreTiptap.vue]
+        RkWrapper[RkWordEditor.vue]
+        Ruler[WordRuler.vue]
+        Ribbon[WordRibbonBar.vue]
+    end
+
+    subgraph RK_Engine ["Ядро RK Word Editor (@raazkhnl/rk-editor-core)"]
+        WEditor[WordEditor Instance]
+        PaginationExt[Pagination Extension: DecorationSet]
+        LayoutExt[PageLayout & Section Extensions]
+        ExportEngine[DOCX / Print Engines]
+    end
+
+    subgraph Semantic_Core ["Семантическое ядро WorldWiki"]
+        Adapter[ASTAdapter.ts]
+        NumEngine[NumberingEngine.ts]
+        DocStore[(Pinia document.store)]
+    end
+
+    subgraph Storage_Backend ["Бэкенд и Хранение"]
+        TauriIPC[Tauri IPC Commands]
+        SurrealDB[(SurrealDB: chapters)]
+        Downloads[(Папка Downloads)]
+    end
+
+    Author -- "Клик по кнопке 'Ориентация: Альбомная'" --> Ribbon
+    Ribbon -- "setOrientation('landscape')" --> RkWrapper
+    RkWrapper -- "WordEditor.setPageLayout(landscape)" --> LayoutExt
+    LayoutExt -- "trigger recompute" --> PaginationExt
+    PaginationExt -- "Виртуальные разрывы (794px h)" --> RkWrapper
+    RkWrapper -- "Событие layout-changed (1123px w)" --> Ruler
+    Ruler -- "Растягивание шкалы до 25.2 см" --> Author
+
+    Author -- "Ввод текста и формул" --> WEditor
+    WEditor -- "onUpdate: ProseMirror JSON" --> Adapter
+    Adapter -- "Обновленный Semantic AST" --> DocStore
+    DocStore -- "Расчет номеров (Рис. 1, Табл. 1)" --> NumEngine
+    DocStore -- "AutoSave AST" --> TauriIPC
+    TauriIPC -- "Сохранение JSON" --> SurrealDB
+
+    Author -- "Экспорт в DOCX" --> Ribbon
+    Ribbon -- "Команда экспорта DOCX" --> ExportEngine
+    ExportEngine -- "Файл с сохранением альбомных листов" --> Downloads

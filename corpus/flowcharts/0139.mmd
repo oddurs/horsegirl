@@ -1,0 +1,8 @@
+flowchart LR
+  R[Request from a grantee] --> F{Owner-only?}
+  F -- yes --> X[Refused: only the owner]
+  F -- no --> L{Size and hourly limit}
+  L -- over --> Y[Refused: try later]
+  L -- ok --> C{Classifier}
+  C -- allow --> Run[Runs like the owner's]
+  C -- deny or error --> Z[Refused]

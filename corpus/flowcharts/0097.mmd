@@ -1,0 +1,36 @@
+graph TB
+  subgraph Client["Frontend (React + Vite)"]
+    UI["Chat UI"] --> API["API Client"]
+  end
+
+  subgraph Server["Backend (Express + TypeScript)"]
+    Routes["Chat Routes<br/>/api/chat/auth<br/>/api/chat/guest"]
+    GeminiSvc["Gemini Service<br/>Prompt Assembly + LLM<br/>+ Hybrid Retrieval"]
+    KBSvc["Knowledge Base Service<br/>Chunking + Vector Retrieval"]
+    GraphSvc["Graph Knowledge Service<br/>Entity Extraction + Graph Retrieval"]
+    EmbedSvc["Embedding Service<br/>gemini-embedding-001"]
+    CLI["Knowledge CLI<br/>REPL · Upsert · Sync<br/>graph:status · graph:rebuild"]
+  end
+
+  subgraph External["External Services"]
+    Gemini["Google Gemini API<br/>Embeddings + Chat<br/>+ Entity Extraction"]
+    Pinecone["Pinecone<br/>Vector Index"]
+    Neo4j["Neo4j AuraDB<br/>Knowledge Graph"]
+    MongoDB["MongoDB<br/>Sources + Conversations"]
+  end
+
+  API -->|HTTP / SSE| Routes
+  Routes --> GeminiSvc
+  GeminiSvc --> KBSvc
+  GeminiSvc --> GraphSvc
+  KBSvc --> EmbedSvc
+  EmbedSvc -->|embed| Gemini
+  KBSvc -->|query / upsert| Pinecone
+  KBSvc -->|CRUD| MongoDB
+  KBSvc -->|graph ingest| GraphSvc
+  GraphSvc -->|entity extraction| Gemini
+  GraphSvc -->|read / write| Neo4j
+  GeminiSvc -->|chat| Gemini
+  Routes -->|save messages| MongoDB
+  CLI --> KBSvc
+  CLI --> GraphSvc

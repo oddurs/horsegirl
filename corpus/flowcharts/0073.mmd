@@ -1,0 +1,12 @@
+flowchart LR
+  subgraph "discojs library"
+    discojs-node-->|extends|discojs;
+    discojs-web-->|extends|discojs;
+  end
+  subgraph User Interface
+    webapp-->|uses|discojs-web;
+    custom_browser["custom browser implementation"]-->|uses|discojs-web;
+    server-->| uses |discojs-node;
+    cli-->|uses|discojs-node;
+    custom_node["custom Node.js scripts"]-->|uses|discojs-node;
+  end

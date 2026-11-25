@@ -1,0 +1,17 @@
+flowchart TD
+    Start([Start]) --> GenRand["generate_random_solution(rng)"]
+    GenRand --> HasInitial{"Initial solution provided?"}
+    HasInitial -- "Yes (caller provided)" --> Pre["preprocess_solution(solution, score)"]
+    HasInitial -- "No (not provided)" --> Pre
+    Pre --> Optim["Optimizer: optimize(...)"]
+    Optim --> Update["handler.update(ctx) each iteration"]
+    Update --> LoopStart["generator.generate_trials(...) once; keep best"]
+    LoopStart --> Eval["p = handler.evaluate(current, trial)"]
+    Eval --> Decide{"accept? (p > rand(0, 1))"}
+    Decide -- "Accept" --> Apply["apply trial -> new current"]
+    Decide -- "Reject" --> Continue["keep current"]
+    Apply --> Optim
+    Continue --> Optim
+    Optim --> Result["optimizer returns best solution"]
+    Result --> Post["postprocess_solution(solution, score)"]
+    Post --> End([End])

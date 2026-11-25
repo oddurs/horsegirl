@@ -1,0 +1,49 @@
+graph TB
+    subgraph Frontend["Frontend (Next.js)"]
+        UI[Chat UI]
+        SSEHook[useSSE Hook]
+    end
+
+    subgraph Backend["Backend (FastAPI)"]
+        Router[REST + SSE Router]
+        SM[SessionManager]
+        SBM[SandboxManager]
+        DB[(SQLite DB)]
+        Notifier[asyncio.Event]
+        Queue[asyncio.Queue]
+    end
+
+    subgraph Modal["Modal Cloud Sandbox"]
+        Runner[agent_runner.py]
+        SDK[Claude Agent SDK]
+        Tools[Read / Write / Edit / Bash / Glob / Grep]
+        GitHook[pre-push hook]
+        CodeServer[code-server]
+    end
+
+    subgraph Anthropic["Anthropic API"]
+        Claude[Claude Model]
+        SessionStore[SDK Session Store]
+    end
+
+    UI -- "POST /messages" --> Router
+    SSEHook -- "GET /events?after=N" --> Router
+    Router --> SM
+    SM -- "store events + messages" --> DB
+    SM -- "notify" --> Notifier
+    Notifier -- "wake up" --> Router
+    Router -- "SSE stream" --> SSEHook
+
+    SM -- "create / run / terminate" --> SBM
+    SBM -- "sb.exec() in thread" --> Runner
+    Runner -- "NDJSON stdout" --> Queue
+    Queue -- "yield events" --> SM
+
+    Runner --> SDK
+    SDK -- "query + resume" --> Claude
+    Claude -- "tool calls" --> Tools
+    SDK -- "session_id" --> SessionStore
+
+    GitHook -- "/tmp/endo-push-request" --> Runner
+    SM -- "sb.exec: write /tmp/endo-push-response" --> SBM
+    UI -- "POST /permission" --> Router

@@ -1,0 +1,6 @@
+flowchart LR
+    Manifest[".claude-plugin/marketplace.json"] -->|lists| Plugins["plugins/ · 9"]
+    Plugins -->|ships| Surfaces["skills · agents · commands · hooks · rules"]
+    CLI["cli/ · aidd"] -->|reads| Manifest
+    CLI -->|installs| Target["a project's AI tool dir"]
+    Editor["AI coding tool"] -->|invokes| Surfaces
