@@ -2,6 +2,8 @@
 # Fails when horsegirl-core depends on a crate that is not in
 # scripts/core-deps.allow. The core must stay pure so it compiles to
 # WebAssembly. Dev dependencies are not checked: they never ship in the core.
+# It resolves every target and every feature, so a dependency behind a cfg or
+# an optional feature is checked too.
 # With -, reads the output of `cargo tree --prefix none` from standard input.
 set -eu
 cd "$(dirname "$0")/.."
@@ -11,7 +13,7 @@ allow=${CORE_DEPS_ALLOW:-scripts/core-deps.allow}
 if [ "${1:-}" = "-" ]; then
   tree=$(cat)
 else
-  tree=$(cargo tree -p horsegirl-core --locked --prefix none -e normal,build --format '{p}')
+  tree=$(cargo tree -p horsegirl-core --locked --target all --all-features --prefix none -e normal,build --format '{p}')
 fi
 
 bad=$(printf '%s\n' "$tree" | awk -v allow="$allow" '
