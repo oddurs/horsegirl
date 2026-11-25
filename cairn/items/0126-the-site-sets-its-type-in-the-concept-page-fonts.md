@@ -3,12 +3,14 @@ id: 126
 uid: d967415b-5e7e-4486-b954-1b4ad19fc7c9
 title: The site sets its type in the concept page fonts
 type: feature
-status: backlog
+status: done
 milestone: v0.1
+assignee: Oddur Sigurdsson
 depends_on:
 - 45
 created: 2026-11-25
 updated: 2026-11-25
+closed_at: 2026-11-25
 priority: p2
 risk: low
 surface: none
@@ -25,6 +27,10 @@ Serve the three fonts from the site itself. Either check in the WOFF2 files unde
 
 ## Acceptance criteria
 
-- [ ] The exported site contains the three font files and their licences, and no page requests a font from another origin.
-- [ ] Headings, body text and code render in the concept page fonts in a screenshot of `/design/`.
-- [ ] `scripts/task check` passes, and the accessibility check in the site build still reports no serious finding.
+- [x] The exported site contains the three font files and their licences, and no page requests a font from another origin.
+- [x] Headings, body text and code render in the concept page fonts in a screenshot of `/design/`.
+- [x] `scripts/task check` passes, and the accessibility check in the site build still reports no serious finding.
+
+## 2026-11-25
+
+Watched pass: scripts/task check (all steps, a11y 36 page loads no serious finding). check-export now fails unless the export has 3 woff2 files, 3 OFL licences and no fonts.googleapis/gstatic reference. webshot of /horsegirl/design/ at 1280px and with -m shows Bricolage headings, Instrument Sans body, JetBrains Mono code.
