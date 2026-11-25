@@ -57,12 +57,30 @@ fn diagnostics_json(source: &str, diagnostics: &[Diagnostic]) -> String {
             let (line, column) = position(source, d.span.start);
             let fix = match &d.fix {
                 None => "null".to_owned(),
-                Some(fix) => format!(
-                    "{{\n      \"span\": [{}, {}],\n      \"text\": {}\n    }}",
-                    fix.span.start,
-                    fix.span.end,
-                    string(&fix.text),
-                ),
+                Some(fix) => {
+                    let edits: Vec<String> = fix
+                        .edits
+                        .iter()
+                        .map(|edit| {
+                            format!(
+                                "{{\n          \"span\": [{}, {}],\n          \"text\": {}\n        }}",
+                                edit.span.start,
+                                edit.span.end,
+                                string(&edit.text),
+                            )
+                        })
+                        .collect();
+                    let edits = if edits.is_empty() {
+                        "[]".to_owned()
+                    } else {
+                        format!("[\n        {}\n      ]", edits.join(",\n        "))
+                    };
+                    format!(
+                        "{{\n      \"confidence\": {},\n      \"description\": {},\n      \"edits\": {edits}\n    }}",
+                        string(fix.confidence.word()),
+                        string(&fix.description),
+                    )
+                }
             };
             [
                 format!("\"code\": {}", string(d.code)),
