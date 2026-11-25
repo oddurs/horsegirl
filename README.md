@@ -1,5 +1,6 @@
 # horsegirl
 
+[![ci](https://github.com/oddurs/horsegirl/actions/workflows/ci.yml/badge.svg)](https://github.com/oddurs/horsegirl/actions/workflows/ci.yml)
 [![license: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
 An agent-first diagram language. An agent states the facts about a system once.
