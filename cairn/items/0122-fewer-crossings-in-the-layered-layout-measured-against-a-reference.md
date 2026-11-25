@@ -36,3 +36,7 @@ The reference counts come from `spikes/layered-layout`. Run `cargo run --release
 ## 2026-11-25
 
 From item 0146: crates/horsegirl-core/src/layout/through.rs has a transpose move (fn transpose: two neighbouring entries of a rank exchange their places, and an entry is an item or every item of a group) and order.rs has fn crossed, the crossings of one corridor. The search of item 0146 runs only when the order of the sweeps has a pass through a group, so it lowers the crossings of 07-compiler and 10-platform only. The test the_crossings_of_each_corpus_diagram_do_not_rise in tests/layout.rs holds the crossing count of each of the eleven pictures: 0, 0, 0, 3, 0, 0, 4, 1, 23, 2, 18. It counts the points where two drawn paths cross.
+
+## 2026-11-25
+
+From pull request 48 (item 0146): the pass search of layout/through.rs counts passes first and crossings second, with no weight. One pass less can cost many crossings. The second review found, on 3000 generated graphs (seed 1), 326 graphs with more crossings than before the search: graph 2184 lost 1 pass and went from 79 to 114 crossings. The move Clear of fix round 1 adds to that: the total on seed 1 is 19183 crossings, against 19125 before any search. The eleven test diagrams do not show it. A transpose step for every picture should decide what a pass is worth in crossings.

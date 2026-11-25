@@ -189,15 +189,38 @@ fn crossings(layers: &[Vec<usize>], steps: &[(usize, usize)], count: usize) -> u
 }
 
 /// How many pairs cross among the steps between two ranks. A step is the
-/// position of its item in each of the two ranks.
+/// position of its item in each of the two ranks. Two steps that share an
+/// item do not cross.
 pub(super) fn crossed(gap: &[(f64, f64)]) -> usize {
-    let mut crossed = 0;
-    for (index, p) in gap.iter().enumerate() {
-        for q in &gap[index + 1..] {
-            if (p.0 - q.0) * (p.1 - q.1) < 0.0 {
-                crossed += 1;
-            }
+    let mut steps = gap.to_vec();
+    steps.sort_by(|p, q| p.0.total_cmp(&q.0).then(p.1.total_cmp(&q.1)));
+    let mut ends: Vec<f64> = steps.iter().map(|step| step.1).collect();
+    inversions(&mut ends)
+}
+
+/// Sorts the values and returns how many pairs were in the wrong order. A
+/// merge sort counts them in fewer steps than a look at every pair.
+fn inversions(values: &mut [f64]) -> usize {
+    if values.len() < 2 {
+        return 0;
+    }
+    let (left, right) = values.split_at_mut(values.len() / 2);
+    let mut count = inversions(left) + inversions(right);
+    let mut merged = Vec::with_capacity(left.len() + right.len());
+    let (mut i, mut j) = (0, 0);
+    while i < left.len() && j < right.len() {
+        if right[j] < left[i] {
+            // Every value that is left in the first half is larger.
+            count += left.len() - i;
+            merged.push(right[j]);
+            j += 1;
+        } else {
+            merged.push(left[i]);
+            i += 1;
         }
     }
-    crossed
+    merged.extend_from_slice(&left[i..]);
+    merged.extend_from_slice(&right[j..]);
+    values.copy_from_slice(&merged);
+    count
 }

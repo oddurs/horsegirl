@@ -12,10 +12,15 @@
 //! It tries one move at a time, so a pass can stay that two moves together
 //! would remove. Some passes no order removes: two groups under one parent
 //! can each have a link to a third group that only goes through the other.
+//! A net with one group ends with no pass: one move puts every item that is
+//! outside the group above it.
 //!
-//! A move that changes a group counts the whole net again. That is the
-//! number of moves times the number of steps for each round, which is small
-//! for a diagram that a person reads.
+//! A move changes some ranks, and the search counts again the steps that
+//! start or end in those ranks only. A group takes another place only when a
+//! link passes through it or through a group under the same parent. So a
+//! large net with few passes costs little. A large net with hundreds of
+//! passes that no order removes is slow: each pass gives two moves in each
+//! round.
 
 use super::order::{arrange, crossed, positions};
 use super::{Group, Item, Net, real, shared};
@@ -35,10 +40,26 @@ enum Move {
         group: usize,
         above: bool,
     },
+    /// Every item that is beside a group, under the same parent, goes to one
+    /// side of it in every rank. `Side` moves one link, and that can push
+    /// another link through the group. This move takes every link at once.
+    Clear { group: usize, above: bool },
     /// The entry that ends before a position of a rank and the entry that
     /// starts there exchange their places. An entry is an item, or every
     /// item of one group.
     Transpose { rank: usize, at: usize },
+}
+
+/// A step of a link inside the ranks of a group that holds neither end of
+/// the link.
+struct Check {
+    /// The index of the link and the group in `Search::pairs`.
+    pair: usize,
+    from: usize,
+    to: usize,
+    /// Whether the step starts on one side of the group and ends on the
+    /// other.
+    turned: bool,
 }
 
 struct Search<'a> {
@@ -53,6 +74,18 @@ struct Search<'a> {
     gaps: Vec<Vec<(usize, usize)>>,
     /// The place of each group among the groups under its parent.
     places: Vec<f64>,
+    /// The steps that leave each rank and can pass through a group.
+    checks: Vec<Vec<Check>>,
+    /// The position of each item in its rank.
+    at: Vec<f64>,
+    /// The first position of each group in each rank.
+    top: Vec<f64>,
+    /// How many steps of each pair are turned.
+    turns: Vec<usize>,
+    /// How many pairs of steps cross after each rank.
+    crossings: Vec<usize>,
+    /// The passes, then the crossings.
+    cost: (usize, usize),
 }
 
 /// Changes the order of the ranks until no move removes a pass or a
@@ -61,7 +94,11 @@ struct Search<'a> {
 /// `keys` are the numbers that gave the groups of `net.layers` their order.
 /// A net with no pass keeps its order.
 pub(super) fn keep_out(net: &mut Net, groups: &[Group], keys: &[f64]) {
+    let Some(last) = net.layers.len().checked_sub(1) else {
+        return;
+    };
     let mut pairs = Vec::new();
+    let mut checks: Vec<Vec<Check>> = net.layers.iter().map(|_| Vec::new()).collect();
     for (link, path) in net.paths.iter().enumerate() {
         let (Some(&first), Some(&last)) = (path.first(), path.last()) else {
             continue;
@@ -73,6 +110,17 @@ pub(super) fn keep_out(net: &mut Net, groups: &[Group], keys: &[f64]) {
                 && !around
                 && low.max(from.rank) < high.min(to.rank)
             {
+                for step in path.windows(2) {
+                    let rank = net.items[step[0]].rank;
+                    if low <= rank && rank < high {
+                        checks[rank].push(Check {
+                            pair: pairs.len(),
+                            from: step[0],
+                            to: step[1],
+                            turned: false,
+                        });
+                    }
+                }
                 pairs.push((link, group));
             }
         }
@@ -88,57 +136,109 @@ pub(super) fn keep_out(net: &mut Net, groups: &[Group], keys: &[f64]) {
         places[group] = real(place);
     }
     let mut search = Search {
-        net,
         groups,
         chains: super::chains(groups),
+        turns: vec![0; pairs.len()],
         pairs,
         gaps,
         places,
+        checks,
+        at: vec![0.0; net.items.len()],
+        top: vec![f64::INFINITY; groups.len() * net.layers.len()],
+        crossings: vec![0; net.layers.len()],
+        cost: (0, 0),
+        net,
     };
-    let mut cost = search.cost();
-    if cost.0 == 0 {
+    search.recount(0, last);
+    if search.cost.0 == 0 {
         return;
     }
     loop {
-        let before = cost;
+        let before = search.cost;
         for change in search.moves() {
-            let earlier = (search.net.layers.clone(), search.places.clone());
-            let now = search.apply(change, cost);
+            let cost = search.cost;
+            let (low, high) = search.ranks(change);
+            let layers = search.net.layers[low..=high].to_vec();
+            let places = search.places.clone();
+            search.apply(change);
+            // Most moves change few of the ranks that they can change.
+            let changed = |rank: &usize| search.net.layers[*rank] != layers[*rank - low];
+            let ends = (low..=high).find(changed).zip((low..=high).rfind(changed));
+            let Some((first, last)) = ends else {
+                search.places = places;
+                continue;
+            };
+            search.recount(first, last);
             debug_assert_eq!(
-                now,
-                search.cost(),
-                "the cost of one rank is not the whole cost"
+                search.cost,
+                search.count(),
+                "the cost of the ranks of a move is not the whole cost"
             );
-            if now < cost {
-                cost = now;
-            } else {
-                (search.net.layers, search.places) = earlier;
+            if search.cost >= cost {
+                search.net.layers[first..=last].clone_from_slice(&layers[first - low..=last - low]);
+                search.places = places;
+                search.recount(first, last);
             }
         }
-        if cost == before {
+        if search.cost == before {
             return;
         }
     }
 }
 
 impl Search<'_> {
-    /// The passes, then the crossings.
-    fn cost(&self) -> (usize, usize) {
-        let at = positions(&self.net.layers, self.net.items.len());
-        let crossings = (0..self.gaps.len()).map(|gap| self.crossed(gap, &at));
-        (self.passes(&at).len(), crossings.sum())
+    /// Counts again what an order of the ranks from `low` to `high` changes:
+    /// the positions in those ranks, and the passes and the crossings of the
+    /// steps that start or end there. So a move costs what it touches, and
+    /// not the whole net.
+    fn recount(&mut self, low: usize, high: usize) {
+        let ranks = self.net.layers.len();
+        for rank in low..=high {
+            for group in 0..self.groups.len() {
+                self.top[group * ranks + rank] = f64::INFINITY;
+            }
+            for (index, &i) in self.net.layers[rank].iter().enumerate() {
+                self.at[i] = real(index);
+                for &g in &self.net.items[i].chain {
+                    let slot = &mut self.top[g * ranks + rank];
+                    *slot = slot.min(real(index));
+                }
+            }
+        }
+        for gap in low.saturating_sub(1)..=high {
+            let steps = self.gaps[gap].iter();
+            let now = crossed(
+                &steps
+                    .map(|&(a, b)| (self.at[a], self.at[b]))
+                    .collect::<Vec<_>>(),
+            );
+            self.cost.1 = self.cost.1 + now - self.crossings[gap];
+            self.crossings[gap] = now;
+            for check in &mut self.checks[gap] {
+                let group = self.pairs[check.pair].1;
+                let above = |i: usize, rank: usize| self.at[i] < self.top[group * ranks + rank];
+                let turned = above(check.from, gap) != above(check.to, gap + 1);
+                if turned == check.turned {
+                    continue;
+                }
+                check.turned = turned;
+                let turns = &mut self.turns[check.pair];
+                if turned {
+                    *turns += 1;
+                    self.cost.0 += usize::from(*turns == 1);
+                } else {
+                    *turns -= 1;
+                    self.cost.0 -= usize::from(*turns == 0);
+                }
+            }
+        }
     }
 
-    /// How many pairs of steps cross after one rank.
-    fn crossed(&self, gap: usize, at: &[f64]) -> usize {
-        let steps = self.gaps[gap].iter();
-        crossed(&steps.map(|&(a, b)| (at[a], at[b])).collect::<Vec<_>>())
-    }
-
-    /// Each link with each group that it passes through.
-    fn passes(&self, at: &[f64]) -> Vec<(usize, usize)> {
+    /// The passes, then the crossings, counted from nothing. It checks
+    /// `recount` in a debug build.
+    fn count(&self) -> (usize, usize) {
         let net = &*self.net;
-        // The first position of each group in each rank.
+        let at = positions(&net.layers, net.items.len());
         let ranks = net.layers.len();
         let mut top = vec![f64::INFINITY; self.groups.len() * ranks];
         for (i, item) in net.items.iter().enumerate() {
@@ -148,14 +248,18 @@ impl Search<'_> {
             }
         }
         let above = |i: usize, group: usize| at[i] < top[group * ranks + net.items[i].rank];
-        let passes = |&(link, group): &(usize, usize)| {
+        let passes = |&&(link, group): &&(usize, usize)| {
             let (low, high) = net.spans[group].unwrap_or((0, 0));
             net.paths[link].windows(2).any(|step| {
                 let inside = low <= net.items[step[0]].rank && net.items[step[1]].rank <= high;
                 inside && above(step[0], group) != above(step[1], group)
             })
         };
-        self.pairs.iter().copied().filter(passes).collect()
+        let crossings = self
+            .gaps
+            .iter()
+            .map(|gap| crossed(&gap.iter().map(|&(a, b)| (at[a], at[b])).collect::<Vec<_>>()));
+        (self.pairs.iter().filter(passes).count(), crossings.sum())
     }
 
     /// The groups with a node under the parent of `group`, in their order.
@@ -169,15 +273,36 @@ impl Search<'_> {
 
     /// Every move to try in one round, in a fixed order.
     fn moves(&self) -> Vec<Move> {
-        let mut moves = Vec::new();
-        for group in (0..self.groups.len()).filter(|&g| self.net.spans[g].is_some()) {
-            let family = self.family(group);
-            let places = (0..family.len()).filter(|&to| family[to] != group);
-            moves.extend(places.map(|to| Move::Shift { group, to }));
+        let passes = self.pairs.iter().zip(&self.turns);
+        let passes: Vec<(usize, usize)> = passes
+            .filter(|&(_, &turns)| turns > 0)
+            .map(|(&pair, _)| pair)
+            .collect();
+        let mut through = vec![false; self.groups.len()];
+        for &(_, group) in &passes {
+            through[group] = true;
         }
-        let at = positions(&self.net.layers, self.net.items.len());
-        for (link, group) in self.passes(&at) {
+        // Another place for a group removes a pass through the group, or
+        // through a group under the same parent. So the other groups keep
+        // their places, and a net with few passes has few moves.
+        let mut moves = Vec::new();
+        let mut tried = vec![false; self.groups.len()];
+        for group in (0..self.groups.len()).filter(|&g| through[g]) {
+            if tried[group] {
+                continue;
+            }
+            let family = self.family(group);
+            for &member in &family {
+                tried[member] = true;
+                let places = (0..family.len()).filter(|&to| family[to] != member);
+                moves.extend(places.map(|to| Move::Shift { group: member, to }));
+            }
+        }
+        for &(link, group) in &passes {
             moves.extend([true, false].map(|above| Move::Side { link, group, above }));
+        }
+        for group in (0..self.groups.len()).filter(|&g| through[g]) {
+            moves.extend([true, false].map(|above| Move::Clear { group, above }));
         }
         for (rank, layer) in self.net.layers.iter().enumerate() {
             moves.extend((1..layer.len()).map(|at| Move::Transpose { rank, at }));
@@ -185,9 +310,26 @@ impl Search<'_> {
         moves
     }
 
-    /// Makes a move and returns the cost after it. `cost` is the cost before
-    /// the move.
-    fn apply(&mut self, change: Move, cost: (usize, usize)) -> (usize, usize) {
+    /// The first and the last rank that a move changes.
+    fn ranks(&self, change: Move) -> (usize, usize) {
+        let net = &*self.net;
+        match change {
+            // A rank that the group has no item in keeps its order.
+            Move::Shift { group, .. } | Move::Clear { group, .. } => {
+                net.spans[group].unwrap_or((0, 0))
+            }
+            Move::Side { link, .. } => {
+                let path = &net.paths[link];
+                (
+                    net.items[path[0]].rank,
+                    net.items[path[path.len() - 1]].rank,
+                )
+            }
+            Move::Transpose { rank, .. } => (rank, rank),
+        }
+    }
+
+    fn apply(&mut self, change: Move) {
         let items = &self.net.items;
         match change {
             Move::Shift { group, to } => {
@@ -199,7 +341,8 @@ impl Search<'_> {
                 for (g, value) in family.into_iter().zip(values) {
                     self.places[g] = value;
                 }
-                for layer in &mut self.net.layers {
+                let (low, high) = self.net.spans[group].unwrap_or((0, 0));
+                for layer in &mut self.net.layers[low..=high] {
                     let value: Vec<f64> = (0..layer.len()).map(real).collect();
                     arrange(layer, &value, items, self.groups, &self.places);
                 }
@@ -210,21 +353,14 @@ impl Search<'_> {
                     beside(layer, items, i, &self.chains[group], above);
                 }
             }
-            Move::Transpose { rank, at } => {
-                // Two items that exchange their places change the crossings
-                // beside their rank and nothing else.
-                let beside = |search: &Self| {
-                    let at = positions(&search.net.layers, search.net.items.len());
-                    let gaps = rank.saturating_sub(1)..=rank;
-                    gaps.map(|gap| search.crossed(gap, &at)).sum::<usize>()
-                };
-                let before = beside(self);
-                if !transpose(&mut self.net.layers[rank], items, at) {
-                    return (cost.0, cost.1 + beside(self) - before);
+            Move::Clear { group, above } => {
+                let (low, high) = self.net.spans[group].unwrap_or((0, 0));
+                for layer in &mut self.net.layers[low..=high] {
+                    clear(layer, items, &self.chains[group], above);
                 }
             }
+            Move::Transpose { rank, at } => transpose(&mut self.net.layers[rank], items, at),
         }
-        self.cost()
     }
 }
 
@@ -257,14 +393,41 @@ fn beside(layer: &mut Vec<usize>, items: &[Item], i: usize, chain: &[usize], abo
     }
 }
 
+/// Puts every item that is beside a group, under the same parent, above the
+/// group or below it. The items keep their order. `chain` is the chain of the
+/// group.
+fn clear(layer: &mut Vec<usize>, items: &[Item], chain: &[usize], above: bool) {
+    let holds = |&j: &usize| items[j].chain.starts_with(chain);
+    let Some(first) = layer.iter().position(holds) else {
+        return;
+    };
+    let last = layer.iter().rposition(holds).unwrap_or(first);
+    let outside = &chain[..chain.len() - 1];
+    let goes = |at: usize, j: usize| {
+        items[j].chain == outside && if above { at > last } else { at < first }
+    };
+    let entries = || layer.iter().copied().enumerate();
+    let moved: Vec<usize> = entries()
+        .filter(|&(at, j)| goes(at, j))
+        .map(|e| e.1)
+        .collect();
+    let mut rest: Vec<usize> = entries()
+        .filter(|&(at, j)| !goes(at, j))
+        .map(|e| e.1)
+        .collect();
+    let to = if above { first } else { last + 1 - moved.len() };
+    rest.splice(to..to, moved);
+    *layer = rest;
+}
+
 /// Exchanges the entry that ends before `at` and the entry that starts at
 /// `at`, when one of the two is an item. Two groups keep their order: every
-/// rank holds it. Returns whether a group moved.
-fn transpose(layer: &mut [usize], items: &[Item], at: usize) -> bool {
+/// rank holds it.
+fn transpose(layer: &mut [usize], items: &[Item], at: usize) {
     let (upper, lower) = (&items[layer[at - 1]].chain, &items[layer[at]].chain);
     let depth = shared(upper, lower);
     if upper.len() > depth && lower.len() > depth {
-        return false;
+        return;
     }
     let same = |j: usize, chain: &[usize]| {
         chain.len() > depth && items[j].chain.get(depth) == chain.get(depth)
@@ -278,5 +441,4 @@ fn transpose(layer: &mut [usize], items: &[Item], at: usize) -> bool {
         end += 1;
     }
     layer[start..end].rotate_left(at - start);
-    upper.len() > depth || lower.len() > depth
 }

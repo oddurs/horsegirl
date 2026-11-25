@@ -485,6 +485,64 @@ fn a_link_beside_a_group_stays_on_one_side_of_it() {
     assert!(collisions.is_empty(), "{collisions:#?}");
 }
 
+// From the review of the pass search. `n4 -> n3` went through `g0`. To put
+// that one link on one side of `g0` pushes `n1 -> n3` or `n4 -> n0` through
+// it, so the search kept the pass. Every link beside the group must change
+// its side at once.
+#[test]
+fn every_link_beside_a_group_takes_one_side_of_it() {
+    let node = |group: Option<usize>| Node {
+        width: 50.0,
+        height: 36.0,
+        group,
+    };
+    let groups = [None, None, Some(0), None, None, Some(0)];
+    let graph = Graph {
+        nodes: groups.map(node).to_vec(),
+        groups: vec![Group { parent: None }],
+        links: vec![(1, 3), (4, 3), (4, 5), (4, 0)],
+        labels: Vec::new(),
+    };
+    let picture = layout(&graph, None);
+    let flow = named(graph, vec![None; 4]);
+    let collisions = collisions(&flow, &picture, &[]);
+    assert!(collisions.is_empty(), "{collisions:#?}");
+}
+
+// With one group an order with no pass exists: every item outside the group
+// is above it in every rank. So no generated graph with one group has a link
+// through the group.
+#[test]
+fn no_link_passes_through_the_only_group_of_a_generated_graph() {
+    let mut next = sequence(3);
+    for round in 0..500 {
+        let count = 2 + next(30);
+        let nodes: Vec<Node> = (0..count)
+            .map(|_| Node {
+                width: 50.0,
+                height: 36.0,
+                group: (next(2) == 0).then_some(0),
+            })
+            .collect();
+        let links: Vec<(usize, usize)> = (0..next(2 * count))
+            .map(|_| (next(count), next(count)))
+            .collect();
+        let graph = Graph {
+            nodes,
+            groups: vec![Group { parent: None }],
+            labels: Vec::new(),
+            links,
+        };
+        let picture = layout(&graph, None);
+        let texts = vec![None; graph.links.len()];
+        let through = through_groups(&named(graph.clone(), texts), &picture);
+        assert!(
+            through.is_empty(),
+            "graph {round}: {through:#?}\n{graph:#?}"
+        );
+    }
+}
+
 // `Middle` has the ranks of both ends of `a -> c`. The sweeps put `Middle`
 // between `From` and `To`, and the path went through the box of `Middle`.
 // Each thing is in a group, so only another order of the groups keeps the
@@ -601,16 +659,22 @@ fn two_things_of_a_group_in_one_rank_keep_the_node_gap() {
     assert!(faults.is_empty(), "{faults:#?}");
 }
 
+/// A fixed sequence of numbers for a generated graph. Each call gives a
+/// number below its argument.
+fn sequence(seed: u32) -> impl FnMut(usize) -> usize {
+    let mut state = seed;
+    move |below| {
+        state = state.wrapping_mul(1_664_525).wrapping_add(1_013_904_223);
+        (state >> 16) as usize % below
+    }
+}
+
 // 300 graphs from a fixed sequence of numbers, with loops, nested groups and
 // links from a node to itself. The diagrams above cannot reach every order
 // of groups, and a wrong order would stop the place phase.
 #[test]
 fn no_generated_graph_has_a_fault() {
-    let mut state: u32 = 7;
-    let mut next = |below: usize| {
-        state = state.wrapping_mul(1_664_525).wrapping_add(1_013_904_223);
-        (state >> 16) as usize % below
-    };
+    let mut next = sequence(7);
     for round in 0..300 {
         let groups: Vec<Group> = (0..next(6))
             .map(|g| Group {
