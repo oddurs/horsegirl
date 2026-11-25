@@ -1,0 +1,38 @@
+name: Bug report
+description: The program does something it should not
+labels: [bug]
+body:
+  - type: textarea
+    id: source
+    attributes:
+      label: Source
+      description: The smallest horsegirl file that shows the problem
+      render: text
+    validations:
+      required: true
+  - type: input
+    id: command
+    attributes:
+      label: Command
+      placeholder: horsegirl spec
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: What happens
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: What should happen
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: Version and platform
+      description: The output of `horsegirl --version`, and the operating system
+    validations:
+      required: true

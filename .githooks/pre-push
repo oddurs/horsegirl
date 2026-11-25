@@ -1,0 +1,18 @@
+#!/bin/sh
+# The default branch advances only through a merged pull request.
+set -eu
+root=$(git rev-parse --show-toplevel)
+default=$(git symbolic-ref -q --short refs/remotes/origin/HEAD 2>/dev/null | sed 's|^origin/||')
+default=${default:-main}
+zero=0000000000000000000000000000000000000000
+while read -r _local _sha remote remote_sha; do
+  if [ "$remote" = "refs/heads/$default" ]; then
+    # The first push to an empty remote creates the default branch.
+    if [ "$remote_sha" = "$zero" ] && [ -z "$(git for-each-ref refs/remotes/origin)" ]; then
+      continue
+    fi
+    echo "pre-push: a direct push to $default is not allowed. Open a pull request: scripts/agent pr" >&2
+    exit 1
+  fi
+done
+exec "$root/scripts/task" check

@@ -1,0 +1,4 @@
+co-authored-by:.*(claude|anthropic|copilot|chatgpt|openai|gemini|cursor|codex|devin)
+(generated|created|written|authored) (with|by) (claude|chatgpt|copilot|gemini|cursor|codex|an? (ai|llm))
+noreply@anthropic\.com
+🤖

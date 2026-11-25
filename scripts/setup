@@ -1,0 +1,11 @@
+#!/bin/sh
+# Run once after cloning. Safe to run again.
+set -eu
+cd "$(dirname "$0")/.."
+git config core.hooksPath .githooks
+echo "setup: git hooks come from .githooks"
+if [ -f cairn.toml ] && command -v cairn >/dev/null 2>&1; then
+  cairn init --git
+  echo "setup: git resolves the backlog's generated files"
+fi
+echo "setup: done. Check the machine with: scripts/agent doctor"

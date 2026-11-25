@@ -1,0 +1,221 @@
+#!/bin/sh
+# One unit of work, one worktree, one branch, one pull request.
+set -eu
+
+say() { printf 'agent: %s\n' "$*"; }
+die() {
+  printf 'agent: %s\n' "$*" >&2
+  exit 1
+}
+
+git rev-parse --show-toplevel >/dev/null 2>&1 || die "not inside a git repository"
+here=$(git rev-parse --show-toplevel)
+common=$(cd "$here" && cd "$(git rev-parse --git-common-dir)" && pwd)
+root=$(dirname "$common") # the primary checkout
+name=$(basename "$root")
+branch_re='^(feat|fix|chore|docs|perf|refactor|test)/[a-z0-9][a-z0-9._-]*$'
+commit_re='^(feat|fix|chore|docs|perf|refactor|test|build|ci|revert)(\([a-z0-9._/-]+\))?!?: [^ ].*[^. ]$'
+
+default_branch() {
+  ref=$(git -C "$root" symbolic-ref -q --short refs/remotes/origin/HEAD 2>/dev/null) && {
+    echo "${ref#origin/}"
+    return
+  }
+  git -C "$root" config init.defaultBranch 2>/dev/null || echo main
+}
+
+current_branch() { git -C "$here" rev-parse --abbrev-ref HEAD; }
+
+worktree_of() { echo "$(dirname "$root")/.worktrees/$name/$1"; }
+
+guard_attribution() {
+  if grep -Eiqf "$root/scripts/attribution-patterns" "$1"; then
+    die "the text names an assistant or a model; the work is published under the owner's name. Remove that line."
+  fi
+}
+
+# Untracked local files live only in the primary checkout. Link each literal
+# path named in info/exclude into a new worktree. A pattern names no file that
+# exists, so only literal paths are linked.
+link_local() {
+  exclude=$common/info/exclude
+  [ -f "$exclude" ] || return 0
+  grep -v '^[[:space:]]*#' "$exclude" | while IFS= read -r entry; do
+    path=${entry#/}
+    path=${path%/}
+    [ -n "$path" ] || continue
+    if [ ! -e "$root/$path" ] || [ -e "$1/$path" ] || [ -L "$1/$path" ]; then
+      continue
+    fi
+    mkdir -p "$(dirname "$1/$path")"
+    ln -s "$root/$path" "$1/$path"
+    say "linked $path from the primary checkout"
+  done
+}
+
+cmd_doctor() {
+  bad=0
+  problem() {
+    printf 'agent: problem: %s\n' "$*" >&2
+    bad=1
+  }
+  for tool in git gh cargo; do
+    command -v "$tool" >/dev/null 2>&1 || problem "$tool is not installed"
+  done
+  if command -v gh >/dev/null 2>&1; then
+    gh auth status >/dev/null 2>&1 || problem "gh is not signed in; run: gh auth login"
+  fi
+  if [ "$(git -C "$root" config core.hooksPath 2>/dev/null)" != ".githooks" ]; then
+    say "setting core.hooksPath to .githooks"
+    git -C "$root" config core.hooksPath .githooks
+  fi
+  for hook in commit-msg pre-commit pre-push; do
+    [ -x "$root/.githooks/$hook" ] || problem ".githooks/$hook is missing or not executable"
+  done
+  cargo --version >/dev/null 2>&1 || problem "the Rust toolchain in rust-toolchain.toml is not installed"
+  command -v cairn >/dev/null 2>&1 || say "note: cairn is not installed; the backlog check runs only in CI"
+  [ -z "$(git -C "$here" status --porcelain)" ] || problem "the working tree in $here has uncommitted changes"
+  [ "$bad" -eq 0 ] || exit 1
+  say "ok"
+}
+
+cmd_start() {
+  branch=${1:-}
+  [ -n "$branch" ] || die "usage: scripts/agent start <type>/<slug>"
+  echo "$branch" | grep -Eq "$branch_re" ||
+    die "branch '$branch' must match $branch_re, for example feat/0012-parse-links"
+  def=$(default_branch)
+  wt=$(worktree_of "$branch")
+  say "fetching origin"
+  git -C "$root" fetch --quiet origin
+  if git -C "$root" show-ref --verify --quiet "refs/heads/$branch"; then
+    die "branch '$branch' already exists; choose another name or run: scripts/agent done $branch"
+  fi
+  [ ! -e "$wt" ] || die "worktree path $wt already exists"
+  say "creating $branch from origin/$def in $wt"
+  mkdir -p "$(dirname "$wt")"
+  git -C "$root" worktree add --quiet -b "$branch" "$wt" "origin/$def"
+  link_local "$wt"
+  # A slug that starts with an item number takes that item in the backlog.
+  item=$(echo "${branch#*/}" | sed -n 's/^\([0-9][0-9]*\)-.*/\1/p')
+  if [ -n "$item" ] && [ -f "$wt/cairn.toml" ] && command -v cairn >/dev/null 2>&1; then
+    say "claiming item $item"
+    cairn -C "$wt" claim "$item" ||
+      say "warning: item $item was not claimed; read the message above before you continue"
+  fi
+  say "ready. Move there with: cd $wt"
+}
+
+cmd_check() { "$here/scripts/task" check; }
+
+cmd_commit() {
+  msg=${1:-}
+  [ -n "$msg" ] || die "usage: scripts/agent commit '<type>(<scope>): <subject>'"
+  subject=$(printf '%s\n' "$msg" | head -n 1)
+  echo "$subject" | grep -Eq "$commit_re" ||
+    die "'$subject' is not a Conventional Commit, for example: feat(parser): read fan-out links"
+  [ "${#subject}" -le 72 ] || die "the subject has ${#subject} characters; the limit is 72"
+  git -C "$here" commit -m "$msg"
+}
+
+cmd_pr() {
+  draft=
+  auto=
+  body=
+  while [ $# -gt 0 ]; do
+    case "$1" in
+      --draft) draft=--draft ;;
+      --auto) auto=1 ;;
+      --body-file)
+        shift
+        body=${1:-}
+        ;;
+      *) die "usage: scripts/agent pr [--draft] [--auto] [--body-file <file>]" ;;
+    esac
+    shift
+  done
+  def=$(default_branch)
+  branch=$(current_branch)
+  [ "$branch" != "$def" ] || die "you are on $def; start a branch with: scripts/agent start <type>/<slug>"
+  cmd_check
+  say "pushing $branch"
+  git -C "$here" push --quiet -u origin "$branch"
+  if url=$(cd "$here" && gh pr view --json url -q .url 2>/dev/null); then
+    say "the pull request already exists"
+  else
+    title=$(git -C "$here" log --reverse --format=%s "origin/$def..HEAD" | head -n 1)
+    tmp=$(mktemp)
+    if [ -n "$body" ]; then
+      cat "$body" >"$tmp"
+    else
+      git -C "$here" log --reverse --format='%b' "origin/$def..HEAD" >"$tmp"
+    fi
+    guard_attribution "$tmp"
+    # shellcheck disable=SC2086 # $draft is one flag or nothing
+    url=$(cd "$here" && gh pr create --title "$title" --body-file "$tmp" $draft)
+    rm -f "$tmp"
+  fi
+  if [ -n "$auto" ]; then
+    say "the pull request merges itself when the required check passes"
+    (cd "$here" && gh pr merge --auto --squash)
+  fi
+  say "$url"
+}
+
+cmd_sync() {
+  def=$(default_branch)
+  say "rebasing $(current_branch) onto origin/$def"
+  git -C "$here" fetch --quiet origin
+  git -C "$here" rebase "origin/$def"
+}
+
+cmd_done() {
+  branch=${1:-$(current_branch)}
+  def=$(default_branch)
+  [ "$branch" != "$def" ] || die "usage: scripts/agent done [<branch>], from the branch or with its name"
+  state=$(cd "$root" && gh pr view "$branch" --json state -q .state 2>/dev/null) ||
+    die "no pull request found for $branch"
+  [ "$state" = "MERGED" ] || die "the pull request for $branch is $state, not MERGED; nothing was removed"
+  wt=$(worktree_of "$branch")
+  if [ -d "$wt" ]; then
+    say "removing worktree $wt"
+    git -C "$root" worktree remove "$wt"
+  fi
+  if git -C "$root" show-ref --verify --quiet "refs/heads/$branch"; then
+    say "deleting local branch $branch"
+    git -C "$root" branch --quiet -D "$branch"
+  fi
+  git -C "$root" worktree prune
+  git -C "$root" fetch --quiet --prune origin
+  say "done. Update the primary checkout with: git -C $root pull --ff-only"
+}
+
+cmd_list() {
+  git -C "$root" worktree list --porcelain | sed -n 's/^branch refs\/heads\///p' | while IFS= read -r branch; do
+    state=$(cd "$root" && gh pr view "$branch" --json state -q .state 2>/dev/null) || state="no pull request"
+    printf '%-40s %s\n' "$branch" "$state"
+  done
+}
+
+cmd_next() {
+  command -v cairn >/dev/null 2>&1 || die "cairn is not installed; see CONTRIBUTING.md"
+  cairn -C "$here" next --view agent
+}
+
+cmd=${1:-}
+[ $# -gt 0 ] && shift
+case "$cmd" in
+  doctor) cmd_doctor ;;
+  start) cmd_start "$@" ;;
+  check) cmd_check ;;
+  commit) cmd_commit "$@" ;;
+  pr) cmd_pr "$@" ;;
+  sync) cmd_sync ;;
+  done) cmd_done "$@" ;;
+  list) cmd_list ;;
+  next) cmd_next ;;
+  *)
+    echo "usage: scripts/agent {doctor|next|start|check|commit|pr|sync|done|list}" >&2
+    exit 2
+    ;;
+esac

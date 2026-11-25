@@ -1,0 +1,22 @@
+name: Feature request
+description: Something the language or the tool should do
+labels: [feature]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem
+      description: What you tried to draw or check, and where it stopped
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposal
+      description: The facts you would write and the picture or output you expect
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: What you do today

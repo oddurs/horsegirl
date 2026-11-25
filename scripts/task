@@ -1,0 +1,60 @@
+#!/bin/sh
+# The one interface between automation and the toolchain. CI, the git hooks and
+# scripts/agent call these verbs and know nothing else about the stack.
+set -eu
+cd "$(dirname "$0")/.."
+
+# A tool that CI must have, but a contributor may lack for an optional check.
+optional() {
+  command -v "$1" >/dev/null 2>&1 && return 0
+  if [ -n "${CI:-}" ]; then
+    echo "task: $1 is required in CI" >&2
+    exit 1
+  fi
+  echo "task: $1 not found; skipped (CI runs this check)" >&2
+  return 1
+}
+
+fmt() { cargo fmt --all; }
+
+fmt_check() { cargo fmt --all -- --check; }
+
+lint() {
+  cargo clippy --all-targets --locked -- -D warnings
+  if optional shellcheck; then
+    shellcheck scripts/task scripts/agent scripts/setup .githooks/* tests/agent.sh
+  fi
+  # The backlog is part of the tree: an invalid item or a stale roadmap is a lint error.
+  if [ -f cairn.toml ] && optional cairn; then
+    cairn check --render --strict
+  fi
+}
+
+test_all() {
+  if command -v cargo-nextest >/dev/null 2>&1; then
+    cargo nextest run --locked
+  else
+    cargo test --locked
+  fi
+  sh tests/agent.sh
+}
+
+build() { cargo build --locked; }
+
+case "${1:-}" in
+  fmt) fmt ;;
+  fmt:check) fmt_check ;;
+  lint) lint ;;
+  test) test_all ;;
+  build) build ;;
+  check)
+    fmt_check
+    lint
+    test_all
+    build
+    ;;
+  *)
+    echo "usage: scripts/task {fmt|fmt:check|lint|test|build|check}" >&2
+    exit 2
+    ;;
+esac

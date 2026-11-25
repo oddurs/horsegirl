@@ -1,0 +1,12 @@
+/target
+.worktrees/
+node_modules/
+.next/
+/site/out/
+
+# OS and editors
+.DS_Store
+Thumbs.db
+*.swp
+.idea/
+.vscode/

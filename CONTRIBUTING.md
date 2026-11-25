@@ -1,0 +1,68 @@
+# Contributing
+
+## Set up
+
+```sh
+scripts/setup
+scripts/agent doctor
+```
+
+`scripts/setup` points git at the hooks in `.githooks`. `scripts/agent doctor`
+reports every problem with the machine, not only the first.
+
+The backlog needs [cairn](https://github.com/oddurs/cairn) 1.0.0-alpha.1 or
+later. Without it, the backlog check runs only in CI.
+
+## The workflow
+
+One unit of work is one worktree, one branch and one pull request.
+
+1. Find work: `scripts/agent next`. Read the item: `cairn show <id>`.
+2. Start: `scripts/agent start <type>/<id>-<slug>`, for example
+   `scripts/agent start feat/0012-parse-links`. This creates
+   `../.worktrees/horsegirl/<branch>` from `origin/main` and claims item 12.
+3. Work in that directory. Commit with `scripts/agent commit '<message>'`.
+4. Tick the acceptance criteria that are now true: `cairn tick <id> <n>`.
+   Close the item in the same branch when all are true: `cairn close <id>`.
+5. Open the pull request: `scripts/agent pr --auto`. The command runs every
+   check, pushes, opens the pull request, and sets it to merge when CI passes.
+6. After the merge: `scripts/agent done <branch>`.
+
+Never commit to `main`. A hook refuses the push, and branch protection refuses
+it on the server.
+
+## Branches and commits
+
+Branch names match `<type>/<slug>`, where the type is one of `feat`, `fix`,
+`chore`, `docs`, `perf`, `refactor`, `test`. Start the slug with the item
+number.
+
+Commits follow [Conventional Commits](https://www.conventionalcommits.org).
+The subject is imperative, at most 72 characters, with no trailing period. The
+body says why. Add a `Refs: <id>` trailer for the backlog item.
+
+A pull request is squashed, so its title becomes the commit on `main`. Write
+the title as a Conventional Commit.
+
+## Checks
+
+```sh
+scripts/task check
+```
+
+This runs the format check, the lints with warnings denied, the tests and the
+build. CI runs the same command, so a branch that passes locally passes in CI.
+Never use `--no-verify`.
+
+## Review
+
+This repository has one maintainer, so a pull request needs zero approvals and
+one green check. State in the description what a reviewer should look at
+sceptically.
+
+## Attribution
+
+Commits, pull requests, comments and documents name no assistant and no model.
+The commit hook refuses a message that does.
+
+Project conventions are in [docs/conventions.md](docs/conventions.md).

@@ -1,0 +1,13 @@
+horsegirl in one page
+
+1 A name is a thing. Spaces are fine.      Web app
+2 An arrow links things. Commas fan out.   A, B -> C: label
+3 Braces hold parts and facts.             G { A, B }   A { owner: X }
+4 A story is links in order.               story S { ... }
+5 show picks a lens.                       show flow | sequence of S | lanes of S
+                                           matrix | rings from T | seams by owner
+
+-x forbids a link.  A final ? marks a guess.
+One fact per line. Order is free outside a story.
+End a line with  @ path:line  to cite evidence.
+Run check after every edit. Apply the fix it returns.

@@ -1,0 +1,54 @@
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+env:
+  CAIRN_VERSION: 1.0.0-alpha.1
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            target
+          key: cargo-${{ runner.os }}-${{ hashFiles('rust-toolchain.toml', 'Cargo.lock') }}
+          restore-keys: cargo-${{ runner.os }}-
+      - name: Install the pinned toolchain
+        run: rustup show active-toolchain || rustup toolchain install
+      - name: Install the backlog tool
+        if: hashFiles('cairn.toml') != ''
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          asset="cairn-${CAIRN_VERSION}-x86_64-unknown-linux-musl.tar.gz"
+          dir="$(mktemp -d)"
+          gh release download "v${CAIRN_VERSION}" --repo oddurs/cairn --dir "$dir" \
+            --pattern "$asset" --pattern SHA256SUMS
+          (cd "$dir" && grep " $asset\$" SHA256SUMS | sha256sum --check -)
+          tar -xzf "$dir/$asset" -C "$dir"
+          install -m 755 "$(find "$dir" -type f -name cairn)" /usr/local/bin/cairn
+          cairn --version
+      - run: scripts/task check
+
+  required:
+    if: always()
+    needs: [check]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Every job passed
+        run: test "${{ contains(needs.*.result, 'failure') || contains(needs.*.result, 'cancelled') || contains(needs.*.result, 'skipped') }}" = "false"

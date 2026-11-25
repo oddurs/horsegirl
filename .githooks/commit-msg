@@ -1,0 +1,20 @@
+#!/bin/sh
+# Reject a message that is not a Conventional Commit, or that credits a tool.
+set -eu
+root=$(git rev-parse --show-toplevel)
+subject=$(sed -n '/^#/!{p;q;}' "$1")
+re='^(feat|fix|chore|docs|perf|refactor|test|build|ci|revert)(\([a-z0-9._/-]+\))?!?: [^ ].*[^. ]$'
+if ! printf '%s\n' "$subject" | grep -Eq "$re"; then
+  echo "commit-msg: '$subject' is not a Conventional Commit." >&2
+  echo "commit-msg: write '<type>(<scope>): <subject>' with no trailing period, for example:" >&2
+  echo "commit-msg:   feat(parser): read fan-out links" >&2
+  exit 1
+fi
+if [ "${#subject}" -gt 72 ]; then
+  echo "commit-msg: the subject has ${#subject} characters; the limit is 72." >&2
+  exit 1
+fi
+if grep -v '^#' "$1" | grep -Eiqf "$root/scripts/attribution-patterns"; then
+  echo "commit-msg: the message names an assistant or a model. Remove that line." >&2
+  exit 1
+fi

@@ -1,0 +1,4 @@
+#!/bin/sh
+# Fast checks only. The full suite runs before a push.
+set -eu
+exec "$(git rev-parse --show-toplevel)/scripts/task" fmt:check

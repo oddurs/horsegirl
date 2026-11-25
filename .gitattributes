@@ -1,0 +1,5 @@
+* text=auto eol=lf
+*.png binary
+*.woff2 binary
+Cargo.lock linguist-generated
+ROADMAP.md linguist-generated
