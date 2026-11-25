@@ -78,12 +78,15 @@ function launch() {
   });
   const exited = new Promise((done) => proc.once("exit", done));
   // Chrome writes to its profile until it exits, so the profile goes after.
+  // Its helper processes can still write for a moment after the main process
+  // exits, and a file that appears during the delete gives ENOTEMPTY, so the
+  // delete retries.
   const stop = async () => {
     if (proc.exitCode === null && proc.signalCode === null) {
       proc.kill();
       await exited;
     }
-    rmSync(profile, { recursive: true, force: true });
+    rmSync(profile, { recursive: true, force: true, maxRetries: 10, retryDelay: 100 });
   };
   return { ready, stop };
 }
