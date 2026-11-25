@@ -594,22 +594,30 @@ fn paths(
 /// The height of a label that lies across no border of a group.
 ///
 /// A label is at the middle of an upright line, and a line that leaves a
-/// group through its top or its bottom has that border somewhere on it. A
-/// label that lies across a border moves along its upright line to the
-/// nearest height where it is [`LABEL_CLEAR`] from every border that it
-/// would lie across. It stays where it is when the line has no such height.
+/// group through its top or its bottom has that border somewhere on it. The
+/// name of a group is drawn in the [`GROUP_TITLE`] band under its top
+/// border, so the top border is that whole band here. A label that lies
+/// across a border moves along its upright line to the nearest height where
+/// it is [`LABEL_CLEAR`] from every border that it would lie across. It
+/// stays where it is when the line has no such height.
 fn off_borders(centre: Point, size: Size, path: &[Point], groups: &[Option<Rect>]) -> f64 {
     let half = size.width / 2.0;
     let beside =
         |group: &&Rect| group.x < centre.x + half && centre.x - half < group.x + group.width;
-    let borders: Vec<f64> = groups
+    let borders: Vec<(f64, f64)> = groups
         .iter()
         .flatten()
         .filter(beside)
-        .flat_map(|group| [group.y, group.y + group.height])
+        .flat_map(|group| {
+            let bottom = group.y + group.height;
+            [(group.y, group.y + GROUP_TITLE), (bottom, bottom)]
+        })
         .collect();
     let half = size.height / 2.0;
-    let across = |y: f64| borders.iter().any(|border| (border - y).abs() < half);
+    let across = |y: f64| {
+        let mut borders = borders.iter();
+        borders.any(|&(top, bottom)| top - half < y && y < bottom + half)
+    };
     if !across(centre.y) {
         return centre.y;
     }
@@ -625,7 +633,7 @@ fn off_borders(centre: Point, size: Size, path: &[Point], groups: &[Option<Rect>
     let reach = half + LABEL_CLEAR;
     borders
         .iter()
-        .flat_map(|border| [border - reach, border + reach])
+        .flat_map(|&(top, bottom)| [top - reach, bottom + reach])
         .filter(|&y| top <= y && y <= bottom && !across(y))
         .min_by(|a, b| (a - centre.y).abs().total_cmp(&(b - centre.y).abs()))
         .unwrap_or(centre.y)

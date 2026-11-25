@@ -14,7 +14,9 @@
 
 use std::fmt::Write as _;
 
-use horsegirl_core::layout::{Graph, Group, LABEL_CLEAR, Layout, NODE_GAP, Node, RANK_GAP, layout};
+use horsegirl_core::layout::{
+    GROUP_TITLE, Graph, Group, LABEL_CLEAR, Layout, NODE_GAP, Node, RANK_GAP, layout,
+};
 use horsegirl_core::model::{Link, Model, Thing, lower};
 use horsegirl_core::overlap::{Kind, overlaps};
 use horsegirl_core::scene::{Placement, Point, Rect, Scene, build};
@@ -399,22 +401,32 @@ fn each_link_label_sits_on_its_path_and_overlaps_no_box() {
 // order of the two upright lines keeps the level lines apart, so one link
 // arrives beside the middle of its box.
 // The smallest input from the review of this phase. The upright line of
-// `a -> c` leaves `G` through its top, and the middle of the line is 3 px
-// from that border.
+// `a -> c` leaves the group through its top, and the middle of the line is
+// 3 px from that border. The name of the group is drawn under that border,
+// so the label must be clear of the band that holds the name too: a long
+// name reaches under the label.
 #[test]
 fn a_label_on_a_line_that_leaves_a_group_is_off_the_border_of_the_group() {
-    let flow = flow("G {\n  a, b\n}\na -> c: charge\nb -> d\nc -> b\n");
-    let picture = layout(&flow.graph, None);
-    let collisions = collisions(&flow, &picture, &[]);
-    assert!(collisions.is_empty(), "{collisions:#?}");
-    let (label, group) = (picture.labels[0].unwrap(), picture.groups[0].unwrap());
-    let size = flow.graph.labels[0].unwrap();
-    let room = label.y - size.height / 2.0 - group.y;
-    assert!((room - LABEL_CLEAR).abs() < 1e-6, "{room}");
-    let path = &picture.paths[0];
-    assert_eq!((path[1].x, path[2].x), (label.x, label.x));
-    let (top, bottom) = (path[1].y.min(path[2].y), path[1].y.max(path[2].y));
-    assert!(top < label.y && label.y < bottom, "{path:?}");
+    for name in ["G", "Services and stores"] {
+        let flow = flow(&format!(
+            "{name} {{\n  a, b\n}}\na -> c: charge\nb -> d\nc -> b\n"
+        ));
+        let picture = layout(&flow.graph, None);
+        let collisions = collisions(&flow, &picture, &[]);
+        assert!(collisions.is_empty(), "{name}: {collisions:#?}");
+        let (label, group) = (picture.labels[0].unwrap(), picture.groups[0].unwrap());
+        let half = flow.graph.labels[0].unwrap().height / 2.0;
+        let above = group.y - (label.y + half);
+        let under = label.y - half - (group.y + GROUP_TITLE);
+        assert!(
+            (above - LABEL_CLEAR).abs() < 1e-6 || (under - LABEL_CLEAR).abs() < 1e-6,
+            "{name}: {above} above the border, {under} under the name"
+        );
+        let path = &picture.paths[0];
+        assert_eq!((path[1].x, path[2].x), (label.x, label.x));
+        let (top, bottom) = (path[1].y.min(path[2].y), path[1].y.max(path[2].y));
+        assert!(top < label.y && label.y < bottom, "{name}: {path:?}");
+    }
 }
 
 #[test]
