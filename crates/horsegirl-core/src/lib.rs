@@ -5,13 +5,15 @@
 //! reads a file into a lossless tree, the diagnostics it gives with their
 //! codes, the model that the tree lowers into, the checks that read the
 //! model, the formatter that prints the tree in one canonical form, the text
-//! measurement that sizes each node to its label, the scene of positioned
-//! shapes that every backend draws, and the SVG backend that draws it.
+//! measurement that sizes each node to its label, the layered layout that
+//! places the nodes of a flow, the scene of positioned shapes that every
+//! backend draws, and the SVG backend that draws it.
 
 pub mod check;
 pub mod codes;
 pub mod diagnostic;
 pub mod format;
+pub mod layout;
 pub mod model;
 pub mod scene;
 pub mod svg;

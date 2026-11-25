@@ -3,8 +3,10 @@ id: 32
 uid: 72b5f672-35bd-446b-ad4a-01cea1ea5842
 title: 'Layered layout: rank, order and place'
 type: feature
-status: planned
+status: doing
 milestone: v0.1
+assignee: Oddur Sigurdsson
+claimed: 2026-11-25
 depends_on:
 - 18
 - 25
