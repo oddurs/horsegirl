@@ -51,6 +51,14 @@ pub fn measure(text: &str, style: Style) -> Size {
     }
 }
 
+/// The distance from the top of a line to its baseline: the ascender of the
+/// face. A backend that places text by its baseline puts the line in the same
+/// box that [`measure`] gives, in any renderer.
+#[must_use]
+pub fn ascent(style: Style) -> f64 {
+    f64::from(ASCENDER) * style.size / f64::from(UNITS_PER_EM)
+}
+
 /// A character, its advance, its left pair class and its right pair class.
 type Entry = (char, u16, u8, u8);
 

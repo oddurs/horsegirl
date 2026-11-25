@@ -33,6 +33,13 @@ the project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   that breaks a `-x` rule. `N0200`: a guess. `E0300`: a `show` line with an
   unknown lens; the message lists the lenses, and a lens one edit from a known
   lens gets a safe fix.
+- `horsegirl_core::svg::draw` draws a scene as one SVG document with a `title`
+  and a `desc`, no script and no external resource. Each colour and the font
+  is a CSS variable with a fallback: `--hg-font`, `--hg-ink`, `--hg-line`,
+  `--hg-surface`, `--hg-group` and `--hg-accent`. A page that holds the SVG
+  inline sets them to restyle it. Each shape has the class of its role
+  (`thing`, `group`, `link`, `label`) and one class for each fact, such as
+  `owner-commerce`.
 
 ### Changed
 
