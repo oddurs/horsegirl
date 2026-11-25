@@ -8,7 +8,8 @@ does not build it. The conclusion is in the Answer section of the item.
 ```sh
 cd spikes/layered-layout
 cargo run --release -- draw   # writes pictures/<candidate>/<diagram>.svg and prints the scores
-cargo run --release -- seed   # adds one thing to each diagram and counts what moves
+cargo run --release -- seed   # adds one thing to each diagram and counts what moves,
+                              # then seeds each diagram with its own picture and no edit
 ```
 
 Two runs give the same bytes. Four runs of `draw` gave identical files for every candidate.
@@ -118,6 +119,29 @@ A cell is: things that moved, pairs of things that changed sides, and crossings 
 | 09-incident | 24 | 2, 2, 2 | 0, 0, 5 | 9, 34, 0 | 24, 47, 0 | 8, 7, 0 | 13, 2, 18 | 12, 11, 1 |
 | 10-platform | 34 | 13, 0, 44 | 24, 0, 44 | 16, 34, 127 | 16, 34, 127 | 34, 230, 26 | 34, 132, 126 | 34, 457, 63 |
 | total | 189 | 69, 71, 86 | 68, 18, 110 | 87, 132, 151 | 117, 135, 151 | 128, 448, 37 | 143, 215, 273 | 134, 708, 88 |
+
+No edit: each row seeds a diagram with its own picture. dagre has no input for positions.
+A cell is: things that moved, the longest move in pixels, and crossings before and after.
+
+| diagram | things | own | graphlay | elk |
+| --- | --- | --- | --- | --- |
+| 01-checkout | 9 | 0, 0, 1 to 1 | 0, 0, 0 to 0 | 9, 40, 0 to 2 |
+| 02-ci-pipeline | 18 | 0, 0, 0 to 0 | 0, 0, 6 to 6 | 18, 201, 1 to 15 |
+| 03-order-states | 15 | 0, 0, 1 to 1 | 0, 0, 0 to 1 | 0, 0, 0 to 2 |
+| 04-data-pipeline | 19 | 6, 24, 0 to 3 | 0, 0, 3 to 3 | 19, 181, 0 to 7 |
+| 05-sign-in | 15 | 2, 12, 0 to 4 | 0, 0, 0 to 3 | 9, 24, 5 to 20 |
+| 06-cluster-request | 17 | 0, 0, 9 to 9 | 0, 0, 7 to 7 | 17, 132, 1 to 16 |
+| 07-compiler | 16 | 6, 36, 1 to 4 | 0, 0, 3 to 3 | 14, 121, 1 to 16 |
+| 08-module-deps | 22 | 4, 24, 22 to 31 | 0, 0, 3 to 3 | 3, 26, 3 to 42 |
+| 09-incident | 24 | 0, 0, 2 to 2 | 0, 0, 0 to 5 | 13, 20, 0 to 17 |
+| 10-platform | 34 | 15, 36, 44 to 44 | 0, 0, 137 to 137 | 34, 852, 25 to 125 |
+| total | 189 | 33, 80 to 99 | 0, 159 to 168 | 136, 36 to 262 |
+
+own fails the no-edit run: 33 of 189 things move when a diagram is seeded with its own picture.
+Every longest move is a multiple of 12 px, the gap beside a bend. A bend has no seed in the
+prototype, so the order phase sorts the bends again and they push the pinned things. A seed of
+centres alone cannot hold a picture still. It must also carry the order of each layer, bends
+included, or the position of each bend. The spike did not test such a seed.
 
 How each candidate receives the earlier positions:
 

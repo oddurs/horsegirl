@@ -33,3 +33,7 @@ Build the first three phases of the layered solver the spike chose: rank, order,
 - [ ] The reference flow places 9 things in ranks that follow the links.
 - [ ] No two boxes overlap on any corpus diagram.
 - [ ] The same input gives the same positions on every run.
+
+## 2026-11-25
+
+From the review of SPIKE-18: a seed of one optional centre for each thing cannot hold a picture still. The prototype in spikes/layered-layout fails the no-edit run of 'cargo run --release -- seed': 33 of 189 things move when a diagram is seeded with its own picture, each by a multiple of 12 px, the gap beside a bend. The bends have no seed. Give the seed type room for the order of each layer, bends included, or for the position of each bend. Rule for the first version: a layout seeded with its own picture moves nothing. SPIKE-75 decides what the seed carries.

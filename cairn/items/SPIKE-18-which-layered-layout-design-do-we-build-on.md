@@ -36,7 +36,7 @@ Five days.
 
 Build our own Sugiyama pipeline in the core crate, with five phases: orient, rank, order, place, route. Do not depend on a layout crate, and do not port ELK. Use the published designs of dagre and ELK as the reference for each phase, and copy no code from them.
 
-Our own pipeline is the only candidate whose order phase and place phase take earlier positions on a diagram with groups. It is also the smallest candidate by two orders of magnitude. The port of ELK draws the best pictures today. If the stability rule did not exist, the port of ELK would be the answer.
+Our own pipeline is the only candidate whose order phase and place phase take earlier positions on a diagram with groups. The prototype does not yet hold a picture still: a seed of centres alone is not enough, and the seed must also carry the order of each layer. It is also the smallest candidate by two orders of magnitude. The port of ELK draws the best pictures today. If the stability rule did not exist, the port of ELK would be the answer.
 
 ### The candidates
 
@@ -62,7 +62,7 @@ All four candidates drew the same ten diagrams with the same box sizes and the s
 
 - No candidate overlaps two boxes or breaks a group.
 - elk has the fewest crossings and the most compact pictures. `10-platform` is 604 px high with elk and 1128 px high with own.
-- own is acceptable on the eight smaller diagrams and loose on `10-platform`. Its weak phase is the order phase where groups nest: `06-cluster-request` has 9 crossings with own and 1 with elk.
+- own is acceptable on seven of the ten diagrams: each has 2 crossings or fewer. It is loose on `10-platform`. Its weak phase is the order phase, in two cases. The first case is a dense graph without groups: `08-module-deps` has 22 crossings with own, 3 with elk, 3 with graphlay and 14 with dagre. That diagram alone is 22 of the 80 crossings of own. The second case is nested groups: `06-cluster-request` has 9 crossings with own and 1 with elk.
 - dagre sends 8 links through a box. It returns control points for a curve and has no router, so item 0033 would be needed with it too.
 - graphlay has the most crossings on diagrams with groups: 137 on `10-platform`.
 
@@ -87,7 +87,7 @@ The README of the spike shows all forty pictures on one page, with the score of 
 
 How each candidate accepts earlier positions:
 
-- **own: yes, in the order phase and in the place phase.** The input is the earlier centre of each thing, and nothing for a new thing. The order phase pins every seeded thing: the seeded things under one parent keep the order of their earlier positions inside each layer, and only new things and bends look for a slot. The place phase starts every seeded thing at its earlier position and moves it only when a constraint pushes it. The rank phase does not read the seed.
+- **own: yes, in the order phase and in the place phase, but the seed of the prototype is too small.** The input is the earlier centre of each thing, and nothing for a new thing. The order phase pins every seeded thing: the seeded things under one parent keep the order of their earlier positions inside each layer, and only new things and bends look for a slot. The place phase starts every seeded thing at its earlier position and moves it only when a constraint pushes it. The rank phase does not read the seed. A bend has no earlier position, so the seeded run looks for a new slot for every bend, and a bend in a new slot pushes the pinned things beside it.
 - **graphlay: yes without groups, no with groups.** The input is `Node::position`, with `SeedMode::Structure` to keep layers and order. The crate documents that it ignores positions in a graph with groups. The six diagrams with groups gave the same numbers with and without a seed.
 - **elk: yes, but the result is poor.** The input is the `x` and `y` of each node, with the `INTERACTIVE` strategy for cycle breaking, layering, crossing minimisation and node placement. Every group must set the same four strategies, or ELK refuses the graph. A new thing needs a position too. The interactive order phase keeps the given order and does not reduce crossings.
 - **dagre: no.** It has no input for positions.
@@ -104,7 +104,27 @@ The measurement, from `cargo run --release -- seed`: each of the ten diagrams ge
 | elk, seed | 143 | 215 | 273 |
 | dagre | 134 | 708 | 88 |
 
-With a seed, own keeps the arrangement: 18 pairs change sides, against 71 without a seed. The 68 things that still move are pushed by one slot to make room, or shift a few pixels when a layer gets wider. The seed costs own 24 crossings. With a seed, elk goes from 37 crossings to 273 and still moves 143 things. SPIKE-75 decides the cost function. This spike shows only that the two phases can take the seed.
+With a seed, own keeps the arrangement: 18 pairs change sides, against 71 without a seed. The seed costs own 24 crossings. The 68 things that still move do not all move because of the edit. The next table shows that 33 things move with no edit at all. With a seed, elk goes from 37 crossings to 273 and still moves 143 things. SPIKE-75 decides the cost function. This spike shows only that the two phases can take the seed.
+
+The same command then runs each candidate with no edit: the seed is the picture that the candidate drew for the same graph. A layout that holds a picture still moves nothing in this run.
+
+| candidate | things that moved, of 189 | diagrams with a move, of 10 | crossings before | crossings after |
+| --- | --- | --- | --- | --- |
+| own | 33 | 5 | 80 | 99 |
+| graphlay | 0 | 0 | 159 | 168 |
+| elk | 136 | 9 | 36 | 262 |
+
+The seeded layout of own is not a fixed point. The five diagrams, with the things that moved, the longest move and the crossings:
+
+| diagram | things that moved | longest move | crossings |
+| --- | --- | --- | --- |
+| 04-data-pipeline | 6 of 19 | 24 px | 0 to 3 |
+| 05-sign-in | 2 of 15 | 12 px | 0 to 4 |
+| 07-compiler | 6 of 16 | 36 px | 1 to 4 |
+| 08-module-deps | 4 of 22 | 24 px | 22 to 31 |
+| 10-platform | 15 of 34 | 36 px | 44 to 44 |
+
+Every longest move is a multiple of 12 px, which is the gap beside a bend (`BEND_GAP`). The prototype gives no seed to a bend (`seed: None` in `build`), so the order phase sorts the bends again from a different start and ends at a different order. The spike did not test a seed that carries the bends. graphlay moves no thing, and its crossings change on three diagrams without groups because its routes change. elk moves 136 things when it gets its own picture back.
 
 ### Evidence: size, dependencies and licence
 
@@ -126,7 +146,8 @@ One small program for each candidate, built for size and stripped. The numbers a
 
 - Keep the group rule of the order phase. A group is present in every rank that it spans. Groups under one parent hold one order in every layer. This rule makes the group boxes disjoint without a repair step.
 - Keep the constraint form of the place phase. The order and the gaps are difference constraints, so a box cannot overlap another box, and a seed is only a wish inside the constraints.
-- Keep the shape of the seed: one optional centre for each thing.
+- Do not keep the shape of the seed. One optional centre for each thing cannot hold a picture still, because it says nothing about the bends. The seed must also carry the order of each layer, bends included, or the position of each bend. SPIKE-75 decides which.
+- Hold this rule from the first version: a layout seeded with its own picture moves nothing. The no-edit run of `cargo run --release -- seed` is the check, and the prototype fails it.
 - Replace the rank phase with network simplex. The prototype uses longest path with a local correction.
 - Replace the choice of the links to reverse. `04-data-pipeline` puts `CRM dump` in the last rank, which stretches its group across the picture.
 - Improve the order phase. Item 0122 holds the target.
@@ -135,6 +156,7 @@ One small program for each candidate, built for size and stripped. The numbers a
 
 - The ten diagrams were written for this spike. The corpus of public flowcharts from SPIKE-17 was not in the repository when the spike ran. The diagrams are in [`spikes/layered-layout/corpus`](../../spikes/layered-layout/corpus). Six have groups and three nest groups. The first one restates `examples/checkout.horse`.
 - No diagram has a link label, and no link ends at a group. Items 0123 and 0124 hold those two cases. ELK and dagre place labels today, and own does not.
+- The prototype fails the no-edit run, so the numbers of the edit run mix two effects: the edit, and the bends that have no seed. The edit run does not show how few things a correct seed would move.
 - The seed measurement is one edit for each diagram. The interactive mode of ELK got one configuration inside the time box. A better configuration may exist.
 - The prototype routes links with one track for each source in each gap. Item 0033 replaces it.
 
@@ -142,10 +164,11 @@ One small program for each candidate, built for size and stripped. The numbers a
 
 - 0032 builds rank, order and place on this design. It existed.
 - 0033 builds the router. It existed.
-- SPIKE-75 and 0076 decide and build the cost of a moved thing. They existed.
+- SPIKE-75 and 0076 decide and build the cost of a moved thing. They existed. SPIKE-75 has a new criterion: a layout seeded with its own picture moves nothing.
 - 0122: fewer crossings in the layered layout, measured against a reference.
 - 0123: draw a link that starts or ends at a group.
 - 0124: reserve room for link labels in the layered layout.
+- 0125: check the choice on the corpus of public flowcharts. It depends on SPIKE-17.
 
 ## Acceptance criteria
 
@@ -173,3 +196,7 @@ Criterion 4: the Answer says for each candidate how it accepts earlier positions
 ## 2026-11-25
 
 Size evidence: built one small program for each candidate outside the repository, for x86_64 and for wasm32-unknown-unknown, with opt-level s, LTO and strip. Sizes in bytes, native then wasm: no layout 284648, 22170; own 403960, 130447; dagre 705304, 404457; graphlay 1058864, 683635; elk 4932680, 4150165.
+
+## 2026-11-25
+
+Review round 1. Ran 'cargo run --release -- seed' with the new no-edit run: seeded with its own picture, own moved 33 of 189 things on 5 diagrams (crossings 80 to 99), graphlay 0 (159 to 168), elk 136 (36 to 262). The Answer now says the seed must also carry the bends or the order of each layer, and that the order phase is weak on a dense graph without groups (08-module-deps: 22 against 3). Filed 0125 to check the choice on the SPIKE-17 corpus. Criterion 3 stays ticked on the ten spike diagrams; 0125 holds the check on public flowcharts. 'cairn check' printed 'ok: 121 item(s), 0 warning(s)'.

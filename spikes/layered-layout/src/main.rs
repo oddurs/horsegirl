@@ -2,7 +2,8 @@
 //!
 //! ```text
 //! cargo run --release -- draw   # writes pictures/<candidate>/<diagram>.svg and prints the scores
-//! cargo run --release -- seed   # adds one thing to each diagram and counts the things that move
+//! cargo run --release -- seed   # adds one thing to each diagram and counts the things that move,
+//!                               # then seeds each diagram with its own picture and no edit
 //! ```
 
 mod crates;
@@ -91,9 +92,9 @@ fn draw() -> Result<(), String> {
     Ok(())
 }
 
-/// The things that are in both pictures and that moved by more than one pixel. A shift of
-/// the whole picture is not a move, so the median shift is taken out first.
-fn moved(before: &Picture, after: &Picture) -> usize {
+/// How far each thing that is in both pictures moved, along each axis. A shift of the whole
+/// picture is not a move, so the median shift is taken out first.
+fn shifts(before: &Picture, after: &Picture) -> Vec<(f64, f64)> {
     let shifts: Vec<(f64, f64)> = before
         .nodes
         .iter()
@@ -106,10 +107,23 @@ fn moved(before: &Picture, after: &Picture) -> usize {
         values[values.len() / 2]
     };
     let (dx, dy) = (median(|s| s.0), median(|s| s.1));
-    shifts
+    shifts.iter().map(|s| (s.0 - dx, s.1 - dy)).collect()
+}
+
+/// The things that are in both pictures and that moved by more than one pixel.
+fn moved(before: &Picture, after: &Picture) -> usize {
+    shifts(before, after)
         .iter()
-        .filter(|s| (s.0 - dx).abs() > 1.0 || (s.1 - dy).abs() > 1.0)
+        .filter(|s| s.0.abs() > 1.0 || s.1.abs() > 1.0)
         .count()
+}
+
+/// The longest move of one thing, in pixels.
+fn farthest(before: &Picture, after: &Picture) -> f64 {
+    shifts(before, after)
+        .iter()
+        .map(|s| s.0.hypot(s.1))
+        .fold(0.0, f64::max)
 }
 
 /// The pairs of things that are in both pictures and that changed sides: one was above the
@@ -150,6 +164,8 @@ fn seed() -> Result<(), String> {
     );
     println!("| --- | --- | --- | --- | --- | --- | --- | --- | --- |");
     let mut totals = [[0usize; 3]; 7];
+    let mut unedited_rows = Vec::new();
+    let mut unedited_totals = [[0usize; 3]; 3];
     for (name, mut graph) in corpus()? {
         let things = graph.nodes.len();
         let before = [
@@ -158,6 +174,36 @@ fn seed() -> Result<(), String> {
             crates::elk(&graph, None)?,
             crates::dagre(&graph),
         ];
+
+        // No edit: each candidate gets its own picture back as the seed. A layout that
+        // holds a picture still moves nothing here.
+        let own_centres: Vec<_> = before[0].nodes.iter().map(|r| Some(r.centre())).collect();
+        let graphlay_centres: Vec<_> = before[1].nodes.iter().map(|r| Some(r.centre())).collect();
+        let unedited = [
+            own::layout(&graph, Some(&own_centres as &Seed)),
+            crates::graphlay(&graph, Some(&graphlay_centres as &Seed))?,
+            crates::elk(&graph, Some(&before[2]))?,
+        ];
+        let mut cells = Vec::new();
+        for (index, picture) in unedited.iter().enumerate() {
+            let earlier = &before[index];
+            let cell = [
+                moved(earlier, picture),
+                measure::score(&graph, earlier).crossings,
+                measure::score(&graph, picture).crossings,
+            ];
+            for (total, value) in unedited_totals[index].iter_mut().zip(cell) {
+                *total += value;
+            }
+            cells.push(format!(
+                "{}, {:.0}, {} to {}",
+                cell[0],
+                farthest(earlier, picture),
+                cell[1],
+                cell[2]
+            ));
+        }
+        unedited_rows.push(format!("| {name} | {things} | {} |", cells.join(" | ")));
         let from = things / 2;
         let group = graph.nodes[from].group;
         let added = graph.thing("New step");
@@ -211,6 +257,22 @@ fn seed() -> Result<(), String> {
     let cells: Vec<String> = totals
         .iter()
         .map(|t| format!("{}, {}, {}", t[0], t[1], t[2]))
+        .collect();
+    println!("| total | 189 | {} |", cells.join(" | "));
+
+    println!(
+        "\nNo edit: each row seeds a diagram with its own picture. dagre has no input for \
+         positions.\nA cell is: things that moved, the longest move in pixels, and crossings \
+         before and after.\n"
+    );
+    println!("| diagram | things | own | graphlay | elk |");
+    println!("| --- | --- | --- | --- | --- |");
+    for row in unedited_rows {
+        println!("{row}");
+    }
+    let cells: Vec<String> = unedited_totals
+        .iter()
+        .map(|t| format!("{}, {} to {}", t[0], t[1], t[2]))
         .collect();
     println!("| total | 189 | {} |", cells.join(" | "));
     Ok(())
