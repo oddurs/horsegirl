@@ -40,3 +40,7 @@ SPIKE-19 answer: the plain theme's label font is Arial, "Liberation Sans", Helve
 ## 2026-11-25
 
 Ran cargo test -p horsegirl-core --test theme: 4 passed, including the_text_of_the_reference_flow_has_4_5_to_1_in_both_modes (ink on paper, c0, c1 to c3, and accent-ink on accent, light and dark) and twelve_tokens_are_listed_in_the_reference_with_both_values (docs/theme.md). Looked at the SVG in light and dark in a browser with webshot. scripts/task check passed.
+
+## 2026-11-25
+
+Fix round 1: scripts/task check passes. New tests: the_picture_draws_its_own_paper_before_any_shape, only_a_thing_takes_a_palette_slot_for_its_owner.

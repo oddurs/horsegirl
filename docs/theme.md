@@ -43,7 +43,9 @@ on the thing names the slot.
 
 ## Contrast
 
-Text in the picture is `--hg-ink`. It sits on `--hg-paper`, on `--hg-c0` (a
+The picture draws one rectangle of `--hg-paper` over its whole area, so link
+strokes and labels sit on `--hg-paper` on any host page. Text in the picture
+is `--hg-ink`. It sits on `--hg-paper`, on `--hg-c0` (a
 group) or on one of `--hg-c1` to `--hg-c3`. In both modes the ratio is at
 least 4.5 to 1. A test in `crates/horsegirl-core/tests/theme.rs` computes
 the ratio for the reference flow and fails below that.

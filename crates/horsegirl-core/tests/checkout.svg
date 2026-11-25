@@ -3,6 +3,7 @@
 <desc>9 things, 1 group and 9 links.</desc>
 <style>
 .horsegirl{color-scheme:var(--hg-scheme,light dark);font-family:var(--hg-font,Arial,"Liberation Sans",Helvetica,sans-serif)}
+.horsegirl .page{fill:var(--hg-paper,light-dark(#FFFFFF,#15171B))}
 .horsegirl .group{fill:var(--hg-c0,light-dark(#F3F4F6,#23272E));stroke:var(--hg-line,light-dark(#D8DCE2,#343941))}
 .horsegirl .thing{fill:var(--hg-paper,light-dark(#FFFFFF,#15171B));stroke:var(--hg-muted,light-dark(#667080,#9AA4B2))}
 .horsegirl .link{fill:none;stroke:var(--hg-ink,light-dark(#1F2328,#E6E8EB))}
@@ -15,6 +16,7 @@
 <defs>
 <marker id="hg-head" viewBox="0 0 8 8" refX="8" refY="4" markerWidth="8" markerHeight="8" markerUnits="userSpaceOnUse" orient="auto"><path class="head" d="M0,0 L8,4 L0,8 z"/></marker>
 </defs>
+<rect class="page" x="-1" y="-1" width="1322" height="126"/>
 <rect class="group" x="392" y="0" width="536" height="72" rx="4"/>
 <polyline class="link" points="120,46 160,46 160,46 200,46" marker-end="url(#hg-head)"/>
 <polyline class="link" points="120,106 160,106 160,46 200,46" marker-end="url(#hg-head)"/>

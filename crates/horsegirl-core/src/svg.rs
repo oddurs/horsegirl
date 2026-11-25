@@ -29,12 +29,14 @@ fn style() -> String {
     let v = theme::var;
     let mut css = format!(
         ".horsegirl{{color-scheme:var(--hg-scheme,light dark);font-family:var(--hg-font,{})}}\n\
+         .horsegirl .page{{fill:{}}}\n\
          .horsegirl .group{{fill:{};stroke:{}}}\n\
          .horsegirl .thing{{fill:{};stroke:{}}}\n\
          .horsegirl .link{{fill:none;stroke:{}}}\n\
          .horsegirl .head{{fill:{}}}\n\
          .horsegirl .label{{fill:{}}}\n",
         theme::FONT,
+        v("paper"),
         v("c0"),
         v("line"),
         v("paper"),
@@ -79,6 +81,16 @@ pub fn draw(scene: &Scene, title: &str) -> String {
          markerWidth=\"8\" markerHeight=\"8\" markerUnits=\"userSpaceOnUse\" orient=\"auto\">\
          <path class=\"head\" d=\"M0,0 L8,4 L0,8 z\"/></marker>\n</defs>\n",
     );
+    // The page colour is drawn, not assumed: link strokes and labels sit
+    // outside every box, and on a host page of the other mode they would
+    // vanish.
+    writeln!(
+        out,
+        "<rect class=\"page\" x=\"{}\" y=\"{}\" width=\"{width}\" height=\"{height}\"/>",
+        number(-MARGIN),
+        number(-MARGIN),
+    )
+    .expect("a String takes any write");
     let style = Style {
         size: scene.font_size,
     };
@@ -161,7 +173,11 @@ fn token(text: &str) -> String {
 /// the same file gets the same colours on every run.
 fn owners(scene: &Scene) -> Vec<&str> {
     let mut owners: Vec<&str> = Vec::new();
-    let facts = scene.shapes.iter().flat_map(|shape| &shape.facts);
+    let things = scene
+        .shapes
+        .iter()
+        .filter(|shape| shape.role == Role::Thing);
+    let facts = things.flat_map(|shape| &shape.facts);
     for fact in facts.filter(|fact| fact.key == "owner") {
         if !owners.contains(&fact.value.as_str()) {
             owners.push(&fact.value);
