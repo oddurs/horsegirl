@@ -43,3 +43,7 @@ Criterion 1: site/lib/gallery.ts runs the horsegirl binary at build time and inl
 ## 2026-11-25
 
 Criterion 2: after scripts/task check, site/out/gallery/index.html holds 11 svg elements with class horsegirl (examples/checkout.horse and the ten files of spikes/layered-layout/corpus, all flow). check-export now fails below six. I looked at a screenshot of /gallery/. a11y: 0 findings on /gallery/.
+
+## 2026-11-25
+
+Fix round 1. scripts/task check passed. site/out/gallery/index.html holds 9 svg elements with class horsegirl: examples/checkout.horse and corpus/horse/0001 to 0008 (each exits 0). site/out/design/index.html has no 'Drawn by hand' text; its figure is drawn from examples/checkout.horse. The gallery test asserts the named list holds six or more corpus/horse files.

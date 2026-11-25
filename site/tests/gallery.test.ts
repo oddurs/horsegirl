@@ -1,9 +1,16 @@
 import assert from "node:assert/strict";
-import { chmodSync, mkdtempSync, readdirSync, writeFileSync } from "node:fs";
+import { chmodSync, existsSync, mkdtempSync, readdirSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { test } from "node:test";
-import { binaryPath, draw, drawGallery, root, sourceFiles } from "../lib/gallery.ts";
+import {
+  binaryPath,
+  draw,
+  drawGallery,
+  root,
+  sourceFiles,
+  sourceFilesList,
+} from "../lib/gallery.ts";
 
 // A stand-in for the horsegirl binary: it prints the arguments it got.
 function stub(body: string): string {
@@ -13,11 +20,12 @@ function stub(body: string): string {
   return path;
 }
 
-test("the gallery holds at least six files of the corpus", () => {
-  const names = sourceFiles().map((file) => file.slice(file.lastIndexOf("/") + 1));
-  assert.ok(names.length >= 6, `found ${names.length}`);
-  assert.ok(names.every((name) => name.endsWith(".horse")));
-  assert.ok(names.includes("checkout.horse"));
+test("the gallery holds at least six named files of corpus/horse", () => {
+  const files = sourceFiles();
+  const corpus = sourceFilesList.filter((file) => file.startsWith(join("corpus", "horse") + "/"));
+  assert.ok(corpus.length >= 6, `found ${corpus.length}`);
+  assert.ok(sourceFilesList.includes(join("examples", "checkout.horse")));
+  for (const file of files) assert.ok(existsSync(file), `${file} does not exist`);
 });
 
 test("a picture is what the binary prints for its file", () => {

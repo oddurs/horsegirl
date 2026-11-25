@@ -2,7 +2,7 @@
 // binary of the same commit on a .horse file of the repository, so a picture
 // shows what the program does today and no file of a picture is committed.
 import { execFileSync } from "node:child_process";
-import { existsSync, readdirSync, readFileSync } from "node:fs";
+import { existsSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 
 export type Picture = {
@@ -15,17 +15,17 @@ export type Picture = {
 // The build runs in site/, and the sources live at the repository root.
 export const root = join(process.cwd(), "..");
 
-// The reference file, then the diagrams of the layered-layout spike. These are
-// the same files that the layout tests draw.
-export const sourceDirs = ["examples", join("spikes", "layered-layout", "corpus")];
+// A fixed, named list: the reference file, then eight files of the converted
+// corpus. The whole corpus is not drawn, because a build must stay fast.
+export const sourceFilesList = [
+  join("examples", "checkout.horse"),
+  ...["0001", "0002", "0003", "0004", "0005", "0006", "0007", "0008"].map((id) =>
+    join("corpus", "horse", `${id}.horse`),
+  ),
+];
 
 export function sourceFiles(repo = root): string[] {
-  return sourceDirs.flatMap((dir) =>
-    readdirSync(join(repo, dir))
-      .filter((name) => name.endsWith(".horse"))
-      .sort()
-      .map((name) => join(repo, dir, name)),
-  );
+  return sourceFilesList.map((file) => join(repo, file));
 }
 
 export function binaryPath(repo = root): string {
