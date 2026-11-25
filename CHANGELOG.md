@@ -24,6 +24,9 @@ the project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   one `fix`, and against the checker, and the diagnostics hit most often.
   `horsegirl_core::check::fix_all` applies every safe fix as `horsegirl fix`
   does.
+- `docs/quickstart.md` and `docs/reference.md`: the way to a first picture
+  and the five rules, each command and each code. A test holds every
+  example of both pages to a golden case.
 - `horsegirl check [--json] [FILE]` prints every diagnostic of a file, as text
   or as one JSON object per line. `horsegirl fix [--json] [FILE]` applies every
   safe fix in place, changes no other byte, and prints what is left.

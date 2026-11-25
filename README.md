@@ -69,9 +69,14 @@ An agent in an MCP client calls the same commands as tools. Run
 `horsegirl mcp --config` and add what it prints to the configuration of the
 client. [docs/mcp.md](docs/mcp.md) states the shape of each tool.
 
-Each command reads standard input when the file is `-` or absent. It exits 0
-when the file has no error, 1 when it has one, and 2 for a mistake in the
-command line. `horsegirl <command> --help` names the options of one command.
+[docs/quickstart.md](docs/quickstart.md) walks through one picture, and
+[docs/reference.md](docs/reference.md) states the language, each command and each
+diagnostic code.
+
+The commands `check`, `fix`, `fmt` and `draw` read standard input when the file
+is `-` or absent. Each exits 0 when the file has no error, 1 when it has one,
+and 2 for a mistake in the command line. `horsegirl <command> --help` names the
+options of one command.
 
 ## Development
 
