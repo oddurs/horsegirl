@@ -39,3 +39,7 @@ Report the placement that the model drops. Give it a stable code, the span of th
 ## 2026-11-25
 
 Evidence: cargo test -p horsegirl-core --test check (34 passed) includes a_thing_in_a_second_group_is_an_error_that_names_the_first, a_group_placed_inside_itself_is_an_error, a_part_in_the_braces_after_several_names_is_an_error and the_reference_file_and_sound_groups_give_no_misplaced_part. horsegirl check on 'G { A } / H { A } / A -> B' printed one E0420 at 2:5: 'A is in the group G already'. On 'A { B } / B { A } / A -> C' one E0420 at the second A: 'would make the group A hold itself'. On 'A, B { C } / C -> D' one E0420: 'a part belongs to one group'. On examples/checkout.horse only W0010. scripts/task check exit 0: 297 tests passed, corpus 174 of 239 (baseline lowered from 176; 0031 and 0207 drew clean only because the second group was dropped; item 165 filed).
+
+## 2026-11-25
+
+Fix round 1: E0420 fix is now suggested; fix_all leaves corpus 0197 and the E0412 chain case unchanged (test fix_leaves_a_thing_in_two_groups_for_the_writer). Shared message reads the final parent (test a_part_after_several_names_names_the_group_that_holds_it). Merged main; cargo run -p horsegirl --example corpus printed 181 of 239 (baseline 181). scripts/task check exited 0.
