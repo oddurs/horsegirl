@@ -107,7 +107,7 @@ fn the_layout_settles_on_one_form() {
         ("A { k: x\"y ?, a: b }\n", "A { k: x\"y ?, a: b }\n"),
         ("A -> B   ?   @   src/a.ts:17", "A -> B ? @ src/a.ts:17\n"),
         ("A ? ", "A ?\n"),
-        ("A -> B  :", "A -> B:\n"),
+        ("A -> B  : save", "A -> B: save\n"),
         ("A -> B:  x  \"a   b\"  y", "A -> B: x \"a   b\" y\n"),
         ("story s {\nA -> B\n}", "story s {\n  A -> B\n}\n"),
         ("show   sequence   of   s", "show sequence of s\n"),

@@ -12,7 +12,7 @@ named for gaits: Walk, Trot, Canter, Gallop.
 
 ## v0.1 — Walk
 
-`··········` 0% · 0 of 18 done · due 2027-01-31
+`··········` 0% · 0 of 17 done · due 2027-01-31
 
 An agent writes a horsegirl file, checks it, applies the fixes, and draws a flow diagram as SVG, from the command line or over MCP.
 
@@ -20,7 +20,6 @@ An agent writes a horsegirl file, checks it, applies the fixes, and draws a flow
 - [ ] [`0122`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0122-fewer-crossings-in-the-layered-layout-measured-against-a-reference.md) Fewer crossings in the layered layout, measured against a reference <sup>feature · p2 · layout</sup>
 - [ ] [`0123`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0123-draw-a-link-that-starts-or-ends-at-a-group.md) Draw a link that starts or ends at a group <sup>feature · p2 · layout</sup>
 - [ ] [`0124`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0124-reserve-room-for-link-labels-in-the-layered-layout.md) Reserve room for link labels in the layered layout <sup>feature · p2 · layout</sup>
-- [ ] [`BUG-133`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/BUG-133-an-empty-link-label-is-an-error.md) An empty link label is an error <sup>bug · p2 · language</sup>
 - [ ] [`BUG-134`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/BUG-134-every-text-that-needs-quotes-gets-them-in-one-step.md) Every text that needs quotes gets them in one step <sup>bug · p2 · language</sup>
 - [ ] [`BUG-135`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/BUG-135-only-a-line-feed-alone-or-after-a-carriage-return-ends-a-line.md) Only a line feed, alone or after a carriage return, ends a line <sup>bug · p2 · language</sup>
 - [ ] [`BUG-139`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/BUG-139-a-thing-placed-in-two-groups-or-a-group-placed-inside-itself-is-an-error.md) A thing placed in two groups, or a group placed inside itself, is an error <sup>bug · p2 · check</sup>
