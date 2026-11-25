@@ -200,7 +200,15 @@ because the parser does not exist yet.
 
 ## Acceptance criteria
 
-- [ ] The Answer section states a conclusion and the evidence for it.
-- [ ] Follow-up items exist for the work the answer implies.
-- [ ] A prototype server answers one tool call from a real MCP client.
-- [ ] The answer fixes the JSON shape of a diagnostic and of a fix.
+- [x] The Answer section states a conclusion and the evidence for it.
+- [x] Follow-up items exist for the work the answer implies.
+- [x] A prototype server answers one tool call from a real MCP client.
+- [x] The answer fixes the JSON shape of a diagnostic and of a fix.
+
+## 2026-11-25
+
+Criterion 3: npx @modelcontextprotocol/inspector@2.16.0 --cli ./target/debug/horsegirl-mcp-spike --method tools/call --tool-name check --tool-arg 'source=Café --> Payments' exited 0 and printed structuredContent with one E0001 diagnostic (span line 1 columns 6-9, safe fix '->'), a text block with the same JSON, isError false. Wire capture showed initialize protocolVersion 2025-11-25. A hand-written server/discover returned supportedVersions up to 2026-07-28. cargo test in spikes/mcp: 1 passed against check.golden.json.
+
+## 2026-11-25
+
+Criteria 1 and 4: the Answer section states rmcp 3.11.0 over stdio, dual-era, and the JSON shape of a check result, a diagnostic, a span, a position, a fix and an edit, with the evidence. Criterion 2: follow-ups are 0024 (core types and snapshot), 0038 (server), 0039 (golden files), and new 0117 (tool schema golden test in both eras); notes on 0024 and 0038 point at the answer. scripts/task check passed.
