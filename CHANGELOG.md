@@ -136,6 +136,8 @@ the project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   comment (ADR-130). The parser reads comments as before.
 - A missing name at the end of a line (`E0006`) has an empty span at the end of
   the line, and not the line break.
+- `A -> B:` and `A -> B: ?` give `E0006`: a link with a colon needs a label.
+  Before, the parser accepted both with no diagnostic.
 - When two fixes of one parse overlap, the outer one keeps its fix and the
   inner one has none, so a tool can apply every fix of one run.
 - `horsegirl_core::text::measure` gives the width and height of a label in
