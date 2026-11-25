@@ -56,6 +56,7 @@ fn every_help_fits_on_one_screen() {
         &["fix"],
         &["fmt"],
         &["draw"],
+        &["mcp"],
     ] {
         let out = run(&[command, &["--help"]].concat(), "");
         assert_eq!(out.status.code(), Some(0), "{command:?}");

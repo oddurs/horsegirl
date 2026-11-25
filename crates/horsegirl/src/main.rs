@@ -9,6 +9,8 @@ use horsegirl_core::syntax::parse;
 use horsegirl_core::text::Style;
 use horsegirl_core::{format, lens, svg};
 
+mod mcp;
+
 // The site lists the commands from the Commands block, read to the end of
 // this text, so the block stays last.
 const USAGE: &str = "\
@@ -26,6 +28,7 @@ Commands:
   fix        Apply every safe fix to a file
   fmt        Print a file in its one canonical form
   draw       Draw a file as SVG
+  mcp        Serve spec, check, fix and draw as MCP tools over stdio
   --version  Print the version
   --help     Print this help";
 
@@ -95,6 +98,7 @@ fn main() -> ExitCode {
         Some("draw") => run("draw", DRAW_USAGE, &["--to", "-o"], rest, |options| {
             draw(&options)
         }),
+        Some("mcp") => mcp::main(&rest),
         Some("--version" | "-V") => {
             println!("horsegirl {}", env!("CARGO_PKG_VERSION"));
             ExitCode::SUCCESS
@@ -379,6 +383,29 @@ fn fmt(options: &Options) -> ExitCode {
     ExitCode::SUCCESS
 }
 
+/// The SVG of `source`, a file with no error, drawn through the lens of its
+/// first `show` line, or through flow when it has none.
+///
+/// The error says that the lens is one this version does not draw, and what
+/// to write instead.
+fn picture(source: &str, title: &str) -> Result<String, String> {
+    let model = lower(&parse(source).tree);
+    let name = model
+        .shows
+        .first()
+        .map_or("flow", |show| show.lens.as_str());
+    // The checks accept every lens of the language card; this version draws
+    // fewer, so a file can be clean and still name a lens with no solver.
+    let Some(lens) = lens::find(name) else {
+        let drawn: Vec<&str> = lens::DRAWN.iter().map(|lens| lens.name).collect();
+        return Err(format!(
+            "`show {name}` names a lens that this version does not draw. It draws: {}. Change the first `show` line to one of those.",
+            drawn.join(", ")
+        ));
+    };
+    Ok(svg::draw(&lens::draw(&model, lens, STYLE), title))
+}
+
 fn draw(options: &Options) -> ExitCode {
     let input = &options.input;
     let diagnostics = check(&input.source);
@@ -396,26 +423,17 @@ fn draw(options: &Options) -> ExitCode {
         );
         return ExitCode::FAILURE;
     }
-    let model = lower(&parse(&input.source).tree);
-    let name = model
-        .shows
-        .first()
-        .map_or("flow", |show| show.lens.as_str());
-    // The checks accept every lens of the language card; this version draws
-    // fewer, so a file can be clean and still name a lens with no solver.
-    let Some(lens) = lens::find(name) else {
-        let drawn: Vec<&str> = lens::DRAWN.iter().map(|lens| lens.name).collect();
-        eprintln!(
-            "horsegirl draw: `show {name}` names a lens that this version does not draw. It draws: {}. Change the first `show` line to one of those.",
-            drawn.join(", ")
-        );
-        return ExitCode::FAILURE;
-    };
     let title = input.path.as_deref().and_then(Path::file_stem).map_or_else(
         || "diagram".to_owned(),
         |stem| stem.to_string_lossy().into_owned(),
     );
-    let picture = svg::draw(&lens::draw(&model, lens, STYLE), &title);
+    let picture = match picture(&input.source, &title) {
+        Ok(picture) => picture,
+        Err(message) => {
+            eprintln!("horsegirl draw: {message}");
+            return ExitCode::FAILURE;
+        }
+    };
     let out = match (options.value("-o"), &input.path) {
         (Some("-"), _) | (None, None) => None,
         (Some(out), _) => Some(PathBuf::from(out)),

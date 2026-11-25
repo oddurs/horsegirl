@@ -7,6 +7,12 @@ the project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Added
 
+- `horsegirl mcp` serves the tools `spec`, `check`, `fix` and `draw` over MCP
+  on standard input and standard output. Each tool takes the whole text of a
+  file. `check`, `fix` and `draw` return `structuredContent` with an
+  `outputSchema`, and a diagnostic has the shape of the `--json` line.
+  `horsegirl mcp --config` prints the entry for the configuration of a client.
+  `docs/mcp.md` states each shape.
 - `horsegirl check [--json] [FILE]` prints every diagnostic of a file, as text
   or as one JSON object per line. `horsegirl fix [--json] [FILE]` applies every
   safe fix in place, changes no other byte, and prints what is left.
