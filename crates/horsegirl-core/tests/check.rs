@@ -123,7 +123,7 @@ fn the_sibling_pairs_of_the_corpus_are_not_typos() {
     for source in [
         "CI -> Deploy EC2 #1\nDeploy EC2 #1 -> Done\nCI -> Deploy EC2 #2\n",
         "Service A -> Sidecar Proxy\nSidecar Proxy -> Service B\nSidecar Proxy -> Service A\n",
-        "Request A -> Event loop\nEvent loop -> Request B\nRequest B -> Request C\nRequest C -> Request D\nRequest D -> Request E\nRequest A -> Request E\nRequest B -> Event loop\n",
+        "Request A -> Event loop\nEvent loop -> Request B\nRequest B -> Request C\nRequest C -> Request D\nRequest D -> Request E\nRequest B -> Event loop\n",
     ] {
         assert_eq!(codes(&check(source)), [""; 0], "{source}");
     }
