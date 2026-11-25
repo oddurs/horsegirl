@@ -12,7 +12,7 @@ named for gaits: Walk, Trot, Canter, Gallop.
 
 ## v0.1 — Walk
 
-`··········` 0% · 0 of 35 done · due 2027-01-31
+`··········` 0% · 0 of 38 done · due 2027-01-31
 
 An agent writes a horsegirl file, checks it, applies the fixes, and draws a flow diagram as SVG, from the command line or over MCP.
 
@@ -22,9 +22,12 @@ An agent writes a horsegirl file, checks it, applies the fixes, and draws a flow
 - [ ] [`0118`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0118-hold-each-svg-label-to-its-measured-width-in-any-font.md) Hold each SVG label to its measured width in any font <sup>feature · p2 · render</sup>
 - [ ] [`ADR-119`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/ADR-119-names-that-hold-a-reserved-character-are-written-in-quotes.md) Names that hold a reserved character are written in quotes <sup>decision · p2 · language</sup>
 - [ ] [`0120`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0120-the-typo-check-leaves-sibling-names-alone.md) The typo check leaves sibling names alone <sup>feature · p2 · check</sup>
+- [ ] [`0122`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0122-fewer-crossings-in-the-layered-layout-measured-against-a-reference.md) Fewer crossings in the layered layout, measured against a reference <sup>feature · p2 · layout</sup>
+- [ ] [`0123`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0123-draw-a-link-that-starts-or-ends-at-a-group.md) Draw a link that starts or ends at a group <sup>feature · p2 · layout</sup>
+- [ ] [`0124`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0124-reserve-room-for-link-labels-in-the-layered-layout.md) Reserve room for link labels in the layered layout <sup>feature · p2 · layout</sup>
+- [ ] [`0125`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0125-check-the-layered-layout-choice-on-the-corpus-of-public-flowcharts.md) Check the layered layout choice on the corpus of public flowcharts <sup>chore · p2 · layout</sup>
 - [ ] [`0126`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0126-the-site-sets-its-type-in-the-concept-page-fonts.md) The site sets its type in the concept page fonts <sup>feature · p2 · site</sup>
 - [ ] [`BUG-127`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/BUG-127-every-docs-page-has-a-level-one-heading.md) Every docs page has a level-one heading <sup>bug · p2 · site</sup>
-- [ ] [`SPIKE-18`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/SPIKE-18-which-layered-layout-design-do-we-build-on.md) Which layered layout design do we build on? <sup>spike · p0 · layout</sup>
 - [ ] [`0023`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0023-parse-names-links-braces-and-show-lines.md) Parse names, links, braces and show lines <sup>feature · p0 · language</sup>
 - [ ] [`0024`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0024-diagnostics-with-stable-codes-spans-and-fixes.md) Diagnostics with stable codes, spans and fixes <sup>feature · p0 · check</sup>
 - [ ] [`0025`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0025-lower-the-tree-into-things-links-groups-and-facts.md) Lower the tree into things, links, groups and facts <sup>feature · p0 · model</sup>
