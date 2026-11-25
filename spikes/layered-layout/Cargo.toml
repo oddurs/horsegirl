@@ -1,0 +1,15 @@
+[package]
+name = "layered-layout-spike"
+version = "0.0.0"
+edition = "2024"
+publish = false
+
+# A stand-alone package. The root crate and scripts/task do not build it.
+[workspace]
+
+[dependencies]
+# dagre 0.1.2 does not compile without its default `json` feature.
+dagre = "=0.1.2"
+elk-layout = "=0.12.2"
+graphlay = { version = "=0.4.0", default-features = false }
+serde_json = "1"

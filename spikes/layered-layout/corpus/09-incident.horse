@@ -1,0 +1,20 @@
+Alert fires -> On call paged
+On call paged -> Acknowledged, Escalate to lead
+Escalate to lead -> Acknowledged
+Acknowledged -> Customer impact
+Customer impact -> Declare incident, Low priority ticket
+Declare incident -> Open channel, Assign commander, Post status page
+Assign commander -> Find cause
+Open channel -> Find cause
+Find cause -> Recent deploy, Dependency down, Capacity, Unknown
+Recent deploy -> Roll back deploy
+Dependency down -> Fail over
+Capacity -> Scale up
+Unknown -> Pull in experts
+Pull in experts -> Find cause
+Roll back deploy, Fail over, Scale up -> Verify recovery
+Verify recovery -> Find cause, Resolve incident
+Resolve incident -> Update status page, Write review
+Post status page -> Update status page
+Write review -> Action items
+Low priority ticket -> Action items

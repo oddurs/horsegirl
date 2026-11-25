@@ -1,0 +1,19 @@
+Source -> Parse
+Parse -> Tree, Parse diagnostics
+Tree -> Model
+Tree -> Formatter
+Model -> Checks, Lens
+Checks -> Check diagnostics
+Parse diagnostics, Check diagnostics -> Fixes
+Fixes -> Source
+Lens -> Layout
+Earlier positions -> Layout
+Layout -> Scene
+Scene -> SVG backend, Text backend, Describe
+Formatter -> Source
+Core {
+  Parse, Tree, Model, Checks, Lens, Layout, Scene
+}
+Backends {
+  SVG backend, Text backend, Describe
+}

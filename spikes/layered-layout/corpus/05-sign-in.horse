@@ -1,0 +1,15 @@
+Open app -> Has session
+Has session -> Home, Sign in form
+Sign in form -> Check password
+Check password -> Wrong password, Needs second factor, Issue session
+Wrong password -> Too many tries
+Too many tries -> Lock account, Sign in form
+Needs second factor -> Send code
+Send code -> Enter code
+Enter code -> Code expired, Issue session
+Code expired -> Send code
+Issue session -> Home
+Lock account -> Email owner
+Sign in form -> Reset password
+Reset password -> Email owner
+Email owner -> Sign in form

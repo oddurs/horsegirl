@@ -1,0 +1,85 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-16.0 -376.0 964.8 410.0" width="965" height="410" font-family="Helvetica, Arial, sans-serif" font-size="13">
+<defs><marker id="tip" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="#444"/></marker></defs>
+<rect x="-16.0" y="-376.0" width="964.8" height="410.0" fill="#fff"/>
+<polyline points="49.6,-60.0 81.6,-60.0 81.6,-90.0 219.2,-90.0 219.2,-132.0 263.2,-132.0" fill="none" stroke="#444" stroke-width="1.2" marker-end="url(#tip)"/>
+<polyline points="49.6,-60.0 81.6,-60.0 81.6,0.0 113.6,0.0" fill="none" stroke="#444" stroke-width="1.2" marker-end="url(#tip)"/>
+<polyline points="49.6,-60.0 117.2,-60.0" fill="none" stroke="#444" stroke-width="1.2" marker-end="url(#tip)"/>
+<polyline points="199.2,0.0 243.2,0.0 243.2,-102.0 358.4,-102.0 358.4,-180.0 412.8,-180.0" fill="none" stroke="#444" stroke-width="1.2" marker-end="url(#tip)"/>
+<polyline points="199.2,0.0 243.2,0.0 243.2,-90.0 366.4,-90.0 366.4,-120.0 409.2,-120.0" fill="none" stroke="#444" stroke-width="1.2" marker-end="url(#tip)"/>
+<polyline points="199.2,0.0 274.0,0.0" fill="none" stroke="#444" stroke-width="1.2" marker-end="url(#tip)"/>
+<polyline points="199.2,0.0 243.2,0.0 243.2,-60.0 266.8,-60.0" fill="none" stroke="#444" stroke-width="1.2" marker-end="url(#tip)"/>
+<polyline points="469.6,-180.0 511.2,-180.0 511.2,-42.0 548.0,-42.0" fill="none" stroke="#444" stroke-width="1.2" marker-end="url(#tip)"/>
+<polyline points="469.6,-180.0 511.2,-180.0 511.2,-204.0 637.9,-204.0 637.9,-270.0 708.4,-270.0" fill="none" stroke="#444" stroke-width="1.2" marker-end="url(#tip)"/>
+<polyline points="469.6,-180.0 511.2,-180.0 511.2,-162.0 548.0,-162.0" fill="none" stroke="#444" stroke-width="1.2" marker-end="url(#tip)"/>
+<polyline points="469.6,-180.0 511.2,-180.0 511.2,-102.0 548.0,-102.0" fill="none" stroke="#444" stroke-width="1.2" marker-end="url(#tip)"/>
+<polyline points="473.2,-120.0 501.6,-120.0 501.6,-42.0 548.0,-42.0" fill="none" stroke="#444" stroke-width="1.2" marker-end="url(#tip)"/>
+<polyline points="473.2,-120.0 501.6,-120.0 501.6,-192.0 643.2,-192.0 643.2,-270.0 708.4,-270.0" fill="none" stroke="#444" stroke-width="1.2" marker-end="url(#tip)"/>
+<polyline points="473.2,-120.0 501.6,-120.0 501.6,-12.0 669.9,-12.0 669.9,-30.0 686.8,-30.0" fill="none" stroke="#444" stroke-width="1.2" marker-end="url(#tip)"/>
+<polyline points="323.6,0.0 382.4,0.0 382.4,-120.0 409.2,-120.0" fill="none" stroke="#444" stroke-width="1.2" marker-end="url(#tip)"/>
+<polyline points="323.6,0.0 409.2,0.0" fill="none" stroke="#444" stroke-width="1.2" marker-end="url(#tip)"/>
+<polyline points="330.8,-60.0 374.4,-60.0 374.4,-180.0 412.8,-180.0" fill="none" stroke="#444" stroke-width="1.2" marker-end="url(#tip)"/>
+<polyline points="330.8,-60.0 374.4,-60.0 374.4,-120.0 409.2,-120.0" fill="none" stroke="#444" stroke-width="1.2" marker-end="url(#tip)"/>
+<polyline points="330.8,-60.0 398.4,-60.0" fill="none" stroke="#444" stroke-width="1.2" marker-end="url(#tip)"/>
+<polyline points="619.2,-42.0 664.5,-42.0 664.5,-90.0 708.4,-90.0" fill="none" stroke="#444" stroke-width="1.2" marker-end="url(#tip)"/>
+<polyline points="619.2,-42.0 664.5,-42.0 664.5,-30.0 686.8,-30.0" fill="none" stroke="#444" stroke-width="1.2" marker-end="url(#tip)"/>
+<polyline points="619.2,-42.0 664.5,-42.0 664.5,-60.0 810.9,-60.0 810.9,-42.0 865.2,-42.0" fill="none" stroke="#444" stroke-width="1.2" marker-end="url(#tip)"/>
+<polyline points="772.4,-270.0 832.3,-270.0 832.3,-42.0 865.2,-42.0" fill="none" stroke="#444" stroke-width="1.2" marker-end="url(#tip)"/>
+<polyline points="772.4,-270.0 861.6,-270.0" fill="none" stroke="#444" stroke-width="1.2" marker-end="url(#tip)"/>
+<polyline points="619.2,-162.0 648.5,-162.0 648.5,-270.0 708.4,-270.0" fill="none" stroke="#444" stroke-width="1.2" marker-end="url(#tip)"/>
+<polyline points="619.2,-162.0 648.5,-162.0 648.5,-330.0 697.6,-330.0" fill="none" stroke="#444" stroke-width="1.2" marker-end="url(#tip)"/>
+<polyline points="619.2,-162.0 648.5,-162.0 648.5,-150.0 683.2,-150.0" fill="none" stroke="#444" stroke-width="1.2" marker-end="url(#tip)"/>
+<polyline points="619.2,-102.0 653.9,-102.0 653.9,-330.0 697.6,-330.0" fill="none" stroke="#444" stroke-width="1.2" marker-end="url(#tip)"/>
+<polyline points="619.2,-102.0 653.9,-102.0 653.9,-210.0 708.4,-210.0" fill="none" stroke="#444" stroke-width="1.2" marker-end="url(#tip)"/>
+<polyline points="619.2,-102.0 653.9,-102.0 653.9,-150.0 683.2,-150.0" fill="none" stroke="#444" stroke-width="1.2" marker-end="url(#tip)"/>
+<polyline points="794.0,-30.0 842.9,-30.0 842.9,-42.0 865.2,-42.0" fill="none" stroke="#444" stroke-width="1.2" marker-end="url(#tip)"/>
+<polyline points="473.2,0.0 848.3,0.0 848.3,-42.0 865.2,-42.0" fill="none" stroke="#444" stroke-width="1.2" marker-end="url(#tip)"/>
+<polyline points="484.0,-60.0 530.4,-60.0 530.4,-72.0 659.2,-72.0 659.2,-180.0 821.6,-180.0 821.6,-132.0 868.8,-132.0" fill="none" stroke="#444" stroke-width="1.2" marker-end="url(#tip)"/>
+<polyline points="334.4,-132.0 350.4,-132.0 350.4,-210.0 520.8,-210.0 520.8,-216.0 632.5,-216.0 632.5,-360.0 837.6,-360.0 837.6,-132.0 868.8,-132.0" fill="none" stroke="#444" stroke-width="1.2" marker-end="url(#tip)"/>
+<polyline points="772.4,-210.0 826.9,-210.0 826.9,-132.0 868.8,-132.0" fill="none" stroke="#444" stroke-width="1.2" marker-end="url(#tip)"/>
+<polyline points="772.4,-90.0 816.3,-90.0 816.3,-42.0 865.2,-42.0" fill="none" stroke="#444" stroke-width="1.2" marker-end="url(#tip)"/>
+<polyline points="195.6,-60.0 231.2,-60.0 231.2,-132.0 263.2,-132.0" fill="none" stroke="#444" stroke-width="1.2" marker-end="url(#tip)"/>
+<rect x="0.0" y="-78.0" width="49.6" height="36.0" rx="4" fill="#fff" stroke="#222"/>
+<text x="24.8" y="-60.0" text-anchor="middle" dominant-baseline="central" fill="#111">cli</text>
+<rect x="263.2" y="-150.0" width="71.2" height="36.0" rx="4" fill="#fff" stroke="#222"/>
+<text x="298.8" y="-132.0" text-anchor="middle" dominant-baseline="central" fill="#111">config</text>
+<rect x="113.6" y="-18.0" width="85.6" height="36.0" rx="4" fill="#fff" stroke="#222"/>
+<text x="156.4" y="0.0" text-anchor="middle" dominant-baseline="central" fill="#111">commands</text>
+<rect x="117.2" y="-78.0" width="78.4" height="36.0" rx="4" fill="#fff" stroke="#222"/>
+<text x="156.4" y="-60.0" text-anchor="middle" dominant-baseline="central" fill="#111">logging</text>
+<rect x="412.8" y="-198.0" width="56.8" height="36.0" rx="4" fill="#fff" stroke="#222"/>
+<text x="441.2" y="-180.0" text-anchor="middle" dominant-baseline="central" fill="#111">draw</text>
+<rect x="409.2" y="-138.0" width="64.0" height="36.0" rx="4" fill="#fff" stroke="#222"/>
+<text x="441.2" y="-120.0" text-anchor="middle" dominant-baseline="central" fill="#111">check</text>
+<rect x="274.0" y="-18.0" width="49.6" height="36.0" rx="4" fill="#fff" stroke="#222"/>
+<text x="298.8" y="0.0" text-anchor="middle" dominant-baseline="central" fill="#111">fix</text>
+<rect x="266.8" y="-78.0" width="64.0" height="36.0" rx="4" fill="#fff" stroke="#222"/>
+<text x="298.8" y="-60.0" text-anchor="middle" dominant-baseline="central" fill="#111">serve</text>
+<rect x="548.0" y="-60.0" width="71.2" height="36.0" rx="4" fill="#fff" stroke="#222"/>
+<text x="583.6" y="-42.0" text-anchor="middle" dominant-baseline="central" fill="#111">parser</text>
+<rect x="708.4" y="-288.0" width="64.0" height="36.0" rx="4" fill="#fff" stroke="#222"/>
+<text x="740.4" y="-270.0" text-anchor="middle" dominant-baseline="central" fill="#111">model</text>
+<rect x="548.0" y="-180.0" width="71.2" height="36.0" rx="4" fill="#fff" stroke="#222"/>
+<text x="583.6" y="-162.0" text-anchor="middle" dominant-baseline="central" fill="#111">layout</text>
+<rect x="548.0" y="-120.0" width="71.2" height="36.0" rx="4" fill="#fff" stroke="#222"/>
+<text x="583.6" y="-102.0" text-anchor="middle" dominant-baseline="central" fill="#111">render</text>
+<rect x="686.8" y="-48.0" width="107.2" height="36.0" rx="4" fill="#fff" stroke="#222"/>
+<text x="740.4" y="-30.0" text-anchor="middle" dominant-baseline="central" fill="#111">diagnostics</text>
+<rect x="409.2" y="-18.0" width="64.0" height="36.0" rx="4" fill="#fff" stroke="#222"/>
+<text x="441.2" y="0.0" text-anchor="middle" dominant-baseline="central" fill="#111">edits</text>
+<rect x="398.4" y="-78.0" width="85.6" height="36.0" rx="4" fill="#fff" stroke="#222"/>
+<text x="441.2" y="-60.0" text-anchor="middle" dominant-baseline="central" fill="#111">protocol</text>
+<rect x="708.4" y="-108.0" width="64.0" height="36.0" rx="4" fill="#fff" stroke="#222"/>
+<text x="740.4" y="-90.0" text-anchor="middle" dominant-baseline="central" fill="#111">lexer</text>
+<rect x="865.2" y="-60.0" width="64.0" height="36.0" rx="4" fill="#fff" stroke="#222"/>
+<text x="897.2" y="-42.0" text-anchor="middle" dominant-baseline="central" fill="#111">spans</text>
+<rect x="861.6" y="-288.0" width="71.2" height="36.0" rx="4" fill="#fff" stroke="#222"/>
+<text x="897.2" y="-270.0" text-anchor="middle" dominant-baseline="central" fill="#111">intern</text>
+<rect x="697.6" y="-348.0" width="85.6" height="36.0" rx="4" fill="#fff" stroke="#222"/>
+<text x="740.4" y="-330.0" text-anchor="middle" dominant-baseline="central" fill="#111">geometry</text>
+<rect x="683.2" y="-168.0" width="114.4" height="36.0" rx="4" fill="#fff" stroke="#222"/>
+<text x="740.4" y="-150.0" text-anchor="middle" dominant-baseline="central" fill="#111">text metrics</text>
+<rect x="708.4" y="-228.0" width="64.0" height="36.0" rx="4" fill="#fff" stroke="#222"/>
+<text x="740.4" y="-210.0" text-anchor="middle" dominant-baseline="central" fill="#111">theme</text>
+<rect x="868.8" y="-150.0" width="56.8" height="36.0" rx="4" fill="#fff" stroke="#222"/>
+<text x="897.2" y="-132.0" text-anchor="middle" dominant-baseline="central" fill="#111">json</text>
+</svg>

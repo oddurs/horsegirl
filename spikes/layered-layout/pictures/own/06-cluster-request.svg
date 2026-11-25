@@ -1,0 +1,69 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-16.0 -448.0 1878.0 482.0" width="1878" height="482" font-family="Helvetica, Arial, sans-serif" font-size="13">
+<defs><marker id="tip" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="#444"/></marker></defs>
+<rect x="-16.0" y="-448.0" width="1878.0" height="482.0" fill="#fff"/>
+<rect x="328.0" y="-328.0" width="1118.4" height="328.0" rx="6" fill="#000" fill-opacity="0.04" stroke="#999"/>
+<text x="338.0" y="-309.0" fill="#555">Cluster</text>
+<rect x="577.6" y="-178.0" width="292.0" height="140.0" rx="6" fill="#000" fill-opacity="0.04" stroke="#999"/>
+<text x="587.6" y="-159.0" fill="#555">Web namespace</text>
+<rect x="933.6" y="-238.0" width="498.8" height="200.0" rx="6" fill="#000" fill-opacity="0.04" stroke="#999"/>
+<text x="943.6" y="-219.0" fill="#555">API namespace</text>
+<rect x="1275.6" y="-432.0" width="570.4" height="80.0" rx="6" fill="#000" fill-opacity="0.04" stroke="#999"/>
+<text x="1285.6" y="-413.0" fill="#555">Data</text>
+<polyline points="78.4,-30.0 110.4,-30.0 110.4,-60.0 178.4,-60.0" fill="none" stroke="#444" stroke-width="1.2" marker-end="url(#tip)"/>
+<polyline points="78.4,-30.0 110.4,-30.0 110.4,0.0 142.4,0.0" fill="none" stroke="#444" stroke-width="1.2" marker-end="url(#tip)"/>
+<polyline points="264.0,0.0 296.0,0.0 296.0,-70.0 356.0,-70.0" fill="none" stroke="#444" stroke-width="1.2" marker-end="url(#tip)"/>
+<polyline points="513.6,-70.0 591.6,-70.0" fill="none" stroke="#444" stroke-width="1.2" marker-end="url(#tip)"/>
+<polyline points="513.6,-70.0 545.6,-70.0 545.6,-202.0 889.6,-202.0 889.6,-100.0 947.6,-100.0" fill="none" stroke="#444" stroke-width="1.2" marker-end="url(#tip)"/>
+<polyline points="698.8,-70.0 730.8,-70.0 730.8,-130.0 762.8,-130.0" fill="none" stroke="#444" stroke-width="1.2" marker-end="url(#tip)"/>
+<polyline points="698.8,-70.0 762.8,-70.0" fill="none" stroke="#444" stroke-width="1.2" marker-end="url(#tip)"/>
+<polyline points="1054.8,-100.0 1086.8,-100.0 1086.8,-190.0 1118.8,-190.0" fill="none" stroke="#444" stroke-width="1.2" marker-end="url(#tip)"/>
+<polyline points="1054.8,-100.0 1086.8,-100.0 1086.8,-130.0 1118.8,-130.0" fill="none" stroke="#444" stroke-width="1.2" marker-end="url(#tip)"/>
+<polyline points="1054.8,-100.0 1086.8,-100.0 1086.8,-70.0 1118.8,-70.0" fill="none" stroke="#444" stroke-width="1.2" marker-end="url(#tip)"/>
+<polyline points="855.6,-130.0 901.6,-130.0 901.6,-100.0 947.6,-100.0" fill="none" stroke="#444" stroke-width="1.2" marker-end="url(#tip)"/>
+<polyline points="855.6,-70.0 913.6,-70.0 913.6,-100.0 947.6,-100.0" fill="none" stroke="#444" stroke-width="1.2" marker-end="url(#tip)"/>
+<polyline points="1211.6,-190.0 1238.8,-190.0 1238.8,-384.0 1289.6,-384.0" fill="none" stroke="#444" stroke-width="1.2" marker-end="url(#tip)"/>
+<polyline points="1211.6,-130.0 1248.4,-130.0 1248.4,-384.0 1289.6,-384.0" fill="none" stroke="#444" stroke-width="1.2" marker-end="url(#tip)"/>
+<polyline points="1211.6,-70.0 1258.0,-70.0 1258.0,-384.0 1289.6,-384.0" fill="none" stroke="#444" stroke-width="1.2" marker-end="url(#tip)"/>
+<polyline points="1211.6,-190.0 1238.8,-190.0 1238.8,-130.0 1322.0,-130.0" fill="none" stroke="#444" stroke-width="1.2" marker-end="url(#tip)"/>
+<polyline points="1211.6,-130.0 1322.0,-130.0" fill="none" stroke="#444" stroke-width="1.2" marker-end="url(#tip)"/>
+<polyline points="1211.6,-70.0 1258.0,-70.0 1258.0,-130.0 1322.0,-130.0" fill="none" stroke="#444" stroke-width="1.2" marker-end="url(#tip)"/>
+<polyline points="1418.4,-384.0 1510.4,-384.0" fill="none" stroke="#444" stroke-width="1.2" marker-end="url(#tip)"/>
+<polyline points="1653.6,-384.0 1717.6,-384.0" fill="none" stroke="#444" stroke-width="1.2" marker-end="url(#tip)"/>
+<polyline points="1414.8,-280.0 1521.2,-280.0" fill="none" stroke="#444" stroke-width="1.2" marker-end="url(#tip)"/>
+<polyline points="1211.6,-190.0 1238.8,-190.0 1238.8,-280.0 1293.2,-280.0" fill="none" stroke="#444" stroke-width="1.2" marker-end="url(#tip)"/>
+<polyline points="855.6,-130.0 901.6,-130.0 901.6,-262.0 1229.2,-262.0 1229.2,-280.0 1293.2,-280.0" fill="none" stroke="#444" stroke-width="1.2" marker-end="url(#tip)"/>
+<rect x="0.0" y="-48.0" width="78.4" height="36.0" rx="4" fill="#fff" stroke="#222"/>
+<text x="39.2" y="-30.0" text-anchor="middle" dominant-baseline="central" fill="#111">Browser</text>
+<rect x="178.4" y="-78.0" width="49.6" height="36.0" rx="4" fill="#fff" stroke="#222"/>
+<text x="203.2" y="-60.0" text-anchor="middle" dominant-baseline="central" fill="#111">DNS</text>
+<rect x="142.4" y="-18.0" width="121.6" height="36.0" rx="4" fill="#fff" stroke="#222"/>
+<text x="203.2" y="0.0" text-anchor="middle" dominant-baseline="central" fill="#111">Load balancer</text>
+<rect x="356.0" y="-88.0" width="157.6" height="36.0" rx="4" fill="#fff" stroke="#222"/>
+<text x="434.8" y="-70.0" text-anchor="middle" dominant-baseline="central" fill="#111">Ingress controller</text>
+<rect x="591.6" y="-88.0" width="107.2" height="36.0" rx="4" fill="#fff" stroke="#222"/>
+<text x="645.2" y="-70.0" text-anchor="middle" dominant-baseline="central" fill="#111">Web service</text>
+<rect x="947.6" y="-118.0" width="107.2" height="36.0" rx="4" fill="#fff" stroke="#222"/>
+<text x="1001.2" y="-100.0" text-anchor="middle" dominant-baseline="central" fill="#111">API service</text>
+<rect x="762.8" y="-148.0" width="92.8" height="36.0" rx="4" fill="#fff" stroke="#222"/>
+<text x="809.2" y="-130.0" text-anchor="middle" dominant-baseline="central" fill="#111">Web pod 1</text>
+<rect x="762.8" y="-88.0" width="92.8" height="36.0" rx="4" fill="#fff" stroke="#222"/>
+<text x="809.2" y="-70.0" text-anchor="middle" dominant-baseline="central" fill="#111">Web pod 2</text>
+<rect x="1118.8" y="-208.0" width="92.8" height="36.0" rx="4" fill="#fff" stroke="#222"/>
+<text x="1165.2" y="-190.0" text-anchor="middle" dominant-baseline="central" fill="#111">API pod 1</text>
+<rect x="1118.8" y="-148.0" width="92.8" height="36.0" rx="4" fill="#fff" stroke="#222"/>
+<text x="1165.2" y="-130.0" text-anchor="middle" dominant-baseline="central" fill="#111">API pod 2</text>
+<rect x="1118.8" y="-88.0" width="92.8" height="36.0" rx="4" fill="#fff" stroke="#222"/>
+<text x="1165.2" y="-70.0" text-anchor="middle" dominant-baseline="central" fill="#111">API pod 3</text>
+<rect x="1289.6" y="-402.0" width="128.8" height="36.0" rx="4" fill="#fff" stroke="#222"/>
+<text x="1354.0" y="-384.0" text-anchor="middle" dominant-baseline="central" fill="#111">Database proxy</text>
+<rect x="1322.0" y="-148.0" width="64.0" height="36.0" rx="4" fill="#fff" stroke="#222"/>
+<text x="1354.0" y="-130.0" text-anchor="middle" dominant-baseline="central" fill="#111">Cache</text>
+<rect x="1510.4" y="-402.0" width="143.2" height="36.0" rx="4" fill="#fff" stroke="#222"/>
+<text x="1582.0" y="-384.0" text-anchor="middle" dominant-baseline="central" fill="#111">Primary database</text>
+<rect x="1717.6" y="-402.0" width="114.4" height="36.0" rx="4" fill="#fff" stroke="#222"/>
+<text x="1774.8" y="-384.0" text-anchor="middle" dominant-baseline="central" fill="#111">Read replica</text>
+<rect x="1293.2" y="-298.0" width="121.6" height="36.0" rx="4" fill="#fff" stroke="#222"/>
+<text x="1354.0" y="-280.0" text-anchor="middle" dominant-baseline="central" fill="#111">Metrics agent</text>
+<rect x="1521.2" y="-298.0" width="121.6" height="36.0" rx="4" fill="#fff" stroke="#222"/>
+<text x="1582.0" y="-280.0" text-anchor="middle" dominant-baseline="central" fill="#111">Metrics store</text>
+</svg>

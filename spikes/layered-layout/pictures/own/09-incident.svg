@@ -1,0 +1,83 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-16.0 -280.0 2724.8 314.0" width="2725" height="314" font-family="Helvetica, Arial, sans-serif" font-size="13">
+<defs><marker id="tip" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="#444"/></marker></defs>
+<rect x="-16.0" y="-280.0" width="2724.8" height="314.0" fill="#fff"/>
+<polyline points="107.2,0.0 171.2,0.0" fill="none" stroke="#444" stroke-width="1.2" marker-end="url(#tip)"/>
+<polyline points="292.8,0.0 324.8,0.0 324.8,-30.0 532.0,-30.0 532.0,0.0 564.0,0.0" fill="none" stroke="#444" stroke-width="1.2" marker-end="url(#tip)"/>
+<polyline points="292.8,0.0 356.8,0.0" fill="none" stroke="#444" stroke-width="1.2" marker-end="url(#tip)"/>
+<polyline points="500.0,0.0 564.0,0.0" fill="none" stroke="#444" stroke-width="1.2" marker-end="url(#tip)"/>
+<polyline points="678.4,0.0 742.4,0.0" fill="none" stroke="#444" stroke-width="1.2" marker-end="url(#tip)"/>
+<polyline points="878.4,0.0 910.4,0.0 910.4,-60.0 953.2,-60.0" fill="none" stroke="#444" stroke-width="1.2" marker-end="url(#tip)"/>
+<polyline points="878.4,0.0 942.4,0.0" fill="none" stroke="#444" stroke-width="1.2" marker-end="url(#tip)"/>
+<polyline points="1096.4,-60.0 1139.2,-60.0 1139.2,-150.0 1185.6,-150.0" fill="none" stroke="#444" stroke-width="1.2" marker-end="url(#tip)"/>
+<polyline points="1096.4,-60.0 1139.2,-60.0 1139.2,-90.0 1171.2,-90.0" fill="none" stroke="#444" stroke-width="1.2" marker-end="url(#tip)"/>
+<polyline points="1096.4,-60.0 1139.2,-60.0 1139.2,-30.0 1171.2,-30.0" fill="none" stroke="#444" stroke-width="1.2" marker-end="url(#tip)"/>
+<polyline points="1314.4,-90.0 1354.4,-90.0 1354.4,-126.0 1378.4,-126.0" fill="none" stroke="#444" stroke-width="1.2" marker-end="url(#tip)"/>
+<polyline points="1300.0,-150.0 1338.4,-150.0 1338.4,-126.0 1378.4,-126.0" fill="none" stroke="#444" stroke-width="1.2" marker-end="url(#tip)"/>
+<polyline points="1478.4,-126.0 1518.4,-126.0 1518.4,-246.0 1549.6,-246.0" fill="none" stroke="#444" stroke-width="1.2" marker-end="url(#tip)"/>
+<polyline points="1478.4,-126.0 1518.4,-126.0 1518.4,-186.0 1542.4,-186.0" fill="none" stroke="#444" stroke-width="1.2" marker-end="url(#tip)"/>
+<polyline points="1478.4,-126.0 1567.6,-126.0" fill="none" stroke="#444" stroke-width="1.2" marker-end="url(#tip)"/>
+<polyline points="1478.4,-126.0 1518.4,-126.0 1518.4,-66.0 1571.2,-66.0" fill="none" stroke="#444" stroke-width="1.2" marker-end="url(#tip)"/>
+<polyline points="1671.2,-246.0 1718.4,-246.0 1718.4,-234.0 1742.4,-234.0" fill="none" stroke="#444" stroke-width="1.2" marker-end="url(#tip)"/>
+<polyline points="1678.4,-186.0 1710.4,-186.0 1710.4,-174.0 1767.6,-174.0" fill="none" stroke="#444" stroke-width="1.2" marker-end="url(#tip)"/>
+<polyline points="1653.2,-126.0 1702.4,-126.0 1702.4,-114.0 1771.2,-114.0" fill="none" stroke="#444" stroke-width="1.2" marker-end="url(#tip)"/>
+<polyline points="1649.6,-66.0 1694.4,-66.0 1694.4,-54.0 1746.0,-54.0" fill="none" stroke="#444" stroke-width="1.2" marker-end="url(#tip)"/>
+<polyline points="1746.0,-54.0 1726.4,-54.0 1726.4,-36.0 1518.4,-36.0 1518.4,-126.0 1478.4,-126.0" fill="none" stroke="#444" stroke-width="1.2" marker-end="url(#tip)"/>
+<polyline points="1885.6,-234.0 1909.6,-234.0 1909.6,-126.0 1949.6,-126.0" fill="none" stroke="#444" stroke-width="1.2" marker-end="url(#tip)"/>
+<polyline points="1860.4,-174.0 1901.6,-174.0 1901.6,-126.0 1949.6,-126.0" fill="none" stroke="#444" stroke-width="1.2" marker-end="url(#tip)"/>
+<polyline points="1856.8,-114.0 1917.6,-114.0 1917.6,-126.0 1949.6,-126.0" fill="none" stroke="#444" stroke-width="1.2" marker-end="url(#tip)"/>
+<polyline points="1949.6,-126.0 1925.6,-126.0 1925.6,-24.0 1518.4,-24.0 1518.4,-126.0 1478.4,-126.0" fill="none" stroke="#444" stroke-width="1.2" marker-end="url(#tip)"/>
+<polyline points="2085.6,-126.0 2117.6,-126.0 2117.6,-90.0 2149.6,-90.0" fill="none" stroke="#444" stroke-width="1.2" marker-end="url(#tip)"/>
+<polyline points="2292.8,-90.0 2356.8,-90.0" fill="none" stroke="#444" stroke-width="1.2" marker-end="url(#tip)"/>
+<polyline points="2292.8,-90.0 2316.8,-90.0 2316.8,-30.0 2378.4,-30.0" fill="none" stroke="#444" stroke-width="1.2" marker-end="url(#tip)"/>
+<polyline points="1314.4,-30.0 1502.4,-30.0 1502.4,-12.0 1933.6,-12.0 1933.6,-30.0 2332.8,-30.0 2332.8,-90.0 2356.8,-90.0" fill="none" stroke="#444" stroke-width="1.2" marker-end="url(#tip)"/>
+<polyline points="2492.8,-30.0 2538.4,-30.0 2538.4,-15.0 2578.4,-15.0" fill="none" stroke="#444" stroke-width="1.2" marker-end="url(#tip)"/>
+<polyline points="1107.2,0.0 2554.4,0.0 2554.4,-15.0 2578.4,-15.0" fill="none" stroke="#444" stroke-width="1.2" marker-end="url(#tip)"/>
+<rect x="0.0" y="-18.0" width="107.2" height="36.0" rx="4" fill="#fff" stroke="#222"/>
+<text x="53.6" y="0.0" text-anchor="middle" dominant-baseline="central" fill="#111">Alert fires</text>
+<rect x="171.2" y="-18.0" width="121.6" height="36.0" rx="4" fill="#fff" stroke="#222"/>
+<text x="232.0" y="0.0" text-anchor="middle" dominant-baseline="central" fill="#111">On call paged</text>
+<rect x="564.0" y="-18.0" width="114.4" height="36.0" rx="4" fill="#fff" stroke="#222"/>
+<text x="621.2" y="0.0" text-anchor="middle" dominant-baseline="central" fill="#111">Acknowledged</text>
+<rect x="356.8" y="-18.0" width="143.2" height="36.0" rx="4" fill="#fff" stroke="#222"/>
+<text x="428.4" y="0.0" text-anchor="middle" dominant-baseline="central" fill="#111">Escalate to lead</text>
+<rect x="742.4" y="-18.0" width="136.0" height="36.0" rx="4" fill="#fff" stroke="#222"/>
+<text x="810.4" y="0.0" text-anchor="middle" dominant-baseline="central" fill="#111">Customer impact</text>
+<rect x="953.2" y="-78.0" width="143.2" height="36.0" rx="4" fill="#fff" stroke="#222"/>
+<text x="1024.8" y="-60.0" text-anchor="middle" dominant-baseline="central" fill="#111">Declare incident</text>
+<rect x="942.4" y="-18.0" width="164.8" height="36.0" rx="4" fill="#fff" stroke="#222"/>
+<text x="1024.8" y="0.0" text-anchor="middle" dominant-baseline="central" fill="#111">Low priority ticket</text>
+<rect x="1185.6" y="-168.0" width="114.4" height="36.0" rx="4" fill="#fff" stroke="#222"/>
+<text x="1242.8" y="-150.0" text-anchor="middle" dominant-baseline="central" fill="#111">Open channel</text>
+<rect x="1171.2" y="-108.0" width="143.2" height="36.0" rx="4" fill="#fff" stroke="#222"/>
+<text x="1242.8" y="-90.0" text-anchor="middle" dominant-baseline="central" fill="#111">Assign commander</text>
+<rect x="1171.2" y="-48.0" width="143.2" height="36.0" rx="4" fill="#fff" stroke="#222"/>
+<text x="1242.8" y="-30.0" text-anchor="middle" dominant-baseline="central" fill="#111">Post status page</text>
+<rect x="1378.4" y="-144.0" width="100.0" height="36.0" rx="4" fill="#fff" stroke="#222"/>
+<text x="1428.4" y="-126.0" text-anchor="middle" dominant-baseline="central" fill="#111">Find cause</text>
+<rect x="1549.6" y="-264.0" width="121.6" height="36.0" rx="4" fill="#fff" stroke="#222"/>
+<text x="1610.4" y="-246.0" text-anchor="middle" dominant-baseline="central" fill="#111">Recent deploy</text>
+<rect x="1542.4" y="-204.0" width="136.0" height="36.0" rx="4" fill="#fff" stroke="#222"/>
+<text x="1610.4" y="-186.0" text-anchor="middle" dominant-baseline="central" fill="#111">Dependency down</text>
+<rect x="1567.6" y="-144.0" width="85.6" height="36.0" rx="4" fill="#fff" stroke="#222"/>
+<text x="1610.4" y="-126.0" text-anchor="middle" dominant-baseline="central" fill="#111">Capacity</text>
+<rect x="1571.2" y="-84.0" width="78.4" height="36.0" rx="4" fill="#fff" stroke="#222"/>
+<text x="1610.4" y="-66.0" text-anchor="middle" dominant-baseline="central" fill="#111">Unknown</text>
+<rect x="1742.4" y="-252.0" width="143.2" height="36.0" rx="4" fill="#fff" stroke="#222"/>
+<text x="1814.0" y="-234.0" text-anchor="middle" dominant-baseline="central" fill="#111">Roll back deploy</text>
+<rect x="1767.6" y="-192.0" width="92.8" height="36.0" rx="4" fill="#fff" stroke="#222"/>
+<text x="1814.0" y="-174.0" text-anchor="middle" dominant-baseline="central" fill="#111">Fail over</text>
+<rect x="1771.2" y="-132.0" width="85.6" height="36.0" rx="4" fill="#fff" stroke="#222"/>
+<text x="1814.0" y="-114.0" text-anchor="middle" dominant-baseline="central" fill="#111">Scale up</text>
+<rect x="1746.0" y="-72.0" width="136.0" height="36.0" rx="4" fill="#fff" stroke="#222"/>
+<text x="1814.0" y="-54.0" text-anchor="middle" dominant-baseline="central" fill="#111">Pull in experts</text>
+<rect x="1949.6" y="-144.0" width="136.0" height="36.0" rx="4" fill="#fff" stroke="#222"/>
+<text x="2017.6" y="-126.0" text-anchor="middle" dominant-baseline="central" fill="#111">Verify recovery</text>
+<rect x="2149.6" y="-108.0" width="143.2" height="36.0" rx="4" fill="#fff" stroke="#222"/>
+<text x="2221.2" y="-90.0" text-anchor="middle" dominant-baseline="central" fill="#111">Resolve incident</text>
+<rect x="2356.8" y="-108.0" width="157.6" height="36.0" rx="4" fill="#fff" stroke="#222"/>
+<text x="2435.6" y="-90.0" text-anchor="middle" dominant-baseline="central" fill="#111">Update status page</text>
+<rect x="2378.4" y="-48.0" width="114.4" height="36.0" rx="4" fill="#fff" stroke="#222"/>
+<text x="2435.6" y="-30.0" text-anchor="middle" dominant-baseline="central" fill="#111">Write review</text>
+<rect x="2578.4" y="-33.0" width="114.4" height="36.0" rx="4" fill="#fff" stroke="#222"/>
+<text x="2635.6" y="-15.0" text-anchor="middle" dominant-baseline="central" fill="#111">Action items</text>
+</svg>

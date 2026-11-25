@@ -1,0 +1,49 @@
+Web app, Mobile app, Partner API client -> CDN
+CDN -> API gateway
+API gateway -> Auth, Rate limiter
+API gateway -> Catalog, Cart, Orders, Search, Accounts
+Auth -> Accounts
+Cart -> Catalog, Pricing
+Orders -> Cart, Payments, Inventory, Order database
+Payments -> Card processor, Fraud check, Ledger
+Fraud check -> Risk model
+Inventory -> Warehouse system, Inventory database
+Catalog -> Catalog database, Image store
+Search -> Search index
+Catalog -> Event bus
+Orders -> Event bus
+Payments -> Event bus
+Inventory -> Event bus
+Event bus -> Indexer, Notifier, Analytics sink, Ledger
+Indexer -> Search index
+Notifier -> Email provider, Push provider
+Analytics sink -> Data lake
+Data lake -> Risk model
+Accounts -> Accounts database
+Pricing -> Catalog database
+Rate limiter -> Cache
+Cart -> Cache
+Clients {
+  Web app, Mobile app, Partner API client
+}
+Edge {
+  CDN, API gateway, Auth, Rate limiter
+}
+Services {
+  Shopping {
+    Catalog, Cart, Pricing, Search
+  }
+  Fulfilment {
+    Orders, Payments, Inventory, Fraud check
+  }
+  Accounts
+}
+Async {
+  Event bus, Indexer, Notifier, Analytics sink
+}
+Stores {
+  Catalog database, Order database, Inventory database, Accounts database, Search index, Cache, Ledger, Image store, Data lake
+}
+External {
+  Card processor, Warehouse system, Email provider, Push provider, Risk model
+}

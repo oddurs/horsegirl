@@ -1,0 +1,17 @@
+Cart -> Placed
+Placed -> Payment pending
+Payment pending -> Paid, Payment failed
+Payment failed -> Payment pending
+Payment failed -> Cancelled
+Paid -> Picking
+Picking -> Packed, Out of stock
+Out of stock -> Refunded
+Packed -> Shipped
+Shipped -> Delivered, Lost in transit
+Lost in transit -> Picking
+Delivered -> Return requested
+Return requested -> Refunded
+Placed -> Cancelled
+Refunded -> Closed
+Cancelled -> Closed
+Delivered -> Closed

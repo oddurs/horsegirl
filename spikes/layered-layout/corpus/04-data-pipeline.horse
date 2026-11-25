@@ -1,0 +1,22 @@
+Postgres replica, Stripe export, Web events, Mobile events, CRM dump -> Landing bucket
+Landing bucket -> Schema check
+Schema check -> Quarantine, Raw tables
+Raw tables -> Clean orders, Clean customers, Clean sessions
+Clean orders, Clean customers -> Revenue model
+Clean sessions, Clean customers -> Funnel model
+Revenue model, Funnel model -> Metrics layer
+Metrics layer -> Finance dashboard, Growth dashboard, Reverse sync
+Reverse sync -> CRM dump
+Quarantine -> Data alert
+Sources {
+  Postgres replica, Stripe export, Web events, Mobile events, CRM dump
+}
+Warehouse {
+  Raw tables
+  Staging {
+    Clean orders, Clean customers, Clean sessions
+  }
+  Marts {
+    Revenue model, Funnel model, Metrics layer
+  }
+}

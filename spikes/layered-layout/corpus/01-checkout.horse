@@ -1,0 +1,10 @@
+Web app, Mobile app -> API gateway
+API gateway -> Orders, Payments
+Orders -> Payments
+Orders -> Postgres
+Payments -> Notify
+Notify -> Events
+Events -> Email provider
+Services {
+  Orders, Payments, Notify
+}

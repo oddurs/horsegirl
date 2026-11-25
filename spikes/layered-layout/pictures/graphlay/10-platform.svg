@@ -1,0 +1,132 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-16.0 -487.6 3362.0 1012.1" width="3362" height="1012" font-family="Helvetica, Arial, sans-serif" font-size="13">
+<defs><marker id="tip" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="#444"/></marker></defs>
+<rect x="-16.0" y="-487.6" width="3362.0" height="1012.1" fill="#fff"/>
+<rect x="0.0" y="-143.0" width="223.6" height="200.0" rx="6" fill="#000" fill-opacity="0.04" stroke="#999"/>
+<text x="10.0" y="-124.0" fill="#555">Clients</text>
+<rect x="287.6" y="-191.0" width="509.2" height="296.0" rx="6" fill="#000" fill-opacity="0.04" stroke="#999"/>
+<text x="297.6" y="-172.0" fill="#555">Edge</text>
+<rect x="874.8" y="-471.6" width="1184.8" height="857.1" rx="6" fill="#000" fill-opacity="0.04" stroke="#999"/>
+<text x="884.8" y="-452.6" fill="#555">Services</text>
+<rect x="1578.0" y="-144.5" width="317.6" height="248.0" rx="6" fill="#000" fill-opacity="0.04" stroke="#999"/>
+<text x="1588.0" y="-125.5" fill="#555">Shopping</text>
+<rect x="926.8" y="-191.8" width="517.2" height="342.7" rx="6" fill="#000" fill-opacity="0.04" stroke="#999"/>
+<text x="936.8" y="-172.8" fill="#555">Fulfilment</text>
+<rect x="2209.6" y="-161.0" width="397.6" height="236.0" rx="6" fill="#000" fill-opacity="0.04" stroke="#999"/>
+<text x="2219.6" y="-142.0" fill="#555">Async</text>
+<rect x="2749.2" y="-327.7" width="301.6" height="569.3" rx="6" fill="#000" fill-opacity="0.04" stroke="#999"/>
+<text x="2759.2" y="-308.7" fill="#555">Stores</text>
+<rect x="3120.8" y="-203.0" width="209.2" height="320.0" rx="6" fill="#000" fill-opacity="0.04" stroke="#999"/>
+<text x="3130.8" y="-184.0" fill="#555">External</text>
+<polyline points="132.0,-95.0 239.6,-95.0 239.6,-17.0 339.6,-17.0" fill="none" stroke="#444" stroke-width="1.2" marker-end="url(#tip)"/>
+<polyline points="142.8,-35.0 255.6,-35.0 255.6,-43.0 364.4,-43.0 364.4,-35.0" fill="none" stroke="#444" stroke-width="1.2" marker-end="url(#tip)"/>
+<polyline points="171.6,25.0 271.6,25.0 271.6,9.0 364.4,9.0 364.4,1.0" fill="none" stroke="#444" stroke-width="1.2" marker-end="url(#tip)"/>
+<polyline points="389.2,-17.0 453.2,-17.0" fill="none" stroke="#444" stroke-width="1.2" marker-end="url(#tip)"/>
+<polyline points="506.8,-35.0 506.8,-143.0 659.2,-143.0" fill="none" stroke="#444" stroke-width="1.2" marker-end="url(#tip)"/>
+<polyline points="560.4,-20.2 630.4,-20.2" fill="none" stroke="#444" stroke-width="1.2" marker-end="url(#tip)"/>
+<polyline points="560.4,-33.2 583.4,-33.2 583.4,-95.0 811.8,-95.0 811.8,-413.5 1563.0,-413.5 1563.0,-114.5 1717.2,-114.5 1717.2,-82.7 1765.2,-82.7" fill="none" stroke="#444" stroke-width="1.2" marker-end="url(#tip)"/>
+<polyline points="560.4,-26.7 591.4,-26.7 591.4,-65.0 819.8,-65.0 819.8,-311.5 1555.0,-311.5 1555.0,-66.5 1637.2,-66.5" fill="none" stroke="#444" stroke-width="1.2" marker-end="url(#tip)"/>
+<polyline points="560.4,-13.8 615.4,-13.8 615.4,31.0 835.8,31.0 835.8,-3.5 978.8,-3.5" fill="none" stroke="#444" stroke-width="1.2" marker-end="url(#tip)"/>
+<polyline points="560.4,-7.3 607.4,-7.3 607.4,61.0 827.8,61.0 827.8,-236.5 1539.0,-236.5 1539.0,71.5 1630.0,71.5" fill="none" stroke="#444" stroke-width="1.2" marker-end="url(#tip)"/>
+<polyline points="560.4,-0.8 599.4,-0.8 599.4,91.0 843.8,91.0 843.8,222.3 1142.6,222.3" fill="none" stroke="#444" stroke-width="1.2" marker-end="url(#tip)"/>
+<polyline points="716.0,-143.0 859.8,-143.0 859.8,238.5 1142.6,238.5" fill="none" stroke="#444" stroke-width="1.2" marker-end="url(#tip)"/>
+<polyline points="1694.0,-66.5 1765.2,-66.5" fill="none" stroke="#444" stroke-width="1.2" marker-end="url(#tip)"/>
+<polyline points="1694.0,-50.3 1749.2,-50.3 1749.2,-6.5 1765.2,-6.5" fill="none" stroke="#444" stroke-width="1.2" marker-end="url(#tip)"/>
+<polyline points="1050.0,-19.7 1076.3,-19.7 1076.3,-81.5 1547.0,-81.5 1547.0,-50.3 1637.2,-50.3" fill="none" stroke="#444" stroke-width="1.2" marker-end="url(#tip)"/>
+<polyline points="1050.0,-3.5 1117.6,-3.5" fill="none" stroke="#444" stroke-width="1.2" marker-end="url(#tip)"/>
+<polyline points="1014.4,-21.5 1014.4,-141.5 1114.0,-141.5" fill="none" stroke="#444" stroke-width="1.2" marker-end="url(#tip)"/>
+<polyline points="1050.0,12.7 1099.0,12.7 1099.0,104.5 2654.2,104.5 2654.2,-275.0 2855.6,-275.0" fill="none" stroke="#444" stroke-width="1.2" marker-end="url(#tip)"/>
+<polyline points="1203.2,-19.7 1245.8,-19.7 1245.8,-51.5 1531.0,-51.5 1531.0,163.5 1966.6,163.5 1966.6,91.5 2074.6,91.5 2074.6,-461.7 3105.8,-461.7 3105.8,-155.0 3180.0,-155.0" fill="none" stroke="#444" stroke-width="1.2" marker-end="url(#tip)"/>
+<polyline points="1203.2,-8.9 1276.8,-8.9" fill="none" stroke="#444" stroke-width="1.2" marker-end="url(#tip)"/>
+<polyline points="1203.2,1.9 1261.8,1.9 1261.8,44.5 1523.0,44.5 1523.0,193.5 1974.6,193.5 1974.6,117.5 2662.2,117.5 2662.2,-206.0 2884.4,-206.0" fill="none" stroke="#444" stroke-width="1.2" marker-end="url(#tip)"/>
+<polyline points="1384.0,-3.5 1515.0,-3.5 1515.0,223.5 1982.6,223.5 1982.6,143.5 2082.6,143.5 2082.6,-431.7 3097.8,-431.7 3097.8,-35.0 3194.4,-35.0" fill="none" stroke="#444" stroke-width="1.2" marker-end="url(#tip)"/>
+<polyline points="1206.8,-125.3 1499.0,-125.3 1499.0,253.5 1990.6,253.5 1990.6,169.5 2090.6,169.5 2090.6,-401.7 3081.8,-401.7 3081.8,-95.0 3172.8,-95.0" fill="none" stroke="#444" stroke-width="1.2" marker-end="url(#tip)"/>
+<polyline points="1206.8,-141.5 2186.6,-141.5 2186.6,165.0 2702.2,165.0 2702.2,25.0 2841.2,25.0" fill="none" stroke="#444" stroke-width="1.2" marker-end="url(#tip)"/>
+<polyline points="1843.6,-66.5 2170.6,-66.5 2170.6,-146.0 2848.4,-146.0" fill="none" stroke="#444" stroke-width="1.2" marker-end="url(#tip)"/>
+<polyline points="1804.4,-84.5 1804.4,-92.5 2178.6,-92.5 2178.6,225.0 2710.2,225.0 2710.2,85.0 2866.4,85.0" fill="none" stroke="#444" stroke-width="1.2" marker-end="url(#tip)"/>
+<polyline points="1701.2,71.5 2162.6,71.5 2162.6,255.0 2694.2,255.0 2694.2,-78.8 2862.8,-78.8" fill="none" stroke="#444" stroke-width="1.2" marker-end="url(#tip)"/>
+<polyline points="1804.4,-48.5 1804.4,-40.5 2098.6,-40.5 2098.6,-17.0 2269.6,-17.0" fill="none" stroke="#444" stroke-width="1.2" marker-end="url(#tip)"/>
+<polyline points="1014.4,14.5 1014.4,134.5 2106.6,134.5 2106.6,-43.0 2286.8,-43.0 2286.8,-35.0" fill="none" stroke="#444" stroke-width="1.2" marker-end="url(#tip)"/>
+<polyline points="1203.2,12.7 1253.8,12.7 1253.8,74.5 1483.0,74.5 1483.0,343.5 2014.6,343.5 2014.6,247.5 2122.6,247.5 2122.6,-0.8 2269.6,-0.8" fill="none" stroke="#444" stroke-width="1.2" marker-end="url(#tip)"/>
+<polyline points="1206.8,-157.7 2194.6,-157.7 2194.6,35.0 2286.8,35.0 2286.8,1.0" fill="none" stroke="#444" stroke-width="1.2" marker-end="url(#tip)"/>
+<polyline points="2345.2,-35.0 2345.2,-113.0 2451.6,-113.0" fill="none" stroke="#444" stroke-width="1.2" marker-end="url(#tip)"/>
+<polyline points="2345.2,1.0 2345.2,43.0 2448.0,43.0" fill="none" stroke="#444" stroke-width="1.2" marker-end="url(#tip)"/>
+<polyline points="2362.4,-17.0 2426.4,-17.0" fill="none" stroke="#444" stroke-width="1.2" marker-end="url(#tip)"/>
+<polyline points="2362.4,-33.2 2394.4,-33.2 2394.4,-65.0 2638.2,-65.0 2638.2,-226.3 2884.4,-226.3" fill="none" stroke="#444" stroke-width="1.2" marker-end="url(#tip)"/>
+<polyline points="2530.0,-113.0 2646.2,-113.0 2646.2,-95.0 2862.8,-95.0" fill="none" stroke="#444" stroke-width="1.2" marker-end="url(#tip)"/>
+<polyline points="2533.6,43.0 2622.2,43.0 2622.2,-371.7 3073.8,-371.7 3073.8,25.0 3180.0,25.0" fill="none" stroke="#444" stroke-width="1.2" marker-end="url(#tip)"/>
+<polyline points="2533.6,26.8 2630.2,26.8 2630.2,-341.7 3065.8,-341.7 3065.8,85.0 3183.6,85.0" fill="none" stroke="#444" stroke-width="1.2" marker-end="url(#tip)"/>
+<polyline points="2555.2,-17.0 2670.2,-17.0 2670.2,-35.0 2873.6,-35.0" fill="none" stroke="#444" stroke-width="1.2" marker-end="url(#tip)"/>
+<polyline points="2966.4,-35.0 3089.8,-35.0 3089.8,-18.8 3194.4,-18.8" fill="none" stroke="#444" stroke-width="1.2" marker-end="url(#tip)"/>
+<polyline points="1228.2,238.5 2154.6,238.5 2154.6,285.0 2718.2,285.0 2718.2,145.0 2844.8,145.0" fill="none" stroke="#444" stroke-width="1.2" marker-end="url(#tip)"/>
+<polyline points="1843.6,-6.5 2146.6,-6.5 2146.6,-166.3 2848.4,-166.3" fill="none" stroke="#444" stroke-width="1.2" marker-end="url(#tip)"/>
+<polyline points="744.8,-17.0 851.8,-17.0 851.8,508.6 2734.2,508.6 2734.2,193.7 2888.0,193.7" fill="none" stroke="#444" stroke-width="1.2" marker-end="url(#tip)"/>
+<polyline points="1665.6,-48.5 1665.6,41.5 2138.6,41.5 2138.6,345.0 2726.2,345.0 2726.2,214.0 2888.0,214.0" fill="none" stroke="#444" stroke-width="1.2" marker-end="url(#tip)"/>
+<rect x="53.6" y="-113.0" width="78.4" height="36.0" rx="4" fill="#fff" stroke="#222"/>
+<text x="92.8" y="-95.0" text-anchor="middle" dominant-baseline="central" fill="#111">Web app</text>
+<rect x="339.6" y="-35.0" width="49.6" height="36.0" rx="4" fill="#fff" stroke="#222"/>
+<text x="364.4" y="-17.0" text-anchor="middle" dominant-baseline="central" fill="#111">CDN</text>
+<rect x="42.8" y="-53.0" width="100.0" height="36.0" rx="4" fill="#fff" stroke="#222"/>
+<text x="92.8" y="-35.0" text-anchor="middle" dominant-baseline="central" fill="#111">Mobile app</text>
+<rect x="14.0" y="7.0" width="157.6" height="36.0" rx="4" fill="#fff" stroke="#222"/>
+<text x="92.8" y="25.0" text-anchor="middle" dominant-baseline="central" fill="#111">Partner API client</text>
+<rect x="453.2" y="-35.0" width="107.2" height="36.0" rx="4" fill="#fff" stroke="#222"/>
+<text x="506.8" y="-17.0" text-anchor="middle" dominant-baseline="central" fill="#111">API gateway</text>
+<rect x="659.2" y="-161.0" width="56.8" height="36.0" rx="4" fill="#fff" stroke="#222"/>
+<text x="687.6" y="-143.0" text-anchor="middle" dominant-baseline="central" fill="#111">Auth</text>
+<rect x="630.4" y="-35.0" width="114.4" height="36.0" rx="4" fill="#fff" stroke="#222"/>
+<text x="687.6" y="-17.0" text-anchor="middle" dominant-baseline="central" fill="#111">Rate limiter</text>
+<rect x="1765.2" y="-84.5" width="78.4" height="36.0" rx="4" fill="#fff" stroke="#222"/>
+<text x="1804.4" y="-66.5" text-anchor="middle" dominant-baseline="central" fill="#111">Catalog</text>
+<rect x="1637.2" y="-84.5" width="56.8" height="36.0" rx="4" fill="#fff" stroke="#222"/>
+<text x="1665.6" y="-66.5" text-anchor="middle" dominant-baseline="central" fill="#111">Cart</text>
+<rect x="978.8" y="-21.5" width="71.2" height="36.0" rx="4" fill="#fff" stroke="#222"/>
+<text x="1014.4" y="-3.5" text-anchor="middle" dominant-baseline="central" fill="#111">Orders</text>
+<rect x="1630.0" y="53.5" width="71.2" height="36.0" rx="4" fill="#fff" stroke="#222"/>
+<text x="1665.6" y="71.5" text-anchor="middle" dominant-baseline="central" fill="#111">Search</text>
+<rect x="1142.6" y="220.5" width="85.6" height="36.0" rx="4" fill="#fff" stroke="#222"/>
+<text x="1185.4" y="238.5" text-anchor="middle" dominant-baseline="central" fill="#111">Accounts</text>
+<rect x="1765.2" y="-24.5" width="78.4" height="36.0" rx="4" fill="#fff" stroke="#222"/>
+<text x="1804.4" y="-6.5" text-anchor="middle" dominant-baseline="central" fill="#111">Pricing</text>
+<rect x="1117.6" y="-21.5" width="85.6" height="36.0" rx="4" fill="#fff" stroke="#222"/>
+<text x="1160.4" y="-3.5" text-anchor="middle" dominant-baseline="central" fill="#111">Payments</text>
+<rect x="1114.0" y="-159.5" width="92.8" height="36.0" rx="4" fill="#fff" stroke="#222"/>
+<text x="1160.4" y="-141.5" text-anchor="middle" dominant-baseline="central" fill="#111">Inventory</text>
+<rect x="2855.6" y="-293.0" width="128.8" height="36.0" rx="4" fill="#fff" stroke="#222"/>
+<text x="2920.0" y="-275.0" text-anchor="middle" dominant-baseline="central" fill="#111">Order database</text>
+<rect x="3180.0" y="-173.0" width="128.8" height="36.0" rx="4" fill="#fff" stroke="#222"/>
+<text x="3244.4" y="-155.0" text-anchor="middle" dominant-baseline="central" fill="#111">Card processor</text>
+<rect x="1276.8" y="-21.5" width="107.2" height="36.0" rx="4" fill="#fff" stroke="#222"/>
+<text x="1330.4" y="-3.5" text-anchor="middle" dominant-baseline="central" fill="#111">Fraud check</text>
+<rect x="2884.4" y="-233.0" width="71.2" height="36.0" rx="4" fill="#fff" stroke="#222"/>
+<text x="2920.0" y="-215.0" text-anchor="middle" dominant-baseline="central" fill="#111">Ledger</text>
+<rect x="3194.4" y="-53.0" width="100.0" height="36.0" rx="4" fill="#fff" stroke="#222"/>
+<text x="3244.4" y="-35.0" text-anchor="middle" dominant-baseline="central" fill="#111">Risk model</text>
+<rect x="3172.8" y="-113.0" width="143.2" height="36.0" rx="4" fill="#fff" stroke="#222"/>
+<text x="3244.4" y="-95.0" text-anchor="middle" dominant-baseline="central" fill="#111">Warehouse system</text>
+<rect x="2841.2" y="7.0" width="157.6" height="36.0" rx="4" fill="#fff" stroke="#222"/>
+<text x="2920.0" y="25.0" text-anchor="middle" dominant-baseline="central" fill="#111">Inventory database</text>
+<rect x="2848.4" y="-173.0" width="143.2" height="36.0" rx="4" fill="#fff" stroke="#222"/>
+<text x="2920.0" y="-155.0" text-anchor="middle" dominant-baseline="central" fill="#111">Catalog database</text>
+<rect x="2866.4" y="67.0" width="107.2" height="36.0" rx="4" fill="#fff" stroke="#222"/>
+<text x="2920.0" y="85.0" text-anchor="middle" dominant-baseline="central" fill="#111">Image store</text>
+<rect x="2862.8" y="-113.0" width="114.4" height="36.0" rx="4" fill="#fff" stroke="#222"/>
+<text x="2920.0" y="-95.0" text-anchor="middle" dominant-baseline="central" fill="#111">Search index</text>
+<rect x="2269.6" y="-35.0" width="92.8" height="36.0" rx="4" fill="#fff" stroke="#222"/>
+<text x="2316.0" y="-17.0" text-anchor="middle" dominant-baseline="central" fill="#111">Event bus</text>
+<rect x="2451.6" y="-131.0" width="78.4" height="36.0" rx="4" fill="#fff" stroke="#222"/>
+<text x="2490.8" y="-113.0" text-anchor="middle" dominant-baseline="central" fill="#111">Indexer</text>
+<rect x="2448.0" y="25.0" width="85.6" height="36.0" rx="4" fill="#fff" stroke="#222"/>
+<text x="2490.8" y="43.0" text-anchor="middle" dominant-baseline="central" fill="#111">Notifier</text>
+<rect x="2426.4" y="-35.0" width="128.8" height="36.0" rx="4" fill="#fff" stroke="#222"/>
+<text x="2490.8" y="-17.0" text-anchor="middle" dominant-baseline="central" fill="#111">Analytics sink</text>
+<rect x="3180.0" y="7.0" width="128.8" height="36.0" rx="4" fill="#fff" stroke="#222"/>
+<text x="3244.4" y="25.0" text-anchor="middle" dominant-baseline="central" fill="#111">Email provider</text>
+<rect x="3183.6" y="67.0" width="121.6" height="36.0" rx="4" fill="#fff" stroke="#222"/>
+<text x="3244.4" y="85.0" text-anchor="middle" dominant-baseline="central" fill="#111">Push provider</text>
+<rect x="2873.6" y="-53.0" width="92.8" height="36.0" rx="4" fill="#fff" stroke="#222"/>
+<text x="2920.0" y="-35.0" text-anchor="middle" dominant-baseline="central" fill="#111">Data lake</text>
+<rect x="2844.8" y="127.0" width="150.4" height="36.0" rx="4" fill="#fff" stroke="#222"/>
+<text x="2920.0" y="145.0" text-anchor="middle" dominant-baseline="central" fill="#111">Accounts database</text>
+<rect x="2888.0" y="187.0" width="64.0" height="36.0" rx="4" fill="#fff" stroke="#222"/>
+<text x="2920.0" y="205.0" text-anchor="middle" dominant-baseline="central" fill="#111">Cache</text>
+</svg>
