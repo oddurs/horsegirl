@@ -49,6 +49,11 @@ Each tool takes the whole text of one file, not a path:
 each declares the matching `outputSchema`. The result also holds one text
 block with the same JSON. The keys of every object are sorted by name.
 
+The `tools/list` result is a public contract. A test holds it to
+`crates/horsegirl/tests/golden/tools.json` in both eras, so a change to a
+schema shows as a diff in that file. A schema uses only the `format` values
+that JSON Schema 2020-12 defines.
+
 ### `check`
 
 ```json

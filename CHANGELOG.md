@@ -12,7 +12,9 @@ the project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   file. `check`, `fix` and `draw` return `structuredContent` with an
   `outputSchema`, and a diagnostic has the shape of the `--json` line.
   `horsegirl mcp --config` prints the entry for the configuration of a client.
-  `docs/mcp.md` states each shape.
+  `docs/mcp.md` states each shape. The tool schemas are committed in
+  `crates/horsegirl/tests/golden/tools.json`, and a test holds the server to
+  them for clients of `2025-11-25` and of `2026-07-28`.
 - A version tag publishes static binaries for Linux and macOS on x86_64 and
   aarch64, with `SHA256SUMS` and a build attestation. `install.sh` installs
   the binary to `~/.local/bin` and refuses an archive whose checksum does not
@@ -24,6 +26,9 @@ the project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   one `fix`, and against the checker, and the diagnostics hit most often.
   `horsegirl_core::check::fix_all` applies every safe fix as `horsegirl fix`
   does.
+- `docs/quickstart.md` and `docs/reference.md`: the way to a first picture
+  and the five rules, each command and each code. A test holds every
+  example of both pages to a golden case.
 - `horsegirl check [--json] [FILE]` prints every diagnostic of a file, as text
   or as one JSON object per line. `horsegirl fix [--json] [FILE]` applies every
   safe fix in place, changes no other byte, and prints what is left.
@@ -32,6 +37,11 @@ the project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   exits 0 when the file has no error, 1 when it has one, and 2 for a usage
   mistake. `horsegirl_core::diagnostic::apply_safe` makes the safe fixes.
 - `horsegirl fmt` prints the errors of a file in the text form of a diagnostic.
+- `E0010`: a link with a second arrow, as in `A -> B -> C`. It was `E0001`
+  with no fix. The fix writes `A -> B` and `B -> C` on two lines with the same
+  indent. The fix is safe when the line ends at the last name. When the line
+  ends in a label, a `?` or a citation, the fix gives that end to each link and
+  is suggested, because the parser cannot know which link it belongs to.
 - `W0108`: a name that ends in `/` followed by braces that hold one bare name,
   as in `GET /users/{id}`. The parser reads a group; the warning suggests
   writing the whole text in double quotes.

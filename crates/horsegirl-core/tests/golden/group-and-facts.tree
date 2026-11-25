@@ -1,0 +1,52 @@
+File
+  Things
+    Names
+      Name "Services"
+    Block
+      Open "{"
+      Things
+        Names
+          Name "Orders"
+          Comma ","
+          Name "Payments"
+        Block
+          Open "{"
+          Facts
+            Fact
+              Key "owner"
+              Colon ":"
+              Value "Commerce"
+          Close "}"
+      Close "}"
+  Things
+    Names
+      Name "Notify"
+    Block
+      Open "{"
+      Facts
+        Fact
+          Key "owner"
+          Colon ":"
+          Value "Growth"
+      Close "}"
+  Link
+    Names
+      Name "Web app"
+    Arrow "->"
+    Names
+      Name "Orders"
+  Link
+    Names
+      Name "Orders"
+    Arrow "->"
+    Names
+      Name "Payments"
+  Link
+    Names
+      Name "Payments"
+    Arrow "->"
+    Names
+      Name "Notify"
+  Show
+    Keyword "show"
+    Lens "flow"

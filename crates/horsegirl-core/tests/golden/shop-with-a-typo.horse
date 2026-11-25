@@ -1,0 +1,5 @@
+Web app, Mobile app -> API gateway
+API gateway -> Orders, Payments
+Orders -> Postgres
+API gatway -> Postgres
+show flow

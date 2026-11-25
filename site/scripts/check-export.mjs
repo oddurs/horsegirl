@@ -39,4 +39,13 @@ if (fonts.length !== 3 || licences.length !== 3 || foreign.length > 0) {
   process.exit(1);
 }
 
+// The gallery draws its pictures while the site builds, from the sources in
+// the repository. A page with fewer than six pictures means a build lost them.
+const gallery = readFileSync(join(out, "gallery", "index.html"), "utf8");
+const pictures = gallery.match(/<svg[^>]*class="horsegirl"/g)?.length ?? 0;
+if (pictures < 6) {
+  console.error(`check-export: the gallery holds ${pictures} drawn pictures, expected at least 6`);
+  process.exit(1);
+}
+
 console.log(`check-export: ${seen.size} paths served from ${base}/, all present`);

@@ -1,0 +1,11 @@
+[
+  {
+    "code": "W0010",
+    "line": 13,
+    "column": 1,
+    "span": [309, 323],
+    "text": "story checkout",
+    "message": "Stories arrive in v0.2. This version parses the story `checkout` and does not order its links. You do not need to change the file.",
+    "fix": null
+  }
+]

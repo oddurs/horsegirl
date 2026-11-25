@@ -1,0 +1,6 @@
+Services { Orders, Payments { owner: Commerce } }
+Notify { owner: Growth }
+Web app -> Orders
+Orders -> Payments
+Payments -> Notify
+show flow

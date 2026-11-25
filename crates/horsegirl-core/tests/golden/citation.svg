@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" class="horsegirl" role="img" width="220.03" height="38" viewBox="-1 -1 220.03 38" font-size="14">
+<title>citation</title>
+<desc>2 things, 0 groups and 1 link.</desc>
+<style>
+.horsegirl{color-scheme:var(--hg-scheme,light dark);font-family:var(--hg-font,Arial,"Liberation Sans",Helvetica,sans-serif)}
+.horsegirl .page{fill:var(--hg-paper,light-dark(#FFFFFF,#15171B))}
+.horsegirl .group{fill:var(--hg-c0,light-dark(#F3F4F6,#23272E));stroke:var(--hg-line,light-dark(#D8DCE2,#343941))}
+.horsegirl .thing{fill:var(--hg-paper,light-dark(#FFFFFF,#15171B));stroke:var(--hg-muted,light-dark(#667080,#9AA4B2))}
+.horsegirl .link{fill:none;stroke:var(--hg-ink,light-dark(#1F2328,#E6E8EB))}
+.horsegirl .head{fill:var(--hg-accent,light-dark(#2F5FD0,#7AA2FF))}
+.horsegirl .label{fill:var(--hg-ink,light-dark(#1F2328,#E6E8EB))}
+.horsegirl .thing.slot-1{fill:var(--hg-c1,light-dark(#E1EAFB,#1D2B47));stroke:var(--hg-accent,light-dark(#2F5FD0,#7AA2FF))}
+.horsegirl .thing.slot-2{fill:var(--hg-c2,light-dark(#E0F2E8,#17322A));stroke:var(--hg-s2,light-dark(#1F7A55,#5FCB9B))}
+.horsegirl .thing.slot-3{fill:var(--hg-c3,light-dark(#FAEFD6,#3A2F17));stroke:var(--hg-s3,light-dark(#A8621B,#E3A75C))}
+</style>
+<defs>
+<marker id="hg-head" viewBox="0 0 8 8" refX="8" refY="4" markerWidth="8" markerHeight="8" markerUnits="userSpaceOnUse" orient="auto"><path class="head" d="M0,0 L8,4 L0,8 z"/></marker>
+</defs>
+<rect class="page" x="-1" y="-1" width="220.03" height="38"/>
+<polyline class="link" points="70.79,18 134.79,18" marker-end="url(#hg-head)"/>
+<rect class="thing" x="0" y="0" width="70.79" height="36" rx="4"/>
+<rect class="thing" x="134.79" y="0" width="83.25" height="36" rx="4"/>
+<text class="label" x="35.39" y="22.85" text-anchor="middle" textLength="42.79" lengthAdjust="spacingAndGlyphs">Orders</text>
+<text class="label" x="176.41" y="22.85" text-anchor="middle" textLength="55.25" lengthAdjust="spacingAndGlyphs">Postgres</text>
+<text class="label" x="102.79" y="22.85" text-anchor="middle" textLength="29.57" lengthAdjust="spacingAndGlyphs">save</text>
+</svg>

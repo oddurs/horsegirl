@@ -1,0 +1,585 @@
+[
+  {
+    "description": "Check the text of a horsegirl file. Returns every diagnostic with its code, span, message and fix, and the count of each severity.",
+    "inputSchema": {
+      "$schema": "https://json-schema.org/draft/2020-12/schema",
+      "properties": {
+        "source": {
+          "description": "The whole text of one horsegirl file.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "source"
+      ],
+      "type": "object"
+    },
+    "name": "check",
+    "outputSchema": {
+      "$defs": {
+        "Confidence": {
+          "oneOf": [
+            {
+              "const": "safe",
+              "description": "`fix` applies it with no question.",
+              "type": "string"
+            },
+            {
+              "const": "suggested",
+              "description": "An agent decides.",
+              "type": "string"
+            }
+          ]
+        },
+        "Diagnostic": {
+          "description": "What is wrong in the source, where, and the fix when one exists.",
+          "properties": {
+            "code": {
+              "description": "`E`, `W` or `N` and four digits. Stable across releases.",
+              "type": "string"
+            },
+            "fix": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/Fix"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "The replacement. Always present; `null` when there is none."
+            },
+            "message": {
+              "description": "Names the cause and says what to do next.",
+              "type": "string"
+            },
+            "severity": {
+              "$ref": "#/$defs/Severity"
+            },
+            "span": {
+              "$ref": "#/$defs/Span"
+            }
+          },
+          "required": [
+            "code",
+            "severity",
+            "message",
+            "span",
+            "fix"
+          ],
+          "type": "object"
+        },
+        "Edit": {
+          "properties": {
+            "span": {
+              "$ref": "#/$defs/Span"
+            },
+            "text": {
+              "description": "Replaces the text in `span`. An empty text deletes it.",
+              "type": "string"
+            }
+          },
+          "required": [
+            "span",
+            "text"
+          ],
+          "type": "object"
+        },
+        "Fix": {
+          "properties": {
+            "confidence": {
+              "$ref": "#/$defs/Confidence"
+            },
+            "description": {
+              "description": "What the fix does, in one sentence.",
+              "type": "string"
+            },
+            "edits": {
+              "description": "Edits against the original source. They do not overlap and are sorted.",
+              "items": {
+                "$ref": "#/$defs/Edit"
+              },
+              "type": "array"
+            }
+          },
+          "required": [
+            "confidence",
+            "description",
+            "edits"
+          ],
+          "type": "object"
+        },
+        "Position": {
+          "description": "Lines and columns start at 1. A column counts Unicode scalar values.",
+          "properties": {
+            "column": {
+              "minimum": 1,
+              "type": "integer"
+            },
+            "line": {
+              "minimum": 1,
+              "type": "integer"
+            }
+          },
+          "required": [
+            "line",
+            "column"
+          ],
+          "type": "object"
+        },
+        "Severity": {
+          "enum": [
+            "error",
+            "warning",
+            "note"
+          ],
+          "type": "string"
+        },
+        "Span": {
+          "description": "A range in the source. `end` is exclusive.",
+          "properties": {
+            "end": {
+              "$ref": "#/$defs/Position"
+            },
+            "start": {
+              "$ref": "#/$defs/Position"
+            }
+          },
+          "required": [
+            "start",
+            "end"
+          ],
+          "type": "object"
+        }
+      },
+      "$schema": "https://json-schema.org/draft/2020-12/schema",
+      "properties": {
+        "diagnostics": {
+          "description": "Every diagnostic, sorted by start position, then by code.",
+          "items": {
+            "$ref": "#/$defs/Diagnostic"
+          },
+          "type": "array"
+        },
+        "errors": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "notes": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "warnings": {
+          "minimum": 0,
+          "type": "integer"
+        }
+      },
+      "required": [
+        "diagnostics",
+        "errors",
+        "warnings",
+        "notes"
+      ],
+      "type": "object"
+    }
+  },
+  {
+    "description": "Draw the text of a horsegirl file as SVG, through the lens of its first show line, or through flow when it has none. A file with an error gives no picture: svg is null, and the diagnostics say what to fix.",
+    "inputSchema": {
+      "$schema": "https://json-schema.org/draft/2020-12/schema",
+      "properties": {
+        "source": {
+          "description": "The whole text of one horsegirl file.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "source"
+      ],
+      "type": "object"
+    },
+    "name": "draw",
+    "outputSchema": {
+      "$defs": {
+        "Confidence": {
+          "oneOf": [
+            {
+              "const": "safe",
+              "description": "`fix` applies it with no question.",
+              "type": "string"
+            },
+            {
+              "const": "suggested",
+              "description": "An agent decides.",
+              "type": "string"
+            }
+          ]
+        },
+        "Diagnostic": {
+          "description": "What is wrong in the source, where, and the fix when one exists.",
+          "properties": {
+            "code": {
+              "description": "`E`, `W` or `N` and four digits. Stable across releases.",
+              "type": "string"
+            },
+            "fix": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/Fix"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "The replacement. Always present; `null` when there is none."
+            },
+            "message": {
+              "description": "Names the cause and says what to do next.",
+              "type": "string"
+            },
+            "severity": {
+              "$ref": "#/$defs/Severity"
+            },
+            "span": {
+              "$ref": "#/$defs/Span"
+            }
+          },
+          "required": [
+            "code",
+            "severity",
+            "message",
+            "span",
+            "fix"
+          ],
+          "type": "object"
+        },
+        "Edit": {
+          "properties": {
+            "span": {
+              "$ref": "#/$defs/Span"
+            },
+            "text": {
+              "description": "Replaces the text in `span`. An empty text deletes it.",
+              "type": "string"
+            }
+          },
+          "required": [
+            "span",
+            "text"
+          ],
+          "type": "object"
+        },
+        "Fix": {
+          "properties": {
+            "confidence": {
+              "$ref": "#/$defs/Confidence"
+            },
+            "description": {
+              "description": "What the fix does, in one sentence.",
+              "type": "string"
+            },
+            "edits": {
+              "description": "Edits against the original source. They do not overlap and are sorted.",
+              "items": {
+                "$ref": "#/$defs/Edit"
+              },
+              "type": "array"
+            }
+          },
+          "required": [
+            "confidence",
+            "description",
+            "edits"
+          ],
+          "type": "object"
+        },
+        "Position": {
+          "description": "Lines and columns start at 1. A column counts Unicode scalar values.",
+          "properties": {
+            "column": {
+              "minimum": 1,
+              "type": "integer"
+            },
+            "line": {
+              "minimum": 1,
+              "type": "integer"
+            }
+          },
+          "required": [
+            "line",
+            "column"
+          ],
+          "type": "object"
+        },
+        "Severity": {
+          "enum": [
+            "error",
+            "warning",
+            "note"
+          ],
+          "type": "string"
+        },
+        "Span": {
+          "description": "A range in the source. `end` is exclusive.",
+          "properties": {
+            "end": {
+              "$ref": "#/$defs/Position"
+            },
+            "start": {
+              "$ref": "#/$defs/Position"
+            }
+          },
+          "required": [
+            "start",
+            "end"
+          ],
+          "type": "object"
+        }
+      },
+      "$schema": "https://json-schema.org/draft/2020-12/schema",
+      "properties": {
+        "diagnostics": {
+          "description": "Every diagnostic of the file.",
+          "items": {
+            "$ref": "#/$defs/Diagnostic"
+          },
+          "type": "array"
+        },
+        "errors": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "notes": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "svg": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "The picture as SVG, or `null` when the file has an error."
+        },
+        "warnings": {
+          "minimum": 0,
+          "type": "integer"
+        }
+      },
+      "required": [
+        "svg",
+        "diagnostics",
+        "errors",
+        "warnings",
+        "notes"
+      ],
+      "type": "object"
+    }
+  },
+  {
+    "description": "Make every safe fix in the text of a horsegirl file, until none is left. Returns the fixed text, how many fixes were made, and every diagnostic that is left. A suggested fix is left for you to decide.",
+    "inputSchema": {
+      "$schema": "https://json-schema.org/draft/2020-12/schema",
+      "properties": {
+        "source": {
+          "description": "The whole text of one horsegirl file.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "source"
+      ],
+      "type": "object"
+    },
+    "name": "fix",
+    "outputSchema": {
+      "$defs": {
+        "Confidence": {
+          "oneOf": [
+            {
+              "const": "safe",
+              "description": "`fix` applies it with no question.",
+              "type": "string"
+            },
+            {
+              "const": "suggested",
+              "description": "An agent decides.",
+              "type": "string"
+            }
+          ]
+        },
+        "Diagnostic": {
+          "description": "What is wrong in the source, where, and the fix when one exists.",
+          "properties": {
+            "code": {
+              "description": "`E`, `W` or `N` and four digits. Stable across releases.",
+              "type": "string"
+            },
+            "fix": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/Fix"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "The replacement. Always present; `null` when there is none."
+            },
+            "message": {
+              "description": "Names the cause and says what to do next.",
+              "type": "string"
+            },
+            "severity": {
+              "$ref": "#/$defs/Severity"
+            },
+            "span": {
+              "$ref": "#/$defs/Span"
+            }
+          },
+          "required": [
+            "code",
+            "severity",
+            "message",
+            "span",
+            "fix"
+          ],
+          "type": "object"
+        },
+        "Edit": {
+          "properties": {
+            "span": {
+              "$ref": "#/$defs/Span"
+            },
+            "text": {
+              "description": "Replaces the text in `span`. An empty text deletes it.",
+              "type": "string"
+            }
+          },
+          "required": [
+            "span",
+            "text"
+          ],
+          "type": "object"
+        },
+        "Fix": {
+          "properties": {
+            "confidence": {
+              "$ref": "#/$defs/Confidence"
+            },
+            "description": {
+              "description": "What the fix does, in one sentence.",
+              "type": "string"
+            },
+            "edits": {
+              "description": "Edits against the original source. They do not overlap and are sorted.",
+              "items": {
+                "$ref": "#/$defs/Edit"
+              },
+              "type": "array"
+            }
+          },
+          "required": [
+            "confidence",
+            "description",
+            "edits"
+          ],
+          "type": "object"
+        },
+        "Position": {
+          "description": "Lines and columns start at 1. A column counts Unicode scalar values.",
+          "properties": {
+            "column": {
+              "minimum": 1,
+              "type": "integer"
+            },
+            "line": {
+              "minimum": 1,
+              "type": "integer"
+            }
+          },
+          "required": [
+            "line",
+            "column"
+          ],
+          "type": "object"
+        },
+        "Severity": {
+          "enum": [
+            "error",
+            "warning",
+            "note"
+          ],
+          "type": "string"
+        },
+        "Span": {
+          "description": "A range in the source. `end` is exclusive.",
+          "properties": {
+            "end": {
+              "$ref": "#/$defs/Position"
+            },
+            "start": {
+              "$ref": "#/$defs/Position"
+            }
+          },
+          "required": [
+            "start",
+            "end"
+          ],
+          "type": "object"
+        }
+      },
+      "$schema": "https://json-schema.org/draft/2020-12/schema",
+      "properties": {
+        "applied": {
+          "description": "How many safe fixes were made.",
+          "minimum": 0,
+          "type": "integer"
+        },
+        "diagnostics": {
+          "description": "Every diagnostic that is left in `source`.",
+          "items": {
+            "$ref": "#/$defs/Diagnostic"
+          },
+          "type": "array"
+        },
+        "errors": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "notes": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "source": {
+          "description": "The file with every safe fix made, and no other byte changed.",
+          "type": "string"
+        },
+        "warnings": {
+          "minimum": 0,
+          "type": "integer"
+        }
+      },
+      "required": [
+        "source",
+        "applied",
+        "diagnostics",
+        "errors",
+        "warnings",
+        "notes"
+      ],
+      "type": "object"
+    }
+  },
+  {
+    "description": "Return the language card: the whole horsegirl language on one page. Read it before you write a file.",
+    "inputSchema": {
+      "properties": {},
+      "type": "object"
+    },
+    "name": "spec"
+  }
+]

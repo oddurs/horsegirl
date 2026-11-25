@@ -29,29 +29,68 @@ fn text(bytes: &[u8]) -> String {
     String::from_utf8_lossy(bytes).into_owned()
 }
 
+/// The two eras of the protocol that the server serves.
+#[derive(Clone, Copy, Debug)]
+enum Era {
+    /// `2025-11-25`: `initialize` opens a session, and a request carries no
+    /// protocol state.
+    Legacy,
+    /// `2026-07-28`: `server/discover` opens, and every request carries the
+    /// protocol version and the client capabilities in `_meta`.
+    Modern,
+}
+
+/// The `_meta` that a `2026-07-28` client puts on each request.
+fn modern_meta() -> Value {
+    json!({
+        "io.modelcontextprotocol/protocolVersion": "2026-07-28",
+        "io.modelcontextprotocol/clientCapabilities": {},
+        "io.modelcontextprotocol/clientInfo": { "name": "scripted", "version": "0" }
+    })
+}
+
 /// Sends a legacy `initialize`, then each request in `calls` with the ids 1,
 /// 2 and so on, and closes standard input. Returns the answer to each request,
 /// in the order of `calls`.
 fn session(calls: &[Value]) -> Vec<Value> {
+    session_in(Era::Legacy, calls)
+}
+
+/// As [`session`], but opens the session the way a client of `era` does.
+fn session_in(era: Era, calls: &[Value]) -> Vec<Value> {
     let mut input = String::new();
     let mut push = |message: Value| {
         input.push_str(&message.to_string());
         input.push('\n');
     };
-    push(json!({
-        "jsonrpc": "2.0", "id": 0, "method": "initialize",
-        "params": {
-            "protocolVersion": "2025-11-25",
-            "capabilities": {},
-            "clientInfo": { "name": "scripted", "version": "0" }
+    match era {
+        Era::Legacy => {
+            push(json!({
+                "jsonrpc": "2.0", "id": 0, "method": "initialize",
+                "params": {
+                    "protocolVersion": "2025-11-25",
+                    "capabilities": {},
+                    "clientInfo": { "name": "scripted", "version": "0" }
+                }
+            }));
+            push(json!({ "jsonrpc": "2.0", "method": "notifications/initialized" }));
         }
-    }));
-    push(json!({ "jsonrpc": "2.0", "method": "notifications/initialized" }));
+        Era::Modern => push(json!({
+            "jsonrpc": "2.0", "id": 0, "method": "server/discover",
+            "params": { "_meta": modern_meta() }
+        })),
+    }
     for (id, call) in (1..).zip(calls) {
         let mut request = json!({ "jsonrpc": "2.0", "id": id });
         let fields = call.as_object().expect("a call is an object");
         for (key, value) in fields {
             request[key] = value.clone();
+        }
+        if let Era::Modern = era {
+            if request.get("params").is_none() {
+                request["params"] = json!({});
+            }
+            request["params"]["_meta"] = modern_meta();
         }
         push(request);
     }
@@ -67,8 +106,12 @@ fn session(calls: &[Value]) -> Vec<Value> {
             .cloned()
             .unwrap_or_else(|| panic!("no answer to {id}: {answers:?}"))
     };
-    let initialize = by_id(0);
-    assert_eq!(initialize["result"]["serverInfo"]["name"], "horsegirl");
+    let opened = by_id(0);
+    let server_info = match era {
+        Era::Legacy => &opened["result"]["serverInfo"],
+        Era::Modern => &opened["result"]["_meta"]["io.modelcontextprotocol/serverInfo"],
+    };
+    assert_eq!(server_info["name"], "horsegirl", "{opened}");
     (1..=calls.len()).map(by_id).collect()
 }
 
@@ -123,11 +166,191 @@ fn the_server_lists_four_tools_and_their_schemas() {
             assert_eq!(tool["outputSchema"]["type"], "object", "{name}");
         }
     }
-    // schemars writes formats such as "uint" that no validator knows.
-    let list = answers[0]["result"].to_string();
-    assert!(!list.contains("\"format\""), "{list}");
     // A client that maps a schema onto one type per value rejects a list.
+    let list = answers[0]["result"].to_string();
     assert!(!list.contains("\"type\":["), "{list}");
+}
+
+/// The committed tool list. The schemas are derived from Rust types, so a
+/// renamed field changes the contract without a visible diff in the source.
+/// This file makes the change visible in review.
+const TOOLS: &str = "tests/golden/tools.json";
+
+/// The tool list in both eras is the committed golden file, byte for byte.
+/// `HORSEGIRL_BLESS=1` writes the list that the server sends.
+#[test]
+fn the_tool_list_is_the_committed_contract_in_both_eras() {
+    let list = |era| {
+        let answers = session_in(era, &[json!({ "method": "tools/list" })]);
+        answers[0]["result"]["tools"].clone()
+    };
+    let legacy = list(Era::Legacy);
+    assert_eq!(list(Era::Modern), legacy);
+    let got = serde_json::to_string_pretty(&legacy).unwrap() + "\n";
+    let path = std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join(TOOLS);
+    if std::env::var_os("HORSEGIRL_BLESS").is_some() {
+        std::fs::write(&path, &got).unwrap();
+    }
+    let want = std::fs::read_to_string(&path).unwrap_or_default();
+    assert!(
+        got == want,
+        "the tool schemas moved; read the diff, then run \
+         HORSEGIRL_BLESS=1 cargo test -p horsegirl --test mcp. They are now:\n{got}"
+    );
+}
+
+/// The formats that JSON Schema 2020-12 defines. schemars writes others, such
+/// as `uint32`, and a client validator warns on each one.
+const FORMATS: [&str; 19] = [
+    "date-time",
+    "date",
+    "time",
+    "duration",
+    "email",
+    "idn-email",
+    "hostname",
+    "idn-hostname",
+    "ipv4",
+    "ipv6",
+    "uri",
+    "uri-reference",
+    "iri",
+    "iri-reference",
+    "uuid",
+    "uri-template",
+    "json-pointer",
+    "relative-json-pointer",
+    "regex",
+];
+
+/// Every `format` keyword under `value`, with the path to it.
+fn formats(value: &Value, path: &str, found: &mut Vec<(String, String)>) {
+    match value {
+        Value::Object(map) => {
+            for (key, child) in map {
+                // A property that is named `format` holds a schema, not a string.
+                if let ("format", Value::String(format)) = (key.as_str(), child) {
+                    found.push((path.to_owned(), format.clone()));
+                }
+                formats(child, &format!("{path}/{key}"), found);
+            }
+        }
+        Value::Array(items) => {
+            for (index, child) in items.iter().enumerate() {
+                formats(child, &format!("{path}/{index}"), found);
+            }
+        }
+        _ => {}
+    }
+}
+
+#[test]
+fn no_schema_has_a_format_that_json_schema_does_not_define() {
+    let answers = session(&[json!({ "method": "tools/list" })]);
+    let mut found = Vec::new();
+    formats(&answers[0]["result"]["tools"], "", &mut found);
+    let unknown: Vec<_> = found
+        .iter()
+        .filter(|(_, format)| !FORMATS.contains(&format.as_str()))
+        .collect();
+    assert!(unknown.is_empty(), "{unknown:?}");
+}
+
+#[test]
+fn the_format_walk_finds_a_format_that_json_schema_does_not_define() {
+    let schema = json!({
+        "properties": {
+            "format": { "type": "string" },
+            "line": { "type": "integer", "format": "uint32" },
+            "at": { "type": "string", "format": "date-time" }
+        }
+    });
+    let mut found = Vec::new();
+    formats(&schema, "", &mut found);
+    let unknown: Vec<_> = found
+        .iter()
+        .filter(|(_, format)| !FORMATS.contains(&format.as_str()))
+        .collect();
+    assert_eq!(found.len(), 2, "{found:?}");
+    assert_eq!(
+        unknown,
+        [&("/properties/line".to_owned(), "uint32".to_owned())]
+    );
+}
+
+/// The `check` result for `Café --> Payments`, as `docs/mcp.md` documents it.
+/// The note sits past a two-byte letter, so a column that counts bytes shows.
+fn documented_check() -> Value {
+    let span = |from: u32, to: u32| json!({ "end": { "column": to, "line": 1 }, "start": { "column": from, "line": 1 } });
+    json!({
+        "diagnostics": [{
+            "code": "N0101",
+            "fix": {
+                "confidence": "safe",
+                "description": "Write the line in the canonical form.",
+                "edits": [{ "span": span(6, 9), "text": "->" }]
+            },
+            "message": "`Café --> Payments` is written the way Mermaid writes it. \
+                        horsegirl reads it, and the canonical form is `Café -> Payments`.",
+            "severity": "note",
+            "span": span(1, 18)
+        }],
+        "errors": 0,
+        "notes": 1,
+        "warnings": 0
+    })
+}
+
+#[test]
+fn check_after_a_legacy_initialize_returns_the_documented_result() {
+    let calls = [call("check", &json!({ "source": "Café --> Payments\n" }))];
+    let answers = session_in(Era::Legacy, &calls);
+    assert_eq!(structured(&answers[0]), documented_check());
+    // A legacy client gets the legacy shape, with no `resultType`.
+    assert!(
+        answers[0]["result"].get("resultType").is_none(),
+        "{}",
+        answers[0]
+    );
+}
+
+#[test]
+fn check_with_modern_meta_after_discover_returns_the_same_result() {
+    let calls = [call("check", &json!({ "source": "Café --> Payments\n" }))];
+    let answers = session_in(Era::Modern, &calls);
+    assert_eq!(structured(&answers[0]), documented_check());
+    assert_eq!(
+        answers[0]["result"]["resultType"], "complete",
+        "{}",
+        answers[0]
+    );
+}
+
+#[test]
+fn a_modern_request_without_its_meta_is_refused() {
+    // Without this, a modern session that fell back to the legacy path would
+    // pass the test above unnoticed.
+    let input = [
+        json!({
+            "jsonrpc": "2.0", "id": 0, "method": "server/discover",
+            "params": { "_meta": modern_meta() }
+        }),
+        json!({
+            "jsonrpc": "2.0", "id": 1, "method": "tools/call",
+            "params": { "name": "check", "arguments": { "source": "A -> B\n" } }
+        }),
+    ];
+    let lines: String = input.iter().map(|m| m.to_string() + "\n").collect();
+    let out = horsegirl(&["mcp"], &lines);
+    let answers: Vec<Value> = text(&out.stdout)
+        .lines()
+        .map(|line| serde_json::from_str(line).unwrap())
+        .collect();
+    let answer = answers
+        .iter()
+        .find(|a| a["id"] == 1)
+        .expect("an answer to 1");
+    assert_eq!(answer["error"]["code"], -32602, "{answer}");
 }
 
 #[test]

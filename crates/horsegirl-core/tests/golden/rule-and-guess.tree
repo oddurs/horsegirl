@@ -1,0 +1,27 @@
+File
+  Link
+    Names
+      Name "Web app"
+    Arrow "->"
+    Names
+      Name "API gateway"
+    Colon ":"
+    Label "POST /checkout"
+  Rule
+    Names
+      Name "Web app"
+    Cross "-x"
+    Names
+      Name "Postgres"
+    Colon ":"
+    Label "never directly"
+  Link
+    Names
+      Name "API gateway"
+    Arrow "->"
+    Names
+      Name "Cache"
+    Guess "?"
+  Show
+    Keyword "show"
+    Lens "flow"
