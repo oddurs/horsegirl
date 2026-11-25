@@ -65,6 +65,10 @@ pub const CATALOGUE: &[Code] = &[
         summary: "A link breaks a `-x` rule in the same direction.",
     },
     Code {
+        code: "N0101",
+        summary: "A line is written the way Mermaid writes it: `-->`, quotes that a name does not need, a space before the colon of a label, or a `;` at the end. The fix writes the canonical form.",
+    },
+    Code {
         code: "N0200",
         summary: "A link or a rule ends in `?` in every statement, so it is a guess.",
     },
