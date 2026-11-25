@@ -132,7 +132,8 @@ A line that holds `,` `:` `{` or `->` and starts with `show` or `story` is not a
 ### Evidence
 
 End a line with `@`, a path and a line number to cite evidence. A citation is
-`@`, a space, and a path with no space inside.
+a space, `@`, a path with no space inside, a colon and a line number, as in
+` @ src/repo.ts:17`.
 
 ```horsegirl
 Orders -> Postgres: save  @ src/repo.ts:17
