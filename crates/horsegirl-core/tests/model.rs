@@ -143,12 +143,14 @@ fn a_rule_is_stored_with_its_reason() {
                 to: 1,
                 reason: Some("the web app never reads the table".into()),
                 span: 0..41,
+                guess: false,
             },
             Rule {
                 from: 0,
                 to: 2,
                 reason: None,
                 span: 42..48,
+                guess: false,
             },
         ]
     );
@@ -170,6 +172,22 @@ fn a_rule_fans_out_and_is_stored_once() {
             (0, 2, Some("later"))
         ]
     );
+}
+
+#[test]
+fn a_final_question_mark_marks_a_guessed_rule() {
+    let model = model("A -x B ?\nC -x D: why ?\nE -x F\n");
+    let guesses: Vec<bool> = model.rules.iter().map(|r| r.guess).collect();
+    assert_eq!(guesses, [true, true, false]);
+    assert_eq!(model.rules[1].reason.as_deref(), Some("why"));
+}
+
+#[test]
+fn a_firm_statement_makes_a_guessed_rule_firm() {
+    let model = model("A -x B ?\nA -x B\nC -x D\nC -x D ?\n");
+    assert_eq!(model.rules.len(), 2);
+    assert!(!model.rules[0].guess);
+    assert!(!model.rules[1].guess);
 }
 
 #[test]

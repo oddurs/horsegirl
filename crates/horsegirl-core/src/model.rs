@@ -72,6 +72,9 @@ pub struct Rule {
     pub reason: Option<String>,
     /// The bytes of the first line that states the rule.
     pub span: Range<usize>,
+    /// Every statement of the rule ends in `?`. One firm statement makes the
+    /// rule firm, as it does for a link.
+    pub guess: bool,
 }
 
 /// `show lens`, or `show lens of name`.
@@ -184,17 +187,17 @@ impl Lowering {
         let label = child(node, NodeKind::Label).map(text);
         // span walks the whole line, so it runs once and not once per link.
         let span = span(node);
+        let guess = node.children.iter().any(
+            |element| matches!(element, Element::Token(token) if token.kind == TokenKind::Guess),
+        );
         if node.kind == NodeKind::Rule {
             for &a in &from {
                 for &b in &to {
-                    self.add_rule(a, b, label.as_deref(), span.clone());
+                    self.add_rule(a, b, label.as_deref(), span.clone(), guess);
                 }
             }
             return;
         }
-        let guess = node.children.iter().any(
-            |element| matches!(element, Element::Token(token) if token.kind == TokenKind::Guess),
-        );
         for &a in &from {
             for &b in &to {
                 self.add_link(a, b, label.as_deref(), span.clone(), guess);
@@ -202,18 +205,27 @@ impl Lowering {
         }
     }
 
-    fn add_rule(&mut self, from: ThingId, to: ThingId, reason: Option<&str>, span: Range<usize>) {
-        let known = self
-            .model
-            .rules
-            .iter()
-            .any(|rule| rule.from == from && rule.to == to && rule.reason.as_deref() == reason);
-        if !known {
+    fn add_rule(
+        &mut self,
+        from: ThingId,
+        to: ThingId,
+        reason: Option<&str>,
+        span: Range<usize>,
+        guess: bool,
+    ) {
+        let known =
+            self.model.rules.iter_mut().find(|rule| {
+                rule.from == from && rule.to == to && rule.reason.as_deref() == reason
+            });
+        if let Some(rule) = known {
+            rule.guess &= guess;
+        } else {
             self.model.rules.push(Rule {
                 from,
                 to,
                 reason: reason.map(str::to_owned),
                 span,
+                guess,
             });
         }
     }

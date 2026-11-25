@@ -241,6 +241,7 @@ Model {
                 "never directly",
             ),
             span: 59..106,
+            guess: false,
         },
         Rule {
             from: 1,
@@ -249,6 +250,7 @@ Model {
                 "never directly",
             ),
             span: 59..106,
+            guess: false,
         },
     ],
     shows: [
