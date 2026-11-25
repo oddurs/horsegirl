@@ -16,6 +16,8 @@ mod order;
 mod place;
 mod rank;
 
+use crate::scene::{Point, Rect};
+
 /// The least distance between two boxes of one rank.
 pub const NODE_GAP: f64 = 24.0;
 /// The least distance between a link that passes a rank and what is beside it.
@@ -52,21 +54,6 @@ pub struct Group {
     /// The index of the group that holds this group. No group holds itself,
     /// directly or through other groups.
     pub parent: Option<usize>,
-}
-
-#[derive(Clone, Copy, Debug, PartialEq)]
-pub struct Point {
-    pub x: f64,
-    pub y: f64,
-}
-
-/// A box by its top left corner. `y` grows down the page.
-#[derive(Clone, Copy, Debug, PartialEq)]
-pub struct Rect {
-    pub x: f64,
-    pub y: f64,
-    pub width: f64,
-    pub height: f64,
 }
 
 /// Where everything is. Each list has the order of its list in the [`Graph`].

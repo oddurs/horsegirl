@@ -14,8 +14,9 @@
 
 use std::fmt::Write as _;
 
-use horsegirl_core::layout::{Graph, Group, Layout, NODE_GAP, Node, RANK_GAP, Rect, layout};
+use horsegirl_core::layout::{Graph, Group, Layout, NODE_GAP, Node, RANK_GAP, layout};
 use horsegirl_core::model::lower;
+use horsegirl_core::scene::Rect;
 use horsegirl_core::syntax::parse;
 use horsegirl_core::text::{Style, measure};
 
