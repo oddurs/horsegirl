@@ -1,0 +1,433 @@
+# cairn.toml — the schema for horsegirl's backlog.
+#
+#   cairn config          show the resolved schema
+#   cairn check           validate every item against it
+#   scripts/agent next    what an agent may start now
+
+format = 5
+
+[project]
+name = "horsegirl"
+description = "An agent-first diagram language: state the facts once, choose a lens."
+dir = "cairn/items"
+default_type = "feature"
+default_status = "backlog"
+url = "https://github.com/oddurs/horsegirl/blob/main"
+# An item is done when its criteria are true, not when somebody is tired of it.
+criteria_section = "Acceptance criteria"
+require_criteria = true
+# An agent session can end without a word. Surface a claim that has gone cold.
+claim_stale_after = 3
+
+# ─── Item types ──────────────────────────────────────────────────────────────
+
+[[type]]
+name = "feature"
+icon = "+"
+color = "cyan"
+description = "Something a user or an agent can do that they could not do before"
+template = """
+## Problem
+
+## Proposal
+
+## Acceptance criteria
+
+- [ ]
+"""
+
+[[type]]
+name = "bug"
+icon = "!"
+color = "red"
+id_format = "BUG-{n}"
+description = "The program does something it should not"
+template = """
+## What happens
+
+## What should happen
+
+## Reproduction
+
+```
+```
+
+## Acceptance criteria
+
+- [ ] A test reproduces the failure and passes with the fix.
+"""
+
+[[type]]
+name = "chore"
+icon = "~"
+color = "gray"
+description = "Work that keeps the project buildable, testable and releasable"
+template = """
+## Purpose
+
+## Approach
+
+## Acceptance criteria
+
+- [ ]
+"""
+
+[[type]]
+name = "docs"
+icon = "*"
+color = "blue"
+description = "Words a reader needs to complete a task"
+template = """
+## Reader and question
+
+## Change
+
+## Acceptance criteria
+
+- [ ] A reader can complete the described task with the current program.
+"""
+
+[[type]]
+name = "spike"
+icon = "?"
+color = "yellow"
+id_format = "SPIKE-{n}"
+description = "A question with a time box. It closes with a written answer."
+template = """
+## Question
+
+## Why it matters
+
+Name the items that cannot be written until this is answered.
+
+## Time box
+
+## Answer
+
+Write the answer here before closing. A spike that closes without one was wasted.
+
+## Acceptance criteria
+
+- [ ] The Answer section states a conclusion and the evidence for it.
+- [ ] Follow-up items exist for the work the answer implies.
+"""
+
+[[type]]
+name = "decision"
+icon = "="
+color = "magenta"
+id_format = "ADR-{n}"
+description = "A choice worth remembering after the work is finished"
+template = """
+## Context
+
+## Options and tradeoffs
+
+## Decision
+
+## Revisit when
+
+## Acceptance criteria
+
+- [ ] The choice, its evidence and its consequences are recorded.
+"""
+
+[[type]]
+name = "lens"
+icon = "o"
+color = "green"
+id_format = "LENS-{n}"
+description = "A new way to look at the same facts: dials, solver, and the question it answers"
+template = """
+## The question this picture answers
+
+## Dials
+
+Which field binds to which channel, for example `x: step`, `y: owner`.
+
+## Facts it needs
+
+What the compiler must report when these facts are missing.
+
+## Solver
+
+One of: layered, grid, nested, radial. Say why if it needs a new one.
+
+## Example
+
+```
+show
+```
+
+## Acceptance criteria
+
+- [ ] The lens draws the example with no overlap.
+- [ ] `describe` reads the picture back as text.
+- [ ] Missing facts produce a diagnostic that names them.
+- [ ] The lens is in the language reference with its dials.
+"""
+
+# What work is filed under, at most one: a release somebody can install.
+[[type]]
+name = "milestone"
+description = "A release a stranger can install and use. The date is a decision."
+groups = "one"
+inverse = "scheduled"
+template = """
+## Ships
+
+One sentence on what a user can do when this lands.
+
+## Acceptance criteria
+
+- [ ]
+
+## Explicitly not in this milestone
+
+-
+"""
+
+# What work serves, possibly several: an effort that crosses releases.
+[[type]]
+name = "track"
+id_format = "TRACK-{n}"
+description = "An effort that runs across releases, such as the website or the agent loop"
+groups = "many"
+inverse = "advances"
+template = """
+## Outcome
+
+What is true when this effort has succeeded.
+
+## Measured by
+"""
+
+# ─── Statuses ────────────────────────────────────────────────────────────────
+# Order is the column order on the board. Category is what the tools reason about.
+
+[[status]]
+name = "backlog"
+category = "open"
+color = "gray"
+label = "not committed"
+
+[[status]]
+name = "planned"
+category = "open"
+color = "blue"
+label = "approved"
+
+[[status]]
+name = "doing"
+category = "active"
+color = "yellow"
+label = "in progress"
+
+[[status]]
+name = "blocked"
+category = "open"
+color = "red"
+label = "waiting"
+
+[[status]]
+name = "done"
+category = "done"
+color = "green"
+
+# Dropping work changes the scope. An agent asks; a person decides.
+[[status]]
+name = "dropped"
+category = "dropped"
+color = "gray"
+board = false
+agent = "propose"
+
+# ─── Fields ──────────────────────────────────────────────────────────────────
+# An agent does the work. A person owns the scope: priority, date and risk.
+
+[[field]]
+name = "priority"
+kind = "enum"
+values = ["p0", "p1", "p2", "p3"]
+default = "p2"
+column = true
+agent = "propose"
+description = "Within its milestone. p0: the release does not ship without it; p1: planned for it; p2: wanted; p3: optional"
+
+[[field]]
+name = "effort"
+kind = "enum"
+values = ["s", "m", "l", "xl"]
+description = "A rough size, never a date. xl means: split it or write a spike."
+
+[[field]]
+name = "area"
+kind = "enum"
+values = [
+  "language",   # lexer, parser, grammar, formatter, the spec card
+  "model",      # things, links, groups, facts, stories, rules
+  "check",      # diagnostics, fixes, lints
+  "lens",       # binding fields to channels
+  "layout",     # the solvers and edge routing
+  "render",     # scene, SVG, text, themes
+  "describe",   # read-back, query, suggest
+  "cli",        # the command line and its output contracts
+  "mcp",        # the MCP server
+  "interop",    # Mermaid in and out, importers, data files
+  "bench",      # the agent benchmark and corpora
+  "wasm",       # the WebAssembly build and the npm package
+  "site",       # the website, docs and playground
+  "workflow",   # hooks, CI, automation, the agent loop
+  "release",    # packaging and distribution
+]
+column = true
+description = "The subsystem that changes"
+
+[[field]]
+name = "risk"
+kind = "enum"
+values = ["low", "medium", "high"]
+default = "low"
+agent = "propose"
+description = "How wrong this can go. high: review it line by line, and an agent does not start it unasked."
+
+[[field]]
+name = "surface"
+kind = "enum"
+values = ["none", "language", "diagnostics", "cli", "mcp", "svg", "theme"]
+default = "none"
+description = "The public contract this changes. Anything but none needs a changelog entry, and language needs a benchmark run."
+
+[[field]]
+name = "due"
+kind = "date"
+agent = "read-only"
+description = "A committed date, YYYY-MM-DD. Set on milestones only."
+
+[[field]]
+name = "pr"
+kind = "text"
+description = "The pull request that carries the work"
+
+[[field]]
+name = "related"
+kind = "ref"
+target = "*"
+cardinality = "many"
+by = "id"
+description = "Items worth reading with this one. Not an ordering; use depends_on for that."
+
+# ─── Saved views ─────────────────────────────────────────────────────────────
+
+[[view]]
+name = "now"
+description = "Work somebody is doing"
+filter = "category=active,type!=milestone|track"
+sort = "priority,id"
+columns = ["id", "assignee", "priority", "area", "title"]
+
+[[view]]
+name = "next"
+description = "Approved work with no unfinished dependency"
+filter = "status=planned|doing,blocked=false,type!=milestone|track"
+sort = "priority,milestone,id"
+columns = ["id", "priority", "effort", "area", "title"]
+
+[[view]]
+name = "agent"
+description = "What an agent may start without asking: approved, unblocked, not high risk, not a decision"
+filter = "status=planned,blocked=false,assignee=,risk!=high,type!=milestone|track|decision"
+sort = "priority,milestone,id"
+columns = ["id", "priority", "effort", "area", "title"]
+
+[[view]]
+name = "human"
+description = "High risk work: a person reviews it line by line, and an agent does not start it unasked"
+filter = "category=open|active,risk=high,type!=milestone|track"
+sort = "priority,id"
+columns = ["id", "type", "priority", "area", "title"]
+
+[[view]]
+name = "triage"
+description = "Ideas with no milestone: accept, defer or drop"
+filter = "milestone=,category=open,type!=milestone|track"
+columns = ["id", "type", "title", "created"]
+
+[[view]]
+name = "waiting"
+description = "Needs an outside action or a decision; read the item's note"
+filter = "status=blocked,type!=milestone|track"
+sort = "priority,id"
+
+[[view]]
+name = "dependencies"
+description = "Work held by an unfinished dependency"
+filter = "blocked=true,category=open|active,type!=milestone|track"
+sort = "priority,id"
+
+[[view]]
+name = "spikes"
+description = "Open questions, and what they hold up"
+filter = "type=spike,category=open|active"
+sort = "priority,id"
+columns = ["id", "priority", "milestone", "title"]
+
+[[view]]
+name = "decisions"
+description = "Every recorded decision, newest first"
+filter = "type=decision,category=open|active|done|dropped"
+sort = "-updated,id"
+
+[[view]]
+name = "contracts"
+description = "Open work that changes a public contract"
+filter = "surface!=none,category=open|active"
+sort = "surface,priority,id"
+columns = ["id", "surface", "priority", "milestone", "title"]
+
+[[view]]
+name = "lenses"
+description = "Lens proposals and their state"
+filter = "type=lens,category=open|active|done"
+sort = "milestone,id"
+columns = ["id", "status", "milestone", "title"]
+
+[[view]]
+name = "site"
+description = "The website, docs and playground"
+filter = "area=site|wasm,category=open|active"
+sort = "milestone,priority,id"
+
+[[view]]
+name = "later"
+description = "Good ideas that are not on the path to 1.0"
+filter = "milestone=later,category=open"
+sort = "priority,id"
+
+[[view]]
+name = "history"
+description = "Finished and dropped work, by last edit"
+filter = "category=done|dropped,type!=milestone|track"
+sort = "-updated,id"
+
+# ─── Hooks ───────────────────────────────────────────────────────────────────
+# The roadmap is generated, so it is regenerated, not remembered.
+
+[hooks]
+after-create = ["cairn", "render", "-q"]
+after-change = ["cairn", "render", "-q"]
+after-remove = ["cairn", "render", "-q"]
+
+# ─── Rendered roadmap ────────────────────────────────────────────────────────
+
+[render]
+target = "ROADMAP.md"
+title = "Roadmap"
+group_by = "milestone"
+include = "category=open|active"
+checkbox = true
+show_ids = true
+progress = true
+group_by_status = false
+link_items = true
+header = "docs/roadmap-intro.md"

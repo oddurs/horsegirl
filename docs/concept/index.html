@@ -1,0 +1,1785 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>body{margin:0}[hidden]{display:none!important}img{max-width:100%}</style>
+<title>horsegirl</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Instrument+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: one 1080px column; every claim sits beside the picture that proves it; show-ring rosette pink carries emphasis, turf and saddle name diagram categories. */
+:root{
+  --bg:#FAF6F8; --surface:#FFFFFF; --ink:#241627; --muted:#6E5F72; --line:#D9CCD9;
+  --accent:#D4246F; --accent-ink:#FFFFFF; --turf:#1F7A55; --saddle:#A8621B;
+  --t-pink:#FBE3EE; --t-green:#DFF1E8; --t-ochre:#F6E9D6; --t-neutral:#F1EAF1;
+  --code-bg:#2A1B2E; --code-fg:#F3E9F3; --code-k:#FF8FBF; --code-s:#9FE0BF; --code-c:#A894AC; --code-w:#F2C078;
+  --display:"Bricolage Grotesque","Avenir Next","Segoe UI",sans-serif;
+  --body:"Instrument Sans","Helvetica Neue",Arial,sans-serif;
+  --mono:"JetBrains Mono","SF Mono",Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+  --bg:#171019; --surface:#211725; --ink:#F4EAF3; --muted:#B3A2B6; --line:#403044;
+  --accent:#FF5C9E; --accent-ink:#2A0B18; --turf:#5FCB9B; --saddle:#E3A75C;
+  --t-pink:#4A1C33; --t-green:#173A2C; --t-ochre:#40301A; --t-neutral:#2C2030;
+  --code-bg:#0F0A11; color-scheme:dark } }
+:root[data-theme="dark"]{
+  --bg:#171019; --surface:#211725; --ink:#F4EAF3; --muted:#B3A2B6; --line:#403044;
+  --accent:#FF5C9E; --accent-ink:#2A0B18; --turf:#5FCB9B; --saddle:#E3A75C;
+  --t-pink:#4A1C33; --t-green:#173A2C; --t-ochre:#40301A; --t-neutral:#2C2030;
+  --code-bg:#0F0A11; color-scheme:dark }
+
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:17px;line-height:1.55}
+.wrap{max-width:1080px;margin:0 auto;padding-left:max(20px,env(safe-area-inset-left,0px));padding-right:max(20px,env(safe-area-inset-right,0px));padding-block:3rem 5rem;display:flex;flex-direction:column;gap:5.5rem}
+h1,h2,h3{font-family:var(--display);text-wrap:balance;margin:0;line-height:1.05}
+h1{font-size:clamp(2.4rem,6.4vw,4.6rem);font-weight:800;letter-spacing:-.03em}
+h2{font-size:clamp(1.8rem,4vw,2.7rem);font-weight:700;letter-spacing:-.02em}
+h3{font-size:1.3rem;font-weight:700;letter-spacing:-.01em}
+p{margin:0;max-width:65ch}
+.lede{font-size:1.2rem;color:var(--muted)}
+.eyebrow{font-family:var(--mono);font-size:.78rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.eyebrow b{color:var(--accent);font-weight:500}
+section{display:flex;flex-direction:column;gap:1.6rem}
+.head{display:flex;flex-direction:column;gap:.8rem}
+code,.mono{font-family:var(--mono);font-size:.88em}
+em{font-style:normal;color:var(--accent);font-weight:600}
+h1 em{font-weight:800}
+a{color:var(--accent)}
+
+.brand{display:flex;align-items:center;gap:1rem}
+.brand svg{width:64px;height:auto;flex:none}
+.wordmark{font-family:var(--display);font-weight:800;font-size:1.7rem;letter-spacing:-.03em}
+.hero{gap:1.4rem}
+.pair{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,7fr);gap:1rem;align-items:start}
+@media (max-width:820px){.pair{grid-template-columns:minmax(0,1fr)}}
+.stack{display:flex;flex-direction:column;gap:.8rem;min-width:0}
+
+pre,code{font-variant-ligatures:none}
+pre{margin:0;background:var(--code-bg);color:var(--code-fg);font-family:var(--mono);font-size:.8rem;line-height:1.6;padding:1.1rem 1.2rem;border-radius:10px;overflow-x:auto;min-width:0}
+pre .k{color:var(--code-k)} pre .s{color:var(--code-s)} pre .c{color:var(--code-c)} pre .w{color:var(--code-w)}
+.filetab{font-family:var(--mono);font-size:.72rem;color:var(--code-c);display:block;margin-bottom:.6rem}
+pre .showline{display:block;margin:.4rem -1.2rem -1.1rem;padding:.7rem 1.2rem;background:var(--accent);color:var(--accent-ink);border-radius:0 0 10px 10px;font-weight:500}
+
+figure{margin:0;display:flex;flex-direction:column;gap:.6rem;min-width:0}
+figcaption{font-size:.88rem;color:var(--muted);max-width:70ch}
+.canvas{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:1rem;overflow-x:auto;min-width:0}
+.canvas svg{display:block;width:100%;height:auto;min-width:var(--min,480px)}
+svg text{font-family:var(--body);font-size:12px;fill:var(--ink)}
+svg text.s{font-size:11px}
+svg text.m{font-family:var(--mono);font-size:10.5px;fill:var(--muted)}
+svg text.h{font-family:var(--display);font-weight:700;font-size:13px}
+svg text.a{fill:var(--accent)}
+svg text.hi{fill:var(--accent-ink)}
+.nd{fill:var(--t-neutral);stroke:var(--ink);stroke-width:1.4}
+.nd.p{fill:var(--t-pink)} .nd.g{fill:var(--t-green)} .nd.o{fill:var(--t-ochre)}
+.nd.x{stroke-dasharray:4 3}
+.nd.hot{fill:var(--accent);stroke:var(--accent)}
+.nd.moved{stroke:var(--saddle);stroke-width:2;stroke-dasharray:5 3;fill:var(--t-ochre)}
+.nd.new{fill:var(--t-pink);stroke:var(--accent);stroke-width:2}
+.nd.tm{stroke:var(--surface);stroke-width:2}
+.grp{fill:none;stroke:var(--muted);stroke-width:1.2;stroke-dasharray:2 4}
+.frame{fill:none;stroke:var(--ink);stroke-width:1.6}
+.ed{fill:none;stroke:var(--ink);stroke-width:1.4;stroke-linejoin:round}
+.ed.d{stroke-dasharray:5 4}
+.ed.ac{stroke:var(--accent);stroke-width:2}
+.ed.faint{stroke:var(--line)}
+.ed.soft{stroke:var(--muted);stroke-width:1.2}
+.ed.gone{stroke:var(--muted);stroke-dasharray:2 4}
+.sl{fill:none;stroke-width:3.5;stroke-linecap:round}
+.sl.c0{stroke:var(--ink)} .sl.c1{stroke:var(--accent)} .sl.c2{stroke:var(--turf)} .sl.c3{stroke:var(--saddle)}
+.rib{fill:none;stroke:var(--accent);opacity:.38}
+.bar{fill:var(--ink)}
+.cell{fill:var(--t-neutral)} .cell.on{fill:var(--accent)}
+.guide{stroke:var(--line);stroke-width:1;stroke-dasharray:3 3;fill:none}
+.ahf{fill:var(--ink)} .ahf-a{fill:var(--accent)}
+.fillsoft{fill:var(--t-pink);stroke:none}
+.dot{fill:var(--ink)} .dot.a{fill:var(--accent)} .dot.h{fill:var(--bg);stroke:var(--accent);stroke-width:2}
+
+.seg{display:inline-flex;flex-wrap:wrap;border:1px solid var(--ink);border-radius:10px;overflow:hidden;align-self:flex-start}
+.seg button{font:500 .85rem var(--body);background:transparent;color:var(--ink);border:0;padding:.5rem .95rem;cursor:pointer}
+.seg button[aria-pressed="true"]{background:var(--ink);color:var(--bg)}
+.seg button:focus-visible{outline:2px solid var(--accent);outline-offset:-3px}
+.dials{display:flex;flex-wrap:wrap;gap:.4rem .5rem;align-items:center;font-family:var(--mono);font-size:.78rem}
+.dials span{border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:.15rem .65rem}
+.dials span b{color:var(--accent);font-weight:500}
+.lensnote{font-size:.95rem;color:var(--muted)}
+
+.rules{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,6fr);border-top:2px solid var(--ink)}
+.rules > div{padding:1rem 0;border-bottom:1px solid var(--line);min-width:0}
+.rules .r{padding-right:1.5rem;display:flex;flex-direction:column;gap:.25rem}
+.rules .r strong{font-family:var(--display);font-size:1.15rem}
+.rules .r span{color:var(--muted);font-size:.95rem}
+.rules pre{font-size:.78rem;padding:.7rem .9rem}
+@media (max-width:820px){.rules{grid-template-columns:minmax(0,1fr)}.rules .r{border-bottom:0;padding-bottom:.3rem}.rules .c{padding-top:0}}
+
+.tablewrap{overflow-x:auto;border:1px solid var(--line);border-radius:10px;background:var(--surface)}
+table{border-collapse:collapse;width:100%;min-width:640px;font-size:.92rem}
+th,td{text-align:left;padding:.6rem .9rem;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-family:var(--mono);font-size:.72rem;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);font-weight:500}
+td:first-child{font-family:var(--display);font-weight:700;white-space:nowrap}
+td code{color:var(--accent)}
+tr.sep td{font-family:var(--mono);font-size:.72rem;letter-spacing:.06em;text-transform:uppercase;color:var(--accent);font-weight:500;background:var(--t-pink)}
+tr:last-child td{border-bottom:0}
+
+.bet{display:grid;grid-template-columns:minmax(0,4fr) minmax(0,7fr);gap:2rem;align-items:start;padding-top:2rem;border-top:1px solid var(--line)}
+@media (max-width:820px){.bet{grid-template-columns:minmax(0,1fr);gap:1.2rem}}
+.bet .txt{display:flex;flex-direction:column;gap:.8rem}
+.tag{font-family:var(--mono);font-size:.74rem;letter-spacing:.06em;text-transform:uppercase;color:var(--accent)}
+.duo{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1rem}
+@media (max-width:520px){.duo{grid-template-columns:minmax(0,1fr)}}
+.duo .canvas svg{min-width:0}
+.duo h4{margin:0 0 .5rem;font-family:var(--mono);font-size:.78rem;font-weight:500;color:var(--muted)}
+.verdict{font-family:var(--mono);font-size:.78rem;margin-top:.5rem;color:var(--muted)}
+.verdict b{color:var(--ink);font-weight:500}
+
+.gallery{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:2rem 1.5rem}
+@media (max-width:820px){.gallery{grid-template-columns:minmax(0,1fr)}}
+.gallery figure h3{margin-bottom:.1rem}
+.gallery .canvas svg{min-width:0}
+.gallery pre{font-size:.76rem;padding:.6rem .9rem}
+
+.field{display:grid;grid-template-columns:minmax(0,6fr) minmax(0,5fr);gap:2rem;align-items:center}
+@media (max-width:820px){.field{grid-template-columns:minmax(0,1fr)}}
+dl.rivals{margin:0;display:grid;grid-template-columns:auto minmax(0,1fr);gap:.7rem 1.1rem;font-size:.95rem}
+dl.rivals dt{font-family:var(--display);font-weight:700}
+dl.rivals dd{margin:0;color:var(--muted)}
+
+.gaits{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:0;border-top:2px solid var(--ink)}
+@media (max-width:820px){.gaits{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:480px){.gaits{grid-template-columns:minmax(0,1fr)}}
+.gait{padding:1.2rem 1.2rem 1.4rem 0;display:flex;flex-direction:column;gap:.6rem;position:relative}
+.gait::before{content:"";position:absolute;top:-8px;left:0;width:14px;height:14px;border-radius:50%;background:var(--accent)}
+.gait .v{font-family:var(--mono);font-size:.78rem;color:var(--muted)}
+.gait .name{font-family:var(--display);font-weight:800;font-size:2rem;letter-spacing:-.03em;line-height:1}
+.gait ul{margin:0;padding-left:1.1rem;font-size:.92rem;display:flex;flex-direction:column;gap:.25rem}
+.gait .exit{font-size:.85rem;color:var(--muted);border-top:1px dashed var(--line);padding-top:.6rem;margin-top:auto}
+.gait .exit b{color:var(--ink);font-weight:600}
+
+.cols{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:1.6rem 2rem}
+@media (max-width:820px){.cols{grid-template-columns:minmax(0,1fr)}}
+.cols div{display:flex;flex-direction:column;gap:.4rem}
+.cols p{font-size:.95rem;color:var(--muted)}
+.open{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:1.4rem 1.5rem;display:flex;flex-direction:column;gap:1rem}
+.open ol,.open ul{margin:0;padding-left:1.2rem;display:flex;flex-direction:column;gap:.6rem}
+.note{font-size:.85rem;color:var(--muted)}
+.sources{font-size:.85rem;color:var(--muted);display:flex;flex-wrap:wrap;gap:.3rem 1rem}
+.editor{display:flex;flex-direction:column;background:var(--code-bg);border-radius:10px;overflow:hidden}
+.editor .filetab{margin:0;padding:.8rem 1.2rem 0}
+textarea#src{width:100%;box-sizing:border-box;background:transparent;color:var(--code-fg);font-family:var(--mono);font-size:.8rem;line-height:1.6;font-variant-ligatures:none;border:0;padding:.6rem 1.2rem 1rem;resize:vertical;white-space:pre;overflow-x:auto;display:block;tab-size:2}
+textarea#src:focus-visible{outline:2px solid var(--accent);outline-offset:-2px}
+.btns{display:flex;flex-wrap:wrap;gap:.5rem}
+.btn{font:500 .82rem var(--body);background:var(--surface);color:var(--ink);border:1px solid var(--ink);border-radius:8px;padding:.4rem .8rem;cursor:pointer}
+.btn:hover{background:var(--ink);color:var(--bg)}
+.btn:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.btn.fix{border-color:var(--accent);color:var(--accent);padding:.2rem .6rem;font-size:.78rem}
+.btn.fix:hover{background:var(--accent);color:var(--accent-ink)}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:.8rem 1rem;display:flex;flex-direction:column;gap:.6rem;min-width:0}
+.panel h4{margin:0;font-family:var(--mono);font-size:.74rem;font-weight:500;color:var(--muted);letter-spacing:.02em}
+.dg{font-variant-ligatures:none;display:flex;flex-direction:column;gap:.25rem;font-size:.88rem;padding-top:.6rem;border-top:1px dashed var(--line)}
+.dg:first-of-type{border-top:0;padding-top:0}
+.dg .top{display:flex;flex-wrap:wrap;gap:.5rem;align-items:center}
+.dg .code{font-family:var(--mono);font-size:.74rem;border-radius:4px;padding:.05rem .4rem;background:var(--t-neutral)}
+.dg.error .code{background:var(--accent);color:var(--accent-ink)}
+.dg.warning .code{background:var(--t-ochre);color:var(--saddle)}
+.dg .json{font-family:var(--mono);font-size:.72rem;color:var(--muted);overflow-wrap:anywhere}
+.clean{font-family:var(--mono);font-size:.82rem;color:var(--turf)}
+.readback{font-family:var(--mono);font-size:.78rem;line-height:1.65;white-space:pre-wrap;overflow-wrap:anywhere;margin:0;background:transparent;color:var(--ink);padding:0}
+.readback b{color:var(--accent);font-weight:500}
+.nd.err{stroke:var(--accent);stroke-width:2;stroke-dasharray:4 3}
+.frames{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.5rem}
+.frames.three{grid-template-columns:repeat(3,minmax(0,1fr))}
+.guess{filter:url(#rough)}
+.st{font-family:var(--mono);font-size:.7rem;border-radius:4px;padding:.05rem .4rem;white-space:nowrap;margin-right:.4rem}
+.st.t{background:var(--t-green);color:var(--turf)}
+.st.f{background:var(--accent);color:var(--accent-ink)}
+.st.o{background:var(--t-neutral);color:var(--muted)}
+table.notes td:first-child{font-family:var(--body);font-weight:600;white-space:normal;min-width:9rem}
+table.notes td:first-child a{color:var(--ink)}
+.frames div{display:flex;flex-direction:column;gap:.2rem}
+.frames span{font-variant-ligatures:none;font-family:var(--mono);font-size:.72rem;color:var(--muted)}
+.band{fill:var(--t-neutral);stroke:none}
+.rules.wide{grid-template-columns:minmax(0,4fr) minmax(0,7fr)}
+@media (max-width:820px){.rules.wide{grid-template-columns:minmax(0,1fr)}}
+.rules .n{font-family:var(--mono);font-size:.72rem;color:var(--accent);letter-spacing:.06em;text-transform:uppercase}
+
+/* ---- diagram themes: every picture reads these tokens, never the page's ---- */
+:root{
+  --d-ink:light-dark(#1F2328,#E6E8EB); --d-paper:light-dark(#FFFFFF,#15171B); --d-line:light-dark(#D8DCE2,#343941); --d-muted:light-dark(#667080,#9AA4B2);
+  --d-accent:light-dark(#2F5FD0,#7AA2FF); --d-accent-ink:light-dark(#FFFFFF,#0B1020);
+  --d-c0:light-dark(#F3F4F6,#23272E); --d-c1:light-dark(#E1EAFB,#1D2B47); --d-c2:light-dark(#E0F2E8,#17322A); --d-c3:light-dark(#FAEFD6,#3A2F17);
+  --d-s2:light-dark(#1F7A55,#5FCB9B); --d-s3:light-dark(#A8621B,#E3A75C); --d-font:var(--body); --d-sw:1.4;
+}
+:root[data-dt="rosette"]{
+  --d-ink:light-dark(#241627,#F4EAF3); --d-paper:light-dark(#FFFFFF,#211725); --d-line:light-dark(#D9CCD9,#403044); --d-muted:light-dark(#6E5F72,#B3A2B6);
+  --d-accent:light-dark(#D4246F,#FF5C9E); --d-accent-ink:light-dark(#FFFFFF,#2A0B18);
+  --d-c0:light-dark(#F1EAF1,#2C2030); --d-c1:light-dark(#FBE3EE,#4A1C33); --d-c2:light-dark(#DFF1E8,#173A2C); --d-c3:light-dark(#F6E9D6,#40301A);
+}
+:root[data-dt="blueprint"]{
+  --d-ink:light-dark(#173B6C,#CFE1FF); --d-paper:light-dark(#F3F7FC,#0D1F38); --d-line:light-dark(#C5D5EA,#27426B); --d-muted:light-dark(#5C7AA3,#8FB0DD);
+  --d-accent:light-dark(#D9480F,#FFA94D); --d-accent-ink:light-dark(#FFFFFF,#2B1400);
+  --d-c0:light-dark(#FFFFFF,#132A4A); --d-c1:light-dark(#DCE9FA,#1B3A66); --d-c2:light-dark(#E4F3F1,#143A44); --d-c3:light-dark(#FFF1E0,#3B2A14);
+  --d-s2:light-dark(#0F766E,#5EEAD4); --d-s3:light-dark(#D9480F,#FFA94D); --d-font:var(--mono);
+}
+:root[data-dt="ink"]{
+  --d-ink:light-dark(#000000,#FFFFFF); --d-paper:light-dark(#FFFFFF,#000000); --d-line:light-dark(#BDBDBD,#555555); --d-muted:light-dark(#555555,#AAAAAA);
+  --d-accent:light-dark(#000000,#FFFFFF); --d-accent-ink:light-dark(#FFFFFF,#000000);
+  --d-c0:light-dark(#FFFFFF,#000000); --d-c1:light-dark(#FFFFFF,#000000); --d-c2:light-dark(#FFFFFF,#000000); --d-c3:light-dark(#FFFFFF,#000000);
+  --d-s2:light-dark(#555555,#AAAAAA); --d-s3:light-dark(#888888,#777777); --d-font:Georgia,"Iowan Old Style",serif; --d-sw:1.2;
+}
+:root[data-dt="ink"] .nd.tm{stroke:var(--d-line)}
+.canvas{background:var(--d-paper)}
+svg text{font-family:var(--d-font);fill:var(--d-ink)}
+svg text.m{fill:var(--d-muted)} svg text.a{fill:var(--d-accent)} svg text.hi{fill:var(--d-accent-ink)}
+.nd{fill:var(--d-c0);stroke:var(--d-ink);stroke-width:var(--d-sw)}
+.nd.p{fill:var(--d-c1)} .nd.g{fill:var(--d-c2)} .nd.o{fill:var(--d-c3)}
+.nd.hot{fill:var(--d-accent);stroke:var(--d-accent)}
+.nd.new{fill:var(--d-c1);stroke:var(--d-accent)}
+.nd.err{stroke:var(--d-accent)}
+.nd.tm{stroke:var(--d-paper)}
+.grp{stroke:var(--d-muted)} .frame{stroke:var(--d-ink)}
+.ed{stroke:var(--d-ink);stroke-width:var(--d-sw)}
+.ed.ac{stroke:var(--d-accent);stroke-width:2} .ed.faint{stroke:var(--d-line)} .ed.soft{stroke:var(--d-muted)} .ed.gone{stroke:var(--d-muted)}
+.sl.c0{stroke:var(--d-ink)} .sl.c1{stroke:var(--d-accent)} .sl.c2{stroke:var(--d-s2)} .sl.c3{stroke:var(--d-s3)}
+.rib{stroke:var(--d-accent)} .bar{fill:var(--d-ink)}
+.cell{fill:var(--d-c0)} .cell.on{fill:var(--d-accent)}
+.guide{stroke:var(--d-line)} .ahf{fill:var(--d-ink)} .ahf-a{fill:var(--d-accent)}
+.fillsoft{fill:var(--d-c1)} .band{fill:var(--d-c0)}
+.dot{fill:var(--d-ink)} .dot.a{fill:var(--d-accent)} .dot.h{fill:var(--d-paper);stroke:var(--d-accent)}
+.sw{display:flex;flex-wrap:wrap;gap:.5rem 1rem;font-family:var(--mono);font-size:.74rem;color:var(--muted)}
+.sw span{display:inline-flex;align-items:center;gap:.4rem}
+.sw i{width:18px;height:18px;border-radius:4px;border:1px solid var(--line);display:inline-block}
+.sw b{font-family:var(--d-font);font-weight:500;font-size:1rem;color:var(--ink)}
+
+/* ---- v7: one tool window, quiet page around it ---- */
+.wrap{max-width:1160px;padding-block:2.2rem 5rem}
+section{scroll-margin-top:4.5rem}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:30;background:var(--bg)}
+.sitebar{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:color-mix(in srgb,var(--bg) 86%,transparent);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+.sitebar .inner{max-width:1160px;margin:0 auto;padding-left:max(20px,env(safe-area-inset-left,0px));padding-right:max(20px,env(safe-area-inset-right,0px));padding-block:.5rem;display:flex;align-items:center;justify-content:space-between;gap:1rem}
+.sitebar .brand{gap:.55rem;text-decoration:none;color:var(--ink)}
+.sitebar .brand svg{width:24px}
+.sitebar .wordmark{font-size:1.2rem}
+.sitebar nav{display:flex;gap:1.2rem;font-size:.9rem}
+.sitebar nav a{color:var(--muted);text-decoration:none}
+.sitebar nav a:hover,.top nav a:focus-visible{color:var(--ink)}
+@media (max-width:900px){.sitebar nav{display:none}}
+.eyebrow{font-family:var(--body);font-size:.92rem;letter-spacing:0;text-transform:none;color:var(--accent);font-weight:600}
+.tag,.rules .n{font-family:var(--body);font-size:.85rem;letter-spacing:0;text-transform:none;font-weight:600}
+th{font-family:var(--body);font-size:.82rem;letter-spacing:0;text-transform:none;font-weight:600}
+tr.sep td{font-family:var(--body);font-size:.85rem;letter-spacing:0;text-transform:none;font-weight:600}
+h1{font-size:clamp(2.3rem,6vw,4.4rem);max-width:none}
+.status{align-self:flex-start;display:inline-flex;align-items:center;gap:.5rem;font-size:.85rem;border:1px solid var(--line);border-radius:999px;padding:.2rem .8rem;color:var(--muted);background:var(--surface);max-width:none}
+.status::before{content:"";width:8px;height:8px;border-radius:50%;background:var(--accent)}
+.hero .lede{max-width:56ch}
+.canvas{background-color:var(--d-paper);background-image:radial-gradient(var(--d-line) 1px,transparent 1.3px);background-size:16px 16px}
+
+.play{border:1.5px solid var(--ink);border-radius:14px;overflow:hidden;background:var(--surface);display:flex;flex-direction:column}
+.play .bar{display:flex;flex-wrap:wrap;gap:.6rem 1rem;align-items:center;justify-content:space-between;padding:.55rem .7rem;border-bottom:1px solid var(--line);background:var(--bg)}
+.play .file{font-family:var(--mono);font-size:.8rem;padding:.3rem .7rem;border-radius:7px;background:var(--code-bg);color:var(--code-fg)}
+.play .seg{border-radius:8px}
+.play .seg button{padding:.38rem .8rem}
+.pick{display:inline-flex;align-items:center;gap:.5rem;font-size:.85rem;color:var(--muted)}
+.pick select{font:500 .85rem var(--body);color:var(--ink);background:var(--surface);border:1px solid var(--ink);border-radius:8px;padding:.32rem .5rem}
+.pick select:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.play .split,.play .out{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,7fr)}
+@media (max-width:820px){.play .split,.play .out{grid-template-columns:minmax(0,1fr)}}
+.play .left{background:var(--code-bg);display:flex;flex-direction:column;min-width:0}
+.code-wrap{position:relative;flex:1;min-width:0}
+#hl{margin:0;padding:.8rem 1rem;background:transparent;border-radius:0;overflow:hidden;white-space:pre;height:100%;box-sizing:border-box}
+#hl .l{min-height:1.6em;border-radius:3px}
+#hl .ln{display:inline-block;width:2.2em;margin-right:.8em;text-align:right;color:var(--code-c);opacity:.65;user-select:none}
+#hl .l.error{background:color-mix(in srgb,var(--code-k) 26%,transparent)}
+#hl .l.warning{background:color-mix(in srgb,var(--code-w) 20%,transparent)}
+#hl .l.note{background:color-mix(in srgb,var(--code-s) 14%,transparent)}
+textarea#src{position:absolute;inset:0;height:100%;padding:.8rem 1rem .8rem calc(1rem + 3em);color:transparent;-webkit-text-fill-color:transparent;caret-color:var(--code-fg);resize:none;overflow:auto hidden;background:transparent}
+textarea#src::selection{background:rgba(255,143,191,.35)}
+.try{display:flex;flex-wrap:wrap;gap:.4rem;align-items:center;padding:.6rem .8rem .8rem;border-top:1px solid color-mix(in srgb,var(--code-fg) 14%,transparent);font-size:.8rem;color:var(--code-c)}
+.try .btn{background:transparent;color:var(--code-fg);border-color:color-mix(in srgb,var(--code-fg) 32%,transparent);padding:.28rem .65rem;font-size:.78rem}
+.try .btn:hover{background:var(--code-fg);color:var(--code-bg)}
+.play .right{display:flex;flex-direction:column;gap:.5rem;padding:.7rem;min-width:0;background-color:var(--d-paper);background-image:radial-gradient(var(--d-line) 1px,transparent 1.3px);background-size:16px 16px}
+.play .right .canvas{border:0;background:none;padding:.4rem 0;flex:1;display:flex;align-items:center}
+.play .right .dials span{background:var(--d-paper)}
+.play .lensnote{font-size:.85rem;color:var(--d-muted);background:var(--d-paper);align-self:flex-start;padding:.1rem .4rem;border-radius:4px;max-width:none}
+.play .out{border-top:1px solid var(--line)}
+.play .out .panel{border:0;border-radius:0;background:var(--surface)}
+.play .out .panel:first-child{border-right:1px solid var(--line)}
+@media (max-width:820px){.play .out .panel:first-child{border-right:0;border-bottom:1px solid var(--line)}}
+#view.in{animation:lens .22s ease-out}
+@keyframes lens{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){#view.in{animation:none}}
+
+.props{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));border-top:1.5px solid var(--ink)}
+.props div{padding:1rem 1.4rem 0 0;display:flex;flex-direction:column;gap:.3rem}
+.props div+div{padding-left:1.4rem;border-left:1px solid var(--line)}
+.props strong{font-family:var(--display);font-size:1.15rem}
+.props span{color:var(--muted);font-size:.95rem}
+@media (max-width:820px){.props{grid-template-columns:minmax(0,1fr)}.props div+div{padding-left:0;border-left:0;border-top:1px solid var(--line)}.props div{padding-bottom:1rem}}
+
+.gallery figure>pre:has(+.canvas){border-radius:10px 10px 0 0;margin-bottom:-.6rem}
+.gallery figure>pre+.canvas{border-radius:0 0 10px 10px;border-top:0}
+
+/* ---- v8: the new default. A neutral page, one brand spark, a stated scale ---- */
+:root{
+  --bg:#FAFAFB; --surface:#FFFFFF; --ink:#15161A; --muted:#666B78; --line:#E3E4EA;
+  --accent:#D12F6D; --accent-ink:#FFFFFF; --turf:#16794F; --saddle:#9A5B00;
+  --t-pink:#FBE9F0; --t-green:#E3F3EA; --t-ochre:#F8EDD8; --t-neutral:#F0F1F4;
+  --code-bg:#F4F5F7; --code-fg:#1B1C21; --code-k:#BE2560; --code-s:#0E7A5C; --code-c:#7A7F8C; --code-w:#94580A;
+  --s1:.5rem; --s2:1rem; --s3:1.5rem; --s4:2.5rem; --s5:4rem; --s6:7.5rem; --r1:6px; --r2:10px; --r3:14px;
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+  --bg:#0D0E11; --surface:#14161A; --ink:#ECEDF1; --muted:#9A9FAD; --line:#272A32;
+  --accent:#FF6FA5; --accent-ink:#2A0B18; --turf:#5FCB9B; --saddle:#E3A75C;
+  --t-pink:#3A1826; --t-green:#15302A; --t-ochre:#35290F; --t-neutral:#1C1F25;
+  --code-bg:#111317; --code-fg:#E4E6EB; --code-k:#FF8FB5; --code-s:#7FD6B5; --code-c:#7B8191; --code-w:#F0C36A; color-scheme:dark } }
+:root[data-theme="dark"]{
+  --bg:#0D0E11; --surface:#14161A; --ink:#ECEDF1; --muted:#9A9FAD; --line:#272A32;
+  --accent:#FF6FA5; --accent-ink:#2A0B18; --turf:#5FCB9B; --saddle:#E3A75C;
+  --t-pink:#3A1826; --t-green:#15302A; --t-ochre:#35290F; --t-neutral:#1C1F25;
+  --code-bg:#111317; --code-fg:#E4E6EB; --code-k:#FF8FB5; --code-s:#7FD6B5; --code-c:#7B8191; --code-w:#F0C36A; color-scheme:dark }
+body{font-size:16px;line-height:1.6;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+.wrap{max-width:1120px;gap:var(--s6);padding-block:2.5rem 6rem}
+.sitebar .inner{max-width:1120px}
+h1{font-weight:700;font-size:clamp(2.3rem,5.6vw,4.25rem);letter-spacing:-.035em;line-height:1.02}
+h2{font-weight:700;font-size:clamp(1.7rem,3.2vw,2.5rem);letter-spacing:-.028em;line-height:1.08;max-width:24ch}
+h3{font-size:1.125rem;font-weight:700;letter-spacing:-.01em;line-height:1.25}
+.lede{font-size:1.2rem;line-height:1.5}
+section{gap:var(--s4)}
+.hero{gap:var(--s3)}
+.head{gap:.9rem}
+.head p{font-size:1.05rem;color:var(--muted)}
+.eyebrow{color:var(--muted);font-weight:500;font-size:.9rem}
+a{color:var(--ink);text-underline-offset:3px;text-decoration-color:var(--muted)}
+pre{border:1px solid var(--line);border-radius:var(--r2)}
+#hl,.readback{border:0}
+td code{color:var(--ink);background:var(--t-neutral);padding:.08rem .32rem;border-radius:4px}
+code{font-size:.86em}
+.tag,.rules .n{color:var(--muted);font-weight:500}
+tr.sep td{color:var(--ink);background:var(--t-neutral)}
+.dials span{border-color:var(--line);color:var(--muted)}
+.dials span b{color:var(--ink)}
+.st.f{background:var(--ink);color:var(--bg)}
+.gait::before{background:var(--ink);width:9px;height:9px;top:-5px}
+.gaits,.rules,.props{border-top:1px solid var(--ink)}
+.gait .name{font-weight:700;font-size:1.75rem}
+.btn{border-color:var(--line);border-radius:var(--r1)}
+.btn:hover{border-color:var(--ink)}
+.btn.fix{border-color:var(--ink);color:var(--ink)}
+.btn.fix:hover{background:var(--ink);color:var(--bg)}
+.seg{border-color:var(--line);background:var(--surface);border-radius:8px}
+.canvas{background-image:none;border-radius:var(--r2)}
+.tablewrap,.open,.panel{border-radius:var(--r2)}
+.status::before{background:var(--accent)}
+
+.play{border:1px solid var(--line);border-radius:var(--r3);box-shadow:0 1px 2px rgba(15,16,20,.04),0 24px 60px -28px rgba(15,16,20,.22)}
+.play .bar{background:var(--surface)}
+.play .file{background:var(--t-neutral);color:var(--ink)}
+.play .left{border-right:1px solid var(--line)}
+@media (max-width:820px){.play .left{border-right:0;border-bottom:1px solid var(--line)}}
+.pick select{border-color:var(--line)}
+.try{border-top:1px solid var(--line);color:var(--muted)}
+.try .btn{background:var(--surface);color:var(--ink);border-color:var(--line)}
+.try .btn:hover{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.play .right{background-image:radial-gradient(color-mix(in srgb,var(--d-muted) 26%,transparent) .7px,transparent 1px);background-size:22px 22px}
+textarea#src::selection{background:color-mix(in srgb,var(--code-k) 22%,transparent)}
+#hl .l.error{background:color-mix(in srgb,var(--code-k) 14%,transparent)}
+#hl .l.warning{background:color-mix(in srgb,var(--code-w) 16%,transparent)}
+#hl .l.note{background:color-mix(in srgb,var(--code-s) 12%,transparent)}
+.props strong{font-size:1.05rem}
+.cols{gap:2rem 2.5rem}
+.bet{padding-top:var(--s4);gap:2.5rem}
+.gallery{gap:3rem 1.75rem}
+.rules > div{padding:1.25rem 0}
+@media (max-width:600px){h1 br{display:none}.play .right .canvas svg{min-width:440px}}
+</style>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" class="ahf"/></marker>
+    <filter id="rough" filterUnits="userSpaceOnUse" x="-50" y="-50" width="900" height="700"><feTurbulence type="fractalNoise" baseFrequency="0.035" numOctaves="2" seed="7" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="5" xChannelSelector="R" yChannelSelector="G"/></filter>
+    <marker id="ahu" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="11" markerHeight="11" markerUnits="userSpaceOnUse" orient="auto"><path d="M0 0L10 5L0 10z" class="ahf"/></marker>
+    <marker id="aha" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" class="ahf-a"/></marker>
+  </defs>
+</svg>
+
+<header class="sitebar"><div class="inner">
+  <a class="brand" href="#top" aria-label="horsegirl, top of page"><svg viewBox="0 0 80 110" role="img" aria-label="A show rosette with a three-node graph at its centre">
+      <polygon points="26,62 16,106 30,96 38,108 40,66" style="fill:var(--accent)"/>
+      <polygon points="54,62 64,106 50,96 42,108 40,66" style="fill:var(--accent)"/>
+      <circle cx="40" cy="40" r="32" style="fill:none;stroke:var(--accent);stroke-width:12;stroke-dasharray:5 3"/>
+      <circle cx="40" cy="40" r="25" style="fill:var(--bg);stroke:var(--accent);stroke-width:2"/>
+      <path d="M40 28V38H29V50M40 38H51V50" style="fill:none;stroke:var(--ink);stroke-width:2"/>
+      <circle cx="40" cy="28" r="4" style="fill:var(--ink)"/><circle cx="29" cy="51" r="4" style="fill:var(--ink)"/><circle cx="51" cy="51" r="4" style="fill:var(--accent)"/>
+    </svg><span class="wordmark">horsegirl</span></a>
+  <nav aria-label="Sections">
+    <a href="#language">Language</a><a href="#lenses">Lenses</a><a href="#pictures">Pictures</a><a href="#agents">Agents</a><a href="#themes">Themes</a><a href="#research">Research</a><a href="#build">Architecture</a><a href="#roadmap">Roadmap</a>
+  </nav>
+</div></header>
+
+<div class="wrap">
+
+<section class="hero" id="top">
+  <p class="status">A concept. No horsegirl code exists yet.</p>
+  <h1>Agents write what is true.<br>You choose how to look.</h1>
+  <p class="lede">horsegirl is an open source diagram language for the case where an agent writes the diagram and a person reads it. State the facts once. A lens turns them into a flow, a sequence, a matrix, or a picture with no name yet.</p>
+
+  <div class="play">
+    <div class="bar">
+      <span class="file">checkout.horse</span>
+      <div class="seg" role="group" aria-label="Lens">
+        <button type="button" data-lens="flow" aria-pressed="true">Flow</button>
+        <button type="button" data-lens="sequence" aria-pressed="false">Sequence</button>
+        <button type="button" data-lens="lanes" aria-pressed="false">Lanes</button>
+        <button type="button" data-lens="matrix" aria-pressed="false">Matrix</button>
+        <button type="button" data-lens="rings" aria-pressed="false">Rings</button>
+        <button type="button" data-lens="seams" aria-pressed="false">Seams</button>
+      </div>
+      <label class="pick">Theme
+        <select id="dt-select">
+          <option value="plain">Plain</option>
+          <option value="rosette">Rosette</option>
+          <option value="blueprint">Blueprint</option>
+          <option value="ink">Ink</option>
+        </select>
+      </label>
+    </div>
+    <div class="split">
+      <div class="left">
+        <div class="code-wrap">
+          <pre id="hl" aria-hidden="true"></pre>
+          <textarea id="src" aria-label="horsegirl source" spellcheck="false" autocomplete="off" autocapitalize="off">Web app, Mobile app -> API gateway
+API gateway -> Payments
+Web app, Mobile app -x Postgres: never directly
+
+Services {
+  Orders, Payments { owner: Commerce }
+  Notify { owner: Growth }
+}
+API gateway, Postgres, Events { owner: Platform }
+Web app, Mobile app { owner: Apps }
+Email provider { owner: External }
+
+story checkout {
+  Web app -> API gateway: POST /checkout
+  API gateway -> Orders: create
+  Orders -> Payments: charge
+  Orders -> Postgres: save
+  Payments -> Notify: paid
+  Notify -> Events: publish
+  Events -> Email provider: send
+}
+
+show flow</textarea>
+        </div>
+        <div class="try">
+          <span>Try</span>
+          <button class="btn" type="button" id="b-typo">a typo</button>
+          <button class="btn" type="button" id="b-habit">a Mermaid habit</button>
+          <button class="btn" type="button" id="b-cache">a new cache</button>
+          <button class="btn" type="button" id="b-guess">a guess</button>
+          <button class="btn" type="button" id="b-rule">a broken rule</button>
+          <button class="btn" type="button" id="b-reset">Reset</button>
+        </div>
+      </div>
+      <div class="right">
+        <div class="dials" id="lens-dials"></div>
+        <div class="canvas"><svg id="view" viewBox="0 0 600 360" role="img" aria-label="The picture for the source in the editor, drawn through the chosen lens"></svg></div>
+        <p id="lens-note" class="lensnote"></p>
+      </div>
+    </div>
+    <div class="out">
+      <div class="panel" aria-live="polite">
+        <h4>$ horsegirl check checkout.horse</h4>
+        <div id="diag"></div>
+      </div>
+      <div class="panel">
+        <h4>$ horsegirl describe checkout.horse</h4>
+        <pre class="readback" id="readback"></pre>
+      </div>
+    </div>
+  </div>
+  <p class="note">This window is a toy of about 350 lines. It reads the five rules and redraws on every key press. Its layouts are simple, and the flow lens starts from positions set by hand. The real engine does not exist yet.</p>
+
+  <div class="props">
+    <div><strong>For the agent</strong><span>Five rules to learn. Every error names its fix. A read-back stands in for eyes.</span></div>
+    <div><strong>For the reader</strong><span>Pictures that stay put between edits. Plain by default, with alt text written for you.</span></div>
+    <div><strong>For the repository</strong><span>One file of facts and many pictures. Rules that fail the build. A diff a reviewer can read.</span></div>
+  </div>
+</section>
+
+<section id="language">
+  <div class="head">
+    <div class="eyebrow">The language</div>
+    <h2>Five rules. That is all of it.</h2>
+    <p>A person learns the language from this table. An agent learns it from the same table. There is one syntax for every kind of picture, and nothing in it needs an id, a quote or a bracket.</p>
+  </div>
+  <div class="rules">
+    <div class="r"><strong>A name is a thing.</strong><span>Names can have spaces. A thing exists as soon as you mention it. You never declare an id and then give it a label.</span></div>
+    <div class="c"><pre>Web app</pre></div>
+
+    <div class="r"><strong>An arrow is a link.</strong><span>Commas fan out. Words after the colon label the link. A crossed arrow is a link that must not exist. A question mark is a guess.</span></div>
+    <div class="c"><pre>Web app, Mobile app -> API gateway: HTTPS
+Web app -x Postgres: never directly
+Orders -> Cache ?</pre></div>
+
+    <div class="r"><strong>Braces hold what is inside and what is known.</strong><span>A bare name inside braces is a part. A <code>key: value</code> pair is a fact. Facts can go on links too.</span></div>
+    <div class="c"><pre>Services { Orders, Payments, Notify }
+Payments { <span class="k">owner</span>: Commerce, <span class="k">calls</span>: 4000 }</pre></div>
+
+    <div class="r"><strong>A story is links in the order they happen.</strong><span>Outside a story, a link is always true. Inside a story, the order you write is the order of events.</span></div>
+    <div class="c"><pre><span class="k">story</span> checkout {
+  Orders -> Payments: charge
+  Payments -> Notify: paid
+}</pre></div>
+
+    <div class="r"><strong>A lens says what position means.</strong><span>The same facts feed every lens. A file can ask for many pictures.</span></div>
+    <div class="c"><pre><span class="k">show</span> flow
+<span class="k">show</span> sequence <span class="k">of</span> checkout
+<span class="k">show</span> rings <span class="k">from</span> Payments</pre></div>
+  </div>
+</section>
+
+<section id="lenses">
+  <div class="head">
+    <div class="eyebrow">The idea underneath</div>
+    <h2>Every diagram type is the same graph with different dials.</h2>
+    <p>Charts solved this problem years ago. A bar chart and a scatter plot are the same data with fields bound to different channels. Diagrams never got that grammar, so each type became its own small language.</p>
+    <p>horsegirl gives diagrams the grammar. A lens binds a field such as <code>step</code>, <code>owner</code> or <code>depth</code> to a channel such as x, y, inside, radius or thickness. A sequence diagram is a graph where down means later. A swimlane is a graph where each row is an owner.</p>
+  </div>
+  <div class="tablewrap">
+    <table>
+      <thead><tr><th>Lens</th><th>You know it as</th><th>The dials</th><th>What position tells you</th></tr></thead>
+      <tbody>
+        <tr><td>flow</td><td>Flowchart, architecture</td><td><code>x: depth</code> · <code>inside: group</code></td><td>What depends on what</td></tr>
+        <tr><td>sequence</td><td>Sequence diagram</td><td><code>x: thing</code> · <code>y: step</code></td><td>What happens next</td></tr>
+        <tr><td>lanes</td><td>Swimlane</td><td><code>x: step</code> · <code>y: owner</code></td><td>Where the handoffs are</td></tr>
+        <tr><td>matrix</td><td>Dependency matrix</td><td><code>x: to</code> · <code>y: from</code></td><td>Every link, with no lines to cross</td></tr>
+        <tr><td>timeline</td><td>Gantt chart</td><td><code>x: time</code> · <code>y: thing</code> · <code>length: duration</code></td><td>What overlaps</td></tr>
+        <tr><td>weight</td><td>Treemap</td><td><code>inside: parent</code> · <code>area: size</code></td><td>What is big</td></tr>
+        <tr><td>volume</td><td>Sankey diagram</td><td><code>x: depth</code> · <code>thickness: amount</code></td><td>Where the traffic goes</td></tr>
+        <tr class="sep"><td colspan="4">New lenses that fall out of the same dials</td></tr>
+        <tr><td>rings</td><td>No common name</td><td><code>radius: hops from focus</code></td><td>How far a failure spreads</td></tr>
+        <tr><td>storyline</td><td>Narrative chart</td><td><code>x: step</code> · <code>y: closeness</code></td><td>Who works with whom, and when</td></tr>
+        <tr><td>strata</td><td>No common name</td><td><code>y: layer</code> · <code>colour: direction</code></td><td>Which links break the layering</td></tr>
+        <tr><td>seams</td><td>No common name</td><td><code>thing: owner</code> · <code>thickness: crossing links</code></td><td>Where teams depend on each other</td></tr>
+        <tr><td>frames</td><td>No common name</td><td><code>panel: step</code> · <code>colour: active</code></td><td>A story, without losing the map</td></tr>
+        <tr><td>trail</td><td>No common name</td><td><code>x: order</code> · <code>spur: crossed link</code></td><td>What was decided, and what was turned down</td></tr>
+        <tr><td>doubt</td><td>No common name</td><td>any lens · <code>line: certainty</code></td><td>Which facts are proven and which are guesses</td></tr>
+        <tr><td>loops</td><td>No common name</td><td><code>ring: cycle</code></td><td>Every circular dependency, one ring each</td></tr>
+        <tr><td>age</td><td>No common name</td><td><code>radius: first commit</code></td><td>The old core and the new edge, like tree rings</td></tr>
+        <tr><td>diff</td><td>No common name</td><td>any lens · <code>colour: change</code></td><td>What a pull request did to the system</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="pair">
+    <div class="stack">
+      <h3>A new diagram type is a few lines</h3>
+      <p>The built-in lenses are written in the same language a user writes. Nobody waits for a maintainer to add a diagram type. Somebody writes a lens, and a new kind of picture exists.</p>
+    </div>
+    <pre aria-label="Defining a lens"><span class="k">lens</span> rings {
+  <span class="k">focus</span>:  one thing
+  <span class="k">radius</span>: hops <span class="k">from</span> focus
+  <span class="k">colour</span>: owner
+}
+
+<span class="k">lens</span> lanes {
+  <span class="k">x</span>: step
+  <span class="k">y</span>: owner
+}</pre>
+  </div>
+</section>
+
+<section id="pictures">
+  <div class="head">
+    <div class="eyebrow">New pictures</div>
+    <h2>Eight pictures from facts you already wrote.</h2>
+    <p>Each one is a single <code>show</code> line. Two of them need numbers, and horsegirl reads those from a file. That is where diagrams and data visualisation become one subject. Six of the eight have no equivalent in Mermaid. Volume and Weight exist there as Sankey and treemap, each with its own syntax and its own copy of the data.</p>
+  </div>
+  <div class="gallery">
+    <figure>
+      <h3>Storyline</h3>
+      <pre><span class="k">show</span> storyline <span class="k">of</span> login</pre>
+      <div class="canvas"><svg id="g-story" viewBox="0 0 520 235" role="img" aria-label="Storyline of a login: four lines for browser, api, auth and db run left to right and pull together in pairs at each step where two of them talk"></svg></div>
+      <figcaption>Each thing is a line through time. Two lines pull together when the two things talk. A sequence diagram shows messages. A storyline shows relationships. The form comes from hand-drawn film charts and has never been in a diagram language.</figcaption>
+    </figure>
+
+    <figure>
+      <h3>Volume</h3>
+      <pre><span class="k">load</span> traffic.csv
+<span class="k">show</span> flow { <span class="k">thickness</span>: calls }</pre>
+      <div class="canvas"><svg viewBox="0 0 420 170" role="img" aria-label="Flow with link thickness bound to calls per minute: 6,000 from Web app and 3,000 from Mobile app join at API gateway, then split into 5,000 to Orders and 4,000 to Payments">
+        <path class="rib" stroke-width="72" d="M32 56C118 56 118 66 204 66"/>
+        <path class="rib" stroke-width="36" d="M32 130C118 130 118 120 204 120"/>
+        <path class="rib" stroke-width="60" d="M216 60C302 60 302 50 388 50"/>
+        <path class="rib" stroke-width="48" d="M216 114C302 114 302 124 388 124"/>
+        <rect class="bar" x="20" y="20" width="12" height="72"/><rect class="bar" x="20" y="112" width="12" height="36"/>
+        <rect class="bar" x="204" y="30" width="12" height="108"/>
+        <rect class="bar" x="388" y="20" width="12" height="60"/><rect class="bar" x="388" y="100" width="12" height="48"/>
+        <text x="40" y="54">Web app</text><text class="m" x="40" y="68">6,000</text>
+        <text x="40" y="128">Mobile app</text><text class="m" x="40" y="142">3,000</text>
+        <text x="224" y="82">API gateway</text><text class="m" x="224" y="96">9,000</text>
+        <text x="380" y="48" text-anchor="end">Orders</text><text class="m" x="380" y="62" text-anchor="end">5,000</text>
+        <text x="380" y="122" text-anchor="end">Payments</text><text class="m" x="380" y="136" text-anchor="end">4,000</text>
+      </svg></div>
+      <figcaption>The flow lens with one extra dial. Thickness is bound to calls per minute from a data file, and a Sankey diagram appears. Nobody wrote a Sankey renderer. The numbers are examples.</figcaption>
+    </figure>
+
+    <figure>
+      <h3>Weight</h3>
+      <pre><span class="k">load</span> loc.csv
+<span class="k">show</span> weight { <span class="k">area</span>: lines }</pre>
+      <div class="canvas"><svg viewBox="0 0 420 200" role="img" aria-label="Treemap of the same things: Services is the largest group with Orders at 42 thousand lines, Payments 31 and Notify 9; Apps holds Web app at 28 and Mobile app at 20; API gateway is 12">
+        <rect class="nd tm" x="10" y="10" width="135" height="105"/><rect class="nd tm" x="10" y="115" width="135" height="75"/>
+        <rect class="nd p tm" x="145" y="10" width="231" height="92"/><rect class="nd p tm" x="145" y="102" width="179" height="88"/><rect class="nd o tm" x="324" y="102" width="52" height="88"/>
+        <rect class="nd g tm" x="376" y="10" width="34" height="180"/>
+        <rect class="frame" x="10" y="10" width="135" height="180"/><rect class="frame" x="145" y="10" width="231" height="180"/><rect class="frame" x="376" y="10" width="34" height="180"/>
+        <text x="20" y="34">Web app</text><text class="m" x="20" y="48">28k</text>
+        <text x="20" y="139">Mobile app</text><text class="m" x="20" y="153">20k</text>
+        <text x="155" y="34">Orders</text><text class="m" x="155" y="48">42k</text>
+        <text x="155" y="126">Payments</text><text class="m" x="155" y="140">31k</text>
+        <text class="s" x="330" y="126">Notify</text><text class="m" x="330" y="140">9k</text>
+        <text class="s" transform="translate(397 24) rotate(90)">API gateway · 12k</text>
+      </svg></div>
+      <figcaption>The braces you wrote for grouping are a hierarchy. Bind area to a number and the hierarchy becomes a treemap. Here the number is lines of code, and the values are examples.</figcaption>
+    </figure>
+
+    <figure>
+      <h3>Diff</h3>
+      <pre>$ horsegirl diff main..HEAD</pre>
+      <div class="canvas"><svg id="g-diff" viewBox="0 0 290 215" style="max-width:380px;margin:0 auto" role="img" aria-label="Diff of two versions of one system: a cache node and two links are new, and the direct link from orders to db is removed"></svg></div>
+      <figcaption>Any lens, drawn over two versions of the facts. The accent colour marks what is new. The dotted link is gone. A reviewer sees that this pull request put a cache between orders and the database. This works only because the layout stays put.</figcaption>
+    </figure>
+
+    <figure>
+      <h3>Seams</h3>
+      <pre><span class="k">show</span> seams <span class="k">by</span> owner</pre>
+      <div class="canvas"><svg id="g-seams" viewBox="0 0 560 370" role="img" aria-label="Seams of the checkout system: one circle for each owner, sized by how many things it owns, joined by the links that cross between owners"></svg></div>
+      <figcaption>Every thing folds into its owner. Only the links that cross between owners remain, and a thicker line means more of them. This is the picture of who has to talk to whom. It is also a lens in the live editor at the top.</figcaption>
+    </figure>
+
+    <figure>
+      <h3>Doubt</h3>
+      <pre>Orders -> Postgres: save  <span class="k">@</span> repo.ts:17
+Orders -> Cache <span class="k">?</span>
+Cache -> Postgres <span class="k">?</span></pre>
+      <div class="canvas"><svg viewBox="0 0 420 150" role="img" aria-label="Three things. The link from Orders to Postgres is solid and cites a file. The links through Cache are dashed and marked with question marks.">
+        <path class="ed" style="stroke-width:2.4" marker-end="url(#ahu)" d="M120 98H300"/>
+        <path class="ed d guess" marker-end="url(#ah)" d="M70 80V38H160"/>
+        <path class="ed d guess" marker-end="url(#ah)" d="M260 38H350V80"/>
+        <rect class="nd p" x="20" y="80" width="100" height="36" rx="6"/><text x="70" y="102" text-anchor="middle">Orders</text>
+        <rect class="nd x guess" x="160" y="20" width="100" height="36" rx="6"/><text x="210" y="42" text-anchor="middle">Cache</text>
+        <rect class="nd g" x="300" y="80" width="100" height="36" rx="6"/><text x="350" y="102" text-anchor="middle">Postgres</text>
+        <text class="h a" x="104" y="32" text-anchor="middle">?</text><text class="h a" x="316" y="32" text-anchor="middle">?</text>
+        <text class="m" x="210" y="90" text-anchor="middle">save · repo.ts:17</text>
+        <text class="m" x="210" y="138" text-anchor="middle">solid: cites evidence · dashed: a guess</text>
+      </svg></div>
+      <figcaption>An agent can say that it is not sure. A fact that cites a file draws solid. A fact with a question mark draws dashed. The reader sees at a glance which parts of the picture to trust, and the agent knows what to verify next. A guess also draws with a shaky line, the way a hand sketch says that it is a draft.</figcaption>
+    </figure>
+
+    <figure>
+      <h3>Frames</h3>
+      <pre><span class="k">show</span> frames <span class="k">of</span> login</pre>
+      <div class="canvas"><div class="frames">
+        <div><svg id="g-f0" viewBox="0 0 260 215" role="img" aria-label="Frame 1: api calls auth"></svg><span>1 · api -> auth</span></div>
+        <div><svg id="g-f1" viewBox="0 0 260 215" role="img" aria-label="Frame 2: auth reads db"></svg><span>2 · auth -> db</span></div>
+        <div><svg id="g-f2" viewBox="0 0 260 215" role="img" aria-label="Frame 3: api calls orders"></svg><span>3 · api -> orders</span></div>
+        <div><svg id="g-f3" viewBox="0 0 260 215" role="img" aria-label="Frame 4: orders reads db"></svg><span>4 · orders -> db</span></div>
+      </div></div>
+      <figcaption>A sequence diagram loses the map. Frames keep it: each step is the same flow with one link lit. On paper this is a storyboard. In the web viewer it plays.</figcaption>
+    </figure>
+
+    <figure>
+      <h3>Strata</h3>
+      <pre><span class="k">show</span> strata <span class="k">by</span> layer</pre>
+      <div class="canvas"><svg viewBox="0 0 420 195" role="img" aria-label="Three layers: clients, services and data. Three links point down. One link from Events up to Notify is marked because it points against the layers.">
+        <rect class="band" x="6" y="8" width="408" height="54" rx="6"/><rect class="band" x="6" y="70" width="408" height="54" rx="6"/><rect class="band" x="6" y="132" width="408" height="54" rx="6"/>
+        <text class="m" x="16" y="39">clients</text><text class="m" x="16" y="101">services</text><text class="m" x="16" y="163">data</text>
+        <path class="ed" marker-end="url(#ah)" d="M190 50V82"/>
+        <path class="ed" marker-end="url(#ah)" d="M155 112V144"/>
+        <path class="ed" marker-end="url(#ah)" d="M335 112V144"/>
+        <path class="ed ac" marker-end="url(#aha)" d="M300 144V112"/>
+        <rect class="nd" x="165" y="20" width="90" height="30" rx="6" style="fill:var(--d-paper)"/><text x="210" y="39" text-anchor="middle">Web app</text>
+        <rect class="nd p" x="110" y="82" width="90" height="30" rx="6"/><text x="155" y="101" text-anchor="middle">Orders</text>
+        <rect class="nd o" x="270" y="82" width="90" height="30" rx="6"/><text x="315" y="101" text-anchor="middle">Notify</text>
+        <rect class="nd g" x="110" y="144" width="90" height="30" rx="6"/><text x="155" y="163" text-anchor="middle">Postgres</text>
+        <rect class="nd g" x="270" y="144" width="90" height="30" rx="6"/><text x="315" y="163" text-anchor="middle">Events</text>
+        <text class="m a" x="292" y="132" text-anchor="end">points up</text>
+      </svg></div>
+      <figcaption>Height means layer. A link that points down is fine. A link that points up is drawn in the accent colour, because a data store that calls a service is usually a mistake. The picture is also a check an agent can run.</figcaption>
+    </figure>
+  </div>
+</section>
+
+<section id="agents">
+  <div class="head">
+    <div class="eyebrow">Agent first</div>
+    <h2>An agent cannot see. So the tool sees for it.</h2>
+    <p>An agent that writes Mermaid works blind. It cannot tell whether the file parses, whether the picture overlaps, or whether the picture says what it meant. horsegirl answers all three in text, so the agent finishes the loop before a person looks.</p>
+  </div>
+  <figure>
+    <div class="canvas" style="--min:700px">
+      <svg viewBox="0 0 760 150" role="img" aria-label="The agent loop: write facts, check, describe, draw, then a person looks. Check sends errors with fixes back to write. Describe sends a read-back to write when it does not match the intent.">
+        <rect class="fillsoft" x="10" y="26" width="660" height="108" rx="12"/>
+        <rect class="nd" x="20" y="50" width="130" height="44" rx="6"/><text class="h" x="85" y="77" text-anchor="middle">Write facts</text>
+        <rect class="nd hot" x="190" y="50" width="130" height="44" rx="6"/><text class="h hi" x="255" y="77" text-anchor="middle">Check</text>
+        <rect class="nd hot" x="360" y="50" width="130" height="44" rx="6"/><text class="h hi" x="425" y="77" text-anchor="middle">Describe</text>
+        <rect class="nd" x="530" y="50" width="130" height="44" rx="6"/><text class="h" x="595" y="77" text-anchor="middle">Draw</text>
+        <rect class="nd g" x="694" y="50" width="56" height="44" rx="22"/><text class="h" x="722" y="77" text-anchor="middle">You</text>
+        <path class="ed" marker-end="url(#ah)" d="M150 72H190"/>
+        <path class="ed" marker-end="url(#ah)" d="M320 72H360"/>
+        <path class="ed" marker-end="url(#ah)" d="M490 72H530"/>
+        <path class="ed" marker-end="url(#ah)" d="M660 72H694"/>
+        <path class="ed ac" marker-end="url(#aha)" d="M255 94V116H100V94"/>
+        <text class="m a" x="178" y="129" text-anchor="middle">errors, each with its fix</text>
+        <path class="ed ac" marker-end="url(#aha)" d="M425 50V36H70V50"/>
+        <text class="m a" x="248" y="20" text-anchor="middle">read-back does not match what I meant</text>
+        <text class="m" x="595" y="116" text-anchor="middle">SVG, PNG or text</text>
+      </svg>
+    </div>
+    <figcaption>Everything inside the tinted area is text in and text out. It needs no vision model, no browser and no person. The two filled stages are the ones other tools do not have.</figcaption>
+  </figure>
+
+  <div class="rules wide">
+    <div class="r"><span class="n">Principle 1</span><strong>The whole language fits in a prompt.</strong><span>No model has seen horsegirl. So the specification is one page, and the tool prints it. An agent reads the page once and can write the language.</span></div>
+    <div class="c"><pre><span class="c">$ horsegirl spec</span>
+1 A name is a thing. Spaces are fine.    Web app
+2 An arrow links things. Commas fan out. A, B -> C: label
+3 Braces hold parts and facts.           G { A, B }  A { owner: X }
+4 A story is links in order.             story S { ... }
+5 show picks a lens.                     show flow | sequence of S
+                                         lanes of S | matrix | rings from T
+-x forbids a link.  A final ? marks a guess.
+One fact per line. Order is free outside a story.
+End a line with  @ path:line  to cite evidence.
+Run check after every edit. Apply the fix it returns.</pre></div>
+
+    <div class="r"><span class="n">Principle 2</span><strong>Forgiving reader, strict writer.</strong><span>Models carry habits from Mermaid. The reader accepts them and says what it changed. The formatter writes one canonical form, so every file in a repository looks the same.</span></div>
+    <div class="c"><pre><span class="c">- "Web app" --> "API gateway" : HTTPS;</span>
+<span class="s">+ Web app -> API gateway: HTTPS</span>
+
+<span class="w">note[N0101]</span>: read `-->` as `->`, dropped quotes and `;`</pre></div>
+
+    <div class="r"><span class="n">Principle 3</span><strong>Every error carries its fix.</strong><span>A message names the place, the cause and the exact replacement. It also ships as JSON, so the agent applies the fix without reading prose. The parser reports every error in one pass.</span></div>
+    <div class="c"><pre><span class="k">error[E0412]</span>: `Paymnts` looks like a typo
+   --&gt; checkout.horse:15:13
+15 |   Orders -> Paymnts: charge
+   |             <span class="k">^^^^^^^</span> used once, one letter from `Payments`
+
+{"code":"E0412","line":15,"fix":{"from":"Paymnts","to":"Payments"}}</pre></div>
+
+    <div class="r"><span class="n">Principle 4</span><strong>Eyes without a vision model.</strong><span><code>describe</code> reads the picture back as text: what it shows, how big it is, and whether anything overlaps. The agent compares the read-back with what it meant to say.</span></div>
+    <div class="c"><pre><span class="c">$ horsegirl describe checkout.horse --lens "lanes of checkout"</span>
+7 steps across 5 owners. 6 handoffs.
+Starts at Web app (Apps). Ends at Email provider (External).
+Drawn at 796 × 266. 0 overlaps. 0 crossings. All labels fit.</pre></div>
+
+    <div class="r"><span class="n">Principle 5</span><strong>Facts cite their evidence.</strong><span>An agent that reads code can attach the file and line to each fact. <code>verify</code> finds facts whose evidence has moved or gone. A diagram can no longer rot in silence.</span></div>
+    <div class="c"><pre>Orders -> Payments: charge  <span class="k">@</span> src/orders/pay.ts:41
+Orders -> Postgres: save    <span class="k">@</span> src/orders/repo.ts:17
+
+<span class="c">$ horsegirl verify checkout.horse</span>
+<span class="w">stale</span>: src/orders/repo.ts:17 no longer mentions Postgres</pre></div>
+
+    <div class="r"><span class="n">Principle 6</span><strong>An edit is an added line.</strong><span>One fact sits on one line. Order does not matter outside a story. Saying a fact twice does no harm. So an agent appends, and never rewrites a file it only half remembers.</span></div>
+    <div class="c"><pre><span class="c">$ horsegirl add checkout.horse "Orders -> Cache -> Postgres"</span>
+<span class="s">+ Orders -> Cache</span>
+<span class="s">+ Cache -> Postgres</span>
+  2 facts added. 1 new thing. 0 things moved in 3 pictures.</pre></div>
+
+    <div class="r"><span class="n">Principle 7</span><strong>The file is the agent's map.</strong><span>A horsegirl file is twenty lines that describe a whole system. An agent reads it faster than it reads the code, and can ask it questions. The person gets the picture. The agent gets the graph.</span></div>
+    <div class="c"><pre><span class="c">$ horsegirl query checkout.horse "what reaches Postgres"</span>
+Web app -> API gateway -> Orders -> Postgres
+
+<span class="c">$ horsegirl query checkout.horse "owners on checkout"</span>
+Apps -> Platform -> Commerce -> Growth -> Platform -> External</pre></div>
+
+    <div class="r"><span class="n">Principle 8</span><strong>A picture has a budget.</strong><span>Agents write too much. A diagram with sixty boxes helps nobody. Past the budget, the compiler folds groups into single boxes and says what it folded.</span></div>
+    <div class="c"><pre><span class="w">note[N0300]</span>: 61 things is over the budget of 25
+   = folded 4 groups: Services (14), Data (9), Edge (7), Jobs (11)
+   = draw one with:  show flow of Services</pre></div>
+
+    <div class="r"><span class="n">Principle 9</span><strong>The syntax is decided by measurement.</strong><span>A public benchmark asks several models to write diagrams with only the one-page spec. A syntax change that lowers the score does not ship. Taste loses to data.</span></div>
+    <div class="c"><pre><span class="c">$ horsegirl bench --models 3 --tasks 200</span>
+valid on first try      target 99%
+valid after one fix     target 100%
+read-back matches task  target 95%</pre></div>
+  </div>
+
+  <div class="tablewrap">
+    <table>
+      <thead><tr><th>MCP tool</th><th>The agent sends</th><th>The agent gets back</th></tr></thead>
+      <tbody>
+        <tr><td><code>spec</code></td><td>Nothing</td><td>The one-page language card</td></tr>
+        <tr><td><code>check</code></td><td>A file</td><td>Every error and warning, each with a fix</td></tr>
+        <tr><td><code>fix</code></td><td>A file</td><td>The file with all safe fixes applied</td></tr>
+        <tr><td><code>add</code></td><td>A file and one fact</td><td>The lines added and what moved</td></tr>
+        <tr><td><code>suggest</code></td><td>A file</td><td>The lenses these facts support, and what each one answers</td></tr>
+        <tr><td><code>describe</code></td><td>A file and a lens</td><td>The picture read back as text, with size and overlap counts</td></tr>
+        <tr><td><code>query</code></td><td>A file and a question about paths or owners</td><td>The matching things and links</td></tr>
+        <tr><td><code>draw</code></td><td>A file and a format</td><td>SVG, PNG, or text for a terminal</td></tr>
+        <tr><td><code>diff</code></td><td>Two versions</td><td>One picture with the changes marked</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p class="note">Every command, code and number in this section is a proposal. The benchmark targets are goals, not results.</p>
+</section>
+
+<section id="themes">
+  <div class="head">
+    <div class="eyebrow">Themes</div>
+    <h2>Plain by default. Yours in one file.</h2>
+    <p>The pink belongs to the project, not to your diagrams. The default theme has no brand. It takes its font from the page it sits in and follows light and dark mode, so a horsegirl picture in your docs looks like your docs.</p>
+    <p>Pick a theme. Every diagram on this page changes, including the live editor at the top.</p>
+  </div>
+  <div class="pair">
+    <div class="stack">
+      <div class="seg" role="group" aria-label="Diagram theme">
+        <button type="button" data-dt-pick="plain" aria-pressed="true">Plain</button>
+        <button type="button" data-dt-pick="rosette" aria-pressed="false">Rosette</button>
+        <button type="button" data-dt-pick="blueprint" aria-pressed="false">Blueprint</button>
+        <button type="button" data-dt-pick="ink" aria-pressed="false">Ink</button>
+      </div>
+      <pre><span class="c">$ horsegirl draw checkout.horse --theme <span id="dt-name">plain</span></span></pre>
+      <div class="panel">
+        <h4>the whole theme: twelve tokens</h4>
+        <div class="sw">
+          <span><i style="background:var(--d-ink)"></i>ink</span>
+          <span><i style="background:var(--d-paper)"></i>paper</span>
+          <span><i style="background:var(--d-line)"></i>line</span>
+          <span><i style="background:var(--d-muted)"></i>muted</span>
+          <span><i style="background:var(--d-accent)"></i>accent</span>
+          <span><i style="background:var(--d-c0)"></i>fill</span>
+          <span><i style="background:var(--d-c1)"></i>palette 1</span>
+          <span><i style="background:var(--d-c2)"></i>palette 2</span>
+          <span><i style="background:var(--d-c3)"></i>palette 3</span>
+          <span><b>Aa</b>font</span>
+          <span>stroke</span>
+          <span>corner</span>
+        </div>
+      </div>
+      <p id="dt-note" class="note"></p>
+    </div>
+    <figure>
+      <div class="canvas" style="--min:520px"><svg id="g-theme" viewBox="0 0 600 360" role="img" aria-label="The checkout flow drawn in the chosen theme"></svg></div>
+      <figcaption>The same file in the chosen theme. A theme changes colour, font and line weight. It never changes position, so switching themes cannot break a layout.</figcaption>
+    </figure>
+  </div>
+
+  <div class="rules wide">
+    <div class="r"><span class="n">Level 1</span><strong>Pick a theme.</strong><span>One word, on the command line or in the project settings. The facts file stays free of style, so the same file draws for a slide, a README and a terminal.</span></div>
+    <div class="c"><pre><span class="c"># horsegirl.toml</span>
+theme = "blueprint"
+dark  = "auto"        <span class="c"># follow the reader's system</span></pre></div>
+
+    <div class="r"><span class="n">Level 2</span><strong>Change a few tokens.</strong><span>A theme is twelve tokens. Start from a built-in one and replace what differs. A brand usually needs an accent, a font and a palette.</span></div>
+    <div class="c"><pre><span class="k">theme</span> ours {
+  <span class="k">from</span>:    plain
+  <span class="k">accent</span>:  #0B6E4F
+  <span class="k">font</span>:    Inter
+  <span class="k">corner</span>:  2
+  <span class="k">palette</span>: #0B6E4F, #D97706, #7C3AED
+}</pre></div>
+
+    <div class="r"><span class="n">Level 3</span><strong>Let the page decide.</strong><span>The SVG reads CSS variables and gives each shape a class named for what it means. A docs site restyles every diagram from its own stylesheet, with no rebuild.</span></div>
+    <div class="c"><pre>.docs svg.horsegirl {
+  --hg-accent: var(--brand);
+  --hg-font:   inherit;
+}
+.docs .hg-thing.owner-commerce { --hg-fill: var(--brand-soft); }</pre></div>
+
+    <div class="r"><span class="n">Level 4</span><strong>Bring your design tokens.</strong><span>A team with a design system already has these values. One command turns a token file into a theme.</span></div>
+    <div class="c"><pre><span class="c">$ horsegirl theme from tokens.json --name ours</span>
+  wrote themes/ours.horse  <span class="c">(12 tokens, light and dark)</span></pre></div>
+
+    <div class="r"><span class="n">The limit</span><strong>Colour follows meaning. Nobody paints one box.</strong><span>Mermaid lets a file set the fill of a single node. Agents write horsegirl files, and an agent should not choose colours. A dial binds colour to a fact, and a rule sets emphasis.</span></div>
+    <div class="c"><pre><span class="k">show</span> flow { <span class="k">colour</span>: owner }
+<span class="k">show</span> flow <span class="k">where</span> tier <span class="k">is</span> critical { <span class="k">emphasis</span>: strong }
+
+<span class="c"># not in the language, on purpose</span>
+<span class="c"># Payments { fill: #ff00aa }</span></pre></div>
+
+    <div class="r"><span class="n">The guard</span><strong>A theme must pass a check.</strong><span>A custom theme can make a diagram unreadable. The tool measures contrast and tests the palette for colour-blind readers before it accepts a theme.</span></div>
+    <div class="c"><pre><span class="c">$ horsegirl theme check ours</span>
+ink on paper       14.8 : 1   pass
+accent on paper     5.9 : 1   pass
+palette 2 vs 3      <span class="w">too close for red-green colour blindness</span>
+   = <span class="s">fix</span>: try #B45309 for palette 2</pre></div>
+  </div>
+  <p class="note">The token count, the variable names and the check output are proposals. The four themes here are a sketch of the built-in set.</p>
+</section>
+
+<section id="people">
+  <div class="head">
+    <div class="eyebrow">For the people</div>
+    <h2>Two things that keep the human readers.</h2>
+  </div>
+
+  <div class="bet">
+    <div class="txt">
+      <div class="tag">Stability</div>
+      <h3>Layout that survives an edit</h3>
+      <p>Most engines solve the whole picture again after each change. One new node can move every other node. Readers lose their place and diffs in review become noise.</p>
+      <p>horsegirl treats the previous layout as an input. The engine keeps each existing node where the reader last saw it and finds room for the new one.</p>
+      <div class="seg" role="group" aria-label="Edit state">
+        <button id="st-before" type="button" aria-pressed="false">Before the edit</button>
+        <button id="st-after" type="button" aria-pressed="true">After adding cache</button>
+      </div>
+    </div>
+    <figure>
+      <div class="duo">
+        <div>
+          <h4>a typical engine</h4>
+          <div class="canvas"><svg id="st-typ" viewBox="0 0 290 220" role="img" aria-label="A typical engine after one node is added: three of four existing nodes change position"></svg></div>
+          <div class="verdict" id="st-typ-v"></div>
+        </div>
+        <div>
+          <h4>horsegirl</h4>
+          <div class="canvas"><svg id="st-hg" viewBox="0 0 290 220" role="img" aria-label="horsegirl after one node is added: no existing node changes position"></svg></div>
+          <div class="verdict" id="st-hg-v"></div>
+        </div>
+      </div>
+      <figcaption>One line added to the source: <code>orders -> cache</code>. Dashed ochre nodes changed position. The node with the accent border is new. Both panels illustrate the behaviour; neither is output from a real engine.</figcaption>
+    </figure>
+  </div>
+
+  <div class="bet">
+    <div class="txt">
+      <div class="tag">Compatibility</div>
+      <h3>Your Mermaid files already work</h3>
+      <p>A new language with no importer starts with no users. horsegirl reads Mermaid directly and draws it with its own layout engine. A team can switch renderers first and switch languages later, or never.</p>
+      <p><code>convert</code> rewrites a Mermaid file as horsegirl source. Once the facts are in horsegirl, every lens works on them.</p>
+      <p>The road also runs the other way. <code>draw --to mermaid</code> writes a Mermaid block, so a README renders on GitHub today, before any host supports horsegirl.</p>
+    </div>
+    <figure>
+<pre aria-label="Rendering and converting a Mermaid file"><span class="c"># draw a Mermaid file as it is</span>
+$ horsegirl draw docs/flow.mmd
+  wrote docs/flow.svg  <span class="c">(12 things, 0 overlaps)</span>
+
+<span class="c"># or move to the native language</span>
+$ horsegirl convert docs/flow.mmd
+  wrote docs/flow.horse
+
+<span class="c">- graph TD</span>
+<span class="c">-   A[Web app] --&gt;|HTTPS| B(API gateway)</span>
+<span class="s">+ Web app -&gt; API gateway: HTTPS</span>
+<span class="s">+ show flow</span></pre>
+      <figcaption>Proposed command line. The Mermaid ids <code>A</code> and <code>B</code> disappear, because the label is the name.</figcaption>
+    </figure>
+  </div>
+</section>
+
+<section id="why">
+  <div class="head">
+    <div class="eyebrow">The opening</div>
+    <h2>Every current tool wins on one axis and loses on the other.</h2>
+    <p>Mermaid is everywhere because GitHub renders it and it needs no install. Its layout is the common complaint. The tools with better layout never got the reach. Nobody holds the top right corner.</p>
+  </div>
+  <div class="field">
+    <figure>
+      <div class="canvas" style="--min:420px">
+        <svg viewBox="0 0 520 330" role="img" aria-label="Map of diagram tools by reach and layout quality. Mermaid has high reach and low layout quality. D2 has high layout quality and low reach. PlantUML and Graphviz sit in the middle. horsegirl starts at high quality and low reach and aims for high on both.">
+          <path class="ed" d="M60 20V290H500"/>
+          <path class="guide" d="M60 155H500M280 20V290"/>
+          <text class="m" x="500" y="310" text-anchor="end">easy to adopt →</text>
+          <text class="m" x="60" y="310">hard to adopt</text>
+          <text class="m" transform="translate(44 20) rotate(-90)" text-anchor="end">layout quality →</text>
+          <circle class="dot" cx="430" cy="235" r="7"/><text x="430" y="259" text-anchor="middle">Mermaid</text>
+          <circle class="dot" cx="255" cy="195" r="7"/><text x="255" y="219" text-anchor="middle">PlantUML</text>
+          <circle class="dot" cx="160" cy="150" r="7"/><text x="160" y="174" text-anchor="middle">Graphviz</text>
+          <circle class="dot" cx="215" cy="100" r="7"/><text x="215" y="124" text-anchor="middle">D2</text>
+          <path class="ed ac d" marker-end="url(#aha)" d="M122 52H424"/>
+          <circle class="dot h" cx="112" cy="52" r="7"/>
+          <circle class="dot a" cx="440" cy="52" r="11"/>
+          <text class="h a" x="112" y="36" text-anchor="middle">v0.1</text>
+          <text class="h a" x="440" y="30" text-anchor="middle">horsegirl v1.0</text>
+          <text class="m a" x="270" y="70" text-anchor="middle">the slow takeover</text>
+        </svg>
+      </div>
+      <figcaption>Positions are a judgment from blog and forum reading, not a measurement. The dashed line is the whole strategy. Quality comes first, then reach.</figcaption>
+    </figure>
+    <dl class="rivals">
+      <dt>Mermaid</dt><dd>Renders on GitHub with zero setup. Layouts overlap and cross. Large diagrams become unreadable.</dd>
+      <dt>D2</dt><dd>Clean language. Its best layout engine is a separate paid product, and a label change can rearrange the whole picture.</dd>
+      <dt>PlantUML</dt><dd>Widest set of diagram types. Needs Java. Looks like 2009.</dd>
+      <dt>Graphviz</dt><dd>Strong graph layout. A terse language and dated output.</dd>
+    </dl>
+  </div>
+</section>
+
+<section id="research">
+  <div class="head">
+    <div class="eyebrow">Field notes</div>
+    <h2>The best idea from each neighbour.</h2>
+    <p>A research pass over twenty competing and adjacent projects. Each row names the idea worth having and what horsegirl does with it. Every project name links to the page the idea was read from.</p>
+  </div>
+  <div class="tablewrap">
+    <table class="notes">
+      <thead><tr><th>Project</th><th>Its best idea</th><th>What horsegirl does with it</th></tr></thead>
+      <tbody>
+        <tr><td><a href="https://d2lang.com/">D2</a></td><td>Layers, scenarios and steps: one file holds several boards, and steps can play as an animation.</td><td><span class="st f">further</span>Boards become lenses and frames. Nobody redraws a board by hand, because every picture comes from the same facts.</td></tr>
+        <tr><td><a href="https://d2lang.com/releases/0.6.0">D2 0.6</a></td><td>Imports and globs, so a large model can live in many files and take bulk edits.</td><td><span class="st t">taken</span><code>use payments.horse</code> and <code>* { owner: Platform }</code>. Variables are left out. A file of facts is not a program.</td></tr>
+        <tr><td><a href="https://docs.structurizr.com/exporters">Structurizr</a></td><td>Exporters: one model writes Mermaid, PlantUML and other formats.</td><td><span class="st t">taken</span><code>draw --to mermaid</code>. A README renders on GitHub today, before any host supports horsegirl.</td></tr>
+        <tr><td><a href="https://docs.structurizr.com/workspaces/inspections">Structurizr inspections</a></td><td>A lint pass over the model itself, with a severity for each check.</td><td><span class="st t">taken</span>This is <code>check</code>. Each warning code can be raised to an error or silenced in one line.</td></tr>
+        <tr><td><a href="https://cdn.jsdelivr.net/npm/@likec4/core@1.59.2/README.md">LikeC4</a></td><td>A view is a set of predicates: include this, exclude that, with wildcards.</td><td><span class="st t">taken</span><code>show flow where owner is Commerce</code>. A lens says how to look. <code>where</code> says at what.</td></tr>
+        <tr><td><a href="https://www.ilograph.com/docs/editing/walkthroughs/">Ilograph</a></td><td>Perspectives on one model, and walkthroughs that lead a reader through it step by step.</td><td><span class="st f">further</span>A story is a walkthrough that is also data. It draws as a sequence, as lanes, or as frames that play.</td></tr>
+        <tr><td><a href="https://docs.icepanel.io/features/modelling">IcePanel</a></td><td>One object appears at several zoom levels, and a change to it shows everywhere.</td><td><span class="st t">taken</span><code>show flow at depth 1</code> folds every group into one box. The picture budget uses the same folding.</td></tr>
+        <tr><td><a href="https://mermaid.js.org/intro/syntax-reference">Mermaid</a></td><td><code>accTitle</code> and <code>accDescr</code>: a diagram can carry text for screen readers, if the author writes it.</td><td><span class="st f">further</span>Nobody writes it. <code>describe</code> already produces the text, so every SVG ships with a title and description.</td></tr>
+        <tr><td><a href="https://www.npmjs.com/package/@rtuin/mcp-mermaid-validator">Mermaid validator MCP servers</a></td><td>A validate-then-render loop for agents. One of them notes that it checks syntax and not whether the diagram is true.</td><td><span class="st f">further</span><code>describe</code> checks meaning. <code>verify</code> checks evidence. The loop closes on truth, where theirs closes on syntax.</td></tr>
+        <tr><td><a href="https://raw.githubusercontent.com/sverweij/dependency-cruiser/HEAD/doc/rules-reference.md">dependency-cruiser</a>, <a href="https://www.archunit.org/userguide/html/000_Index.html">ArchUnit</a></td><td>Forbidden dependencies written as code. A violation fails the build.</td><td><span class="st t">taken</span>The crossed arrow, <code>-x</code>. The rule sits beside the facts it governs and draws in the same picture.</td></tr>
+        <tr><td><a href="https://elm-lang.org/news/compiler-errors-for-humans">Elm</a>, <a href="https://rust.googlesource.com/rustc-guide/+/refs/heads/master/src/diagnostics.md">Rust</a></td><td>Errors written for the reader. Rust marks each suggestion with how safe it is to apply by machine.</td><td><span class="st t">taken</span>Every fix carries a confidence. <code>fix</code> applies the safe ones and lists the rest.</td></tr>
+        <tr><td><a href="https://laurmaedje.github.io/posts/comemo">Typst</a></td><td>Incremental compilation: the time to refresh depends on the size of the edit, not of the document.</td><td><span class="st t">taken</span>A goal for the core. Combined with stable layout, a one-line edit redraws one part of the picture.</td></tr>
+        <tr><td><a href="https://link.springer.com/content/pdf/10.1007/BFb0021824.pdf">DynaDAG</a>, <a href="https://vis.cs.ucdavis.edu/papers/tarik_incremental.pdf">incremental layout research</a>, <a href="https://eclipse.dev/elk/reference/algorithms/org-eclipse-elk-layered.html">ELK</a></td><td>Keep the reader's mental map. A layout can take earlier positions as an input.</td><td><span class="st t">taken</span>This is the stability rule. The research calls the field sparse, which matches how few tools do it.</td></tr>
+        <tr><td><a href="https://grafana.com/docs/tempo/latest/metrics-from-traces/service_graphs.md">OpenTelemetry service graphs</a>, <a href="https://pkg.go.dev/github.com/cycloidio/inframap">InfraMap</a>, <a href="https://backstage.io/docs/next/features/software-catalog/well-known-relations">Backstage</a></td><td>The running system already knows its own shape. Traces, Terraform state and service catalogs each hold part of it.</td><td><span class="st t">taken</span>Importers. Each imported fact cites where it came from, and a trace becomes a story.</td></tr>
+        <tr><td><a href="https://observablehq.com/plot/features/facets">Observable Plot</a></td><td>Facets: split by a field and repeat the picture, on shared scales.</td><td><span class="st t">taken</span><code>show flow per owner</code>. Small multiples of a graph, with every panel in the same layout.</td></tr>
+        <tr><td><a href="https://www.github.com/pshihn/rough">rough.js</a>, <a href="https://github.com/excalidraw/excalidraw/">Excalidraw</a></td><td>A hand-drawn line tells the reader that this is a draft.</td><td><span class="st f">further</span>The look carries meaning. Only a guess draws shaky. A proven fact draws clean.</td></tr>
+        <tr><td><a href="https://metacpan.org/module/Graph::Easy::As_ascii">Graph::Easy</a>, <a href="https://github.com/AlexanderGrooff/mermaid-ascii">mermaid-ascii</a></td><td>A graph drawn in box characters, for a terminal.</td><td><span class="st t">taken</span>The text backend. It matters more now, because an agent's reply is text.</td></tr>
+        <tr><td><a href="https://pikchr.org">Pikchr</a></td><td>A single-pass compiler with no dependencies, small enough to embed in a documentation tool. Objects are placed relative to each other.</td><td><span class="st t">taken</span>The small, embeddable core. <span class="st o">left out</span>Placing objects by hand. A lens decides position.</td></tr>
+        <tr><td><a href="https://kroki.io/">Kroki</a></td><td>One HTTP endpoint in front of more than twenty diagram tools.</td><td><span class="st o">left out</span>horsegirl runs no server. Kroki shows the demand for one front door, and the lens is that door.</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="gallery">
+    <figure class="wide" style="grid-column:1/-1">
+      <h3>Added from this pass: facts come from the system itself</h3>
+      <div class="canvas" style="--min:680px"><svg viewBox="0 0 720 226" style="min-width:680px" role="img" aria-label="Five sources feed one file of facts: traces, Terraform state, a service catalog, Mermaid files, and code read by an agent. The one file feeds any picture: flow, sequence, seams, rings, volume.">
+        <path class="ed soft" marker-end="url(#ah)" d="M190 28C245 28 245 104 300 104"/>
+        <path class="ed soft" marker-end="url(#ah)" d="M190 68C245 68 245 107 300 107"/>
+        <path class="ed soft" marker-end="url(#ah)" d="M190 108H300"/>
+        <path class="ed soft" marker-end="url(#ah)" d="M190 148C245 148 245 109 300 109"/>
+        <path class="ed soft" marker-end="url(#ah)" d="M190 188C245 188 245 112 300 112"/>
+        <path class="ed soft" marker-end="url(#ah)" d="M420 108C495 108 495 28 570 28"/>
+        <path class="ed soft" marker-end="url(#ah)" d="M420 108C495 108 495 68 570 68"/>
+        <path class="ed soft" marker-end="url(#ah)" d="M420 108H570"/>
+        <path class="ed soft" marker-end="url(#ah)" d="M420 108C495 108 495 148 570 148"/>
+        <path class="ed soft" marker-end="url(#ah)" d="M420 108C495 108 495 188 570 188"/>
+        <rect class="nd g" x="20" y="14" width="170" height="28" rx="6"/><text x="105" y="32" text-anchor="middle">Traces</text>
+        <rect class="nd g" x="20" y="54" width="170" height="28" rx="6"/><text x="105" y="72" text-anchor="middle">Terraform state</text>
+        <rect class="nd g" x="20" y="94" width="170" height="28" rx="6"/><text x="105" y="112" text-anchor="middle">Service catalog</text>
+        <rect class="nd g" x="20" y="134" width="170" height="28" rx="6"/><text x="105" y="152" text-anchor="middle">Mermaid files</text>
+        <rect class="nd g" x="20" y="174" width="170" height="28" rx="6"/><text x="105" y="192" text-anchor="middle">Code, read by an agent</text>
+        <rect class="nd hot" x="300" y="78" width="120" height="60" rx="8"/><text class="h hi" x="360" y="104" text-anchor="middle">checkout.horse</text><text class="hi s" x="360" y="122" text-anchor="middle">facts, each cited</text>
+        <rect class="nd o" x="570" y="14" width="130" height="28" rx="14"/><text x="635" y="32" text-anchor="middle">flow</text>
+        <rect class="nd o" x="570" y="54" width="130" height="28" rx="14"/><text x="635" y="72" text-anchor="middle">sequence</text>
+        <rect class="nd o" x="570" y="94" width="130" height="28" rx="14"/><text x="635" y="112" text-anchor="middle">seams</text>
+        <rect class="nd o" x="570" y="134" width="130" height="28" rx="14"/><text x="635" y="152" text-anchor="middle">rings</text>
+        <rect class="nd o" x="570" y="174" width="130" height="28" rx="14"/><text x="635" y="192" text-anchor="middle">volume</text>
+        <text class="m" x="105" y="220" text-anchor="middle">what already knows the truth</text>
+        <text class="m" x="360" y="220" text-anchor="middle">one file</text>
+        <text class="m" x="635" y="220" text-anchor="middle">any picture</text>
+      </svg></div>
+      <figcaption>Nobody should type what a machine already knows. An importer writes facts from a source of truth, and each fact cites that source. A trace becomes a story, with its real order and its real call counts. The agent fills the gaps and marks its guesses.</figcaption>
+    </figure>
+
+    <figure>
+      <h3>Facets</h3>
+      <pre><span class="k">show</span> flow <span class="k">per</span> owner</pre>
+      <div class="canvas"><div class="frames three">
+        <div><svg id="g-p0" viewBox="0 0 260 215" role="img" aria-label="The flow with the things owned by Edge marked"></svg><span>Edge</span></div>
+        <div><svg id="g-p1" viewBox="0 0 260 215" role="img" aria-label="The flow with the things owned by Identity marked"></svg><span>Identity</span></div>
+        <div><svg id="g-p2" viewBox="0 0 260 215" role="img" aria-label="The flow with the things owned by Commerce marked"></svg><span>Commerce</span></div>
+      </div></div>
+      <figcaption>One panel for each owner, and every panel uses the same layout. The eye compares shapes without finding its place again. Charts have had facets for years. Diagrams have not.</figcaption>
+    </figure>
+
+    <figure>
+      <h3>Alt text, written by the tool</h3>
+<pre aria-label="SVG output with title and description">&lt;svg role="img" aria-labelledby="t d"&gt;
+  &lt;title id="t"&gt;checkout, as lanes&lt;/title&gt;
+  &lt;desc id="d"&gt;7 steps across 5 owners.
+    Starts at Web app. Ends at Email
+    provider. 6 handoffs.&lt;/desc&gt;</pre>
+<pre aria-label="Mermaid export"><span class="c">$ horsegirl draw checkout.horse --to mermaid</span>
+flowchart LR
+  n1[Web app] --&gt;|POST /checkout| n3[API gateway]
+  n3 --&gt;|create| n4[Orders]</pre>
+      <figcaption>Two small outputs with a large effect. The read-back that serves the agent also serves a screen reader, so every picture is accessible by default. The Mermaid export lets a README render on GitHub with no wait for native support.</figcaption>
+    </figure>
+  </div>
+</section>
+
+<section id="sources">
+  <div class="head">
+    <div class="eyebrow">Where the syntax comes from</div>
+    <h2>Borrowed from five projects. Fixed in three places.</h2>
+    <p>None of the parts is new. The combination is, and so is the length: the whole language is five rules.</p>
+  </div>
+  <div class="cols">
+    <div><h3>From D2 and Graphviz</h3><p>The arrow, the braces, and things that exist when you mention them. These are the parts of existing languages that people learn without reading documentation.</p></div>
+    <div><h3>From Structurizr</h3><p>One model, many views. Structurizr proved that teams want it. It is limited to the C4 architecture views.</p></div>
+    <div><h3>From Vega-Lite</h3><p>Bind a field to a channel and let the compiler work out the scales and the layout. This is the grammar of graphics, applied to graphs.</p></div>
+    <div><h3>From Penrose</h3><p>Keep what a diagram says apart from how it is drawn. Penrose pays for this with three files and a lot of setup. horsegirl keeps one file.</p></div>
+    <div><h3>From storyline research</h3><p>A layout where lines meet when things interact. The research is twenty years deep and no text language exposes it.</p></div>
+    <div><h3>Fixed: Mermaid's traps</h3><p>In Mermaid, a node named <code>end</code> breaks the file, a bracket in a label changes the node's shape, and each diagram type has its own rules. horsegirl has one grammar and its keywords appear only at the start of a line.</p></div>
+  </div>
+  <div class="open">
+    <h3>Where this language design is weak</h3>
+    <ul>
+      <li><strong>No model has seen this language.</strong> Every model has seen Mermaid. The one-page spec, the forgiving reader and the benchmark exist to close this gap. If the benchmark shows they do not, the syntax must move closer to what models already write.</li>
+      <li><strong>Names with spaces need a careful grammar.</strong> A name cannot contain <code>-></code>, a colon, a comma or a brace without quotes. This rule needs testing on a few thousand real diagrams before it is safe.</li>
+      <li><strong>Things that exist on mention hide typos.</strong> <code>Paymnts</code> becomes a new node. The answer is a check: a name that appears once and is one letter from another name is an error.</li>
+      <li><strong>A lens needs its fields.</strong> <code>show lanes</code> is useless if nothing has an owner. The compiler must say which facts are missing, and never draw a wrong picture.</li>
+      <li><strong>A lens is short to write and hard to lay out.</strong> Each family of lens needs its own solver. The plan is four solvers (layered, grid, nested, radial) and every lens picks one.</li>
+    </ul>
+  </div>
+</section>
+
+<section id="build">
+  <div class="head">
+    <div class="eyebrow">Architecture</div>
+    <h2>One core. Every surface is a thin shell.</h2>
+    <p>The core is a single Rust library that compiles to a native binary and to WebAssembly. The command line, the browser, the editor and the agent all run the same code and get the same bytes out.</p>
+  </div>
+  <figure>
+    <div class="canvas" style="--min:760px">
+      <svg viewBox="0 0 770 300" role="img" aria-label="Pipeline: horsegirl and Mermaid sources are parsed into one model of things and links; a lens binds fields to channels; layout places and routes; the scene of positioned shapes is drawn by four backends. One Rust core spans parse to scene. Five shells wrap the core: CLI, language server, MCP server, GitHub Action and playground.">
+        <rect class="fillsoft" x="122" y="84" width="518" height="100" rx="12"/>
+        <rect class="nd" x="20" y="76" width="80" height="36" rx="6"/><text class="m" x="60" y="98" text-anchor="middle" style="fill:var(--d-ink)">.horse</text>
+        <rect class="nd x" x="20" y="132" width="80" height="36" rx="6"/><text class="m" x="60" y="154" text-anchor="middle" style="fill:var(--d-ink)">.mmd</text>
+        <path class="ed" marker-end="url(#ah)" d="M100 94H115V122H130"/>
+        <path class="ed" d="M100 150H115V122"/>
+        <rect class="nd" x="130" y="100" width="86" height="44" rx="6"/><text class="h" x="173" y="127" text-anchor="middle">Parse</text>
+        <rect class="nd" x="234" y="100" width="86" height="44" rx="6"/><text class="h" x="277" y="127" text-anchor="middle">Model</text>
+        <rect class="nd hot" x="338" y="100" width="86" height="44" rx="6"/><text class="h hi" x="381" y="127" text-anchor="middle">Lens</text>
+        <rect class="nd hot" x="442" y="100" width="86" height="44" rx="6"/><text class="h hi" x="485" y="127" text-anchor="middle">Layout</text>
+        <rect class="nd" x="546" y="100" width="86" height="44" rx="6"/><text class="h" x="589" y="127" text-anchor="middle">Scene</text>
+        <path class="ed" marker-end="url(#ah)" d="M216 122H234"/>
+        <path class="ed" marker-end="url(#ah)" d="M320 122H338"/>
+        <path class="ed" marker-end="url(#ah)" d="M424 122H442"/>
+        <path class="ed" marker-end="url(#ah)" d="M528 122H546"/>
+        <text class="m" x="173" y="164" text-anchor="middle">lossless tree</text>
+        <text class="m" x="277" y="164" text-anchor="middle">things + links</text>
+        <text class="m" x="381" y="164" text-anchor="middle">binds dials</text>
+        <text class="m" x="485" y="164" text-anchor="middle">four solvers</text>
+        <text class="m" x="589" y="164" text-anchor="middle">placed shapes</text>
+        <path class="ed" d="M632 122H646M646 65V179"/>
+        <path class="ed" marker-end="url(#ah)" d="M646 65H660"/>
+        <path class="ed" marker-end="url(#ah)" d="M646 103H660"/>
+        <path class="ed" marker-end="url(#ah)" d="M646 141H660"/>
+        <path class="ed" marker-end="url(#ah)" d="M646 179H660"/>
+        <rect class="nd g" x="660" y="51" width="94" height="28" rx="6"/><text x="707" y="69" text-anchor="middle">SVG</text>
+        <rect class="nd g" x="660" y="89" width="94" height="28" rx="6"/><text x="707" y="107" text-anchor="middle">PNG · PDF</text>
+        <rect class="nd g" x="660" y="127" width="94" height="28" rx="6"/><text x="707" y="145" text-anchor="middle">Text</text>
+        <rect class="nd g" x="660" y="165" width="94" height="28" rx="6"/><text x="707" y="183" text-anchor="middle">Web viewer</text>
+        <text class="h a" x="381" y="206" text-anchor="middle">one Rust core → native binary + WebAssembly</text>
+        <path class="guide" d="M381 212V240M110 240H680M110 240V252M252 240V252M395 240V252M538 240V252M680 240V252"/>
+        <rect class="nd o" x="50" y="252" width="120" height="30" rx="15"/><text x="110" y="271" text-anchor="middle">CLI</text>
+        <rect class="nd o" x="192" y="252" width="120" height="30" rx="15"/><text x="252" y="271" text-anchor="middle">Language server</text>
+        <rect class="nd hot" x="335" y="252" width="120" height="30" rx="15"/><text class="hi" x="395" y="271" text-anchor="middle">MCP server</text>
+        <rect class="nd o" x="478" y="252" width="120" height="30" rx="15"/><text x="538" y="271" text-anchor="middle">GitHub Action</text>
+        <rect class="nd o" x="620" y="252" width="120" height="30" rx="15"/><text x="680" y="271" text-anchor="middle">Playground</text>
+      </svg>
+    </div>
+    <figcaption>Both languages lower to one model, so the Mermaid importer costs one parser and nothing downstream. The two filled stages hold most of the project's effort. The lens turns facts into a layout problem. One of four solvers (layered, grid, nested, radial) answers it. The scene is the only thing a backend sees. The MCP server ships first, because agents are the first users.</figcaption>
+  </figure>
+
+  <figure>
+<pre aria-label="Text backend output"><span class="c">$ horsegirl draw checkout.horse --to text --only "Web app, API gateway, Orders, Payments"</span>
+
+ +---------+      +-------------+      +----------+
+ | Web app +-----&gt;| API gateway +-----&gt;|  Orders  |
+ +---------+      +-------------+      +----+-----+
+                                            | charge
+                                            v
+                                       +----------+
+                                       | Payments |
+                                       +----------+</pre>
+    <figcaption>The same scene drawn in a terminal. Agents, commit messages and code comments need diagrams as text. Because each backend draws one shared scene, a text backend is a small piece of work.</figcaption>
+  </figure>
+
+  <div class="cols">
+    <div><h3>No browser, anywhere</h3><p>Mermaid needs a headless browser to measure text on a server. horsegirl ships font metrics inside the binary. The same input gives the same SVG on every machine.</p></div>
+    <div><h3>No server either</h3><p>The playground is a static page that runs the WebAssembly build. The project needs a package registry, release binaries and a docs site. It has no backend to operate.</p></div>
+    <div><h3>The parser never gives up</h3><p>A half-typed file still produces a tree and a partial diagram. Editors need this for live preview. Agents need it to get every error in one pass.</p></div>
+  </div>
+</section>
+
+<section id="layout">
+  <div class="head">
+    <div class="eyebrow">The hard part</div>
+    <h2>Layout is four steps, and the fourth is where diagrams get ugly.</h2>
+    <p>This is the layered solver, the one the flow lens uses. The method is public knowledge. Graphviz and ELK both use it. The open work is orthogonal routing around groups and the stability rule.</p>
+  </div>
+  <figure>
+    <div class="canvas" style="--min:680px">
+      <svg viewBox="0 0 720 180" role="img" aria-label="The four layout steps on a four-node graph: assign layers, order nodes in each layer for fewest crossings, place nodes on a grid, then route edges at right angles">
+        <g>
+          <text class="h" x="90" y="20" text-anchor="middle">1 · Rank</text>
+          <path class="guide" d="M30 55H160M30 100H160M30 145H160"/>
+          <text class="m" x="18" y="59">0</text><text class="m" x="18" y="104">1</text><text class="m" x="18" y="149">2</text>
+          <path class="ed faint" d="M90 55L60 100L90 145L120 100Z"/>
+          <circle class="dot" cx="90" cy="55" r="7"/><circle class="dot" cx="60" cy="100" r="7"/><circle class="dot" cx="120" cy="100" r="7"/><circle class="dot" cx="90" cy="145" r="7"/>
+          <text class="m" x="90" y="172" text-anchor="middle">assign layers</text>
+        </g>
+        <g transform="translate(180 0)">
+          <text class="h" x="90" y="20" text-anchor="middle">2 · Order</text>
+          <path class="ed faint" d="M90 55L60 100L90 145L120 100Z"/>
+          <path class="ed ac" marker-end="url(#aha)" marker-start="url(#aha)" d="M70 112Q90 128 110 112"/>
+          <circle class="dot" cx="90" cy="55" r="7"/><circle class="dot a" cx="60" cy="100" r="7"/><circle class="dot a" cx="120" cy="100" r="7"/><circle class="dot" cx="90" cy="145" r="7"/>
+          <text class="m" x="90" y="172" text-anchor="middle">fewest crossings</text>
+        </g>
+        <g transform="translate(360 0)">
+          <text class="h" x="90" y="20" text-anchor="middle">3 · Place</text>
+          <path class="guide" d="M54 34V158M90 34V158M126 34V158"/>
+          <rect class="nd" x="62" y="43" width="56" height="24" rx="4"/><rect class="nd" x="26" y="88" width="56" height="24" rx="4"/><rect class="nd" x="98" y="88" width="56" height="24" rx="4"/><rect class="nd" x="62" y="133" width="56" height="24" rx="4"/>
+          <text class="m" x="90" y="172" text-anchor="middle">snap to a grid</text>
+        </g>
+        <g transform="translate(540 0)">
+          <text class="h a" x="90" y="20" text-anchor="middle">4 · Route</text>
+          <path class="ed ac" marker-end="url(#aha)" d="M78 67V78H54V88"/>
+          <path class="ed ac" marker-end="url(#aha)" d="M102 67V78H126V88"/>
+          <path class="ed ac" marker-end="url(#aha)" d="M54 112V123H78V133"/>
+          <path class="ed ac" marker-end="url(#aha)" d="M126 112V123H102V133"/>
+          <rect class="nd" x="62" y="43" width="56" height="24" rx="4"/><rect class="nd" x="26" y="88" width="56" height="24" rx="4"/><rect class="nd" x="98" y="88" width="56" height="24" rx="4"/><rect class="nd" x="62" y="133" width="56" height="24" rx="4"/>
+          <text class="m" x="90" y="172" text-anchor="middle">right-angle edges</text>
+        </g>
+      </svg>
+    </div>
+    <figcaption>For stability, steps 2 and 3 take the previous positions as a starting point and count each moved node as a cost. A label change widens a box and never changes the order.</figcaption>
+  </figure>
+</section>
+
+<section id="roadmap">
+  <div class="head">
+    <div class="eyebrow">Roadmap</div>
+    <h2>Four gaits to 1.0.</h2>
+    <p>Each release is named for a gait and ends with a test a stranger can run. The scope and the tests are proposals.</p>
+  </div>
+  <div class="gaits">
+    <div class="gait">
+      <span class="v">v0.1</span><span class="name">Walk</span>
+      <ul><li>The five rules, parser, formatter</li><li><code>spec</code>, <code>check</code>, <code>fix</code> with JSON</li><li>MCP server and command line</li><li>The flow lens, SVG output</li></ul>
+      <p class="exit"><b>Done when</b> three model families write a valid file on the first try in 95 of 100 tasks, with only the spec page.</p>
+    </div>
+    <div class="gait">
+      <span class="v">v0.3</span><span class="name">Trot</span>
+      <ul><li>Stories, sequence and lanes</li><li><code>describe</code>, <code>suggest</code>, <code>query</code></li><li>Text output, themes, CSS variables</li><li>Mermaid in and out, playground</li></ul>
+      <p class="exit"><b>Done when</b> an agent finds a wrong diagram from the read-back alone in 9 of 10 seeded cases.</p>
+    </div>
+    <div class="gait">
+      <span class="v">v0.6</span><span class="name">Canter</span>
+      <ul><li>Stable layout across edits</li><li>Evidence, <code>verify</code>, <code>diff</code> in pull requests</li><li>Matrix, rings, storyline</li><li>Importers: traces, Terraform, catalogs</li></ul>
+      <p class="exit"><b>Done when</b> adding one node to a 50-node diagram moves fewer than three others.</p>
+    </div>
+    <div class="gait">
+      <span class="v">v1.0</span><span class="name">Gallop</span>
+      <ul><li>User-written lenses</li><li>Frozen language specification</li><li>Public conformance suite</li><li>Interactive viewer, language server</li></ul>
+      <p class="exit"><b>Done when</b> someone outside the project ships a lens the maintainers did not think of.</p>
+    </div>
+  </div>
+</section>
+
+<section id="adoption">
+  <div class="head">
+    <div class="eyebrow">Adoption</div>
+    <h2>How it takes over, one step at a time.</h2>
+    <p>horsegirl cannot ask GitHub for native rendering on day one. It starts where nobody has to be persuaded. An agent picks the tool that gives it the fewest errors. People meet horsegirl as a picture in a pull request, and no step asks them to give anything up.</p>
+  </div>
+  <figure>
+    <div class="canvas" style="--min:620px">
+      <svg viewBox="0 0 640 262" role="img" aria-label="Five adoption steps rising left to right: agents draw with it, people see it in every pull request, it reads your Mermaid files, it lives in editors and docs sites, hosts render it natively">
+        <path class="fillsoft" d="M20 210H140V170H260V130H380V90H500V50H620V250H20Z"/>
+        <path class="ed" d="M20 210H140V170H260V130H380V90H500V50H620"/>
+        <text class="h" x="28" y="186">Agents draw</text><text class="h" x="28" y="202">with it</text>
+        <text class="h" x="148" y="146">People see it</text><text class="h" x="148" y="162">in every PR</text>
+        <text class="h" x="268" y="106">Reads your</text><text class="h" x="268" y="122">Mermaid files</text>
+        <text class="h" x="388" y="66">In editors and</text><text class="h" x="388" y="82">docs sites</text>
+        <text class="h a" x="508" y="26">Hosts render</text><text class="h a" x="508" y="42">it natively</text>
+        <text class="m" x="28" y="230">MCP + spec page</text>
+        <text class="m" x="148" y="190">Action + diff</text>
+        <text class="m" x="268" y="150">convert</text>
+        <text class="m" x="388" y="110">language server</text>
+        <text class="m" x="508" y="70">spec + suite</text>
+      </svg>
+    </div>
+    <figcaption>The line under each step names the piece of the project that makes the step possible. The last step is outside the project's control. A frozen specification and a conformance suite are what make a host willing to say yes.</figcaption>
+  </figure>
+</section>
+
+<section id="open">
+  <div class="head">
+    <div class="eyebrow">Open source, on purpose</div>
+    <h2>Rules that keep the project worth trusting.</h2>
+  </div>
+  <div class="cols">
+    <div><h3>The best layout is free</h3><p>No paid engine and no watermark. The feature that makes horsegirl better is in the open repository.</p></div>
+    <div><h3>The spec is the product</h3><p>The language has a written specification and a public test suite. Anyone can build a second implementation, and the project wants one to exist.</p></div>
+    <div><h3>Permissive licence</h3><p>MIT or Apache-2.0, so editors, docs platforms and hosts can embed the core without a legal review.</p></div>
+    <div><h3>No breaking the picture</h3><p>After 1.0, a file that drew last year draws the same this year. Layout changes ship behind a version line in the file.</p></div>
+    <div><h3>Lenses belong to everyone</h3><p>A lens is a text file in the same language. People share lenses the way they share themes. The core stays small enough for one person to read.</p></div>
+    <div><h3>Honest gallery</h3><p>Every example in the docs is drawn by CI from source in the repository. No picture is touched up by hand.</p></div>
+  </div>
+
+  <figure>
+    <h3>Three decisions, drawn as a trail</h3>
+    <div class="canvas" style="--min:600px">
+      <svg viewBox="0 0 620 215" role="img" aria-label="A trail of three decisions. First users: agents, not people first. Names: with spaces, not ids plus labels. Core language: Rust, not TypeScript and not Go.">
+        <path class="ed" style="stroke-width:3" marker-end="url(#ahu)" d="M20 140H604"/>
+        <path class="ed gone" d="M70 140C70 100 100 82 130 82"/><path class="ed gone" d="M130 74V90"/>
+        <path class="ed gone" d="M250 140C250 100 280 82 310 82"/><path class="ed gone" d="M310 74V90"/>
+        <path class="ed gone" d="M430 140C430 100 460 82 490 82"/><path class="ed gone" d="M490 74V90"/>
+        <path class="ed gone" d="M430 140C430 70 455 34 490 34"/><path class="ed gone" d="M490 26V42"/>
+        <text class="s" x="138" y="80">People first</text><text class="m" x="138" y="94">agents write more</text>
+        <text class="s" x="318" y="80">Ids + labels</text><text class="m" x="318" y="94">worse to write</text>
+        <text class="s" x="498" y="80">TypeScript</text><text class="m" x="498" y="94">needs a runtime</text>
+        <text class="s" x="498" y="32">Go</text><text class="m" x="498" y="46">large WebAssembly</text>
+        <circle class="dot" cx="70" cy="140" r="8"/><circle class="dot" cx="250" cy="140" r="8"/><circle class="dot" cx="430" cy="140" r="8"/>
+        <rect class="nd hot" x="125" y="127" width="70" height="26" rx="13"/><text class="hi" x="160" y="144" text-anchor="middle">Agents</text>
+        <rect class="nd hot" x="292" y="127" width="96" height="26" rx="13"/><text class="hi" x="340" y="144" text-anchor="middle">With spaces</text>
+        <rect class="nd hot" x="492" y="127" width="56" height="26" rx="13"/><text class="hi" x="520" y="144" text-anchor="middle">Rust</text>
+        <text class="h" x="70" y="178" text-anchor="middle">First users</text>
+        <text class="h" x="250" y="178" text-anchor="middle">Names</text>
+        <text class="h" x="430" y="178" text-anchor="middle">Core language</text>
+        <text class="m" x="160" y="198" text-anchor="middle">fewest errors wins them</text>
+        <text class="m" x="340" y="198" text-anchor="middle">the label is the name</text>
+        <text class="m" x="520" y="198" text-anchor="middle">one binary, same bytes</text>
+      </svg>
+    </div>
+    <figcaption>This is the trail lens, the ninth new picture. A link is the road taken. A crossed link, <code>-x</code>, is a road turned down, with the reason kept beside it. Decision records are usually prose that nobody reads. The source for this picture is seven lines.</figcaption>
+  </figure>
+  <div class="pair">
+<pre aria-label="Source for the trail"><span class="k">story</span> horsegirl {
+  First users -> Agents: fewest errors wins them
+  First users -x People first: agents write more
+  Names -> With spaces: the label is the name
+  Names -x Ids + labels: worse to write
+  Core language -> Rust: one binary, same bytes
+  Core language -x TypeScript: needs a runtime
+  Core language -x Go: large WebAssembly
+}
+<span class="k">show</span> trail <span class="k">of</span> horsegirl</pre>
+    <div class="open">
+      <h3>What Rust costs</h3>
+      <ul>
+        <li><strong>Fewer contributors.</strong> More people write TypeScript. The answer is that lenses and themes are written in horsegirl, so most contributions never touch Rust.</li>
+        <li><strong>A bigger download in the browser.</strong> A WebAssembly core is larger than a small JavaScript layout library. The build needs a size budget that CI enforces.</li>
+        <li><strong>Slower experiments.</strong> Layout work is trial and error, and Rust compiles slowly. The scene format lets a layout idea be tested from any language first.</li>
+      </ul>
+      <p class="note">Every diagram on this page is a target drawn by hand or by a page script, and every command is a proposal. No horsegirl code exists yet.</p>
+    </div>
+  </div>
+
+  <div class="sources">
+    <span>Research read for this page:</span>
+    <a href="https://penrose.cs.cmu.edu/docs/ref/">Penrose</a>
+    <a href="https://docs.structurizr.com/dsl">Structurizr DSL</a>
+    <a href="https://vega.github.io/vega-lite/docs">Vega-Lite</a>
+    <a href="https://arxiv.org/abs/2307.00146">Bluefish</a>
+    <a href="https://d2lang.com/tour/tala/">D2</a>
+    <a href="https://mermaid.js.org/syntax/flowchart">Mermaid flowchart syntax</a>
+    <a href="https://arxiv.org/abs/2412.03310">Grounded language design for diagramming</a>
+    <a href="https://arxiv.org/html/2508.06772v1">Storyline visualisation survey</a>
+    <a href="https://neurips.cc/virtual/2026/173008">Diagnosing LLM generation for diagram DSLs</a>
+    <span>The field notes table links its own sources.</span>
+    <span>Page design looked at: Zed and Linear for one real product window under a short headline, tldraw for code beside a live canvas, the D2 playground for a toolbar with a theme control.</span>
+  </div>
+</section>
+
+</div>
+
+<script>
+(function(){
+  var NS='http://www.w3.org/2000/svg';
+  function el(t,a,txt){var x=document.createElementNS(NS,t);for(var k in a)x.setAttribute(k,a[k]);if(txt!=null)x.textContent=txt;return x}
+  function h(t,c,txt){var x=document.createElement(t);if(c)x.className=c;if(txt!=null)x.textContent=txt;return x}
+  function $(id){return document.getElementById(id)}
+
+  /* ---------- toy reader for the five rules ---------- */
+  function near(a,b){
+    a=a.toLowerCase();b=b.toLowerCase();if(a===b)return true;
+    var la=a.length,lb=b.length,i=0;if(Math.abs(la-lb)>1)return false;
+    while(i<la&&i<lb&&a[i]===b[i])i++;
+    if(la===lb)return a.slice(i+1)===b.slice(i+1);
+    return la>lb?a.slice(i+1)===b.slice(i):a.slice(i)===b.slice(i+1);
+  }
+  function parse(text){
+    var M={things:[],idx:{},links:[],stories:[],show:{lens:'flow',arg:null},diag:[],rules:[]};
+    function thing(name,ln){
+      name=name.trim().replace(/^"(.*)"$/,'$1');if(!name)return -1;
+      if(!(name in M.idx)){M.idx[name]=M.things.length;M.things.push({name:name,props:{},uses:0,line:ln,group:null,isGroup:false})}
+      M.things[M.idx[name]].uses++;return M.idx[name];
+    }
+    function names(s,ln){return s.split(',').map(function(n){return thing(n,ln)}).filter(function(i){return i>=0})}
+    function props(s,ids){s.split(',').forEach(function(p){var c=p.indexOf(':');if(c<0)return;var k=p.slice(0,c).trim(),v=p.slice(c+1).trim();ids.forEach(function(i){M.things[i].props[k]=v})})}
+    var story=null,group=null;
+    text.split('\n').forEach(function(raw,n){
+      var ln=n+1,s=raw.trim(),m;
+      if(!s||s[0]==='#')return;
+      s=s.replace(/\s+@\s+\S+$/,'');
+      if(m=/(-->|=>|→)/.exec(s)){M.diag.push({sev:'note',code:'N0101',line:ln,msg:'Read `'+m[1]+'` as `->`',fix:{from:m[1],to:'->'}});s=s.replace(m[1],'->')}
+      if(/;$/.test(s))s=s.replace(/;$/,'');
+      var guess=/\s\?$/.test(s);if(guess)s=s.replace(/\s*\?$/,'');
+      if(m=/^(.+?)\s*-x\s*([^:]+?)\s*(?::\s*(.*))?$/.exec(s)){var RA=names(m[1],ln),RB=names(m[2],ln),why=m[3]||'';RA.forEach(function(a){RB.forEach(function(b){M.rules.push({a:a,b:b,why:why,line:ln})})});return}
+      if(m=/^show\s+(\S+)(?:\s+(?:of|from|by)\s+(.+))?$/.exec(s)){M.show={lens:m[1],arg:m[2]?m[2].trim():null,line:ln};return}
+      if(m=/^story\s+(.+?)\s*\{$/.exec(s)){story={name:m[1],steps:[]};M.stories.push(story);return}
+      if(s==='}'){if(story)story=null;else group=null;return}
+      if(m=/^(.+?)\s*->\s*([^:]+?)\s*(?::\s*(.*))?$/.exec(s)){
+        var A=names(m[1],ln),B=names(m[2],ln);
+        A.forEach(function(a){B.forEach(function(b){if(a===b)return;var L={a:a,b:b,label:m[3]||'',line:ln,guess:guess};if(story)story.steps.push(L);M.links.push(L)})});
+        return;
+      }
+      if(m=/^(.+?)\s*\{\s*(.*?)\s*\}$/.exec(s)){
+        var ids=names(m[1],ln);
+        if(m[2].indexOf(':')>=0){props(m[2],ids);if(group!=null)ids.forEach(function(i){M.things[i].group=group})}
+        else{var kids=names(m[2],ln);ids.forEach(function(g){M.things[g].isGroup=true;kids.forEach(function(k){M.things[k].group=g})})}
+        return;
+      }
+      if(m=/^(.+?)\s*\{$/.exec(s)){group=thing(m[1],ln);M.things[group].isGroup=true;return}
+      if(/[{}:]/.test(s)){M.diag.push({sev:'error',code:'E0001',line:ln,msg:'Cannot read this line. Write a name, a link with `->`, or braces.'});return}
+      var ids2=names(s,ln);if(group!=null)ids2.forEach(function(i){M.things[i].group=group});
+    });
+    /* derived */
+    M.nodes=[];M.things.forEach(function(t,i){if(!t.isGroup)M.nodes.push(i)});
+    M.edges=[];var seen={};
+    M.links.forEach(function(L){
+      if(M.things[L.a].isGroup||M.things[L.b].isGroup)return;
+      var k=L.a+'>'+L.b;if(k in seen){var e=M.edges[seen[k]];if(!e.label)e.label=L.label;if(!L.guess)e.guess=false;return}
+      seen[k]=M.edges.length;M.edges.push({a:L.a,b:L.b,label:L.label,guess:L.guess,line:L.line});
+    });
+    M.deg={};M.nodes.forEach(function(i){M.deg[i]=0});
+    M.edges.forEach(function(e){M.deg[e.a]++;M.deg[e.b]++});
+    M.owners=[];M.nodes.forEach(function(i){var o=M.things[i].props.owner;if(o&&M.owners.indexOf(o)<0)M.owners.push(o)});
+    /* checks */
+    M.typo={};
+    M.things.forEach(function(t,i){
+      if(t.uses!==1)return;
+      for(var j=0;j<M.things.length;j++){var u=M.things[j];
+        if(j!==i&&near(t.name,u.name)&&(u.uses>1||j<i)){
+          M.typo[i]=true;
+          M.diag.push({sev:'error',code:'E0412',line:t.line,msg:'`'+t.name+'` looks like a typo. It is used once and is one letter from `'+u.name+'`.',fix:{from:t.name,to:u.name}});
+          return;
+        }}
+    });
+    M.nodes.forEach(function(i){if(!M.deg[i]&&!M.typo[i])M.diag.push({sev:'warning',code:'W0107',line:M.things[i].line,msg:'`'+M.things[i].name+'` has no links. The file draws, but this thing is connected to nothing.'})});
+    M.edges.forEach(function(e){
+      M.rules.forEach(function(r){if(r.a===e.a&&r.b===e.b){e.bad=true;M.diag.push({sev:'error',code:'E0500',line:e.line,msg:'`'+M.things[e.a].name+' -> '+M.things[e.b].name+'` breaks the rule on line '+r.line+(r.why?': '+r.why:'')+'. Remove the link or route it another way.'})}});
+      if(e.guess)M.diag.push({sev:'note',code:'N0200',line:e.line,msg:'`'+M.things[e.a].name+' -> '+M.things[e.b].name+'` is a guess. Cite evidence with @ path:line, or drop the question mark when it is verified.'});
+    });
+    return M;
+  }
+  var PAL=['','g','p','o','x'];
+  function cls(M,i){var o=M.things[i].props.owner,k=M.owners.indexOf(o);return (k<0?'':PAL[k%PAL.length])+(M.typo[i]?' err':'')}
+  function storyOf(M){var s=null;M.stories.forEach(function(x){if(x.name===M.show.arg)s=x});return s||M.stories[0]||null}
+  function orderOf(st){var o=[];st.steps.forEach(function(s){[s.a,s.b].forEach(function(i){if(o.indexOf(i)<0)o.push(i)})});return o}
+  function busiest(M){var b=M.nodes[0];M.nodes.forEach(function(i){if(M.deg[i]>M.deg[b])b=i});return b}
+  function focusOf(M){var a=M.show.arg;if(M.show.lens==='rings'&&a&&(a in M.idx)&&!M.things[M.idx[a]].isGroup)return M.idx[a];return busiest(M)}
+  function hops(M,f){
+    var d={},q=[f],par={};d[f]=0;
+    while(q.length){var x=q.shift();M.edges.forEach(function(e){var y=e.a===x?e.b:e.b===x?e.a:-1;if(y>=0&&!(y in d)){d[y]=d[x]+1;par[y]=x;q.push(y)}})}
+    return {d:d,par:par};
+  }
+
+  /* ---------- lenses ---------- */
+  var W=110,H=40;
+  var HOME={'Web app':[20,40],'Mobile app':[20,110],'API gateway':[180,75],'Orders':[415,50],'Payments':[415,120],'Notify':[415,190],'Postgres':[415,300],'Events':[180,300],'Email provider':[20,300]};
+  var HAND={'Web app>API gateway':['M130 60H155V88H180',136,52,'start'],'Mobile app>API gateway':['M130 130H155V102H180',136,146,'start'],'API gateway>Orders':['M290 88H388V70H415',300,82,'start'],'API gateway>Payments':['M290 102H388V140H415',300,116,'start'],'Orders>Payments':['M470 90V120',477,109,'start'],'Payments>Notify':['M470 160V190',477,179,'start'],'Orders>Postgres':['M525 70H555V320H525',549,282,'end'],'Notify>Events':['M415 210H330V320H290',337,286,'start'],'Events>Email provider':['M180 320H130',155,313,'middle']};
+  var SLOTS=[[610,50],[610,120],[610,190],[610,300],[20,205],[180,190],[20,380],[180,380],[415,380],[610,380],[20,450],[180,450],[415,450],[610,450]];
+  function autoEdge(p,q){
+    var x1,y1,x2,y2,m;
+    if(q[0]>=p[0]+W||q[0]+W<=p[0]){
+      if(q[0]>=p[0]+W){x1=p[0]+W;x2=q[0]}else{x1=p[0];x2=q[0]+W}
+      y1=p[1]+H/2;y2=q[1]+H/2;m=(x1+x2)/2;
+      return {d:'M'+x1+' '+y1+'C'+m+' '+y1+' '+m+' '+y2+' '+x2+' '+y2,lx:m,ly:(y1+y2)/2-6,an:'middle'};
+    }
+    x1=p[0]+W/2;x2=q[0]+W/2;if(q[1]>p[1]){y1=p[1]+H;y2=q[1]}else{y1=p[1];y2=q[1]+H}m=(y1+y2)/2;
+    return {d:'M'+x1+' '+y1+'C'+x1+' '+m+' '+x2+' '+m+' '+x2+' '+y2,lx:(x1+x2)/2+7,ly:m+4,an:'start'};
+  }
+  function flow(svg,M){
+    var pos={},used={},mx=580,my=340,extra=0;
+    M.nodes.forEach(function(i){var hpos=HOME[M.things[i].name];if(hpos)pos[i]=hpos});
+    M.nodes.forEach(function(i){
+      if(pos[i])return;
+      var sx=0,sy=0,c=0;M.edges.forEach(function(e){var o=e.a===i?e.b:e.b===i?e.a:-1;if(o>=0&&pos[o]){sx+=pos[o][0];sy+=pos[o][1];c++}});
+      var best=-1,bd=1e9;SLOTS.forEach(function(s,k){if(used[k])return;var d=c?Math.pow(s[0]-sx/c,2)+Math.pow(s[1]-sy/c,2):k;if(d<bd){bd=d;best=k}});
+      if(best>=0){used[best]=true;pos[i]=SLOTS[best]}else{pos[i]=[20+(extra%4)*150,520+70*Math.floor(extra/4)];extra++}
+    });
+    M.things.forEach(function(g,gi){
+      if(!g.isGroup)return;var x0=1e9,y0=1e9,x1=-1e9,y1=-1e9,any=false;
+      M.nodes.forEach(function(i){if(M.things[i].group!==gi)return;any=true;x0=Math.min(x0,pos[i][0]);y0=Math.min(y0,pos[i][1]);x1=Math.max(x1,pos[i][0]+W);y1=Math.max(y1,pos[i][1]+H)});
+      if(!any)return;
+      svg.appendChild(el('rect',{'class':'grp',x:x0-40,y:y0-30,width:x1-x0+80,height:y1-y0+50,rx:10}));
+      svg.appendChild(el('text',{'class':'m',x:x0-28,y:y0-12},g.name));
+    });
+    M.edges.forEach(function(e){
+      var A=M.things[e.a].name,B=M.things[e.b].name,hd=HAND[A+'>'+B],g;
+      if(hd)g={d:hd[0],lx:hd[1],ly:hd[2],an:hd[3]};else g=autoEdge(pos[e.a],pos[e.b]);
+      svg.appendChild(el('path',{'class':'ed'+(e.bad?' ac':e.guess?' d guess':''),d:g.d,'marker-end':e.bad?'url(#aha)':'url(#ah)'}));
+      var lb=e.guess?(e.label?e.label+' ?':'?'):e.label;
+      if(lb)svg.appendChild(el('text',{'class':'m'+(e.bad||e.guess?' a':''),x:g.lx,y:g.ly,'text-anchor':g.an},lb));
+    });
+    M.nodes.forEach(function(i){
+      var p=pos[i];mx=Math.max(mx,p[0]+W);my=Math.max(my,p[1]+H);
+      svg.appendChild(el('rect',{'class':'nd '+cls(M,i),x:p[0],y:p[1],width:W,height:H,rx:6}));
+      svg.appendChild(el('text',{x:p[0]+W/2,y:p[1]+24,'text-anchor':'middle'},M.things[i].name));
+    });
+    return [mx+20,my+20];
+  }
+  function sequence(svg,M){
+    var st=storyOf(M),O=orderOf(st),cx=function(i){return 48+O.indexOf(i)*86},bottom=70+st.steps.length*30,open=[];
+    O.forEach(function(i){svg.appendChild(el('path',{'class':'guide',d:'M'+cx(i)+' 42V'+bottom}))});
+    O.forEach(function(i){
+      svg.appendChild(el('rect',{'class':'nd '+cls(M,i),x:cx(i)-40,y:14,width:80,height:28,rx:6}));
+      svg.appendChild(el('text',{'class':'s',x:cx(i),y:32,'text-anchor':'middle'},M.things[i].name));
+    });
+    st.steps.forEach(function(s,k){
+      var y=72+k*30,a=cx(s.a),b=cx(s.b),top=open[open.length-1],reply=top&&top.a===s.b&&top.b===s.a;
+      if(reply)open.pop();else open.push(s);
+      svg.appendChild(el('path',{'class':'ed'+(reply?' d':''),d:'M'+a+' '+y+'H'+b,'marker-end':'url(#ah)'}));
+      svg.appendChild(el('text',{'class':'m',x:(a+b)/2,y:y-6,'text-anchor':'middle'},s.label));
+    });
+    return [96+(O.length-1)*86,bottom+10];
+  }
+  function lanes(svg,M){
+    var st=storyOf(M),O=orderOf(st),LN=[];
+    function own(i){return M.things[i].props.owner||'no owner'}
+    O.forEach(function(i){if(LN.indexOf(own(i))<0)LN.push(own(i))});
+    var X=function(i){return 84+O.indexOf(i)*88},Y=function(i){return 18+LN.indexOf(own(i))*50},wide=84+O.length*88+8;
+    LN.forEach(function(l,k){
+      if(k)svg.appendChild(el('path',{'class':'guide',d:'M4 '+(8+k*50)+'H'+(wide-6)}));
+      svg.appendChild(el('text',{'class':'m',x:8,y:37+k*50},l));
+    });
+    st.steps.forEach(function(s,k){
+      var a=s.a,b=s.b,y2=Y(b)+15,back=X(b)<X(a),xe=back?X(b)+78:X(b),d;
+      if(own(a)===own(b))d='M'+(back?X(a):X(a)+78)+' '+(Y(a)+15)+'H'+xe;
+      else d='M'+(X(a)+39)+' '+(Y(b)>Y(a)?Y(a)+30:Y(a))+'V'+y2+'H'+xe;
+      svg.appendChild(el('path',{'class':'ed',d:d,'marker-end':'url(#ah)'}));
+      svg.appendChild(el('text',{'class':'m a',x:back?xe+9:xe-9,y:y2-5,'text-anchor':back?'start':'end'},String(k+1)));
+    });
+    O.forEach(function(i){
+      svg.appendChild(el('rect',{'class':'nd '+cls(M,i),x:X(i),y:Y(i),width:78,height:30,rx:6}));
+      svg.appendChild(el('text',{'class':'s',x:X(i)+39,y:Y(i)+19,'text-anchor':'middle'},M.things[i].name));
+    });
+    return [wide,16+LN.length*50];
+  }
+  function matrix(svg,M){
+    var N=M.nodes,c=26,longest=0;N.forEach(function(i){longest=Math.max(longest,M.things[i].name.length)});
+    var ox=24+longest*6.3,oy=30+longest*4.6,st=storyOf(M),step={};
+    if(st)st.steps.forEach(function(s,k){var key=s.a+'>'+s.b;if(!(key in step))step[key]=k+1});
+    svg.appendChild(el('text',{'class':'m',x:8,y:oy-10},'from ↓'));
+    svg.appendChild(el('text',{'class':'m',x:8,y:18},'to →'));
+    N.forEach(function(i,r){
+      svg.appendChild(el('text',{'class':'s',x:ox-8,y:oy+r*c+16,'text-anchor':'end'},M.things[i].name));
+      svg.appendChild(el('text',{'class':'s',transform:'translate('+(ox+r*c+15)+' '+(oy-8)+') rotate(-50)'},M.things[i].name));
+      N.forEach(function(j,q){svg.appendChild(el('rect',{'class':'cell',x:ox+q*c,y:oy+r*c,width:c-2,height:c-2,rx:3}))});
+    });
+    M.edges.forEach(function(e){
+      var r=N.indexOf(e.a),q=N.indexOf(e.b),n=step[e.a+'>'+e.b];
+      svg.appendChild(el('rect',{'class':'cell on',x:ox+q*c,y:oy+r*c,width:c-2,height:c-2,rx:3}));
+      if(n)svg.appendChild(el('text',{'class':'s hi',x:ox+q*c+12,y:oy+r*c+16,'text-anchor':'middle'},String(n)));
+    });
+    return [ox+N.length*c+longest*4.4+10,oy+N.length*c+10];
+  }
+  function rings(svg,M){
+    var f=focusOf(M),bh=hops(M,f),d=bh.d,par=bh.par,R=[0,95,160,235,300,360],cx=280,cy=215,ang={},P={},kids={},lost=0;
+    ang[f]=0;
+    var first=M.nodes.filter(function(i){return d[i]===1});
+    first.forEach(function(i,k){ang[i]=Math.PI+k*2*Math.PI/first.length});
+    M.nodes.forEach(function(i){if(d[i]>1){(kids[par[i]]=kids[par[i]]||[]).push(i)}});
+    for(var depth=2;depth<6;depth++)M.nodes.forEach(function(i){if(d[i]!==depth)return;var sib=kids[par[i]],j=sib.indexOf(i);ang[i]=ang[par[i]]+(j-(sib.length-1)/2)*0.38});
+    M.nodes.forEach(function(i){
+      if(i in d){var r=R[Math.min(d[i],5)];P[i]=[cx+r*Math.cos(ang[i]),cy+r*Math.sin(ang[i])]}
+      else{P[i]=[60+lost*110,20];lost++}
+    });
+    var far=0;M.nodes.forEach(function(i){if(i in d)far=Math.max(far,d[i])});
+    for(var k=1;k<=Math.min(far,3);k++){
+      svg.appendChild(el('circle',{'class':'guide',cx:cx,cy:cy,r:R[k]}));
+      svg.appendChild(el('text',{'class':'m',x:cx-R[k]*0.707-5,y:cy+R[k]*0.707+8,'text-anchor':'end'},k+(k>1?' hops':' hop')));
+    }
+    M.edges.forEach(function(e){svg.appendChild(el('path',{'class':'ed soft',d:'M'+P[e.a][0]+' '+P[e.a][1]+'L'+P[e.b][0]+' '+P[e.b][1]}))});
+    M.nodes.forEach(function(i){
+      var t=M.things[i].name,w=Math.max(74,t.length*6.4+16),p=P[i],hot=i===f;
+      svg.appendChild(el('rect',{'class':'nd '+(hot?'hot':cls(M,i)),x:p[0]-w/2,y:p[1]-12,width:w,height:24,rx:12}));
+      svg.appendChild(el('text',{'class':'s'+(hot?' hi':''),x:p[0],y:p[1]+4,'text-anchor':'middle'},t));
+    });
+    return [560,440];
+  }
+  function seams(svg,M){
+    function own(i){return M.things[i].props.owner||'no owner'}
+    var O=[],count={},rad={},P={},w={},cx=280,cy=185,R=125;
+    M.nodes.forEach(function(i){var o=own(i);if(O.indexOf(o)<0)O.push(o);count[o]=(count[o]||0)+1});
+    O.forEach(function(o,k){var a=-Math.PI/2+k*2*Math.PI/O.length;P[o]=[cx+R*Math.cos(a),cy+R*Math.sin(a)];rad[o]=20+count[o]*7});
+    M.edges.forEach(function(e){var a=O.indexOf(own(e.a)),b=O.indexOf(own(e.b));if(a!==b)w[a+'>'+b]=(w[a+'>'+b]||0)+1});
+    Object.keys(w).forEach(function(k){
+      var ab=k.split('>'),A=O[+ab[0]],B=O[+ab[1]],p=P[A],q=P[B],dx=q[0]-p[0],dy=q[1]-p[1],len=Math.sqrt(dx*dx+dy*dy),ux=dx/len,uy=dy/len,nx=-uy*7,ny=ux*7;
+      var x1=p[0]+ux*(rad[A]+2)+nx,y1=p[1]+uy*(rad[A]+2)+ny,x2=q[0]-ux*(rad[B]+4)+nx,y2=q[1]-uy*(rad[B]+4)+ny;
+      svg.appendChild(el('path',{'class':'ed',style:'stroke-width:'+(1+w[k]*1.5),d:'M'+x1+' '+y1+'L'+x2+' '+y2,'marker-end':'url(#ahu)'}));
+      svg.appendChild(el('text',{'class':'m a',x:(x1+x2)/2+nx*1.5,y:(y1+y2)/2+ny*1.5+4,'text-anchor':'middle'},String(w[k])));
+    });
+    O.forEach(function(o){
+      var k=M.owners.indexOf(o);
+      svg.appendChild(el('circle',{'class':'nd '+(k<0?'':PAL[k%PAL.length]),cx:P[o][0],cy:P[o][1],r:rad[o]}));
+      svg.appendChild(el('text',{'class':'s',x:P[o][0],y:P[o][1]+1,'text-anchor':'middle'},o));
+      svg.appendChild(el('text',{'class':'m',x:P[o][0],y:P[o][1]+14,'text-anchor':'middle'},String(count[o])));
+    });
+    return [560,370];
+  }
+  var LENS={
+    flow:{fn:flow,show:function(){return 'show flow'},dials:['x: depth','inside: group','colour: owner'],note:'Position means dependency. A thing sits after what calls it. Things you add take a free place and nothing else moves.'},
+    sequence:{fn:sequence,story:true,show:function(M){return 'show sequence of '+(storyOf(M)||{name:'checkout'}).name},dials:['x: thing','y: step'],note:'Down the page means later.'},
+    lanes:{fn:lanes,story:true,show:function(M){return 'show lanes of '+(storyOf(M)||{name:'checkout'}).name},dials:['x: step','y: owner'],note:'Each row is an owner. A link that changes row is a handoff.'},
+    matrix:{fn:matrix,show:function(){return 'show matrix'},dials:['x: to','y: from','mark: link'],note:'A filled cell is a link. A number is its step in the story. No line can cross another.'},
+    rings:{fn:rings,show:function(M){var a=M.show.lens==='rings'&&M.show.arg;return 'show rings from '+(a||M.things[busiest(M)].name)},dials:['radius: hops from focus','colour: owner'],note:'Distance from the centre shows how soon a failure in the focus reaches each thing.'},
+    seams:{fn:seams,show:function(){return 'show seams by owner'},dials:['thing: owner','size: things owned','thickness: crossing links'],note:'Each circle is an owner. Only links that cross between owners remain. A thick line is where two teams depend on each other.'}
+  };
+
+  /* ---------- read-back ---------- */
+  function describe(M,lens){
+    var out=[],n=M.nodes.length,steps=0;M.stories.forEach(function(s){steps+=s.steps.length});
+    out.push(n+' things · '+M.edges.length+' links · '+M.stories.length+(M.stories.length===1?' story':' stories')+(steps?' ('+steps+' steps)':'')+' · '+M.owners.length+' owners');
+    if(!n)return out.join('\n');
+    var memo={},on={};
+    function longest(i){if(memo[i])return memo[i];if(on[i])return [i];on[i]=true;var best=[i];M.edges.forEach(function(e){if(e.a===i){var p=longest(e.b);if(p.length+1>best.length&&p.indexOf(i)<0)best=[i].concat(p)}});on[i]=false;return memo[i]=best}
+    var deep=[];M.nodes.forEach(function(i){var p=longest(i);if(p.length>deep.length)deep=p});
+    if(deep.length>1)out.push('deepest path, '+(deep.length-1)+' links: '+deep.map(function(i){return M.things[i].name}).join(' -> '));
+    var b=busiest(M);out.push('most connected: '+M.things[b].name+' ('+M.deg[b]+' links)');
+    var st=storyOf(M);
+    if(st&&st.steps.length){var hand=0;st.steps.forEach(function(s){if((M.things[s.a].props.owner||'')!==(M.things[s.b].props.owner||''))hand++});
+      out.push('story '+st.name+': '+st.steps.length+' steps, '+hand+' handoffs between owners')}
+    var f=focusOf(M),d=hops(M,f).d,ring={},far=0,cut=0;
+    M.nodes.forEach(function(i){if(i===f)return;if(i in d){ring[d[i]]=(ring[d[i]]||0)+1;far=Math.max(far,d[i])}else cut++});
+    var parts=[];for(var k=1;k<=far;k++)parts.push(ring[k]+' at '+k+(k>1?' hops':' hop'));
+    out.push('from '+M.things[f].name+': '+parts.join(', ')+(cut?', '+cut+' not connected':''));
+    var bad=M.edges.filter(function(e){return e.bad}).length,gs=M.edges.filter(function(e){return e.guess}).length;
+    out.push('rules: '+M.rules.length+', broken: '+bad+' · guesses: '+gs);
+    var can=['flow','matrix','rings'];if(M.owners.length>1)can.push('seams');if(st&&st.steps.length)can.push('sequence','lanes');
+    out.push('these facts support: '+can.join(', '));
+    if(!st)out.push('add a story to unlock: sequence, lanes');
+    return out.join('\n');
+  }
+
+  /* ---------- wiring ---------- */
+  var hl=$('hl');
+  function esc(t){return t.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
+  function paintLine(t){
+    var m,c='',q='',label='';
+    if(/^\s*#/.test(t))return '<span class="c">'+esc(t)+'</span>';
+    if(m=/^(.*?)(\s+@\s+\S+)$/.exec(t)){t=m[1];c='<span class="c">'+esc(m[2])+'</span>'}
+    if(m=/^(.*\S)(\s\?)$/.exec(t)){t=m[1];q='<span class="w">'+m[2]+'</span>'}
+    if(m=/^([^:]*?(?:->|-x\s|=>)[^:]*)(:.*)$/.exec(t)){t=m[1];label='<span class="s">'+esc(m[2])+'</span>'}
+    var isShow=/^\s*show\b/.test(t),o=esc(t);
+    o=o.replace(/(--&gt;|-&gt;|=&gt;|-x(?=\s))/g,'<span class="k">$1</span>');
+    o=o.replace(/([{,]\s*)([A-Za-z][\w ]*)(:)/g,'$1<span class="w">$2</span>$3');
+    o=o.replace(/^(\s*)(story|show|theme|lens|use)\b/,'$1<span class="k">$2</span>');
+    if(isShow)o=o.replace(/ (of|from|by|where|per|at) /g,' <span class="k">$1</span> ');
+    return o+label+q+c;
+  }
+  function paint(text,diag){
+    var mark={},rank={error:3,warning:2,note:1};
+    diag.forEach(function(g){if(g.line&&(!mark[g.line]||rank[g.sev]>rank[mark[g.line]]))mark[g.line]=g.sev});
+    hl.innerHTML=text.split('\n').map(function(t,i){return '<div class="l'+(mark[i+1]?' '+mark[i+1]:'')+'"><span class="ln">'+(i+1)+'</span>'+(paintLine(t)||' ')+'</div>'}).join('');
+  }
+  var ed=$('src'),view=$('view'),buttons=document.querySelectorAll('[data-lens]'),START=ed.defaultValue;
+  function setLine(ln,from,to){var L=ed.value.split('\n');L[ln-1]=L[ln-1].replace(from,to);ed.value=L.join('\n');update()}
+  function update(){
+    var M=parse(ed.value),name=M.show.lens,L=LENS[name];
+    if(!L){M.diag.push({sev:'error',code:'E0300',line:M.show.line,msg:'No lens is called `'+name+'`. Try flow, sequence, lanes, matrix, rings or seams.'});name='flow';L=LENS.flow}
+    if(L.story&&!storyOf(M)){M.diag.push({sev:'error',code:'E0301',line:M.show.line,msg:'`show '+name+'` needs a story. Write `story name { ... }` with links in order.'});name='flow';L=LENS.flow}
+    if(name==='rings'&&M.show.arg&&!(M.show.arg in M.idx))M.diag.push({sev:'error',code:'E0302',line:M.show.line,msg:'Nothing is called `'+M.show.arg+'`. The picture uses the most connected thing.'});
+    if(name==='lanes'){var st=storyOf(M),miss=orderOf(st).filter(function(i){return !M.things[i].props.owner}).map(function(i){return M.things[i].name});
+      if(miss.length)M.diag.push({sev:'warning',code:'W0221',line:M.show.line,msg:'`show lanes` needs an owner on every thing. Missing on: '+miss.join(', ')+'.'})}
+    while(view.firstChild)view.removeChild(view.firstChild);
+    var size=[600,360];
+    if(M.nodes.length)size=L.fn(view,M);
+    view.setAttribute('viewBox','0 0 '+Math.ceil(size[0])+' '+Math.ceil(size[1]));
+    view.style.minWidth=Math.min(size[0],520)+'px';view.style.maxWidth=Math.round(size[0]*1.3)+'px';view.style.margin='0 auto';
+    buttons.forEach(function(b){b.setAttribute('aria-pressed',String(b.getAttribute('data-lens')===name))});
+    $('lens-note').textContent=L.note;
+    var dl=$('lens-dials');dl.textContent='';
+    L.dials.forEach(function(s){var p=s.split(': '),e=h('span'),b=h('b',null,p[0]);e.appendChild(b);e.appendChild(document.createTextNode(' = '+p[1]));dl.appendChild(e)});
+    $('readback').textContent=describe(M,name);
+    var box=$('diag');box.textContent='';
+    var errs=M.diag.filter(function(x){return x.sev==='error'}).length,warns=M.diag.filter(function(x){return x.sev==='warning'}).length;
+    M.diag.sort(function(a,b){return (a.line||0)-(b.line||0)});
+    if(!M.diag.length)box.appendChild(h('div','clean','0 errors · 0 warnings · '+M.nodes.length+' things · '+M.edges.length+' links'));
+    M.diag.forEach(function(g){
+      var row=h('div','dg '+g.sev),top=h('div','top');
+      top.appendChild(h('span','code',g.sev+'['+g.code+']'));top.appendChild(h('span',null,'line '+(g.line||'?')));
+      if(g.fix){var fx=h('button','btn fix','Apply fix');fx.type='button';fx.addEventListener('click',function(){setLine(g.line,g.fix.from,g.fix.to)});top.appendChild(fx)}
+      row.appendChild(top);row.appendChild(h('div',null,g.msg.replace(/`/g,'')));
+      var j={code:g.code,line:g.line};if(g.fix)j.fix=g.fix;row.appendChild(h('div','json',JSON.stringify(j)));
+      box.appendChild(row);
+    });
+    if(M.diag.length&&!errs)box.insertBefore(h('div','clean','0 errors · '+warns+(warns===1?' warning':' warnings')),box.firstChild);
+    paint(ed.value,M.diag);
+    return M;
+  }
+  ed.addEventListener('input',update);
+  ed.addEventListener('scroll',function(){hl.scrollLeft=ed.scrollLeft});
+  buttons.forEach(function(b){b.addEventListener('click',function(){
+    var M=parse(ed.value),line=LENS[b.getAttribute('data-lens')].show(M);
+    if(/^show .*$/m.test(ed.value))ed.value=ed.value.replace(/^show .*$/m,line);else ed.value=ed.value.replace(/\s*$/,'')+'\n\n'+line;
+    update();view.classList.remove('in');void view.getBoundingClientRect();view.classList.add('in');
+  })});
+  $('b-typo').addEventListener('click',function(){if(ed.value.indexOf('Orders -> Payments: charge')>=0){ed.value=ed.value.replace('Orders -> Payments: charge','Orders -> Paymnts: charge');update()}});
+  $('b-habit').addEventListener('click',function(){if(ed.value.indexOf('Notify -> Events: publish')>=0){ed.value=ed.value.replace('Notify -> Events: publish','Notify --> Events: publish');update()}});
+  $('b-cache').addEventListener('click',function(){if(ed.value.indexOf('Orders -> Cache')<0){ed.value=ed.value.replace('API gateway -> Payments\n','API gateway -> Payments\nOrders -> Cache\nCache -> Postgres\n');update()}});
+  $('b-guess').addEventListener('click',function(){if(ed.value.indexOf('Notify -> Email provider ?')<0){ed.value=ed.value.replace('API gateway -> Payments\n','API gateway -> Payments\nNotify -> Email provider ?\n');update()}});
+  $('b-rule').addEventListener('click',function(){if(ed.value.indexOf('Mobile app -> Postgres')<0){ed.value=ed.value.replace('API gateway -> Payments\n','API gateway -> Payments\nMobile app -> Postgres\n');update()}});
+  $('b-reset').addEventListener('click',function(){ed.value=START;update()});
+  update();
+
+  /* ---------- themes ---------- */
+  var THEME_NOTE={plain:'Plain is the default. No brand, a calm blue for emphasis, and the font of the page around it.',rosette:'Rosette is the project\'s own look. It is one theme among others.',blueprint:'Blueprint uses one hue and a monospace face. It suits engineering docs.',ink:'Ink has no fills and no colour. It is made for print and for papers, and it tells things apart by line alone.'};
+  var picks=document.querySelectorAll('[data-dt-pick]');
+  function theme(n){
+    if(!THEME_NOTE[n])n='plain';
+    if(n==='plain')document.documentElement.removeAttribute('data-dt');else document.documentElement.setAttribute('data-dt',n);
+    picks.forEach(function(b){b.setAttribute('aria-pressed',String(b.getAttribute('data-dt-pick')===n))});
+    $('dt-select').value=n;$('dt-name').textContent=n;$('dt-note').textContent=THEME_NOTE[n];
+    try{localStorage.setItem('hg-theme',n)}catch(e){}
+  }
+  picks.forEach(function(b){b.addEventListener('click',function(){theme(b.getAttribute('data-dt-pick'))})});
+  $('dt-select').addEventListener('change',function(){theme($('dt-select').value)});
+  var saved='plain';try{saved=localStorage.getItem('hg-theme')||'plain'}catch(e){}
+  theme(saved);
+  flow($('g-theme'),parse(START));
+
+  /* ---------- storyline ---------- */
+  (function(svg){
+    var A=['browser','api','auth','db'],home=[40,90,140,190],xs=[90,180,270,360,450];
+    var meet=[[0,1],[1,2],[2,3],[1,2],[0,1]],lab=['POST /login','verify','select user','token','200 + cookie'];
+    xs.forEach(function(x,k){
+      svg.appendChild(el('path',{'class':'guide',d:'M'+x+' 24V206'}));
+      svg.appendChild(el('text',{'class':'m',x:x,y:224,'text-anchor':'middle'},lab[k]));
+    });
+    A.forEach(function(a,i){
+      var d='M20 '+home[i]+'H40',px=40,py=home[i];
+      xs.forEach(function(x,k){
+        var m=meet[k],y=home[i];
+        if(m.indexOf(i)>=0){var mid=(home[m[0]]+home[m[1]])/2;y=i===m[0]?mid-5:mid+5}
+        d+='C'+(px+28)+' '+py+' '+(x-38)+' '+y+' '+(x-10)+' '+y+'H'+(x+10);px=x+10;py=y;
+      });
+      d+='C'+(px+20)+' '+py+' 480 '+home[i]+' 500 '+home[i];
+      svg.appendChild(el('path',{'class':'sl c'+i,d:d}));
+      svg.appendChild(el('text',{'class':'s',x:20,y:home[i]-9},a));
+    });
+  })($('g-story'));
+  seams($('g-seams'),parse(START));
+
+  /* ---------- small graphs: stability demo and diff ---------- */
+  var w=80,hh=32;
+  function draw(svg,g){
+    while(svg.firstChild)svg.removeChild(svg.firstChild);
+    g.e.forEach(function(e){var d=e.d||e,c=e.c||'';svg.appendChild(el('path',{'class':'ed '+c,d:d,'marker-end':c==='ac'?'url(#aha)':'url(#ah)'}))});
+    g.n.forEach(function(n){
+      svg.appendChild(el('rect',{'class':'nd '+(n[3]||''),x:n[1],y:n[2],width:w,height:hh,rx:6}));
+      svg.appendChild(el('text',{x:n[1]+w/2,y:n[2]+20,'text-anchor':'middle'},n[0]));
+    });
+  }
+  var base={n:[['api',90,15],['auth',25,90],['orders',155,90],['db',90,170]],
+            e:['M115 47V68H65V90','M145 47V68H195V90','M65 122V146H110V170','M185 122V146H150V170']};
+  var typ={n:[['api',90,15],['orders',25,90,'moved'],['auth',155,90,'moved'],['cache',25,170,'new'],['db',155,170,'moved']],
+           e:['M115 47V68H65V90','M145 47V68H195V90','M50 122V170','M80 122V146H180V170','M210 122V170']};
+  var hg={n:base.n.concat([['cache',185,170,'new']]),e:base.e.concat(['M215 122V170'])};
+  draw($('g-diff'),{n:hg.n,e:[base.e[0],base.e[1],base.e[2],{d:base.e[3],c:'gone'},{d:'M215 122V170',c:'ac'},{d:'M185 186H170',c:'ac'}]});
+  [0,2,1,3].forEach(function(lit,k){draw($('g-f'+k),{n:base.n,e:base.e.map(function(d,i){return i===lit?{d:d,c:'ac'}:{d:d,c:'faint'}})})});
+  [['api'],['auth'],['orders','db']].forEach(function(mine,k){draw($('g-p'+k),{n:base.n.map(function(n){return [n[0],n[1],n[2],mine.indexOf(n[0])>=0?'p':'x']}),e:base.e.map(function(d){return {d:d,c:'faint'}})})});
+  var b0=$('st-before'),b1=$('st-after');
+  function set(after){
+    draw($('st-typ'),after?typ:base);draw($('st-hg'),after?hg:base);
+    $('st-typ-v').innerHTML=after?'<b>3 of 4</b> existing nodes moved':'4 nodes, 4 edges';
+    $('st-hg-v').innerHTML=after?'<b>0 of 4</b> existing nodes moved':'4 nodes, 4 edges';
+    b0.setAttribute('aria-pressed',String(!after));b1.setAttribute('aria-pressed',String(after));
+  }
+  b0.addEventListener('click',function(){set(false)});
+  b1.addEventListener('click',function(){set(true)});
+  set(true);
+})();
+</script>
