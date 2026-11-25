@@ -3,12 +3,12 @@ id: 16
 uid: 73e6ff44-96e9-43b1-aec0-7599a929c4a7
 title: Confirm the licence before the first release
 type: decision
-status: doing
+status: done
 milestone: v0.1
 assignee: Oddur Sigurdsson
-claimed: 2026-11-25
 created: 2026-11-25
 updated: 2026-11-25
+closed_at: 2026-11-25
 priority: p1
 risk: low
 surface: none
