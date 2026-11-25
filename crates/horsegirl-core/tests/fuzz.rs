@@ -30,6 +30,9 @@ show rings from GET /users/{id}
 show rings from Sensors: wind
 show sequence of a@b
 show sequence of S, T
+show rings from, T
+show rings from{id}
+show rings from: x
 show, A -> B
 show { owner: X }
 owner: X

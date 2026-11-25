@@ -824,7 +824,9 @@ impl<'s> Parser<'s> {
         let joins = ["of", "from", "by"]
             .iter()
             .any(|join| self.is_word(word, join));
-        (joins && spaced(word + 1)).then(|| self.skip(word + 1))
+        // A word token is whole, so a comma, a colon or a brace straight after
+        // the join word is a mistake in the argument, not a longer word.
+        joins.then(|| self.skip(word + 1))
     }
 
     fn show(&mut self, into: &mut Children<'s>) -> Result<NodeKind, Diagnostic> {
@@ -1109,13 +1111,13 @@ impl<'s> Parser<'s> {
         let text = &self.source[span.clone()];
         // A quoted name cannot hold a double quote, so no fix exists then.
         // A text longer than `MAX_FIX` gets no fix either.
-        // In `A -x@b` the quote would touch the `-x` and make one word of the
-        // two, so a space goes between them.
-        let space = if self.source[..span.start].ends_with("-x") {
-            " "
-        } else {
-            ""
-        };
+        // In `A -x@b` or `show rings from{id}` the quote would touch the word
+        // before it and make one word of the two, so a space goes between them.
+        let touches = self.source[..span.start]
+            .chars()
+            .next_back()
+            .is_some_and(char::is_alphanumeric);
+        let space = if touches { " " } else { "" };
         let fix = (text.len() <= MAX_FIX && !text.contains('"')).then(|| Fix {
             confidence: Confidence::Safe,
             description: format!("Write the {what} in double quotes."),

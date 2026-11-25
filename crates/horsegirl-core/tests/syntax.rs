@@ -454,6 +454,10 @@ fn a_show_line_with_a_mistake_in_its_argument_is_still_a_show_line() {
             "show rings from \"Sensors: wind\"",
         ),
         ("show sequence of a@b", "show sequence of \"a@b\""),
+        // With no space after the join word, the fix adds one.
+        ("show rings from{id}", "show rings from \"{id}\""),
+        // A name may hold a colon in double quotes, so the fix keeps every byte.
+        ("show rings from: x", "show rings from \": x\""),
     ] {
         let error = only(source);
         assert_eq!(error.code, "E0004", "{source}");
@@ -462,10 +466,13 @@ fn a_show_line_with_a_mistake_in_its_argument_is_still_a_show_line() {
         assert_eq!(codes, [""; 0], "{quoted}");
         assert_eq!(kinds(&parse(quoted).tree), [NodeKind::Show], "{tree}");
     }
-    let error = only("show sequence of S, T");
-    assert_eq!(error.code, "E0008");
-    assert!(error.message.contains("one name"), "{}", error.message);
-    assert_eq!(error.fix, None);
+    for source in ["show sequence of S, T", "show rings from, T"] {
+        let error = only(source);
+        assert_eq!(error.code, "E0008", "{source}");
+        assert!(error.message.contains("one name"), "{}", error.message);
+        assert_eq!(error.fix, None, "{source}");
+        assert_eq!(kinds(&parse(source).tree), [NodeKind::Error], "{source}");
+    }
     // A link or a group after the lens is an error in the show line too.
     for (source, code) in [
         ("show flow of A -> B", "E0004"),
