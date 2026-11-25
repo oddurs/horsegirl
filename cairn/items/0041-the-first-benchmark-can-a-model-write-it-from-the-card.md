@@ -50,3 +50,7 @@ Criterion 3: bench/tasks holds 100 task files, each a description and a checker 
 ## Result
 
 bench/tasks holds 100 tasks, each a description and a checker in horsegirl. horsegirl-bench scores replies for validity on the first try, after one fix, and against the checker, and reports the diagnostics hit most often. A model joins through a command adapter; recorded replies score with no network. Only a hand-written run exists; no real model has been scored.
+
+## 2026-11-25
+
+Fix round 1 for #57: scripts/task check exited 0. cargo test -p horsegirl-bench: 25 passed. The four new tests (empty reply, empty command reply, checker names, missing directory) failed on the old source. horsegirl-bench run --command true now prints 'Valid on the first try | 0 of 100'; score bench/runs/hadn exits 1.
