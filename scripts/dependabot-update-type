@@ -1,0 +1,18 @@
+#!/bin/sh
+# Decide whether a Dependabot pull request may merge without a person.
+# Reads the commit messages of the pull request on standard input. Dependabot
+# writes one "update-type: version-update:semver-<kind>" line for each
+# dependency it changes. Prints "auto" when there is at least one such line and
+# every line is patch or minor. Prints "manual" in every other case, so a major
+# update, a missing line or an unknown kind waits for a person.
+set -eu
+kinds=$(sed -n 's/^[[:space:]]*update-type:[[:space:]]*//p')
+if [ -z "$kinds" ]; then
+  echo manual
+  exit 0
+fi
+if printf '%s\n' "$kinds" | grep -Evq '^version-update:semver-(patch|minor)$'; then
+  echo manual
+else
+  echo auto
+fi

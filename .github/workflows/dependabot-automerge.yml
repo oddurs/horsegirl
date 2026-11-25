@@ -1,0 +1,33 @@
+name: dependabot-automerge
+
+# Runs on pull_request, never pull_request_target: the job reads the pull
+# request through the API and never checks out its code.
+on:
+  pull_request:
+    types: [opened, reopened, synchronize]
+
+permissions: {}
+
+jobs:
+  automerge:
+    # The actor test stops a person who pushes to a Dependabot branch from
+    # reusing the update-type lines in its commits.
+    if: github.event.pull_request.user.login == 'dependabot[bot]' && github.actor == 'dependabot[bot]'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      # The script comes from the base branch, not from the pull request.
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.base.sha }}
+      - name: Merge a patch or minor update when the required check passes
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR_URL: ${{ github.event.pull_request.html_url }}
+          PR_API: repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}
+        run: |
+          kind=$(gh api --paginate "$PR_API/commits" --jq '.[].commit.message' | scripts/dependabot-update-type)
+          echo "update kind: $kind"
+          scripts/dependabot-automerge "$kind" "$PR_URL"
