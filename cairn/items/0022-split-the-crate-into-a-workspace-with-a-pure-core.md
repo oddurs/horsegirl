@@ -43,3 +43,7 @@ Ran cargo tree -p horsegirl-core: it prints only horsegirl-core v0.0.0. The core
 ## 2026-11-25
 
 Ran cargo run -p horsegirl -- spec and diffed with crates/horsegirl-core/src/spec.txt: identical. Test spec_prints_the_card passes.
+
+## 2026-11-25
+
+Fix round 1: README install line now 'cargo install --path crates/horsegirl --locked'; installed binary printed 'horsegirl 0.0.0'.
