@@ -19,6 +19,7 @@ pub mod scene;
 pub mod svg;
 pub mod syntax;
 pub mod text;
+pub mod theme;
 
 /// The whole language on one page.
 ///

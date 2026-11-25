@@ -14,20 +14,46 @@ use std::fmt::Write as _;
 
 use crate::scene::{Role, Scene, Shape, number};
 use crate::text::{self, Style};
+use crate::theme;
 
 /// The room around the scene, so a stroke on its edge is not cut in half.
 const MARGIN: f64 = 1.0;
 
 /// The style of every picture. Each rule is scoped to the `horsegirl` class,
 /// so a page that holds the SVG inline keeps its own `.label` and `.link`.
-const STYLE: &str = "\
-.horsegirl{font-family:var(--hg-font,Arial,\"Liberation Sans\",Helvetica,sans-serif)}
-.horsegirl .group{fill:var(--hg-group,#F1EAF1);stroke:var(--hg-line,#6E5F72)}
-.horsegirl .thing{fill:var(--hg-surface,#FFFFFF);stroke:var(--hg-line,#6E5F72)}
-.horsegirl .link{fill:none;stroke:var(--hg-line,#6E5F72)}
-.horsegirl .head{fill:var(--hg-accent,#D4246F)}
-.horsegirl .label{fill:var(--hg-ink,#241627)}
-";
+///
+/// The first three owners take the palette slots 1 to 3, and a fourth owner
+/// takes slot 1 again. `color-scheme` lets `light-dark()` follow the reader's
+/// mode; a page sets `--hg-scheme` to `light` or `dark` to force one.
+fn style() -> String {
+    let v = theme::var;
+    let mut css = format!(
+        ".horsegirl{{color-scheme:var(--hg-scheme,light dark);font-family:var(--hg-font,{})}}\n\
+         .horsegirl .group{{fill:{};stroke:{}}}\n\
+         .horsegirl .thing{{fill:{};stroke:{}}}\n\
+         .horsegirl .link{{fill:none;stroke:{}}}\n\
+         .horsegirl .head{{fill:{}}}\n\
+         .horsegirl .label{{fill:{}}}\n",
+        theme::FONT,
+        v("c0"),
+        v("line"),
+        v("paper"),
+        v("muted"),
+        v("ink"),
+        v("accent"),
+        v("ink"),
+    );
+    for (slot, stroke) in [(1, "accent"), (2, "s2"), (3, "s3")] {
+        writeln!(
+            css,
+            ".horsegirl .thing.slot-{slot}{{fill:{};stroke:{}}}",
+            v(&format!("c{slot}")),
+            v(stroke)
+        )
+        .expect("a String takes any write");
+    }
+    css
+}
 
 /// Draws `scene` as an SVG document.
 ///
@@ -47,7 +73,7 @@ pub fn draw(scene: &Scene, title: &str) -> String {
     );
     writeln!(out, "<title>{}</title>", escape(title)).expect("a String takes any write");
     writeln!(out, "<desc>{}</desc>", describe(scene)).expect("a String takes any write");
-    writeln!(out, "<style>\n{STYLE}</style>").expect("a String takes any write");
+    writeln!(out, "<style>\n{}</style>", style()).expect("a String takes any write");
     out.push_str(
         "<defs>\n<marker id=\"hg-head\" viewBox=\"0 0 8 8\" refX=\"8\" refY=\"4\" \
          markerWidth=\"8\" markerHeight=\"8\" markerUnits=\"userSpaceOnUse\" orient=\"auto\">\
@@ -56,15 +82,16 @@ pub fn draw(scene: &Scene, title: &str) -> String {
     let style = Style {
         size: scene.font_size,
     };
+    let owners = owners(scene);
     for shape in &scene.shapes {
-        out.push_str(&element(shape, style));
+        out.push_str(&element(shape, style, &owners));
     }
     out.push_str("</svg>\n");
     out
 }
 
-fn element(shape: &Shape, style: Style) -> String {
-    let class = class(shape);
+fn element(shape: &Shape, style: Style, owners: &[&str]) -> String {
+    let class = class(shape, owners);
     let r = shape.rect;
     match shape.role {
         Role::Group | Role::Thing => format!(
@@ -96,9 +123,16 @@ fn element(shape: &Shape, style: Style) -> String {
     }
 }
 
-/// The role of a shape, then `key-value` for each of its facts.
-fn class(shape: &Shape) -> String {
+/// The role of a shape, the palette slot of its owner, then `key-value` for
+/// each of its facts.
+fn class(shape: &Shape, owners: &[&str]) -> String {
     let mut class = shape.role.as_str().to_owned();
+    if shape.role == Role::Thing {
+        let owner = shape.facts.iter().find(|fact| fact.key == "owner");
+        if let Some(at) = owner.and_then(|fact| owners.iter().position(|o| *o == fact.value)) {
+            write!(class, " slot-{}", at % 3 + 1).expect("a String takes any write");
+        }
+    }
     for fact in &shape.facts {
         write!(class, " {}-{}", token(&fact.key), token(&fact.value))
             .expect("a String takes any write");
@@ -121,6 +155,19 @@ fn token(text: &str) -> String {
             c.to_lowercase()
         })
         .collect()
+}
+
+/// Each distinct `owner` value in the scene, in the order of the shapes, so
+/// the same file gets the same colours on every run.
+fn owners(scene: &Scene) -> Vec<&str> {
+    let mut owners: Vec<&str> = Vec::new();
+    let facts = scene.shapes.iter().flat_map(|shape| &shape.facts);
+    for fact in facts.filter(|fact| fact.key == "owner") {
+        if !owners.contains(&fact.value.as_str()) {
+            owners.push(&fact.value);
+        }
+    }
+    owners
 }
 
 /// What the picture shows, counted, for the `desc` of the document.

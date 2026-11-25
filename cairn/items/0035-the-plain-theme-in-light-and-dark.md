@@ -3,8 +3,10 @@ id: 35
 uid: 7a142f13-59f7-4f47-9886-72be24bd6404
 title: The plain theme, in light and dark
 type: feature
-status: planned
+status: doing
 milestone: v0.1
+assignee: Oddur Sigurdsson
+claimed: 2026-11-25
 depends_on:
 - 34
 created: 2026-11-25

@@ -47,7 +47,10 @@ fn the_svg_is_well_formed_xml() {
         "{svg}"
     );
     assert!(svg.contains(">x &lt; y</text>"), "{svg}");
-    assert!(svg.contains("class=\"thing owner-platform-team\""), "{svg}");
+    assert!(
+        svg.contains("class=\"thing slot-1 owner-platform-team\""),
+        "{svg}"
+    );
     assert!(svg.contains("<title>a &amp; b</title>"), "{svg}");
 }
 
@@ -110,7 +113,7 @@ fn each_shape_has_a_class_for_its_role_and_for_its_facts() {
     let model = model(CHECKOUT);
     for owner in model.owners() {
         let class = format!(" owner-{}", owner.to_lowercase());
-        assert!(svg.contains(&format!("class=\"thing{class}\"")), "{class}");
+        assert!(svg.contains(&format!("{class}\" x=")), "{class}");
         assert!(svg.contains(&format!("class=\"label{class}\"")), "{class}");
     }
     assert_eq!(svg.matches("class=\"group").count(), 1);
