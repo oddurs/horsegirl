@@ -50,6 +50,64 @@ scripts/agent start chore/links >/dev/null 2>&1 && fail "an existing branch was 
 git worktree remove "$wt"
 [ -f LOCAL.md ] && [ -f .localdir/file ] || fail "removing the worktree removed the primary's files"
 
+# take and finish need the backlog tool. CI has it; a contributor may not.
+if command -v cairn >/dev/null 2>&1; then
+  cp "$src/cairn.toml" .
+  mkdir -p cairn/items scripts docs
+  cp "$src/docs/roadmap-intro.md" docs/
+  printf '#!/bin/sh\nexit 0\n' >scripts/task
+  chmod +x scripts/task
+  body='## Problem\n\nNothing reads a file.\n\n## Proposal\n\nRead it.\n\n## Acceptance criteria\n\n- [ ] It reads a file.\n- [ ] It says so.\n'
+  printf '%b' "$body" | cairn new "Read a File, please!" -t feature -s planned -q --no-hooks --stdin >/dev/null
+  cairn render -q
+  git add -A
+  git commit -q -m "chore: add a backlog"
+  git push -q origin main
+
+  # A stand-in for gh that records how it was called.
+  mkdir "$tmp/bin"
+  cat >"$tmp/bin/gh" <<'GH'
+#!/bin/sh
+echo "$*" >>"$GH_LOG"
+case "$1 $2" in
+  "pr view") exit 1 ;;
+  "pr create")
+    while [ $# -gt 0 ]; do
+      [ "$1" = "--body-file" ] && cp "$2" "$GH_LOG.body"
+      shift
+    done
+    echo "https://example.invalid/pr/1"
+    ;;
+esac
+GH
+  chmod +x "$tmp/bin/gh"
+  GH_LOG=$tmp/gh.log
+  export GH_LOG
+  PATH=$tmp/bin:$PATH
+
+  prompt=$(scripts/agent take 2>/dev/null)
+  wt=$tmp/.worktrees/repo/feat/0001-read-a-file-please
+  [ -d "$wt" ] || fail "take did not create the worktree named from the item"
+  echo "$prompt" | grep -q "It reads a file" || fail "take did not print the item as a prompt"
+  grep -q '^assignee:' "$wt"/cairn/items/0001-*.md || fail "take did not claim the item"
+
+  cd "$wt"
+  echo change >feature.txt
+  git add -A
+  git commit -q -m "feat: read a file"
+  out=$(scripts/agent finish 2>&1) && fail "finish accepted an item with unticked criteria"
+  echo "$out" | grep -q "It says so" || fail "finish did not name the unticked criterion"
+  cairn tick 1 --all >/dev/null
+  scripts/agent finish >/dev/null 2>&1 || fail "finish failed on a complete item"
+  grep -q '^status: done' cairn/items/0001-*.md || fail "finish did not close the item"
+  [ -z "$(git status --porcelain)" ] || fail "finish left uncommitted changes"
+  grep -q "Nothing reads a file" "$GH_LOG.body" || fail "the pull request body lacks the problem"
+  grep -q "^Refs: 0001" "$GH_LOG.body" || fail "the pull request body lacks the Refs line"
+  grep -q "Acceptance criteria" "$GH_LOG.body" && fail "the pull request body repeats the criteria"
+  grep -q "pr merge --auto --squash" "$GH_LOG" || fail "finish did not set the pull request to merge itself"
+  cd "$tmp/repo"
+fi
+
 hook=$src/.githooks/commit-msg
 msg=$tmp/msg
 accept() {

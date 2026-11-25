@@ -51,10 +51,10 @@ An agent writes a horsegirl file, checks it, applies the fixes, and draws a flow
 - [ ] [`0048`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0048-deploy-the-site-to-github-pages.md) Deploy the site to GitHub Pages <sup>chore · p0 · workflow</sup>
 - [ ] [`0049`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0049-an-honest-gallery-drawn-by-ci.md) An honest gallery, drawn by CI <sup>feature · p2 · site</sup>
 - [ ] [`0050`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0050-check-the-pull-request-title-in-ci.md) Check the pull request title in CI <sup>feature · p1 · workflow</sup>
-- [ ] [`0051`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0051-one-command-takes-an-item-and-one-command-finishes-it.md) One command takes an item and one command finishes it <sup>feature · p0 · workflow</sup>
 - [ ] [`0052`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0052-a-daily-report-of-what-the-backlog-needs-from-a-person.md) A daily report of what the backlog needs from a person <sup>feature · p2 · workflow</sup>
 - [ ] [`0053`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0053-merge-passing-patch-and-minor-dependency-updates-automatically.md) Merge passing patch and minor dependency updates automatically <sup>chore · p2 · workflow</sup>
 - [ ] [`0054`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0054-cut-a-release-with-one-command.md) Cut a release with one command <sup>chore · p1 · workflow</sup>
+- [ ] [`0051`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0051-one-command-takes-an-item-and-one-command-finishes-it.md) One command takes an item and one command finishes it <sup>feature · p0 · workflow</sup>
 
 ## later — Later
 

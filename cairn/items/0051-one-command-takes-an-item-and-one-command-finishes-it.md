@@ -3,8 +3,10 @@ id: 51
 uid: 3b84421c-a112-4fea-b7e6-0605d38f82c7
 title: One command takes an item and one command finishes it
 type: feature
-status: planned
+status: doing
 milestone: v0.1
+assignee: Oddur Sigurdsson
+claimed: 2026-11-25
 created: 2026-11-25
 updated: 2026-11-25
 priority: p0

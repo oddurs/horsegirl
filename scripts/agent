@@ -162,11 +162,162 @@ cmd_pr() {
   say "$url"
 }
 
-cmd_sync() {
+# Rebase onto the default branch. The roadmap is generated, so a conflict in it
+# alone is resolved by generating it again. Any other conflict needs a person.
+rebase_onto_default() {
   def=$(default_branch)
-  say "rebasing $(current_branch) onto origin/$def"
   git -C "$here" fetch --quiet origin
-  git -C "$here" rebase "origin/$def"
+  if git -C "$here" merge-base --is-ancestor "origin/$def" HEAD; then
+    return 0
+  fi
+  say "rebasing $(current_branch) onto origin/$def"
+  git -C "$here" rebase "origin/$def" >/dev/null 2>&1 && return 0
+  while [ -d "$(git -C "$here" rev-parse --git-path rebase-merge)" ]; do
+    conflicts=$(git -C "$here" diff --name-only --diff-filter=U)
+    if [ "$conflicts" != "ROADMAP.md" ]; then
+      die "the rebase stopped on a conflict in: $(echo "$conflicts" | tr '\n' ' '). Resolve it in $here, run 'git rebase --continue', then run this command again."
+    fi
+    say "generating ROADMAP.md again"
+    cairn -C "$here" render -q --no-hooks
+    git -C "$here" add ROADMAP.md
+    GIT_EDITOR=true git -C "$here" rebase --continue >/dev/null 2>&1 || true
+  done
+  # A roadmap generated mid-rebase can be stale once every commit is replayed.
+  if [ -f "$here/cairn.toml" ] && command -v cairn >/dev/null 2>&1; then
+    cairn -C "$here" render -q --no-hooks
+    if ! git -C "$here" diff --quiet -- ROADMAP.md; then
+      git -C "$here" commit --quiet -m "docs(backlog): regenerate the roadmap" -- ROADMAP.md
+    fi
+  fi
+}
+
+cmd_sync() {
+  rebase_onto_default
+  say "up to date with origin/$(default_branch). Push with: scripts/agent land"
+}
+
+# Bring the branch up to date, push it, and wait until its pull request merges.
+# The default branch can move while CI runs, so this repeats until it lands.
+cmd_land() {
+  def=$(default_branch)
+  branch=$(current_branch)
+  [ "$branch" != "$def" ] || die "you are on $def; run this from the branch's worktree"
+  [ -z "$(git -C "$here" status --porcelain)" ] || die "the working tree has uncommitted changes"
+  attempt=0
+  while :; do
+    attempt=$((attempt + 1))
+    [ "$attempt" -le 6 ] || die "the pull request did not land after 6 attempts; read 'gh pr view $branch'"
+    rebase_onto_default
+    if [ "$(git -C "$here" rev-parse HEAD)" != "$(git -C "$here" rev-parse "origin/$branch" 2>/dev/null)" ]; then
+      say "pushing $branch"
+      git -C "$here" push --quiet --force-with-lease origin "$branch"
+    fi
+    (cd "$here" && gh pr merge --auto --squash >/dev/null)
+    # Checks take a moment to register for a new commit.
+    waited=0
+    until (cd "$here" && gh pr checks >/dev/null 2>&1) || [ "$waited" -ge 60 ]; do
+      [ "$(cd "$here" && gh pr view --json state -q .state)" = "MERGED" ] && break
+      sleep 5
+      waited=$((waited + 5))
+    done
+    (cd "$here" && gh pr checks --watch --interval 10 >/dev/null 2>&1) ||
+      [ "$(cd "$here" && gh pr view --json state -q .state)" = "MERGED" ] ||
+      die "a check failed on $branch; read 'gh pr checks' in $here"
+    waited=0
+    while [ "$waited" -lt 60 ]; do
+      state=$(cd "$here" && gh pr view --json state -q .state)
+      if [ "$state" = "MERGED" ]; then
+        say "merged"
+        return 0
+      fi
+      [ "$state" = "OPEN" ] || die "the pull request for $branch is $state"
+      sleep 5
+      waited=$((waited + 5))
+    done
+    say "not merged yet; the default branch probably moved. Trying again."
+  done
+}
+
+item_number() { echo "${1#*/}" | sed -n 's/^0*\([0-9][0-9]*\)-.*/\1/p'; }
+
+item_field() { cairn -C "$2" show "$1" --raw | sed -n "s/^$3: *//p" | head -n 1 | sed "s/^[\"']//; s/[\"']\$//"; }
+
+# Take an item: name the branch from it, start the worktree, claim it, and
+# print it as the prompt to work from.
+cmd_take() {
+  command -v cairn >/dev/null 2>&1 || die "cairn is not installed; see CONTRIBUTING.md"
+  id=${1:-}
+  if [ -z "$id" ]; then
+    id=$(cairn -C "$root" next --view agent --ids --limit 1)
+    [ -n "$id" ] || die "nothing is ready in the agent view; see 'cairn next --blocked'"
+  fi
+  type=$(item_field "$id" "$root" type)
+  title=$(item_field "$id" "$root" title)
+  number=$(item_field "$id" "$root" id)
+  [ -n "$number" ] && [ -n "$title" ] || die "no item '$id' in the backlog"
+  case "$type" in
+    feature | lens) kind=feat ;;
+    bug) kind=fix ;;
+    docs | decision) kind=docs ;;
+    *) kind=chore ;;
+  esac
+  slug=$(printf '%s' "$title" | tr '[:upper:]' '[:lower:]' | sed 's/[^a-z0-9][^a-z0-9]*/-/g; s/^-//; s/-$//' | cut -c1-40 | sed 's/-$//')
+  branch=$(printf '%s/%04d-%s' "$kind" "$number" "$slug")
+  cmd_start "$branch" >&2
+  cairn -C "$(worktree_of "$branch")" prompt "$number"
+}
+
+# Finish the item this branch carries: check, close it, commit the backlog,
+# and open the pull request with a body built from the item.
+cmd_finish() {
+  auto=--auto
+  body=
+  while [ $# -gt 0 ]; do
+    case "$1" in
+      --no-auto) auto= ;;
+      --body-file)
+        shift
+        body=${1:-}
+        ;;
+      *) die "usage: scripts/agent finish [--no-auto] [--body-file <file>]" ;;
+    esac
+    shift
+  done
+  command -v cairn >/dev/null 2>&1 || die "cairn is not installed; see CONTRIBUTING.md"
+  branch=$(current_branch)
+  number=$(item_number "$branch")
+  [ -n "$number" ] || die "branch '$branch' does not start with an item number; use: scripts/agent pr"
+  unticked=$(cairn -C "$here" show "$number" --criteria | grep -E '^ *[0-9]+ +\[ \]' || true)
+  if [ -n "$unticked" ]; then
+    printf 'agent: these criteria are not ticked. Tick each one that is true with: cairn tick %s <n>\n%s\n' "$number" "$unticked" >&2
+    exit 1
+  fi
+  [ -z "$(git -C "$here" status --porcelain -- . ':!cairn' ':!ROADMAP.md')" ] ||
+    die "there are uncommitted changes outside the backlog; commit them first"
+  if [ "$(item_field "$number" "$here" status)" != "done" ]; then
+    say "closing item $number"
+    cairn -C "$here" close "$number" -q
+  fi
+  ref=$(printf '%04d' "$number")
+  if [ -n "$(git -C "$here" status --porcelain)" ]; then
+    git -C "$here" add -A cairn ROADMAP.md
+    git -C "$here" commit --quiet -m "docs(backlog): close $ref"
+  fi
+  tmp=
+  if [ -z "$body" ]; then
+    tmp=$(mktemp)
+    # Everything the item says above its criteria, then the reference.
+    cairn -C "$here" show "$number" --raw | awk '
+      body && /^## Acceptance criteria/ { exit }
+      body { print }
+      /^(---|\.\.\.)[[:space:]]*$/ { seen++; if (seen == 2) body = 1 }
+    ' >"$tmp"
+    printf 'Refs: %s\n' "$ref" >>"$tmp"
+    body=$tmp
+  fi
+  # shellcheck disable=SC2086 # $auto is one flag or nothing
+  cmd_pr $auto --body-file "$body"
+  [ -z "$tmp" ] || rm -f "$tmp"
 }
 
 cmd_done() {
@@ -211,11 +362,14 @@ case "$cmd" in
   commit) cmd_commit "$@" ;;
   pr) cmd_pr "$@" ;;
   sync) cmd_sync ;;
+  land) cmd_land ;;
+  take) cmd_take "$@" ;;
+  finish) cmd_finish "$@" ;;
   done) cmd_done "$@" ;;
   list) cmd_list ;;
   next) cmd_next ;;
   *)
-    echo "usage: scripts/agent {doctor|next|start|check|commit|pr|sync|done|list}" >&2
+    echo "usage: scripts/agent {doctor|next|take|start|check|commit|finish|pr|sync|land|done|list}" >&2
     exit 2
     ;;
 esac

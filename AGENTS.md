@@ -5,18 +5,22 @@ Follow these rules exactly. They are enforced by hooks and by CI.
 
 ## The workflow
 
-1. Run `scripts/agent next` to see ready work. Read one item with
-   `cairn show <id>`, or as a prompt with `cairn prompt <id>`.
-2. Run `scripts/agent start <type>/<id>-<slug>`. Work only in the directory it
-   prints. Never work in the primary checkout, and never share a worktree.
+1. Run `scripts/agent take` to take the next ready item, or
+   `scripts/agent take <id>` for one item. It names the branch, makes the
+   worktree, claims the item and prints it as your prompt.
+2. Work only in the worktree it names. Never work in the primary checkout, and
+   never share a worktree.
 3. Make the change. A bug fix arrives with the test that would have caught it.
 4. Run `scripts/agent check` until it passes.
 5. Commit with `scripts/agent commit '<type>(<scope>): <subject>'`.
 6. Tick each acceptance criterion that is now true with `cairn tick <id> <n>`.
-   When all are true, run `cairn close <id>` in the same branch and commit.
-7. Run `scripts/agent pr --auto --body-file <file>`. The body states the
-   problem, the approach, and what a reviewer should doubt.
-8. After the merge, run `scripts/agent done <branch>`.
+   Tick what you watched pass, not what would let you close.
+7. Run `scripts/agent finish`. It refuses while a criterion is unticked. Then
+   it closes the item, commits the backlog and opens the pull request, set to
+   merge when CI passes. Use `--no-auto` when a review comes first, and
+   `--body-file <file>` to state what a reviewer should doubt.
+8. Run `scripts/agent land` to bring the branch up to date, push it and wait
+   until it merges. Then run `scripts/agent done <branch>`.
 
 If you cannot finish, run `cairn release <id> --reason '<why>'` and say what
 you learned in `cairn note <id> '<text>'`.

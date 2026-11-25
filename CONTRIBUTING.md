@@ -18,15 +18,19 @@ later. Without it, the backlog check runs only in CI.
 One unit of work is one worktree, one branch and one pull request.
 
 1. Find work: `scripts/agent next`. Read the item: `cairn show <id>`.
-2. Start: `scripts/agent start <type>/<id>-<slug>`, for example
-   `scripts/agent start feat/0012-parse-links`. This creates
-   `../.worktrees/horsegirl/<branch>` from `origin/main` and claims item 12.
+2. Start: `scripts/agent take <id>`. This names the branch from the item,
+   creates `../.worktrees/horsegirl/<branch>` from `origin/main`, claims the
+   item and prints it. `scripts/agent start <type>/<id>-<slug>` does the same
+   with a name you choose.
 3. Work in that directory. Commit with `scripts/agent commit '<message>'`.
 4. Tick the acceptance criteria that are now true: `cairn tick <id> <n>`.
-   Close the item in the same branch when all are true: `cairn close <id>`.
-5. Open the pull request: `scripts/agent pr --auto`. The command runs every
-   check, pushes, opens the pull request, and sets it to merge when CI passes.
-6. After the merge: `scripts/agent done <branch>`.
+5. Finish: `scripts/agent finish`. The command runs every check, closes the
+   item, pushes, and opens the pull request with a body built from the item,
+   set to merge when CI passes.
+6. Land: `scripts/agent land`. It rebases when `main` has moved, pushes, and
+   waits for the merge. A conflict in the generated roadmap is resolved for
+   you; any other conflict stops with instructions.
+7. After the merge: `scripts/agent done <branch>`.
 
 Never commit to `main`. A hook refuses the push, and branch protection refuses
 it on the server.
