@@ -61,9 +61,15 @@ jobs:
           mkdir "$name"
           cp "target/$TARGET/release/horsegirl" README.md LICENSE-MIT LICENSE-APACHE "$name/"
           tar -czf "$name.tar.gz" "$name"
+      # A binary with no INTERP program header needs no dynamic loader.
       - name: Check that the Linux binary is static
         if: runner.os == 'Linux'
-        run: file "horsegirl-$TARGET/horsegirl" | grep -E 'static(-pie)? linked'
+        run: |
+          file "horsegirl-$TARGET/horsegirl"
+          if readelf --program-headers "horsegirl-$TARGET/horsegirl" | grep INTERP; then
+            echo "horsegirl-$TARGET/horsegirl needs a dynamic loader" >&2
+            exit 1
+          fi
       # The macOS runner is aarch64, so it cannot run the x86_64 binary
       # without Rosetta.
       - name: Run the binary
