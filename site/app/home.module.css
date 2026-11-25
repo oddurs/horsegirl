@@ -206,3 +206,8 @@
     grid-template-columns: minmax(0, 1fr);
   }
 }
+.picture svg {
+  display: block;
+  width: 100%;
+  height: auto;
+}
