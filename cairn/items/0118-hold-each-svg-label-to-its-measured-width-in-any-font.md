@@ -69,3 +69,7 @@ Fix round 2: merged origin/main (#42, #44) into the branch as c4c8f94, resolved 
 ## 2026-11-25
 
 Fix round 3: merged origin/main 9b7101a (#41), ran cairn render (ROADMAP.md drops the closed 0116 line). scripts/task check exit 0; scripts/check-core-deps exit 0; cairn check: ok, 152 items, 0 warnings.
+
+## 2026-11-25
+
+Round 4. Added the test an_empty_label_has_no_text_length. With '&& r.width > 0.0' removed from svg.rs the test fails on textLength="0"; with the guard it passes (14 tests pass in --test svg). CHANGELOG.md and docs/theme.md now state that a label with a character outside the metrics table has neither attribute. Filed BUG-158 for white space that SVG collapses. Merged origin/main at 75e7e58 and rendered the roadmap.
