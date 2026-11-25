@@ -45,8 +45,10 @@ the project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - `E0420`: a name in braces that the model does not place in their group. A
   thing in a second group names the group that holds it. A group placed
   inside itself, and a part in the braces after several names, each say why.
-  Before, the model dropped the placement with no diagnostic. The safe fix
-  removes the name when the line names other things and says nothing else.
+  Before, the model dropped the placement with no diagnostic. The suggested
+  fix removes the name when the line names other things and says nothing
+  else. It is never safe, because only the writer knows whether the two
+  mentions mean one thing.
 - `W0108`: a name that ends in `/` followed by braces that hold one bare name,
   as in `GET /users/{id}`. The parser reads a group; the warning suggests
   writing the whole text in double quotes.

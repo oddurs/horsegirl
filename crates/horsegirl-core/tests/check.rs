@@ -392,12 +392,12 @@ fn the_reference_file_and_sound_groups_give_no_misplaced_part() {
 }
 
 #[test]
-fn a_held_name_among_others_gets_a_safe_fix_that_removes_it() {
+fn a_held_name_among_others_gets_a_suggested_fix_that_removes_it() {
     let source = "G { A }\nH { A, B }\nA -> B\n";
     let found = misplaced(source);
     assert_eq!(found.len(), 1, "{found:#?}");
     let fix = found[0].0.fix.as_ref().expect("the name can be removed");
-    assert_eq!(fix.confidence, Confidence::Safe);
+    assert_eq!(fix.confidence, Confidence::Suggested);
     assert_eq!(fix.apply(source), "G { A }\nH { B }\nA -> B\n");
     assert_eq!(misplaced(&fix.apply(source)), []);
 
@@ -415,11 +415,48 @@ fn two_held_names_side_by_side_get_fixes_that_do_not_overlap() {
     let source = "G { A, B }\nH { A, B, C }\nA -> B\nB -> C\n";
     let found = misplaced(source);
     assert_eq!(found.len(), 2, "{found:#?}");
-    assert!(found.iter().all(|(error, _)| error.fix.is_some()));
-    assert_eq!(
-        fix_all(source).text,
-        "G { A, B }\nH { C }\nA -> B\nB -> C\n"
-    );
+    let fixes: Vec<_> = found.iter().filter_map(|(e, _)| e.fix.as_ref()).collect();
+    assert_eq!(fixes.len(), 2, "{found:#?}");
+    assert!(fixes[0].span().end <= fixes[1].span().start, "{fixes:#?}");
+}
+
+/// Only the writer knows whether a second mention in braces means the same
+/// thing, so `fix` never removes one. A safe fix here once removed the second
+/// `Server` with no word left, and once left a name written once that E0412
+/// then rewrote, so two things became one.
+#[test]
+fn fix_leaves_a_thing_in_two_groups_for_the_writer() {
+    for source in [
+        "Server -> sync application\nServer -> async application\n\
+         WSGI { Server, sync application }\n\
+         ASGI { Server, async application }\n",
+        "G { Cart }\nH { Cart, B }\nCarts -> B\nCarts -> G\n",
+    ] {
+        assert_eq!(misplaced(source).len(), 1, "{source:?}");
+        let fixed = fix_all(source);
+        assert_eq!(fixed.text, source);
+        assert_eq!(fixed.applied, 0);
+        assert_eq!(misplaced(&fixed.text).len(), 1, "{source:?}");
+    }
+}
+
+#[test]
+fn a_part_after_several_names_names_the_group_that_holds_it() {
+    let message = |source: &str| {
+        let found = misplaced(source);
+        assert_eq!(found.len(), 1, "{source:?}: {found:#?}");
+        found[0].0.message.clone()
+    };
+    // Earlier braces hold `C`, so these braces leave it in `G`.
+    let held = message("G { C }\nA, B { C }\nC -> D\n");
+    assert!(held.contains("so `C` is in `G`."), "{held}");
+    assert!(!held.contains("`A` only"), "{held}");
+    // `A` cannot be inside itself, so no group holds it.
+    let nowhere = message("A, B { A }\nA -> D\n");
+    assert!(nowhere.contains("so `A` is in no group."), "{nowhere}");
+    // The first group holds a new part.
+    let first = message("A, B { C }\nC -> D\n");
+    assert!(first.contains("so `C` is in `A` only."), "{first}");
 }
 
 #[test]

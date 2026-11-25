@@ -104,7 +104,8 @@ pub enum Why {
     /// The group of the braces is the thing or inside it.
     Loop,
     /// The braces follow these names. The model places the thing in the
-    /// first of them.
+    /// first of them when no other rule stops it, so the parent of the
+    /// thing, and not this list, says where the thing is.
     Shared(Vec<ThingId>),
 }
 
@@ -413,25 +414,23 @@ impl Lowering {
             return;
         };
         let parent = self.model.things[id].parent;
-        let why = if groups.len() > 1 {
-            Why::Shared(groups.to_vec())
-        } else if self.within(group, id) {
-            Why::Loop
+        let can_enter = !self.within(group, id);
+        let (why, removable) = if groups.len() > 1 {
+            // The model still places the part in the first group when it can.
+            if parent.is_none() && can_enter {
+                self.model.things[id].parent = Some(group);
+            }
+            (Why::Shared(groups.to_vec()), None)
+        } else if !can_enter {
+            (Why::Loop, removable)
         } else if let Some(holder) = parent.filter(|_| !self.within(id, group)) {
-            Why::Held(holder)
+            (Why::Held(holder), removable)
         } else {
             if parent.is_none() {
                 self.model.things[id].parent = Some(group);
             }
             return;
         };
-        if let Why::Shared(_) = why {
-            // The model still places the part in the first group.
-            if parent.is_none() && !self.within(group, id) {
-                self.model.things[id].parent = Some(group);
-            }
-        }
-        let removable = removable.filter(|_| !matches!(why, Why::Shared(_)));
         self.model.misplaced.push(Misplaced {
             thing: id,
             group,

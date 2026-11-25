@@ -267,7 +267,7 @@ from it.
 | `E0301` | Add a link, or remove the `show` line. |
 | `E0302` | Change the first `show` line to a lens that this version draws. The message names them. |
 | `E0412` | Write the name that you meant. The fix does it when only one name is near. |
-| `E0420` | Keep the thing in one group, and write a part in the braces after one name. The fix removes a name that says nothing new. |
+| `E0420` | Keep the thing in one group, and write a part in the braces after one name. The suggested fix removes the later name; apply it only when the two mentions mean one thing. |
 | `E0500` | Remove the link, or remove the rule if it no longer holds. |
 | `N0101` | Write the canonical form. The fix does it. |
 | `N0200` | Confirm the guess against the system, then remove the final `?`. |

@@ -189,9 +189,11 @@ fn orphans(model: &Model, typos: &[(ThingId, Diagnostic)]) -> Vec<Diagnostic> {
 /// E0420: a name in braces that the model does not place in their group: a
 /// thing in a second group, a group inside itself, or a part in the braces
 /// after several names. The fix removes the name where the line only names
-/// things. Two such names next to each other on one line would remove the
-/// same comma, so the second keeps no fix and `fix` removes it on its next
-/// pass.
+/// things. It is suggested and never safe: the error is the only sign that
+/// the writer meant two things or one, and removing a name can leave another
+/// name written once, which E0412 then reads as a typo. Two such names next
+/// to each other on one line would remove the same comma, so the second keeps
+/// no fix.
 fn misplaced(model: &Model) -> Vec<Diagnostic> {
     let name = |id: ThingId| &model.things[id].name;
     let mut removed_to = 0;
@@ -213,8 +215,17 @@ fn misplaced(model: &Model) -> Vec<Diagnostic> {
             Why::Shared(groups) => {
                 let groups: Vec<String> =
                     groups.iter().map(|&g| format!("`{}`", name(g))).collect();
+                // The parent at the end of lowering, so that the message
+                // states where the thing is and not where these braces aimed.
+                let placed = match model.things[misplaced.thing].parent {
+                    Some(parent) if parent == misplaced.group => {
+                        format!("`{thing}` is in `{group}` only")
+                    }
+                    Some(parent) => format!("`{thing}` is in `{}`", name(parent)),
+                    None => format!("`{thing}` is in no group"),
+                };
                 format!(
-                    "`{thing}` is in the braces after {}, and a part belongs to one group, so `{thing}` is in `{group}` only. Write the part in the braces after one name. Braces after several names hold facts only.",
+                    "`{thing}` is in the braces after {}, and a part belongs to one group, so {placed}. Write the part in the braces after one name. Braces after several names hold facts only.",
                     groups.join(" and ")
                 )
             }
@@ -226,7 +237,7 @@ fn misplaced(model: &Model) -> Vec<Diagnostic> {
             .map(|span| {
                 removed_to = span.end;
                 Fix {
-                    confidence: Confidence::Safe,
+                    confidence: Confidence::Suggested,
                     description: format!("Remove `{thing}` from the braces of `{group}`."),
                     edits: vec![Edit {
                         span,

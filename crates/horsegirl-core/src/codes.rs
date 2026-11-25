@@ -74,7 +74,7 @@ pub const CATALOGUE: &[Code] = &[
     },
     Code {
         code: "E0420",
-        summary: "A name in braces is not placed in their group: the thing is in another group already, the group is the thing or inside it, or the braces follow several names. A thing is in one group. The safe fix removes the name when the line names other things and says nothing else.",
+        summary: "A name in braces is not placed in their group: the thing is in another group already, the group is the thing or inside it, or the braces follow several names. A thing is in one group. The suggested fix removes the name when the line names other things and says nothing else. It is never safe, because only the writer knows whether the two mentions mean one thing.",
     },
     Code {
         code: "E0500",
