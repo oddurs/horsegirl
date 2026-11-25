@@ -3,12 +3,12 @@ id: 119
 uid: cb05580b-48ff-424d-a94b-34e8a620616e
 title: Names that hold a reserved character are written in quotes
 type: decision
-status: doing
+status: done
 milestone: v0.1
 assignee: Oddur Sigurdsson
-claimed: 2026-11-25
 created: 2026-11-25
 updated: 2026-11-25
+closed_at: 2026-11-25
 priority: p2
 risk: low
 surface: language
