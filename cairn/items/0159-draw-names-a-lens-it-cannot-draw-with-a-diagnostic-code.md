@@ -3,12 +3,12 @@ id: 159
 uid: 49538270-cbfa-4256-bfb1-3bb3f725985c
 title: draw names a lens it cannot draw with a diagnostic code
 type: feature
-status: doing
+status: done
 milestone: v0.1
 assignee: Oddur Sigurdsson
-claimed: 2026-11-25
 created: 2026-11-25
 updated: 2026-11-25
+closed_at: 2026-11-25
 priority: p2
 risk: low
 surface: diagnostics
