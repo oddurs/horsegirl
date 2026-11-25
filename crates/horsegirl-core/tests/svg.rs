@@ -11,8 +11,10 @@
 
 mod support;
 
+use horsegirl_core::scene::Role;
 use horsegirl_core::svg::draw;
-use support::{model, scene};
+use horsegirl_core::text::measure;
+use support::{STYLE, model, scene};
 
 const CHECKOUT: &str = include_str!("../../../examples/checkout.horse");
 const CHECKOUT_SVG: &str = include_str!("checkout.svg");
@@ -124,6 +126,31 @@ fn each_shape_has_a_class_for_its_role_and_for_its_facts() {
             "{}",
             thing.name
         );
+    }
+}
+
+#[test]
+fn each_label_is_held_to_its_measured_width() {
+    let svg = checkout();
+    let labels: Vec<&str> = svg.lines().filter(|l| l.starts_with("<text ")).collect();
+    let shapes = scene(CHECKOUT).shapes;
+    let texts: Vec<&str> = shapes
+        .iter()
+        .filter(|s| s.role == Role::Label)
+        .map(|s| s.text.as_str())
+        .collect();
+    assert_eq!(labels.len(), texts.len());
+    for (line, text) in labels.iter().zip(texts) {
+        let (_, rest) = line.split_once(" textLength=\"").expect(line);
+        let (length, rest) = rest.split_once('"').unwrap();
+        assert!(
+            rest.starts_with(" lengthAdjust=\"spacingAndGlyphs\""),
+            "{line}"
+        );
+        let length: f64 = length.parse().unwrap();
+        // The SVG writes two decimals.
+        let width = measure(text, STYLE).width;
+        assert!((length - width).abs() <= 0.005, "{line}: {width}");
     }
 }
 

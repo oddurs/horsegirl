@@ -30,7 +30,8 @@ A page sets `--hg-scheme` to `light` or `dark` to force one.
 
 The font is `--hg-font`. Its value is `Arial, "Liberation Sans", Helvetica,
 sans-serif`, the face the core measures in. A theme can name another face.
-Positions stay the same.
+Positions stay the same. Each label carries `textLength`, its measured width,
+so a wider or narrower face is squeezed or spread to fit its box.
 
 ## The palette and the `owner` fact
 

@@ -127,10 +127,18 @@ fn element(shape: &Shape, style: Style, colour: Option<&str>, owners: &[&str]) -
         }
         // The baseline comes from the measured face, not from
         // `dominant-baseline`, which renderers treat differently.
+        //
+        // The width of a label box is its measured width. `textLength` holds
+        // the drawn text to that width, so a viewer that falls back to a
+        // wider or narrower face squeezes or spreads the label to fit its box
+        // instead of overflowing it. In a face with Arial metrics the change
+        // is too small to see (SPIKE-19).
         Role::Label => format!(
-            "<text class=\"{class}\" x=\"{}\" y=\"{}\" text-anchor=\"middle\">{}</text>\n",
+            "<text class=\"{class}\" x=\"{}\" y=\"{}\" text-anchor=\"middle\" \
+             textLength=\"{}\" lengthAdjust=\"spacingAndGlyphs\">{}</text>\n",
             number(r.x + r.width / 2.0),
             number(r.y + text::ascent(style)),
+            number(r.width),
             escape(&shape.text)
         ),
     }
