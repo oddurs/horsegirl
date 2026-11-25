@@ -2,6 +2,7 @@
   "width": 1320,
   "height": 124,
   "font_size": 12,
+  "colour": "owner",
   "shapes": [
     {
       "role": "group",

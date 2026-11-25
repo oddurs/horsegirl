@@ -19,9 +19,12 @@ pub fn model(source: &str) -> Model {
 }
 
 /// The scene of `source`, placed by the stand-in.
+/// Things take the colour of their owner, as the flow lens binds it.
 pub fn scene(source: &str) -> Scene {
     let model = model(source);
-    build(&model, &place(&model), STYLE)
+    let mut scene = build(&model, &place(&model), STYLE);
+    scene.colour = Some("owner".to_owned());
+    scene
 }
 
 /// A stand-in for the layout: each thing in the column of its longest path

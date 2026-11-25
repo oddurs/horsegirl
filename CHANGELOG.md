@@ -42,8 +42,9 @@ the project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   them. A page that holds the SVG inline sets them to restyle it, or sets
   `--hg-scheme` to `light` or `dark`. Each shape has the class of its role
   (`thing`, `group`, `link`, `label`) and one class for each fact, such as
-  `owner-commerce`. A thing with an `owner` also has `slot-1`, `slot-2` or
-  `slot-3`, the palette slot of its owner.
+  `owner-commerce`. When the scene names a colour fact, as the flow lens names
+  `owner`, a thing with that fact also has `slot-1`, `slot-2` or `slot-3`,
+  the palette slot of its value.
 - The parser reads habits from Mermaid and says what it changed with the note
   `N0101`. It reads `-->` as `->`, a final `;` at the end of a line, double
   quotes around a name that does not need them, and a space before the colon
@@ -56,6 +57,17 @@ the project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   in common that lie on each other, a label on the box of another thing, a
   label across the border of a group, a link label that is not on its link,
   and two labels that overlap.
+- The flow lens. `horsegirl_core::lens::FLOW` declares it as data: the
+  question it answers, its dials (`x: depth`, `inside: group`,
+  `colour: owner`), the facts it needs and its solver. `lens::draw` reads the
+  dials, places the model with the layered layout and gives the scene.
+  `docs/lenses.md` lists each lens with its dials, from the same data.
+- The error `E0301`: a `show` line picks a lens that needs facts the file does
+  not state. `show flow` in a file with no link gives it, because there is
+  nothing to order.
+- `Scene::colour` names the fact whose value picks the palette slot of a
+  thing, and the scene JSON holds it as `"colour"`. The flow lens sets it to
+  `owner`.
 
 ### Changed
 

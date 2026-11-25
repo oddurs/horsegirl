@@ -34,7 +34,8 @@ Positions stay the same.
 
 ## The palette and the `owner` fact
 
-The palette follows the `owner` fact. The owners are numbered in the order
+The palette follows the fact that the lens binds to `colour`. The flow lens
+binds `colour: owner`, so the palette follows the `owner` fact. The owners are numbered in the order
 that their things appear in the picture. The first owner gets `--hg-c1` and
 the accent stroke, the second gets `--hg-c2` and `--hg-s2`, and the third gets
 `--hg-c3` and `--hg-s3`. A fourth owner starts again at the first. A thing

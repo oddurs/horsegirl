@@ -41,7 +41,7 @@ An agent writes a horsegirl file, checks it, applies the fixes, and draws a flow
 - [ ] [`0144`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0144-a-path-that-the-parser-reads-as-a-group-gets-a-warning-with-the-quote-fix.md) A path that the parser reads as a group gets a warning with the quote fix <sup>feature · p2 · check</sup>
 - [ ] [`0145`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0145-each-golden-case-that-draws-holds-its-svg.md) Each golden case that draws holds its SVG <sup>chore · p2 · render</sup>
 - [ ] [`0146`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0146-no-link-passes-through-a-group-that-holds-neither-of-its-ends.md) No link passes through a group that holds neither of its ends <sup>feature · p0 · layout</sup>
-- [ ] [`LENS-36`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/LENS-36-flow.md) flow <sup>lens · p0 · lens</sup>
+- [ ] [`BUG-152`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/BUG-152-a-link-label-stays-legible-where-it-sits-on-its-own-line.md) A link label stays legible where it sits on its own line <sup>bug · p2 · render</sup>
 - [ ] [`0037`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0037-the-command-line-check-fix-fmt-draw-spec.md) The command line: check, fix, fmt, draw, spec <sup>feature · p0 · cli</sup>
 - [ ] [`0038`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0038-an-mcp-server-with-spec-check-fix-and-draw.md) An MCP server with spec, check, fix and draw <sup>feature · p0 · mcp</sup>
 - [ ] [`0040`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0040-draw-the-corpus-in-ci-and-count-overlaps.md) Draw the corpus in CI and count overlaps <sup>chore · p0 · bench</sup>

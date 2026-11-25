@@ -57,6 +57,10 @@ pub const CATALOGUE: &[Code] = &[
         summary: "A `show` line names a lens that does not exist. The message lists the lenses, and a lens one edit from a known lens gets a safe fix.",
     },
     Code {
+        code: "E0301",
+        summary: "A `show` line picks a lens that needs facts the file does not state, such as `show flow` in a file with no link. The message names the missing facts.",
+    },
+    Code {
         code: "E0412",
         summary: "A name is written once and is one edit from a name written more often, so it is likely a typo that makes a new thing. The safe fix writes the other name. When more than one such name is one edit away, the message names each and there is no fix.",
     },
