@@ -29,6 +29,9 @@ pub struct Model {
     pub rules: Vec<Rule>,
     /// Every `show` line, in order.
     pub shows: Vec<Show>,
+    /// Every name in braces that the model does not place there, in source
+    /// order.
+    pub misplaced: Vec<Misplaced>,
 }
 
 #[derive(Clone, Debug, PartialEq, Eq)]
@@ -75,6 +78,34 @@ pub struct Rule {
     /// Every statement of the rule ends in `?`. One firm statement makes the
     /// rule firm, as it does for a link.
     pub guess: bool,
+}
+
+/// A name in braces that the model does not place in the group of the
+/// braces, because a thing is in one group and no group holds itself.
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub struct Misplaced {
+    pub thing: ThingId,
+    /// The group of the braces. For braces after several names, the first.
+    pub group: ThingId,
+    /// The bytes of the name in the braces.
+    pub span: Range<usize>,
+    pub why: Why,
+    /// The bytes to delete to remove the name and its comma, when the name
+    /// is one of several on a line that only names things. The thing then
+    /// keeps its group and its other mentions, so the file means the same.
+    pub removable: Option<Range<usize>>,
+}
+
+/// Why the model does not place a thing in a group.
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub enum Why {
+    /// The thing is in this other group already, from earlier braces.
+    Held(ThingId),
+    /// The group of the braces is the thing or inside it.
+    Loop,
+    /// The braces follow these names. The model places the thing in the
+    /// first of them.
+    Shared(Vec<ThingId>),
 }
 
 /// `show lens`, or `show lens of name`.
@@ -184,8 +215,8 @@ impl Lowering {
         let (Some(from), Some(to)) = (ends.next(), ends.next()) else {
             return;
         };
-        let from = self.names(from, scope);
-        let to = self.names(to, scope);
+        let from = self.names(from, scope, false);
+        let to = self.names(to, scope, false);
         let label = child(node, NodeKind::Label).map(text);
         // span walks the whole line, so it runs once and not once per link.
         let span = span(node);
@@ -264,7 +295,18 @@ impl Lowering {
         let Some(names) = child(node, NodeKind::Names) else {
             return;
         };
-        let ids = self.names(names, scope);
+        // A line with a block, a citation or a stray token says more than
+        // its names, so a name on it is never removed.
+        let bare = node.children.iter().all(|element| match element {
+            Element::Node(inner) => inner.kind == NodeKind::Names,
+            Element::Token(token) => {
+                matches!(
+                    token.kind,
+                    TokenKind::Space | TokenKind::Newline | TokenKind::Semi
+                )
+            }
+        });
+        let ids = self.names(names, scope, bare);
         if let Some(block) = child(node, NodeKind::Block) {
             self.lines(&block.children, Scope::Inside(&ids));
         }
@@ -309,15 +351,34 @@ impl Lowering {
         });
     }
 
-    /// The things of a `Names` node, each mentioned once more.
-    fn names(&mut self, node: &Node<'_>, scope: Scope<'_>) -> Vec<ThingId> {
-        nodes(&node.children)
+    /// The things of a `Names` node, each mentioned once more. `bare` says
+    /// that the line only names things, so a name on it can be removed.
+    fn names(&mut self, node: &Node<'_>, scope: Scope<'_>, bare: bool) -> Vec<ThingId> {
+        let names: Vec<&Node<'_>> = nodes(&node.children)
             .filter(|n| n.kind == NodeKind::Name)
-            .map(|name| self.mention(name, scope))
+            .collect();
+        let spans: Vec<Range<usize>> = names.iter().map(|name| span(name)).collect();
+        // A name and the comma and spaces up to the next name; the last name
+        // takes the comma before it instead.
+        let removable = |i: usize| match (i.checked_sub(1), spans.get(i + 1)) {
+            _ if !bare || spans.len() < 2 => None,
+            (_, Some(next)) => Some(spans[i].start..next.start),
+            (Some(before), None) => Some(spans[before].end..spans[i].end),
+            (None, None) => None,
+        };
+        names
+            .iter()
+            .enumerate()
+            .map(|(i, name)| self.mention(name, scope, removable(i)))
             .collect()
     }
 
-    fn mention(&mut self, node: &Node<'_>, scope: Scope<'_>) -> ThingId {
+    fn mention(
+        &mut self,
+        node: &Node<'_>,
+        scope: Scope<'_>,
+        removable: Option<Range<usize>>,
+    ) -> ThingId {
         let name = text(node);
         let things = &mut self.model.things;
         let id = *self.names.entry(name).or_insert_with_key(|name| {
@@ -329,24 +390,62 @@ impl Lowering {
             });
             things.len() - 1
         });
-        things[id].mentions.push(span(node));
-        // A thing has one parent: the first group that holds it. The braces
-        // after several names place a part in the first of them.
-        if let Scope::Inside(&[group, ..]) = scope
-            && self.model.things[id].parent.is_none()
-            && !self.holds(id, group)
-        {
-            self.model.things[id].parent = Some(group);
+        let span = span(node);
+        things[id].mentions.push(span.clone());
+        if let Scope::Inside(groups) = scope {
+            self.place(id, groups, span, removable);
         }
         id
     }
 
-    /// Whether `group` is `id` or inside it, so that making `group` the parent
-    /// of `id` would close a loop.
-    fn holds(&self, id: ThingId, group: ThingId) -> bool {
-        let mut at = Some(group);
+    /// Makes the first of `groups` the parent of `id`, or records why not. A
+    /// thing has one parent: the first group whose braces hold it. A name in
+    /// the braces of a group that holds the thing already, at any depth, says
+    /// nothing new and is not an error.
+    fn place(
+        &mut self,
+        id: ThingId,
+        groups: &[ThingId],
+        span: Range<usize>,
+        removable: Option<Range<usize>>,
+    ) {
+        let [group, ..] = *groups else {
+            return;
+        };
+        let parent = self.model.things[id].parent;
+        let why = if groups.len() > 1 {
+            Why::Shared(groups.to_vec())
+        } else if self.within(group, id) {
+            Why::Loop
+        } else if let Some(holder) = parent.filter(|_| !self.within(id, group)) {
+            Why::Held(holder)
+        } else {
+            if parent.is_none() {
+                self.model.things[id].parent = Some(group);
+            }
+            return;
+        };
+        if let Why::Shared(_) = why {
+            // The model still places the part in the first group.
+            if parent.is_none() && !self.within(group, id) {
+                self.model.things[id].parent = Some(group);
+            }
+        }
+        let removable = removable.filter(|_| !matches!(why, Why::Shared(_)));
+        self.model.misplaced.push(Misplaced {
+            thing: id,
+            group,
+            span,
+            why,
+            removable,
+        });
+    }
+
+    /// Whether `inner` is `outer` or inside it, at any depth.
+    fn within(&self, inner: ThingId, outer: ThingId) -> bool {
+        let mut at = Some(inner);
         while let Some(thing) = at {
-            if thing == id {
+            if thing == outer {
                 return true;
             }
             at = self.model.things[thing].parent;

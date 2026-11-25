@@ -2,12 +2,13 @@
 //!
 //! A thing exists from its first mention, so a typo makes a new thing with no
 //! error from the parser. The checks read the model and report a typo, a thing
-//! with no link, a link that breaks a `-x` rule, a guess, an unknown lens and
-//! a lens whose facts the file does not state.
+//! with no link, a part that the model leaves out of a group, a link that
+//! breaks a `-x` rule, a guess, an unknown lens and a lens whose facts the
+//! file does not state.
 
 use crate::diagnostic::{Confidence, Diagnostic, Edit, Fix, Fixed, LineIndex, apply_safe};
 use crate::lens::Need;
-use crate::model::{Model, Thing, ThingId, lower};
+use crate::model::{Model, Thing, ThingId, Why, lower};
 use crate::syntax::{Element, Node, NodeKind, parse};
 
 /// Every lens that a `show` line can pick, as the language card lists them.
@@ -32,6 +33,7 @@ pub fn of_model(source: &str, model: &Model) -> Vec<Diagnostic> {
     let typos = typos(source, model);
     let mut diagnostics = orphans(model, &typos);
     diagnostics.extend(typos.into_iter().map(|(_, diagnostic)| diagnostic));
+    diagnostics.extend(misplaced(model));
     diagnostics.extend(broken_rules(source, model));
     diagnostics.extend(guesses(model));
     diagnostics.extend(lenses(model));
@@ -182,6 +184,64 @@ fn orphans(model: &Model, typos: &[(ThingId, Diagnostic)]) -> Vec<Diagnostic> {
             }
         })
         .collect()
+}
+
+/// E0420: a name in braces that the model does not place in their group: a
+/// thing in a second group, a group inside itself, or a part in the braces
+/// after several names. The fix removes the name where the line only names
+/// things. Two such names next to each other on one line would remove the
+/// same comma, so the second keeps no fix and `fix` removes it on its next
+/// pass.
+fn misplaced(model: &Model) -> Vec<Diagnostic> {
+    let name = |id: ThingId| &model.things[id].name;
+    let mut removed_to = 0;
+    let mut found = Vec::new();
+    for misplaced in &model.misplaced {
+        let thing = name(misplaced.thing);
+        let group = name(misplaced.group);
+        let message = match &misplaced.why {
+            Why::Held(holder) => format!(
+                "`{thing}` is in the group `{}` already, and a thing is in one group, so the braces of `{group}` do not place it. Remove `{thing}` from one of the two groups. To link `{thing}` from inside `{group}`, write the link outside the braces.",
+                name(*holder)
+            ),
+            Why::Loop if misplaced.thing == misplaced.group => format!(
+                "`{thing}` is in its own braces, and a group would hold itself. Remove `{thing}` from these braces."
+            ),
+            Why::Loop => format!(
+                "`{group}` is inside `{thing}`, so placing `{thing}` in `{group}` would make the group `{thing}` hold itself. Remove `{thing}` from the braces of `{group}`."
+            ),
+            Why::Shared(groups) => {
+                let groups: Vec<String> =
+                    groups.iter().map(|&g| format!("`{}`", name(g))).collect();
+                format!(
+                    "`{thing}` is in the braces after {}, and a part belongs to one group, so `{thing}` is in `{group}` only. Write the part in the braces after one name. Braces after several names hold facts only.",
+                    groups.join(" and ")
+                )
+            }
+        };
+        let fix = misplaced
+            .removable
+            .clone()
+            .filter(|span| span.start >= removed_to)
+            .map(|span| {
+                removed_to = span.end;
+                Fix {
+                    confidence: Confidence::Safe,
+                    description: format!("Remove `{thing}` from the braces of `{group}`."),
+                    edits: vec![Edit {
+                        span,
+                        text: String::new(),
+                    }],
+                }
+            });
+        found.push(Diagnostic {
+            code: "E0420",
+            span: misplaced.span.clone(),
+            message,
+            fix,
+        });
+    }
+    found
 }
 
 /// E0500: a link that a `-x` rule forbids, in the same direction.

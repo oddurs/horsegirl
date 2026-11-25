@@ -76,7 +76,10 @@ show flow
 ### 5. Braces hold what is inside and what is known
 
 A name followed by braces is a group. The braces hold the things inside it.
-A group nests, up to 64 levels deep. Deeper braces give `E0007`.
+A group nests, up to 64 levels deep. Deeper braces give `E0007`. A thing is in
+one group, and a group is never inside itself. A thing in the braces of a
+second group, or of a group inside it, gives `E0420`. So does a part in the
+braces after several names: those braces hold facts only.
 
 A `key: value` pair is a fact, and it is a fact only inside braces. A fact
 applies to the things that stand before the brace. Write one fact on each
@@ -264,6 +267,7 @@ from it.
 | `E0301` | Add a link, or remove the `show` line. |
 | `E0302` | Change the first `show` line to a lens that this version draws. The message names them. |
 | `E0412` | Write the name that you meant. The fix does it when only one name is near. |
+| `E0420` | Keep the thing in one group, and write a part in the braces after one name. The fix removes a name that says nothing new. |
 | `E0500` | Remove the link, or remove the rule if it no longer holds. |
 | `N0101` | Write the canonical form. The fix does it. |
 | `N0200` | Confirm the guess against the system, then remove the final `?`. |

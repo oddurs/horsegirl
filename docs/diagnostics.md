@@ -97,6 +97,7 @@ code that the table does not hold. To regenerate it, run
 | `E0301` | error | A `show` line picks a lens that needs facts the file does not state, such as `show flow` in a file with no link. The message names the missing facts. |
 | `E0302` | error | A `show` line names a lens of the language card that this version does not draw, so `draw` gives no picture. The message names the lenses this version draws. |
 | `E0412` | error | A name is written once and is one edit from a name written more often, so it is likely a typo that makes a new thing. The safe fix writes the other name. When more than one such name is one edit away, the message names each and there is no fix. Two names are not a typo when they differ only in a final word that is a number or one letter (`Service A` and `Service B`), or when both are shorter than three characters. |
+| `E0420` | error | A name in braces is not placed in their group: the thing is in another group already, the group is the thing or inside it, or the braces follow several names. A thing is in one group. The safe fix removes the name when the line names other things and says nothing else. |
 | `E0500` | error | A link breaks a `-x` rule in the same direction. |
 | `N0101` | note | A line is written the way Mermaid writes it: `-->`, quotes that a name does not need, a space before the colon of a label, or a `;` at the end. The fix writes the canonical form. |
 | `N0200` | note | A link or a rule ends in `?` in every statement, so it is a guess. |

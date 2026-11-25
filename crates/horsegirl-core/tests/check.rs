@@ -4,7 +4,7 @@
 //! Each case states the file, the codes it gives and, where a check carries a
 //! fix, the file after the fix.
 
-use horsegirl_core::check::{LENSES, check, of_model};
+use horsegirl_core::check::{LENSES, check, fix_all, of_model};
 use horsegirl_core::diagnostic::{Confidence, Diagnostic};
 use horsegirl_core::model::lower;
 use horsegirl_core::syntax::parse;
@@ -311,4 +311,121 @@ fn a_group_with_a_name_that_does_not_end_in_a_slash_gives_no_path_warning() {
             check(source)
         );
     }
+}
+
+/// The E0420 errors of a file, each with the text that its span covers.
+fn misplaced(source: &str) -> Vec<(Diagnostic, &str)> {
+    check(source)
+        .into_iter()
+        .filter(|d| d.code == "E0420")
+        .map(|d| {
+            let spanned = &source[d.span.clone()];
+            (d, spanned)
+        })
+        .collect()
+}
+
+#[test]
+fn a_thing_in_a_second_group_is_an_error_that_names_the_first() {
+    let source = "G { A }\nH { A }\nA -> B\n";
+    let found = misplaced(source);
+    assert_eq!(found.len(), 1, "{found:#?}");
+    let (error, spanned) = &found[0];
+    assert_eq!(spanned, &"A");
+    assert_eq!(error.span.start, "G { A }\nH { ".len());
+    assert!(error.message.contains("`G`"), "{}", error.message);
+    // Removing the only part would turn `H` from a group into a thing.
+    assert_eq!(error.fix, None);
+}
+
+#[test]
+fn a_group_placed_inside_itself_is_an_error() {
+    let source = "A { B }\nB { A }\nA -> C\n";
+    let found = misplaced(source);
+    assert_eq!(found.len(), 1, "{found:#?}");
+    let (error, spanned) = &found[0];
+    assert_eq!(spanned, &"A");
+    assert_eq!(error.span.start, "A { B }\nB { ".len());
+    assert!(error.message.contains("hold itself"), "{}", error.message);
+
+    let found = misplaced("A { A }\nA -> B\n");
+    assert_eq!(found.len(), 1, "{found:#?}");
+    assert!(
+        found[0].0.message.contains("hold itself"),
+        "{}",
+        found[0].0.message
+    );
+}
+
+#[test]
+fn a_part_in_the_braces_after_several_names_is_an_error() {
+    let source = "A, B { C }\nC -> D\n";
+    let found = misplaced(source);
+    assert_eq!(found.len(), 1, "{found:#?}");
+    let (error, spanned) = &found[0];
+    assert_eq!(spanned, &"C");
+    assert!(
+        error.message.contains("a part belongs to one group"),
+        "{}",
+        error.message
+    );
+    assert!(error.message.contains("`A` and `B`"), "{}", error.message);
+    assert_eq!(error.fix, None);
+}
+
+#[test]
+fn the_reference_file_and_sound_groups_give_no_misplaced_part() {
+    assert_eq!(misplaced(CHECKOUT), []);
+    for source in [
+        // The same group again, and a group that holds the thing deeper.
+        "G { A }\nG { A, B }\nA -> B\n",
+        "G { H { A } }\nG { A -> B }\n",
+        // A thing first named outside braces, then placed.
+        "A -> B\nG { A }\n",
+        // Facts after several names place nothing.
+        "A, B { owner: X }\nA -> B\n",
+        // A story places nothing.
+        "G { A }\nstory S {\n  A -> B\n}\n",
+    ] {
+        assert_eq!(misplaced(source), [], "{source:?}");
+    }
+}
+
+#[test]
+fn a_held_name_among_others_gets_a_safe_fix_that_removes_it() {
+    let source = "G { A }\nH { A, B }\nA -> B\n";
+    let found = misplaced(source);
+    assert_eq!(found.len(), 1, "{found:#?}");
+    let fix = found[0].0.fix.as_ref().expect("the name can be removed");
+    assert_eq!(fix.confidence, Confidence::Safe);
+    assert_eq!(fix.apply(source), "G { A }\nH { B }\nA -> B\n");
+    assert_eq!(misplaced(&fix.apply(source)), []);
+
+    let source = "G { A }\nH { B, A }\nA -> B\n";
+    let fix = misplaced(source)[0]
+        .0
+        .fix
+        .clone()
+        .expect("the last name too");
+    assert_eq!(fix.apply(source), "G { A }\nH { B }\nA -> B\n");
+}
+
+#[test]
+fn two_held_names_side_by_side_get_fixes_that_do_not_overlap() {
+    let source = "G { A, B }\nH { A, B, C }\nA -> B\nB -> C\n";
+    let found = misplaced(source);
+    assert_eq!(found.len(), 2, "{found:#?}");
+    assert!(found.iter().all(|(error, _)| error.fix.is_some()));
+    assert_eq!(
+        fix_all(source).text,
+        "G { A, B }\nH { C }\nA -> B\nB -> C\n"
+    );
+}
+
+#[test]
+fn a_held_name_in_a_link_inside_braces_has_no_fix() {
+    let source = "G { A }\nH { A -> B }\n";
+    let found = misplaced(source);
+    assert_eq!(found.len(), 1, "{found:#?}");
+    assert_eq!(found[0].0.fix, None);
 }
