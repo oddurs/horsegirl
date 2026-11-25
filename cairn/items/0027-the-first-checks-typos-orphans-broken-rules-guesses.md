@@ -33,3 +33,7 @@ Write the first checks: a name used once that is one edit from another name is e
 - [ ] Each check has a test with the file, the expected code and the expected fix.
 - [ ] `Paymnts` beside `Payments` gives E0412 with the replacement `Payments`.
 - [ ] A clean reference file gives zero diagnostics.
+
+## 2026-11-25
+
+From the review of item 23: `GET /users/{id}` alone on a line parses with no diagnostic as a group `GET /users/` with the part `id`. The parser cannot tell this from a group. A check can: a thing whose name ends in `/` and that has a block of one bare name is likely a path that needs quotes. Give it a warning with the quote fix.

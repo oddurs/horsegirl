@@ -1,9 +1,11 @@
 //! horsegirl: an agent-first diagram language.
 //!
 //! The crate is at the start of its roadmap. Today it carries the one-page
-//! language card that an agent reads before it writes a file, and the text
-//! measurement that sizes each node to its label.
+//! language card that an agent reads before it writes a file, the parser that
+//! reads a file into a lossless tree, and the text measurement that sizes each
+//! node to its label.
 
+pub mod syntax;
 pub mod text;
 
 /// The whole language on one page.

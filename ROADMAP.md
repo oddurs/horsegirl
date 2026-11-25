@@ -12,7 +12,7 @@ named for gaits: Walk, Trot, Canter, Gallop.
 
 ## v0.1 — Walk
 
-`··········` 0% · 0 of 36 done · due 2027-01-31
+`··········` 0% · 0 of 43 done · due 2027-01-31
 
 An agent writes a horsegirl file, checks it, applies the fixes, and draws a flow diagram as SVG, from the command line or over MCP.
 
@@ -28,7 +28,14 @@ An agent writes a horsegirl file, checks it, applies the fixes, and draws a flow
 - [ ] [`0126`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0126-the-site-sets-its-type-in-the-concept-page-fonts.md) The site sets its type in the concept page fonts <sup>feature · p2 · site</sup>
 - [ ] [`BUG-127`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/BUG-127-every-docs-page-has-a-level-one-heading.md) Every docs page has a level-one heading <sup>bug · p2 · site</sup>
 - [ ] [`BUG-129`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/BUG-129-the-site-highlighter-colours-a-link-s-target-as-a-fact-key.md) The site highlighter colours a link's target as a fact key <sup>bug · p2 · site</sup>
-- [ ] [`0023`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0023-parse-names-links-braces-and-show-lines.md) Parse names, links, braces and show lines <sup>feature · p0 · language</sup>
+- [ ] [`ADR-130`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/ADR-130-a-comment-line-is-stated-on-the-language-card-or-leaves-the-language.md) A comment line is stated on the language card or leaves the language <sup>decision · p2 · language</sup>
+- [ ] [`0131`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0131-a-chain-of-arrows-on-one-line-gets-a-fix-that-splits-it.md) A chain of arrows on one line gets a fix that splits it <sup>feature · p2 · check</sup>
+- [ ] [`BUG-132`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/BUG-132-a-bad-line-with-a-brace-keeps-the-lines-after-it-and-deep-braces-stay-paired.md) A bad line with a brace keeps the lines after it, and deep braces stay paired <sup>bug · p2 · language</sup>
+- [ ] [`BUG-133`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/BUG-133-an-empty-link-label-is-an-error.md) An empty link label is an error <sup>bug · p2 · language</sup>
+- [ ] [`BUG-134`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/BUG-134-every-text-that-needs-quotes-gets-them-in-one-step.md) Every text that needs quotes gets them in one step <sup>bug · p2 · language</sup>
+- [ ] [`BUG-135`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/BUG-135-only-a-line-feed-alone-or-after-a-carriage-return-ends-a-line.md) Only a line feed, alone or after a carriage return, ends a line <sup>bug · p2 · language</sup>
+- [ ] [`BUG-136`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/BUG-136-a-show-line-with-a-mistake-in-its-argument-is-read-as-a-show-line.md) A show line with a mistake in its argument is read as a show line <sup>bug · p1 · language</sup>
+- [ ] [`BUG-137`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/BUG-137-an-unclosed-quote-in-a-citation-is-an-error.md) An unclosed quote in a citation is an error <sup>bug · p1 · language</sup>
 - [ ] [`0024`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0024-diagnostics-with-stable-codes-spans-and-fixes.md) Diagnostics with stable codes, spans and fixes <sup>feature · p0 · check</sup>
 - [ ] [`0025`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0025-lower-the-tree-into-things-links-groups-and-facts.md) Lower the tree into things, links, groups and facts <sup>feature · p0 · model</sup>
 - [ ] [`0026`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0026-rules-with-x-and-guesses-with.md) Rules with -x and guesses with ? <sup>feature · p1 · model</sup>
