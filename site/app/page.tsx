@@ -1,9 +1,9 @@
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import Link from "next/link";
-import { CheckoutSketch } from "../components/CheckoutSketch";
 import { CodeBlock } from "../components/CodeBlock";
 import { Section } from "../components/Section";
+import { binaryPath, draw, root } from "../lib/gallery.ts";
 import { highlightHorsegirl } from "../lib/highlight.ts";
 import { readCommands, readSpec } from "../lib/status.ts";
 import styles from "./home.module.css";
@@ -12,6 +12,8 @@ const roadmap = "https://github.com/oddurs/horsegirl/blob/main/ROADMAP.md";
 
 // The build runs in site/, and the reference file lives at the repository root.
 const checkout = readFileSync(join(process.cwd(), "..", "examples", "checkout.horse"), "utf8");
+
+const checkoutSvg = draw(binaryPath(), join(root, "examples", "checkout.horse")).svg;
 
 // Each statement says what horsegirl is built to do. The status section says
 // what of it works today.
@@ -92,10 +94,11 @@ export default function Home() {
               <Source text={checkout.trimEnd()} />
             </pre>
             <figure className={styles.picture}>
-              <CheckoutSketch />
+              {/* biome-ignore lint/security/noDangerouslySetInnerHtml: the SVG is the output of our own program, drawn from a file of this repository. */}
+              <div dangerouslySetInnerHTML={{ __html: checkoutSvg }} />
               <figcaption>
-                Drawn by hand. This is the picture the flow lens will draw from this file. horsegirl
-                cannot draw yet.
+                Drawn when this site was built, by <code>horsegirl draw checkout.horse</code>. See
+                the <Link href="/gallery/">gallery</Link> for more.
               </figcaption>
             </figure>
           </div>
