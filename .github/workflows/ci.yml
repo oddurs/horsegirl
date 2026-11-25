@@ -44,6 +44,19 @@ jobs:
           tar -xzf "$dir/$asset" -C "$dir"
           install -m 755 "$(find "$dir" -type f -name cairn)" /usr/local/bin/cairn
           cairn --version
+      # The site verbs in scripts/task need the pinned Node and pnpm.
+      - name: Install pnpm
+        if: hashFiles('site/package.json') != ''
+        uses: pnpm/action-setup@v4
+        with:
+          package_json_file: site/package.json
+      - name: Install Node
+        if: hashFiles('site/package.json') != ''
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: site/.node-version
+          cache: pnpm
+          cache-dependency-path: site/pnpm-lock.yaml
       - run: scripts/task check
 
   # The job always runs, so `required` never sees it as skipped on a push.

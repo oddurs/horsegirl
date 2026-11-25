@@ -56,6 +56,10 @@ scripts/task check
 
 This runs the format check, the lints with warnings denied, the tests and the
 build. CI runs the same command, so a branch that passes locally passes in CI.
+
+The site in `site/` needs the Node version in `site/.node-version` and the pnpm
+version in `site/package.json`. Without pnpm, `scripts/task` skips the site
+verbs locally. CI always runs them.
 Never use `--no-verify`.
 
 ## Review
