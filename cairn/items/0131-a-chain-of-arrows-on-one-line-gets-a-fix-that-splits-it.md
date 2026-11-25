@@ -3,8 +3,10 @@ id: 131
 uid: 6636a6d9-1c8b-484a-a66e-c073482f1698
 title: A chain of arrows on one line gets a fix that splits it
 type: feature
-status: backlog
+status: doing
 milestone: v0.1
+assignee: Oddur Sigurdsson
+claimed: 2026-11-25
 depends_on:
 - 24
 created: 2026-11-25

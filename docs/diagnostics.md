@@ -83,7 +83,7 @@ code that the table does not hold. To regenerate it, run
 <!-- catalogue: start -->
 | Code | Severity | Meaning |
 | --- | --- | --- |
-| `E0001` | error | A token stands where the line cannot hold it: a second arrow, a `@` that is not a citation, or a word after the end of a fact. |
+| `E0001` | error | A token stands where the line cannot hold it: an arrow after a block, a `@` that is not a citation, or a word after the end of a fact. |
 | `E0002` | error | A `{` never closes. |
 | `E0003` | error | A `}` closes nothing. |
 | `E0004` | error | A name, a value or a label holds a character that only a text in double quotes can hold. The fix adds the quotes. |
@@ -92,6 +92,7 @@ code that the table does not hold. To regenerate it, run
 | `E0007` | error | Braces nest deeper than the parser reads. |
 | `E0008` | error | A `show` line is not `show` and a lens, with `of`, `from` or `by` and a name after it. |
 | `E0009` | error | A fact stands outside braces, or a line mixes names and facts. |
+| `E0010` | error | A link has a second arrow, as in `A -> B -> C`. The fix writes each link on its own line with the same indent. It is safe when the line ends at the last name, and suggested when the line ends in a label, a `?` or a citation, which the fix gives to each link. |
 | `E0300` | error | A `show` line names a lens that does not exist. The message lists the lenses, and a lens one edit from a known lens gets a safe fix. |
 | `E0301` | error | A `show` line picks a lens that needs facts the file does not state, such as `show flow` in a file with no link. The message names the missing facts. |
 | `E0412` | error | A name is written once and is one edit from a name written more often, so it is likely a typo that makes a new thing. The safe fix writes the other name. When more than one such name is one edit away, the message names each and there is no fix. Two names are not a typo when they differ only in a final word that is a number or one letter (`Service A` and `Service B`), or when both are shorter than three characters. |

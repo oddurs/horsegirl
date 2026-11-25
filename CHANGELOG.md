@@ -37,6 +37,11 @@ the project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   exits 0 when the file has no error, 1 when it has one, and 2 for a usage
   mistake. `horsegirl_core::diagnostic::apply_safe` makes the safe fixes.
 - `horsegirl fmt` prints the errors of a file in the text form of a diagnostic.
+- `E0010`: a link with a second arrow, as in `A -> B -> C`. It was `E0001`
+  with no fix. The fix writes `A -> B` and `B -> C` on two lines with the same
+  indent. The fix is safe when the line ends at the last name. When the line
+  ends in a label, a `?` or a citation, the fix gives that end to each link and
+  is suggested, because the parser cannot know which link it belongs to.
 - `W0108`: a name that ends in `/` followed by braces that hold one bare name,
   as in `GET /users/{id}`. The parser reads a group; the warning suggests
   writing the whole text in double quotes.
