@@ -2,11 +2,13 @@
 //!
 //! A flow reads from left to right. The rank phase gives each node a column,
 //! so that a link goes from a lower rank to a higher one. The order phase
-//! sorts each rank to cross few links. The place phase sets the position of
-//! each node along its rank. A group stays in one piece: its box holds its
-//! nodes and no other node. The route phase draws each link as a path at
+//! sorts each rank to cross few links, and keeps each link on one side of a
+//! group that holds neither of its ends. The place phase sets the position
+//! of each node along its rank. A group stays in one piece: its box holds
+//! its nodes and no other node. The route phase draws each link as a path at
 //! right angles that crosses no box of a node. A path can still pass through
-//! a group that holds neither end of its link.
+//! a group that holds neither end of its link, where the order phase finds
+//! no order that keeps it out.
 //!
 //! The phases use sums, differences, halves and means only, and they iterate
 //! no hash map, so the same graph gives the same bits on every machine.
@@ -15,6 +17,7 @@ mod order;
 mod place;
 mod rank;
 mod route;
+mod through;
 
 use crate::scene::{Point, Rect};
 use crate::text::Size;
@@ -87,8 +90,10 @@ pub struct Layout {
     /// part of a path is level or upright. A path starts on the border of
     /// the box of its first node, ends on the border of the box of its
     /// second node, and crosses no box of a node. It can pass through the box
-    /// of a group that holds neither of its two nodes: the order phase can
-    /// put a link above such a group in one rank and below it in the next.
+    /// of a group that holds neither of its two nodes, where the order phase
+    /// finds no order of the ranks that keeps it out. Some graphs have no
+    /// such order: two groups under one parent can each have a link to a
+    /// third group that only goes through the other.
     pub paths: Vec<Vec<Point>>,
     /// The centre of the label of each link that has one. It is on the path
     /// of the link, and a label of the size in the [`Graph`] overlaps no box

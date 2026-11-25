@@ -8,9 +8,13 @@
 //! are next to each other. The groups under one parent have one order, and
 //! every rank holds it. So one group is above another in every rank that
 //! they share, and their boxes need no repair.
+//!
+//! A second part then keeps each link out of the groups that hold neither of
+//! its ends: see [`super::through`].
 
 use std::collections::BTreeMap;
 
+use super::through::keep_out;
 use super::{Group, Item, Net, real};
 
 const ROUNDS: usize = 24;
@@ -45,6 +49,7 @@ pub(super) fn order(net: &mut Net, groups: &[Group]) {
         arrange(layer, &value, &net.items, groups, &keys);
     }
     let mut best = net.layers.clone();
+    let mut best_keys = keys.clone();
     let mut fewest = crossings(&net.layers, &net.steps, count);
     let last = net.layers.len().saturating_sub(1);
     for _ in 0..ROUNDS {
@@ -75,13 +80,15 @@ pub(super) fn order(net: &mut Net, groups: &[Group]) {
         if now < fewest {
             fewest = now;
             best.clone_from(&net.layers);
+            best_keys.clone_from(&keys);
         }
     }
     net.layers = best;
+    keep_out(net, groups, &best_keys);
 }
 
 /// The index of each item in its rank.
-fn positions(layers: &[Vec<usize>], count: usize) -> Vec<f64> {
+pub(super) fn positions(layers: &[Vec<usize>], count: usize) -> Vec<f64> {
     let mut at = vec![0.0; count];
     for layer in layers {
         for (index, &i) in layer.iter().enumerate() {
@@ -113,7 +120,13 @@ fn group_keys(net: &Net, groups: usize) -> Vec<f64> {
 /// A group sorts as one entry with the mean of the values of its items. The
 /// groups under one parent then exchange their values, so that they stand in
 /// the order of their keys and a node between two groups keeps its place.
-fn arrange(layer: &mut [usize], value: &[f64], items: &[Item], groups: &[Group], keys: &[f64]) {
+pub(super) fn arrange(
+    layer: &mut [usize],
+    value: &[f64],
+    items: &[Item],
+    groups: &[Group],
+    keys: &[f64],
+) {
     // An entry is a group, by its index, or an item, by its index after the
     // groups. The second number of an entry settles equal values.
     let first_item = groups.len();
@@ -172,15 +185,42 @@ fn crossings(layers: &[Vec<usize>], steps: &[(usize, usize)], count: usize) -> u
     for &(a, b) in steps {
         by_rank[rank_of[a]].push((at[a], at[b]));
     }
-    let mut crossed = 0;
-    for gap in &by_rank {
-        for (index, p) in gap.iter().enumerate() {
-            for q in &gap[index + 1..] {
-                if (p.0 - q.0) * (p.1 - q.1) < 0.0 {
-                    crossed += 1;
-                }
-            }
+    by_rank.iter().map(|gap| crossed(gap)).sum()
+}
+
+/// How many pairs cross among the steps between two ranks. A step is the
+/// position of its item in each of the two ranks. Two steps that share an
+/// item do not cross.
+pub(super) fn crossed(gap: &[(f64, f64)]) -> usize {
+    let mut steps = gap.to_vec();
+    steps.sort_by(|p, q| p.0.total_cmp(&q.0).then(p.1.total_cmp(&q.1)));
+    let mut ends: Vec<f64> = steps.iter().map(|step| step.1).collect();
+    inversions(&mut ends)
+}
+
+/// Sorts the values and returns how many pairs were in the wrong order. A
+/// merge sort counts them in fewer steps than a look at every pair.
+fn inversions(values: &mut [f64]) -> usize {
+    if values.len() < 2 {
+        return 0;
+    }
+    let (left, right) = values.split_at_mut(values.len() / 2);
+    let mut count = inversions(left) + inversions(right);
+    let mut merged = Vec::with_capacity(left.len() + right.len());
+    let (mut i, mut j) = (0, 0);
+    while i < left.len() && j < right.len() {
+        if right[j] < left[i] {
+            // Every value that is left in the first half is larger.
+            count += left.len() - i;
+            merged.push(right[j]);
+            j += 1;
+        } else {
+            merged.push(left[i]);
+            i += 1;
         }
     }
-    crossed
+    merged.extend_from_slice(&left[i..]);
+    merged.extend_from_slice(&right[j..]);
+    values.copy_from_slice(&merged);
+    count
 }

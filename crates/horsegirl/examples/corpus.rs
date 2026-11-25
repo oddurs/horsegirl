@@ -26,7 +26,7 @@ use horsegirl_core::text::Style;
 /// The number of corpus files that draw clean on `main`: with no overlap and
 /// with every link. Every kind of overlap counts, because the gate is a
 /// picture with none. Raise the number when a change draws more files clean.
-const BASELINE: usize = 176;
+const BASELINE: usize = 184;
 
 /// The style of `horsegirl draw`, so that the count is of the pictures that
 /// the command line draws.
