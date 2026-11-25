@@ -32,5 +32,21 @@ Add a workflow that builds the site on every pull request and deploys `site/out`
 ## Acceptance criteria
 
 - [ ] A merge to `main` updates https://oddurs.github.io/horsegirl within ten minutes.
-- [ ] The deploy job has only the permissions that Pages needs.
-- [ ] The `required` check covers the site build.
+- [x] The deploy job has only the permissions that Pages needs.
+- [x] The `required` check covers the site build.
+
+## 2026-11-25
+
+Enabled Pages with gh api POST repos/oddurs/horsegirl/pages build_type=workflow; it printed html_url https://oddurs.github.io/horsegirl/ and build_type workflow.
+
+## 2026-11-25
+
+Criterion 2: deploy job sets permissions pages: write and id-token: write only; the workflow-level default stays contents: read, which a job-level block replaces. Read from .github/workflows/ci.yml.
+
+## 2026-11-25
+
+Criterion 3: required needs check; check runs scripts/task check, which runs build and site export. Ran scripts/task check locally: exit 0, 'check-export: 7 paths served from /horsegirl/, all present', site/out/index.html exists. Not yet seen on a CI run.
+
+## 2026-11-25
+
+Criterion 1 is open: it can only be watched after a merge to main.
