@@ -234,6 +234,26 @@ fn a_name_or_a_value_that_needs_quotes_gets_them_from_the_fix() {
         ("A {x} @y -> B", "\"A {x} @y\" -> B"),
         // A quote that touches `-x` would be a character of that word.
         ("A -x@pixi/react", "A -x \"@pixi/react\""),
+        // From BUG-134. A name ends at a comma, and an arrow after the comma
+        // still makes the colon a character of the name.
+        ("Sensors: wind, B -> Hub", "\"Sensors: wind\", B -> Hub"),
+        // A value runs on past a comma until a fact follows, so one fix
+        // quotes all of it.
+        (
+            "api { note: GET /users/{id}, list }",
+            "api { note: \"GET /users/{id}, list\" }",
+        ),
+        (
+            "A { note: install, list {x} }",
+            "A { note: \"install, list {x}\" }",
+        ),
+        (
+            "A { note: install, list {x}, owner: X }",
+            "A { note: \"install, list {x}\", owner: X }",
+        ),
+        // The name after an arrow gets the same fix as the name before one.
+        ("A -> GET /users/{id}", "A -> \"GET /users/{id}\""),
+        ("A -x GET /users/{id}", "A -x \"GET /users/{id}\""),
     ] {
         assert_eq!(only(source).code, "E0004", "{source}");
         assert_eq!(fixed(source), repaired);
@@ -268,6 +288,7 @@ fn a_name_or_a_value_that_needs_quotes_gets_them_from_the_fix() {
 fn a_group_or_an_open_block_is_never_quoted_into_a_name() {
     for source in [
         "Services { Orders, Payments } -> Postgres: save",
+        "G{ A, B } -> C",
         "A -> B: x {\n}",
         "A -> B: x { a, b }",
         "A {\n  note: b {\n  }\n}",
@@ -276,6 +297,11 @@ fn a_group_or_an_open_block_is_never_quoted_into_a_name() {
         assert_eq!(stray.code, "E0001", "{source}");
         assert_eq!(stray.fix, None, "{source}");
     }
+    // From BUG-134: a brace with no space before it opens a group too.
+    let team = only("Team@x{ A }");
+    assert_eq!(team.code, "E0004");
+    assert_eq!(fixed("Team@x{ A }"), "\"Team@x\"{ A }");
+    assert_eq!(read("\"Team@x\"{ A }").1, [""; 0]);
     // A block cannot follow a link. The name still gets its quotes, and the
     // fix leaves the brace outside them for the next message.
     for (source, repaired) in [
@@ -284,6 +310,56 @@ fn a_group_or_an_open_block_is_never_quoted_into_a_name() {
     ] {
         assert_eq!(fixed(source), repaired);
         assert_eq!(only(repaired).code, "E0001");
+    }
+}
+
+// Before or after an arrow, braces that hold one word and no space are
+// characters of the name. Any other braces are a group, and a link cannot
+// hold a group, so the arrow is the mistake and quotes are not the fix.
+#[test]
+fn braces_before_an_arrow_are_characters_only_around_one_word() {
+    for (source, repaired) in [
+        ("A {x} -> B", "\"A {x}\" -> B"),
+        ("G{x} -> B", "\"G{x}\" -> B"),
+        ("GET /users/{id} -> B", "\"GET /users/{id}\" -> B"),
+    ] {
+        assert_eq!(fixed(source), repaired, "{source}");
+        assert_eq!(read(repaired).1, [""; 0], "{repaired}");
+    }
+    for source in [
+        "Services { Orders } -> Postgres",
+        "Services {Orders, Payments} -> Postgres",
+        "Services { Orders, Payments } -> Postgres",
+        "G{ A } -> C",
+        "G {} -> C",
+    ] {
+        let error = only(source);
+        assert_eq!((error.code, error.fix), ("E0001", None), "{source}");
+        assert_eq!(&source[error.span], "->", "{source}");
+    }
+}
+
+// No text can hold a double quote, so the message says to remove it and
+// does not say to add quotes.
+#[test]
+fn a_text_that_holds_a_double_quote_is_told_to_remove_it() {
+    for (source, text) in [
+        ("A { note: a \"b\" c }", "a \"b\" c"),
+        ("A { note: x, \"y\" }", "x, \"y\""),
+        ("A \"b\" -> C", "A \"b\""),
+        ("A -> B \"c\"", "B \"c\""),
+        ("A -> B: say \"hi\" {x}", "say \"hi\" {x}"),
+    ] {
+        let error = only(source);
+        assert_eq!(error.code, "E0004", "{source}");
+        assert_eq!(&source[error.span.clone()], text, "{source}");
+        assert!(
+            error.message.contains("Remove each double quote"),
+            "{}",
+            error.message
+        );
+        assert!(!error.message.contains("Write the"), "{}", error.message);
+        assert_eq!(error.fix, None, "{source}");
     }
 }
 

@@ -208,6 +208,18 @@ fn exercise(source: &str) {
             after <= errors,
             "the fix {fix:?} takes {source:?} from {errors} errors to {after}"
         );
+        // The quotes are the whole correction: no text that needs quotes
+        // starts inside the fixed text. A text around it, as in a value whose
+        // braces hold the fixed line, can still need them.
+        let place = fix.span().start..end + added - removed;
+        let again = parse(&fixed)
+            .diagnostics
+            .into_iter()
+            .find(|d| d.code == "E0004" && place.contains(&d.span.start));
+        assert!(
+            again.is_none(),
+            "the fix {fix:?} of {source:?} gives {again:?}"
+        );
     }
 }
 

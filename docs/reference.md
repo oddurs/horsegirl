@@ -32,6 +32,17 @@ show flow
 A name holds `-x` only as a part of a longer word: `Dash-x` is a name. `-x` is
 a rule only as a whole word.
 
+No name or value can hold a double quote, with quotes or without. `check`
+reports a double quote in a bare text with `E0004`, and the message says to
+remove it.
+
+A link cannot hold a group. Before or after an arrow, braces that hold one
+word and no space are characters of a name, as in `GET /users/{id}`. Such a
+name needs quotes, and the fix of `E0004` adds them:
+`A -> "GET /users/{id}"`. Any other braces are a group, as in
+`Services { Orders } -> Postgres` and `G{ A, B } -> C`, and `check` reports
+the arrow with `E0001`. Write the group on its own line.
+
 ### 2. An arrow is a link
 
 `A -> B` links `A` to `B`. A comma fans out on either side:

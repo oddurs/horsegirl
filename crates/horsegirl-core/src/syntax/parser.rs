@@ -69,9 +69,9 @@ pub(super) fn parse(source: &str) -> Parse<'_> {
 /// Takes the fix off each diagnostic whose fix overlaps the fix of an earlier
 /// one, so that a tool can apply every fix of one parse.
 ///
-/// The earlier fix is the outer one: in `A { B @ x } -> C` the line and the
-/// block inside it each need quotes. Quotes around the whole name repair both,
-/// and the inner fix would cut into them.
+/// The earlier fix is the outer one: in `A { note: x {B@y} }` the value and
+/// the block inside it each need quotes. Quotes around the whole value repair
+/// both, and the inner fix would cut into them.
 fn drop_overlapping_fixes(diagnostics: &mut [Diagnostic]) {
     let mut end = 0;
     for diagnostic in diagnostics {
@@ -152,8 +152,6 @@ struct Entry {
     start: usize,
     /// The index of the first token of the value, when the entry is a fact.
     value: Option<usize>,
-    /// The byte offset where the entry ends.
-    end: usize,
 }
 
 /// A text that double quotes can hold.
@@ -382,6 +380,13 @@ impl<'s> Parser<'s> {
             // No arrow came before this one, so a `@` or a brace ended the
             // names too early.
             NodeKind::Things if arrow => self.cut_short(index),
+            // A link cannot hold a group, so a `{` after the last name is in
+            // that name, as in `A -> GET /users/{id}`.
+            NodeKind::Link | NodeKind::Rule if self.kind_at(index) == Some(TokenKind::Open) => {
+                self.cut_short(index)
+            }
+            // A double quote after a bare word, as in `A "b"`, is in the text.
+            _ if self.kind_at(index) == Some(TokenKind::Quoted) => self.cut_short(index),
             _ => self.unexpected(index),
         })
     }
@@ -453,6 +458,13 @@ impl<'s> Parser<'s> {
             let start = self.pos;
             let from = into.len();
             if !self.name(NodeKind::Name, into) {
+                // `note: x, @y` is one value with a comma in it, as `facts`
+                // reads `note: x, y`.
+                if let Some(value) = entries.last().and_then(|entry: &Entry| entry.value)
+                    && self.kind() == Some(TokenKind::At)
+                {
+                    return Err(self.quotes_or_unexpected(value, Text::Value, self.pos));
+                }
                 return Err(self.missing_text(Text::Name));
             }
             let mut value = None;
@@ -469,11 +481,7 @@ impl<'s> Parser<'s> {
                 }
                 wrap(into, from, NodeKind::Fact);
             }
-            entries.push(Entry {
-                start,
-                value,
-                end: self.here(),
-            });
+            entries.push(Entry { start, value });
             if self.next() != Some(TokenKind::Comma) {
                 return Ok(entries);
             }
@@ -545,7 +553,8 @@ impl<'s> Parser<'s> {
             return Ok(());
         };
         // `note: install, list` reads as a fact and a name. The author meant
-        // one value with a comma in it.
+        // one value with a comma in it. `extent` runs the value on to the next
+        // fact, as in `note: install, list {x}, owner: X`.
         let value = name.checked_sub(1).and_then(|fact| entries[fact].value);
         let Some(value) = value else {
             return Err(diagnostic(
@@ -554,19 +563,38 @@ impl<'s> Parser<'s> {
                 "This line mixes names and facts. Write the names on one line and the facts on another line.",
             ));
         };
-        let names = entries[name..]
-            .iter()
-            .take_while(|entry| entry.value.is_none());
-        let end = names.last().map_or(self.here(), |entry| entry.end);
-        Err(self.needs_quotes(self.span_at(value).start..end, Text::Value))
+        let end = self.extent(value, Text::Value);
+        Err(self.needs_quotes(
+            self.span_at(value).start..self.span_at(end - 1).end,
+            Text::Value,
+        ))
+    }
+
+    /// Whether a fact starts at the token at `index`: a name and a colon.
+    fn starts_fact(&self, index: usize) -> bool {
+        let mut index = self.skip(index);
+        match self.kind_at(index) {
+            Some(TokenKind::Quoted) => index += 1,
+            Some(TokenKind::Word) => {
+                while self.kind_at(self.skip(index + 1)) == Some(TokenKind::Word) {
+                    index = self.skip(index + 1);
+                }
+                index += 1;
+            }
+            _ => return false,
+        }
+        self.kind_at(self.skip(index)) == Some(TokenKind::Colon)
     }
 
     /// The error for `key: value` outside braces. The colon is in a name when
     /// an arrow or a brace follows it, and the line is a stray fact otherwise.
+    /// The name ends at a comma, and the scan for the arrow goes on past it:
+    /// `Sensors: wind, B -> Hub` is a link.
     fn colon_outside_braces(&self, entries: &[Entry]) -> Diagnostic {
         let first = entries.last().map_or(self.pos, |entry| entry.start);
         let start = self.span_at(first).start;
         let mut end = self.here();
+        let mut named = false;
         let mut index = self.pos;
         loop {
             match self.kind_at(index) {
@@ -580,18 +608,12 @@ impl<'s> Parser<'s> {
                     let start = name.map_or(start, |name| self.span_at(name).start);
                     return self.needs_quotes(start..end, Text::Name);
                 }
-                None
-                | Some(
-                    TokenKind::Newline
-                    | TokenKind::Comma
-                    | TokenKind::Close
-                    | TokenKind::At
-                    | TokenKind::Semi,
-                ) => {
-                    break;
-                }
+                None | Some(TokenKind::Newline | TokenKind::Close | TokenKind::Semi) => break,
+                Some(TokenKind::At) if !named => break,
+                Some(TokenKind::Comma) => named = true,
                 Some(TokenKind::Space) => {}
-                Some(_) => end = self.span_at(index).end,
+                Some(_) if !named => end = self.span_at(index).end,
+                Some(_) => {}
             }
             index += 1;
         }
@@ -960,7 +982,18 @@ impl<'s> Parser<'s> {
             }
             _ => false,
         };
-        if !self.tokens[first..end].iter().any(reserved) {
+        let tokens = &self.tokens[first..end];
+        // A text in quotes with nothing after it is whole, and the token
+        // after it is the mistake.
+        if let [token] = tokens
+            && token.kind == TokenKind::Quoted
+        {
+            return self.unexpected(index);
+        }
+        // A double quote in a longer text is a mistake of its own, which
+        // `needs_quotes` names.
+        let quoted = |token: &Token<'_>| token.kind == TokenKind::Quoted;
+        if !tokens.iter().any(reserved) && !tokens.iter().any(quoted) {
             return self.unexpected(index);
         }
         let span = self.span_at(first).start..self.span_at(end - 1).end;
@@ -1242,19 +1275,19 @@ impl<'s> Parser<'s> {
     /// The index after the last token of the text that starts at token
     /// `from`. The text ends at the end of the line, at the `}` that closes
     /// the block around it, or at the guess mark and the citation that end the
-    /// fact. A value ends at a comma too, and a name at a comma or an arrow.
+    /// fact. A name ends at a comma or an arrow. A value ends at a comma that
+    /// a fact follows: in `note: install, list` the comma is in the value.
     ///
-    /// A `{` is a character of the text only when it closes on its line. A
-    /// name or a label also ends before a `{` that follows a space and holds a
-    /// comma, a colon or an arrow: `Services { Orders, Payments }` is a group,
-    /// and quotes would make one thing of it. A name that needs quotes before
-    /// such a `{` ends there too: `Team@x { A }` is a group with one part, as
-    /// `Team { A }` is.
+    /// A `{` is a character of the text only when it closes on its line. In
+    /// a name, the braces are characters only when they hold one word and no
+    /// space, as in `GET /users/{id}`. Any other braces are a group, as in
+    /// `Team@x{ A }` and `Services { Orders }`, and quotes would make one
+    /// thing of the group and lose its parts. A link cannot hold a group, so
+    /// `Services { Orders } -> Postgres` gets no quotes. A label ends before
+    /// a `{` that follows a space and holds a comma, a colon or an arrow.
     fn extent(&self, from: usize, text: Text) -> usize {
         let mut end = from;
         let mut index = from;
-        // Whether the name holds a reserved character so far.
-        let mut reserved = false;
         loop {
             let kind = match self.kind_at(index) {
                 None | Some(TokenKind::Newline | TokenKind::Close | TokenKind::Semi) => {
@@ -1263,25 +1296,36 @@ impl<'s> Parser<'s> {
                 Some(kind) => kind,
             };
             let stops = match kind {
-                TokenKind::Comma => text != Text::Label,
+                TokenKind::Comma => match text {
+                    Text::Name => true,
+                    Text::Value => self.starts_fact(index + 1),
+                    Text::Label => false,
+                },
                 TokenKind::Arrow | TokenKind::Cross => text == Text::Name,
                 TokenKind::Open => match self.closes[index] {
                     None => true,
                     Some(close) => {
                         let spaced =
                             index > from && self.kind_at(index - 1) == Some(TokenKind::Space);
-                        let block = text != Text::Value
-                            && spaced
-                            && (reserved
-                                || self.tokens[index..close].iter().any(|token| {
-                                    matches!(
-                                        token.kind,
-                                        TokenKind::Comma
-                                            | TokenKind::Colon
-                                            | TokenKind::Arrow
-                                            | TokenKind::Cross
-                                    )
-                                }));
+                        let block = match text {
+                            Text::Value => false,
+                            Text::Name => {
+                                close != index + 2
+                                    || self.kind_at(index + 1) != Some(TokenKind::Word)
+                            }
+                            Text::Label => {
+                                spaced
+                                    && self.tokens[index..close].iter().any(|token| {
+                                        matches!(
+                                            token.kind,
+                                            TokenKind::Comma
+                                                | TokenKind::Colon
+                                                | TokenKind::Arrow
+                                                | TokenKind::Cross
+                                        )
+                                    })
+                            }
+                        };
                         if !block {
                             // The braces are matched, so the text goes on
                             // after the `}` and reads no token twice.
@@ -1295,9 +1339,6 @@ impl<'s> Parser<'s> {
             if stops {
                 return end;
             }
-            // A comma or an arrow ends a name, so only these stay in one.
-            reserved |= text == Text::Name
-                && matches!(kind, TokenKind::At | TokenKind::Colon | TokenKind::Open);
             if kind != TokenKind::Space {
                 end = index + 1;
             }
@@ -1361,8 +1402,19 @@ impl<'s> Parser<'s> {
     fn needs_quotes(&self, span: Range<usize>, text: Text) -> Diagnostic {
         let what = text.word();
         let text = &self.source[span.clone()];
-        // A quoted name cannot hold a double quote, so no fix exists then.
-        // A text longer than `MAX_FIX` gets no fix either.
+        // No text can hold a double quote, with quotes or without, so advice
+        // to add quotes would ask for a form the language does not have.
+        if text.contains('"') {
+            return diagnostic(
+                "E0004",
+                span,
+                format!(
+                    "`{}` holds a double quote, and a {what} cannot hold one. Remove each double quote from the {what}, and run check again.",
+                    quote(text)
+                ),
+            );
+        }
+        // A text longer than `MAX_FIX` gets no fix.
         // In `A -x@b` or `show rings from{id}` the quote would touch the word
         // before it and make one word of the two, so a space goes between them.
         let touches = self.source[..span.start]

@@ -174,3 +174,11 @@ G {
 }
 }
 after
+Sensors: wind, B -> Hub
+api { note: GET /users/{id}, list }
+A { note: install, list {x} }
+A { note: a "b" c }
+A -> GET /users/{id}
+G{ A, B } -> C
+Team@x{ A }
+Services { Orders } -> Postgres

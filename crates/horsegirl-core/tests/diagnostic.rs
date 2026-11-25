@@ -125,12 +125,12 @@ fn a_mistake_at_the_end_of_a_line_has_an_empty_span_and_one_mark() {
 // that applied both corrupted the line.
 #[test]
 fn when_two_fixes_overlap_the_outer_one_is_kept() {
-    let source = "A { B @ x } -> C\n";
+    let source = "A { note: x {B@y} }\n";
     let diagnostics = parse(source).diagnostics;
     let codes: Vec<_> = diagnostics.iter().map(|d| d.code).collect();
     assert_eq!(codes, ["E0004", "E0004"]);
     let fix = diagnostics[0].fix.as_ref().expect("the outer fix is kept");
-    assert_eq!(fix.apply(source), "\"A { B @ x }\" -> C\n");
+    assert_eq!(fix.apply(source), "A { note: \"x {B@y}\" }\n");
     assert_eq!(diagnostics[1].fix, None);
     assert_eq!(parse(&fix.apply(source)).diagnostics, []);
 }
