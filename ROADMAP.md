@@ -20,7 +20,6 @@ An agent writes a horsegirl file, checks it, applies the fixes, and draws a flow
 - [ ] [`0116`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0116-fail-the-check-when-the-core-crate-gains-a-dependency-that-does-i-o.md) Fail the check when the core crate gains a dependency that does I/O <sup>chore · p2 · workflow</sup>
 - [ ] [`0117`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0117-the-mcp-tool-schemas-are-a-reviewed-contract-in-both-protocol-eras.md) The MCP tool schemas are a reviewed contract in both protocol eras <sup>feature · p2 · mcp</sup>
 - [ ] [`0118`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0118-hold-each-svg-label-to-its-measured-width-in-any-font.md) Hold each SVG label to its measured width in any font <sup>feature · p2 · render</sup>
-- [ ] [`ADR-119`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/ADR-119-names-that-hold-a-reserved-character-are-written-in-quotes.md) Names that hold a reserved character are written in quotes <sup>decision · p2 · language</sup>
 - [ ] [`0120`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0120-the-typo-check-leaves-sibling-names-alone.md) The typo check leaves sibling names alone <sup>feature · p2 · check</sup>
 - [ ] [`0122`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0122-fewer-crossings-in-the-layered-layout-measured-against-a-reference.md) Fewer crossings in the layered layout, measured against a reference <sup>feature · p2 · layout</sup>
 - [ ] [`0123`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0123-draw-a-link-that-starts-or-ends-at-a-group.md) Draw a link that starts or ends at a group <sup>feature · p2 · layout</sup>
@@ -54,6 +53,7 @@ An agent writes a horsegirl file, checks it, applies the fixes, and draws a flow
 - [ ] [`0054`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0054-cut-a-release-with-one-command.md) Cut a release with one command <sup>chore · p1 · workflow</sup>
 - [ ] [`0048`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0048-deploy-the-site-to-github-pages.md) Deploy the site to GitHub Pages <sup>chore · p0 · workflow</sup>
 - [ ] [`0053`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0053-merge-passing-patch-and-minor-dependency-updates-automatically.md) Merge passing patch and minor dependency updates automatically <sup>chore · p2 · workflow</sup>
+- [ ] [`ADR-119`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/ADR-119-names-that-hold-a-reserved-character-are-written-in-quotes.md) Names that hold a reserved character are written in quotes <sup>decision · p2 · language</sup>
 
 ## later — Later
 
