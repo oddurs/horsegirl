@@ -3,14 +3,14 @@ id: 144
 uid: 5ff07c1a-3c6b-4ed8-bf23-af96a41ef423
 title: A path that the parser reads as a group gets a warning with the quote fix
 type: feature
-status: doing
+status: done
 milestone: v0.1
 assignee: Oddur Sigurdsson
-claimed: 2026-11-25
 depends_on:
 - 27
 created: 2026-11-25
 updated: 2026-11-25
+closed_at: 2026-11-25
 priority: p2
 risk: low
 surface: diagnostics
