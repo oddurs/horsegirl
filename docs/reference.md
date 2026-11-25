@@ -250,7 +250,7 @@ from it.
 
 | Code | What to do |
 | --- | --- |
-| `E0001` | Remove the second arrow, the stray `@` or the extra word. |
+| `E0001` | Remove the stray `@` or the extra word. |
 | `E0002` | Close the `{` with a `}`. |
 | `E0003` | Remove the `}` or open a group before it. |
 | `E0004` | Write the name, the value or the label in double quotes. The fix does it. |
@@ -259,6 +259,7 @@ from it.
 | `E0007` | Nest the braces less than 64 deep. |
 | `E0008` | Write `show` and a lens, and `of`, `from` or `by` and a name when the lens needs one. |
 | `E0009` | Put a fact inside braces, and keep names and facts on separate lines. |
+| `E0010` | Write each link on its own line. The fix does it. |
 | `E0300` | Write a lens that exists. The fix replaces a name that is one edit away. |
 | `E0301` | Add a link, or remove the `show` line. |
 | `E0412` | Write the name that you meant. The fix does it when only one name is near. |

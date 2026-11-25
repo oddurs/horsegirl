@@ -317,6 +317,7 @@ impl<'s> Parser<'s> {
     }
 
     fn fact(&mut self, depth: usize, into: &mut Children<'s>) -> Result<NodeKind, Diagnostic> {
+        let start = self.pos;
         let kind = if self.is_word(self.pos, "show") && self.is_show_line() {
             self.show(into)?
         } else if self.is_word(self.pos, "story") && self.is_story() {
@@ -355,17 +356,7 @@ impl<'s> Parser<'s> {
             Some(TokenKind::Arrow | TokenKind::Cross)
         );
         Err(match kind {
-            NodeKind::Link | NodeKind::Rule if arrow => {
-                let span = self.span_at(index);
-                let text = quote(&self.source[span.clone()]);
-                diagnostic(
-                    "E0001",
-                    span,
-                    format!(
-                        "A line holds one arrow, and this `{text}` is a second one. Write each link on its own line. A name that holds `{text}` is written in double quotes."
-                    ),
-                )
-            }
+            NodeKind::Link | NodeKind::Rule if arrow => self.chain(start, index),
             // No arrow came before this one, so a `@` or a brace ended the
             // names too early.
             NodeKind::Things if arrow => self.cut_short(index),
@@ -747,6 +738,132 @@ impl<'s> Parser<'s> {
         Ok(())
     }
 
+    /// The error for the second arrow of a link, at `second`. The fix writes
+    /// each link of the chain from token `start` on its own line.
+    fn chain(&self, start: usize, second: usize) -> Diagnostic {
+        let span = self.span_at(second);
+        let text = quote(&self.source[span.clone()]);
+        Diagnostic {
+            fix: self.split_chain(start),
+            ..diagnostic(
+                "E0010",
+                span,
+                format!(
+                    "A line holds one arrow, and this `{text}` is a second one. Write each link on its own line. A name that holds `{text}` is written in double quotes."
+                ),
+            )
+        }
+    }
+
+    /// The fix for a chain of links that starts at token `start`, when the
+    /// chain is plain enough to split: names, commas and arrows, and at the
+    /// end a label, a guess mark or a citation. That end goes on each link.
+    /// Each name list must read the same at the start and at the end of a
+    /// line.
+    fn split_chain(&self, start: usize) -> Option<Fix> {
+        let line = self.source[..self.span_at(start).start]
+            .rfind('\n')
+            .map_or(0, |newline| newline + 1);
+        let indent = &self.source[line..self.span_at(start).start];
+        // A chain inside a one-line block cannot get a line of its own.
+        if !indent.chars().all(|c| c == ' ' || c == '\t') {
+            return None;
+        }
+        // The first token and the bytes of each name list. An arrow starts
+        // the next one.
+        let mut lists: Vec<Option<(usize, Range<usize>)>> = vec![None];
+        let mut index = start;
+        loop {
+            match self.kind_at(index) {
+                Some(TokenKind::Arrow | TokenKind::Cross) => lists.push(None),
+                Some(TokenKind::Word) if self.is_guess(index) => break,
+                Some(TokenKind::Word | TokenKind::Quoted | TokenKind::Comma) => {
+                    let span = self.span_at(index);
+                    if let Some(list) = lists.last_mut() {
+                        let (first, from) = list
+                            .as_ref()
+                            .map_or((index, span.start), |(first, list)| (*first, list.start));
+                        *list = Some((first, from..span.end));
+                    }
+                }
+                Some(TokenKind::Space) => {}
+                _ => break,
+            }
+            index += 1;
+        }
+        let lists: Vec<(usize, Range<usize>)> = lists.into_iter().collect::<Option<_>>()?;
+        // A name list in the middle ends one link and starts the next. At the
+        // start of a line `#` makes a comment, and `show`, a lens and `of`,
+        // `from` or `by` make a `show` line. At the end of a line a `?` is a
+        // guess mark and a `;` is a mark. The split would change what such a
+        // list means.
+        let mut middle = lists.iter().skip(1).take(lists.len().saturating_sub(2));
+        if middle.any(|(first, list)| {
+            let text = &self.source[list.clone()];
+            text.starts_with('#')
+                || (self.is_word(*first, "show") && self.show_argument(*first).is_some())
+                || text.ends_with(';')
+                || text.rsplit([' ', '\t', ',']).next() == Some("?")
+        }) {
+            return None;
+        }
+        let names: Vec<Range<usize>> = lists.into_iter().map(|(_, list)| list).collect();
+        // What follows the last name: a label, a guess mark and a citation.
+        let mut end = index;
+        while !matches!(
+            self.kind_at(end),
+            None | Some(TokenKind::Newline | TokenKind::Semi | TokenKind::Close)
+        ) {
+            end += 1;
+        }
+        let rest = &self.tokens[index..end];
+        let plain = match self.kind_at(index) {
+            Some(TokenKind::Colon) => {
+                let label = self.skip(index + 1);
+                self.extent(label, Text::Label) > label
+                    && !rest
+                        .iter()
+                        .any(|token| matches!(token.kind, TokenKind::Open | TokenKind::Unclosed))
+            }
+            _ => self.ends_fact(index),
+        };
+        if !plain {
+            return None;
+        }
+        let last = names.last()?.end;
+        let tail_end = rest
+            .iter()
+            .rev()
+            .find(|token| token.kind != TokenKind::Space)
+            .map_or(last, |token| token.span().end);
+        let tail = &self.source[last..tail_end];
+        let span = self.span_at(start).start..last + tail.len();
+        if span.len() > MAX_FIX {
+            return None;
+        }
+        let links: Vec<String> = names
+            .windows(2)
+            .map(|pair| format!("{}{tail}", &self.source[pair[0].start..pair[1].end]))
+            .collect();
+        let confidence = if tail.is_empty() {
+            Confidence::Safe
+        } else {
+            Confidence::Suggested
+        };
+        Some(Fix {
+            confidence,
+            description: if tail.is_empty() {
+                "Write each link on its own line.".to_owned()
+            } else {
+                "Write each link on its own line, and give each link the end of the chain: its label, guess mark or citation. Remove that end from each link it does not belong to.".to_owned()
+            },
+            edits: vec![Edit {
+                span,
+                text: links.join(&format!("\n{indent}")),
+            }],
+        })
+    }
+
     /// The error for the token at `index`, which ended a bare text too early.
     fn cut_short(&self, index: usize) -> Diagnostic {
         let Some((mut first, text)) = self.last else {
@@ -836,7 +953,7 @@ impl<'s> Parser<'s> {
     /// `show`, a lens and `of`, `from` or `by` always start a `show` line, so
     /// a reserved character after them is a mistake in the argument.
     fn is_show_line(&self) -> bool {
-        if self.show_argument().is_some() {
+        if self.show_argument(self.pos).is_some() {
             return true;
         }
         let mut index = self.pos + 1;
@@ -856,13 +973,13 @@ impl<'s> Parser<'s> {
     }
 
     /// The first token after `show`, a lens and `of`, `from` or `by`, when the
-    /// line starts that way.
-    fn show_argument(&self) -> Option<usize> {
-        let lens = self.pos + 2;
+    /// tokens from `show`, at index `at`, start that way.
+    fn show_argument(&self, at: usize) -> Option<usize> {
+        let lens = at + 2;
         let spaced = |index: usize| self.kind_at(index) == Some(TokenKind::Space);
         let is_lens =
             self.kind_at(lens) == Some(TokenKind::Word) && LENSES.contains(&self.tokens[lens].text);
-        if !spaced(self.pos + 1) || !is_lens || !spaced(lens + 1) {
+        if !spaced(at + 1) || !is_lens || !spaced(lens + 1) {
             return None;
         }
         let word = self.skip(lens + 1);
@@ -876,7 +993,7 @@ impl<'s> Parser<'s> {
 
     fn show(&mut self, into: &mut Children<'s>) -> Result<NodeKind, Diagnostic> {
         let start = self.pos;
-        let argument = self.show_argument();
+        let argument = self.show_argument(self.pos);
         if self.show_parts(into) {
             return Ok(NodeKind::Show);
         }

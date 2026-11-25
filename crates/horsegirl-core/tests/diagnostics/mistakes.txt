@@ -1,8 +1,9 @@
-error[E0001]: A line holds one arrow, and this `->` is a second one. Write each link on its own line. A name that holds `->` is written in double quotes.
+error[E0010]: A line holds one arrow, and this `->` is a second one. Write each link on its own line. A name that holds `->` is written in double quotes.
  --> mistakes.horse:1:18
   |
 1 | Café -> Payments -> Ledger
   |                  ^^
+  = safe fix: Write each link on its own line.
 
 error[E0004]: `API@v2` holds a character that a bare name cannot hold. Write the name in double quotes. A citation is a space, `@`, a path and a line number at the end of the line, as in ` @ src/app.ts:17`.
  --> mistakes.horse:2:12

@@ -1,6 +1,6 @@
 //! The parser against the reference file, the corpus and bad input.
 
-use horsegirl_core::syntax::{Diagnostic, Element, Fix, Node, NodeKind, parse};
+use horsegirl_core::syntax::{Confidence, Diagnostic, Element, Fix, Node, NodeKind, parse};
 
 const CHECKOUT: &str = include_str!("../../../examples/checkout.horse");
 const CHECKOUT_TREE: &str = include_str!("checkout.tree");
@@ -119,7 +119,7 @@ show flow
         .map(|d| (d.code, source[..d.span.start].matches('\n').count() + 1))
         .collect();
     // Each diagnostic is paired with its line, counted from 1.
-    assert_eq!(found, [("E0009", 2), ("E0006", 4), ("E0001", 6)]);
+    assert_eq!(found, [("E0009", 2), ("E0006", 4), ("E0010", 6)]);
     assert_eq!(
         kinds(&parse.tree),
         [
@@ -494,7 +494,7 @@ fn a_show_line_with_a_mistake_in_its_argument_is_still_a_show_line() {
 #[test]
 fn each_mistake_has_its_own_code() {
     for (source, code) in [
-        ("A -> B -> C", "E0001"),
+        ("A -> B -> C", "E0010"),
         ("A {\n  B\n", "E0002"),
         ("A }", "E0003"),
         ("A -> \"B", "E0005"),
@@ -693,7 +693,138 @@ fn a_semicolon_inside_a_line_is_a_character_of_the_name() {
 fn a_line_with_a_mistake_gets_the_mistake_and_no_note() {
     let diagnostics = parse("\"A\" --> B -> C;\n").diagnostics;
     assert_eq!(diagnostics.len(), 1, "{diagnostics:?}");
-    assert_eq!(diagnostics[0].code, "E0001");
+    assert_eq!(diagnostics[0].code, "E0010");
+}
+
+// An agent that knows Mermaid or D2 writes a chain. The fix writes one link
+// on each line, with the indent of the chain.
+#[test]
+fn a_chain_of_arrows_gets_a_safe_fix_that_splits_it() {
+    let chain = only("A -> B -> C\n");
+    assert_eq!(chain.code, "E0010");
+    let fix = chain.fix.as_ref().expect("the diagnostic carries a fix");
+    assert_eq!(fix.confidence, Confidence::Safe);
+    for (source, repaired) in [
+        ("A -> B -> C\n", "A -> B\nB -> C\n"),
+        ("A -> B -> C -> D", "A -> B\nB -> C\nC -> D"),
+        ("A, B -> C -> D, E\n", "A, B -> C\nC -> D, E\n"),
+        (
+            "Web app -x \"API: v2\" -> DB\n",
+            "Web app -x \"API: v2\"\n\"API: v2\" -> DB\n",
+        ),
+        ("G {\n  A -> B -> C\n}\n", "G {\n  A -> B\n  B -> C\n}\n"),
+        ("A -> show flow -> C\n", "A -> show flow\nshow flow -> C\n"),
+        ("A -> story S -> C\n", "A -> story S\nstory S -> C\n"),
+    ] {
+        assert_eq!(fixed(source), repaired, "{source}");
+        assert_eq!(parse(repaired).diagnostics, [], "{repaired}");
+        assert_eq!(
+            links(&parse(repaired).tree),
+            chain_links(source),
+            "{source}"
+        );
+    }
+}
+
+/// The name lists of each link and each rule in the tree under `node`.
+fn links(node: &Node<'_>) -> Vec<Vec<String>> {
+    let mut found = Vec::new();
+    if matches!(node.kind, NodeKind::Link | NodeKind::Rule) {
+        let names = node.children.iter().filter_map(|child| match child {
+            Element::Node(names) if names.kind == NodeKind::Names => {
+                Some(names.to_string().trim().to_owned())
+            }
+            _ => None,
+        });
+        found.push(names.collect());
+    }
+    for child in &node.children {
+        if let Element::Node(child) = child {
+            found.extend(links(child));
+        }
+    }
+    found
+}
+
+/// The name lists of each link that the one chain in `source` means.
+fn chain_links(source: &str) -> Vec<Vec<String>> {
+    let line = source
+        .lines()
+        .find(|line| line.contains(" -"))
+        .unwrap_or("");
+    let lists: Vec<String> = line
+        .trim()
+        .split(" -> ")
+        .flat_map(|part| part.split(" -x "))
+        .map(|list| list.trim().to_owned())
+        .collect();
+    lists.windows(2).map(<[String]>::to_vec).collect()
+}
+
+// A name list in the middle of a chain moves to the start of one line and the
+// end of another. A list that reads differently there gets no fix.
+#[test]
+fn a_chain_whose_middle_name_reads_differently_gets_no_fix() {
+    for source in [
+        "A -> #ops -> C\n",
+        "A -> B ? -> C\n",
+        "A -> B; -> C\n",
+        "A -> show flow of S -> C\n",
+        "A -> show rings from T -> C\n",
+        "A -> show seams by owner -> C\n",
+        "G {\n  A -> show flow of S -> C\n}\n",
+    ] {
+        let diagnostics = parse(source).diagnostics;
+        assert_eq!(diagnostics[0].code, "E0010", "{source}");
+        assert_eq!(diagnostics[0].fix, None, "{source}");
+    }
+}
+
+// The parser cannot know which link a label, a guess mark or a citation is
+// for. The fix gives it to each link, and an agent decides.
+#[test]
+fn a_chain_with_a_label_gets_a_suggested_fix() {
+    for (source, repaired) in [
+        ("A -> B -> C: label\n", "A -> B: label\nB -> C: label\n"),
+        ("A -> B -> C ?\n", "A -> B ?\nB -> C ?\n"),
+        (
+            "A -> B -> C @ a.rs:3\n",
+            "A -> B @ a.rs:3\nB -> C @ a.rs:3\n",
+        ),
+    ] {
+        let chain = only(source);
+        assert_eq!(chain.code, "E0010", "{source}");
+        let fix = chain.fix.expect("the diagnostic carries a fix");
+        assert_eq!(fix.confidence, Confidence::Suggested, "{source}");
+        let repaired_text = fix.apply(source);
+        assert_eq!(repaired_text, repaired, "{source}");
+        assert_eq!(parse(&repaired_text).diagnostics, [], "{repaired_text}");
+    }
+}
+
+#[test]
+fn a_chain_that_the_fix_cannot_split_gets_the_message_only() {
+    for source in [
+        "G { A -> B -> C }",
+        "A -> B -> C { D }",
+        "A -> B -> -> C",
+        &format!("A -> B -> {}", "C".repeat(300)),
+    ] {
+        let diagnostics = parse(source).diagnostics;
+        assert_eq!(diagnostics[0].code, "E0010", "{source}");
+        assert_eq!(diagnostics[0].fix, None, "{source}");
+    }
+}
+
+#[test]
+fn a_name_in_quotes_that_holds_an_arrow_is_not_a_chain() {
+    for source in [
+        "\"A -> B\" -> C\n",
+        "A -> \"B -> C\"\n",
+        "\"A -x B\" -x \"C -> D\"\n",
+    ] {
+        assert_eq!(parse(source).diagnostics, [], "{source}");
+    }
 }
 
 #[test]

@@ -267,7 +267,7 @@ fn every_lens_is_on_the_language_card() {
 #[test]
 fn parse_and_check_diagnostics_come_sorted_by_place() {
     let source = "show bubbles\nA -> B -> C\nLonely\n";
-    assert_eq!(codes(&check(source)), ["E0300", "E0001", "W0107"]);
+    assert_eq!(codes(&check(source)), ["E0300", "E0010", "W0107"]);
 }
 
 #[test]

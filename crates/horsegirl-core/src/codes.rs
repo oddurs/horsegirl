@@ -18,7 +18,7 @@ pub struct Code {
 pub const CATALOGUE: &[Code] = &[
     Code {
         code: "E0001",
-        summary: "A token stands where the line cannot hold it: a second arrow, a `@` that is not a citation, or a word after the end of a fact.",
+        summary: "A token stands where the line cannot hold it: an arrow after a block, a `@` that is not a citation, or a word after the end of a fact.",
     },
     Code {
         code: "E0002",
@@ -51,6 +51,10 @@ pub const CATALOGUE: &[Code] = &[
     Code {
         code: "E0009",
         summary: "A fact stands outside braces, or a line mixes names and facts.",
+    },
+    Code {
+        code: "E0010",
+        summary: "A link has a second arrow, as in `A -> B -> C`. The fix writes each link on its own line with the same indent. It is safe when the line ends at the last name, and suggested when the line ends in a label, a `?` or a citation, which the fix gives to each link.",
     },
     Code {
         code: "E0300",
