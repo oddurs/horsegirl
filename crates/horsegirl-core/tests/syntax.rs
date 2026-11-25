@@ -525,6 +525,107 @@ fn braces_that_nest_too_deep_are_an_error_and_not_a_crash() {
     assert!(parse.diagnostics.iter().any(|d| d.code == "E0007"));
 }
 
+#[test]
+fn a_bad_line_with_an_open_brace_keeps_the_lines_after_it() {
+    for (source, code) in [
+        ("A -> B: uses {braces\nC -> D\nshow flow\n", "E0001"),
+        ("A@b -> C: uses {braces\nC -> D\nshow flow\n", "E0004"),
+    ] {
+        let parse = parse(source);
+        assert_eq!(parse.tree.to_string(), source);
+        assert_eq!(
+            kinds(&parse.tree),
+            [NodeKind::Error, NodeKind::Link, NodeKind::Show],
+            "{source:?}"
+        );
+        let codes: Vec<_> = parse.diagnostics.iter().map(|d| d.code).collect();
+        assert_eq!(codes, [code], "{source:?}");
+    }
+}
+
+#[test]
+fn a_bad_line_keeps_a_block_whose_brace_ends_the_line() {
+    let source = "A -> B: x {\n  C -> D\n}\nE -> F\n";
+    let parse = parse(source);
+    assert_eq!(kinds(&parse.tree), [NodeKind::Error, NodeKind::Link]);
+    let codes: Vec<_> = parse.diagnostics.iter().map(|d| d.code).collect();
+    assert_eq!(codes, ["E0001"]);
+}
+
+#[test]
+fn a_name_that_needs_quotes_keeps_its_group_across_lines() {
+    for (source, code) in [
+        ("G@x { A\nB\n}\nafter\n", "E0004"),
+        ("Team: x { A\nB\n}\nafter\n", "E0004"),
+        ("G@x, H { A\nB\n}\nafter\n", "E0004"),
+        ("G@x{ A\nB\n}\nafter\n", "E0004"),
+        ("{ A\nB\n}\nafter\n", "E0006"),
+    ] {
+        let parse = parse(source);
+        assert_eq!(parse.tree.to_string(), source);
+        assert_eq!(
+            kinds(&parse.tree),
+            [NodeKind::Error, NodeKind::Things],
+            "{source:?}"
+        );
+        let codes: Vec<_> = parse.diagnostics.iter().map(|d| d.code).collect();
+        assert_eq!(codes, [code], "{source:?}");
+    }
+}
+
+#[test]
+fn a_brace_after_a_label_is_a_stray_mark_even_with_a_part_after_it() {
+    // A label cannot open a group, so the `{` opens no block, and the `}`
+    // that the author meant for it closes nothing.
+    let source = "A -> B: x { C\nD\n}\nafter\n";
+    let parse = parse(source);
+    assert_eq!(parse.tree.to_string(), source);
+    assert_eq!(
+        kinds(&parse.tree),
+        [
+            NodeKind::Error,
+            NodeKind::Things,
+            NodeKind::Error,
+            NodeKind::Things
+        ]
+    );
+    let codes: Vec<_> = parse.diagnostics.iter().map(|d| d.code).collect();
+    assert_eq!(codes, ["E0001", "E0003"]);
+}
+
+#[test]
+fn braces_past_the_depth_limit_stay_paired() {
+    let lines = format!("{}{}after\n", "G {\n".repeat(70), "}\n".repeat(70));
+    let one_line = format!("{}{}\nafter\n", "G { ".repeat(70), "} ".repeat(70));
+    let part_after = format!("{}{}after\n", "G { A\n".repeat(70), "}\n".repeat(70));
+    for source in [lines, one_line, part_after] {
+        let parse = parse(&source);
+        assert_eq!(parse.tree.to_string(), source);
+        let codes: Vec<_> = parse.diagnostics.iter().map(|d| d.code).collect();
+        assert_eq!(codes, ["E0007"], "{source:?}");
+        assert_eq!(
+            kinds(&parse.tree),
+            [NodeKind::Things, NodeKind::Things],
+            "{source:?}"
+        );
+    }
+}
+
+#[test]
+fn a_block_past_the_depth_limit_that_never_closes_is_reported() {
+    let source = format!("{}H {{\n", "G {\n".repeat(64));
+    let codes: Vec<_> = parse(&source).diagnostics.iter().map(|d| d.code).collect();
+    assert_eq!(codes.iter().filter(|&&code| code == "E0007").count(), 1);
+    assert_eq!(codes.iter().filter(|&&code| code == "E0002").count(), 65);
+}
+
+#[test]
+fn a_story_line_that_fails_after_its_block_gives_no_story_note() {
+    let source = "story s {} x\nA -> B\n";
+    let codes: Vec<_> = parse(source).diagnostics.iter().map(|d| d.code).collect();
+    assert_eq!(codes, ["E0001"]);
+}
+
 /// Asserts that `source` has no diagnostic.
 fn silent(source: &str) {
     let diagnostics = parse(source).diagnostics;

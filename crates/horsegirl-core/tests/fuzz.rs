@@ -15,38 +15,9 @@ use horsegirl_core::syntax::{Diagnostic, Element, Node, NodeKind, Token, parse};
 
 const CHECKOUT: &str = include_str!("../../../examples/checkout.horse");
 
-/// A file that uses each form the parser reads, right and wrong.
-const FORMS: &str = "\
-# a comment
-\"Sensors: wind\", Web app -> Hub: \"GET /users/{id}\" ?  @ src/a.ts:17
-A -x B: never, ever -> not: once
-G { A, B { owner: X, note: \"install, list\" } ? }
-story checkout {
-  A -> B: pay
-}
-show sequence of checkout
-show rings from \"API gateway\"
-show rings from GET /users/{id}
-show rings from Sensors: wind
-show sequence of a@b
-show sequence of S, T
-show rings from, T
-show rings from{id}
-show rings from: x
-show, A -> B
-show { owner: X }
-owner: X
-A -> -> B
-A -> \"B
-Renderer PixiJS / @pixi/react -> B: mail bob@example.com
-A {x} -> B
-Team @pixi {
-  owner: Web
-}
-Services { Orders, Payments } -> Postgres: save
-A -> B: x {
-}
-";
+/// A file that uses each form the parser reads, right and wrong, and the
+/// inputs of bugs that the parser had.
+const FORMS: &str = include_str!("fuzz-seed.horse");
 
 /// The pieces that random input is made from. The marks of the language come
 /// more often than they do in real text, so the parser meets odd orders.
@@ -214,8 +185,11 @@ fn exercise(source: &str) {
         }
     }
 
-    // A fix that adds quotes repairs its text and breaks nothing else.
-    let errors = errors(&result.diagnostics);
+    // A fix that adds quotes breaks nothing up to the end of its text. The
+    // parser reads no further on a bad line, so the rest of the line can hold
+    // errors that show only once the fix makes the text good. A `{` there can
+    // then open a block that changes how the lines after it read. So the
+    // errors after the fixed text are not counted.
     for diagnostic in &result.diagnostics {
         let Some(fix) = diagnostic
             .fix
@@ -225,7 +199,11 @@ fn exercise(source: &str) {
             continue;
         };
         let fixed = fix.apply(source);
-        let after = errors_of(&fixed);
+        let added: usize = fix.edits.iter().map(|edit| edit.text.len()).sum();
+        let removed: usize = fix.edits.iter().map(|edit| edit.span.len()).sum();
+        let end = fix.span().end;
+        let errors = errors_before(&result.diagnostics, end);
+        let after = errors_before(&parse(&fixed).diagnostics, end + added - removed);
         assert!(
             after <= errors,
             "the fix {fix:?} takes {source:?} from {errors} errors to {after}"
@@ -233,13 +211,10 @@ fn exercise(source: &str) {
     }
 }
 
-fn errors(diagnostics: &[Diagnostic]) -> usize {
+/// The count of errors that start before the byte `end`.
+fn errors_before(diagnostics: &[Diagnostic], end: usize) -> usize {
     let errors = diagnostics.iter().filter(|d| d.code.starts_with('E'));
-    errors.count()
-}
-
-fn errors_of(source: &str) -> usize {
-    errors(&parse(source).diagnostics)
+    errors.filter(|d| d.span.start < end).count()
 }
 
 #[test]
