@@ -76,10 +76,23 @@ fn the_text_form_marks_the_span_under_the_source_line() {
     let lines = LineIndex::new("Café -> API@v2\n");
     let diagnostic = &parse("Café -> API@v2\n").diagnostics[0];
     let text = diagnostic.render(&lines, "a.horse");
-    // The column counts characters, so `é` is one column and one mark.
+    // The column counts characters, so `é` before the span is one column and
+    // one space of padding.
     assert!(text.contains("--> a.horse:1:9\n"), "{text}");
     assert!(
         text.contains("1 | Café -> API@v2\n  |         ^^^^^^\n"),
+        "{text}"
+    );
+}
+
+#[test]
+fn a_character_of_two_bytes_inside_the_span_gets_one_mark() {
+    let source = "Web -> Café@v2\n";
+    let diagnostic = &parse(source).diagnostics[0];
+    let text = diagnostic.render(&LineIndex::new(source), "a.horse");
+    // `Café@v2` is seven characters in eight bytes.
+    assert!(
+        text.contains("1 | Web -> Café@v2\n  |        ^^^^^^^\n"),
         "{text}"
     );
 }

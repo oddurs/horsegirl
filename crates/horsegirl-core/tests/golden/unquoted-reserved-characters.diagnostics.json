@@ -7,8 +7,14 @@
     "text": "Renderer PixiJS / @pixi/react",
     "message": "`Renderer PixiJS / @pixi/react` holds a character that a bare name cannot hold. Write the name in double quotes. A citation is a space, `@`, a path and a line number at the end of the line, as in ` @ src/app.ts:17`.",
     "fix": {
-      "span": [0, 29],
-      "text": "\"Renderer PixiJS / @pixi/react\""
+      "confidence": "safe",
+      "description": "Write the name in double quotes.",
+      "edits": [
+        {
+          "span": [0, 29],
+          "text": "\"Renderer PixiJS / @pixi/react\""
+        }
+      ]
     }
   },
   {
@@ -19,8 +25,14 @@
     "text": "returns {id}",
     "message": "`returns {id}` holds a character that a bare label cannot hold. Write the label in double quotes.",
     "fix": {
-      "span": [43, 55],
-      "text": "\"returns {id}\""
+      "confidence": "safe",
+      "description": "Write the label in double quotes.",
+      "edits": [
+        {
+          "span": [43, 55],
+          "text": "\"returns {id}\""
+        }
+      ]
     }
   },
   {
@@ -31,8 +43,14 @@
     "text": "django :8000",
     "message": "`django :8000` holds a character that a bare value cannot hold. Write the value in double quotes.",
     "fix": {
-      "span": [68, 80],
-      "text": "\"django :8000\""
+      "confidence": "safe",
+      "description": "Write the value in double quotes.",
+      "edits": [
+        {
+          "span": [68, 80],
+          "text": "\"django :8000\""
+        }
+      ]
     }
   }
 ]
