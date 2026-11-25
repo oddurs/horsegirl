@@ -12,7 +12,7 @@ named for gaits: Walk, Trot, Canter, Gallop.
 
 ## v0.1 — Walk
 
-`··········` 0% · 0 of 41 done · due 2027-01-31
+`··········` 0% · 0 of 40 done · due 2027-01-31
 
 An agent writes a horsegirl file, checks it, applies the fixes, and draws a flow diagram as SVG, from the command line or over MCP.
 
@@ -40,7 +40,6 @@ An agent writes a horsegirl file, checks it, applies the fixes, and draws a flow
 - [ ] [`BUG-140`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/BUG-140-a-quote-fix-for-a-link-target-keeps-the-label-outside-the-quotes.md) A quote fix for a link target keeps the label outside the quotes <sup>bug · p2 · language</sup>
 - [ ] [`0144`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0144-a-path-that-the-parser-reads-as-a-group-gets-a-warning-with-the-quote-fix.md) A path that the parser reads as a group gets a warning with the quote fix <sup>feature · p2 · check</sup>
 - [ ] [`0028`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0028-read-mermaid-habits-and-say-what-was-changed.md) Read Mermaid habits and say what was changed <sup>feature · p1 · check</sup>
-- [ ] [`0029`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0029-a-formatter-with-one-canonical-form.md) A formatter with one canonical form <sup>feature · p1 · language</sup>
 - [ ] [`0032`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0032-layered-layout-rank-order-and-place.md) Layered layout: rank, order and place <sup>feature · p0 · layout</sup>
 - [ ] [`0033`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0033-route-edges-at-right-angles-around-boxes-and-groups.md) Route edges at right angles around boxes and groups <sup>feature · p0 · layout</sup>
 - [ ] [`0034`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0034-draw-the-scene-as-svg-with-css-variables.md) Draw the scene as SVG with CSS variables <sup>feature · p0 · render</sup>
@@ -60,7 +59,7 @@ An agent writes a horsegirl file, checks it, applies the fixes, and draws a flow
 
 ## later — Later
 
-`··········` 0% · 0 of 15 done
+`··········` 0% · 0 of 16 done
 
 Nothing on a date. Good ideas wait here until a release needs them.
 
@@ -78,6 +77,7 @@ Nothing on a date. Good ideas wait here until a release needs them.
 - [ ] [`0113`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0113-incremental-compilation-for-live-preview.md) Incremental compilation for live preview <sup>feature · p3 · layout</sup>
 - [ ] [`0114`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0114-a-hand-drawn-line-for-guesses.md) A hand-drawn line for guesses <sup>feature · p3 · render</sup>
 - [ ] [`0128`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0128-a-label-that-changes-script-is-never-measured-narrower-than-the-browser-draws-it.md) A label that changes script is never measured narrower than the browser draws it <sup>feature · p2 · render</sup>
+- [ ] [`0138`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0138-fmt-writes-a-file-in-place.md) fmt writes a file in place <sup>feature · p2 · cli</sup>
 - [ ] [`0143`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0143-a-rule-against-a-group-also-forbids-links-to-its-parts.md) A rule against a group also forbids links to its parts <sup>feature · p2 · check</sup>
 
 ## v0.2 — Trot
