@@ -49,3 +49,7 @@ Criterion 3: site/scripts/check-lighthouse.mjs runs Lighthouse 13.6.0 on the lan
 ## Result
 
 The site root is a landing page that says there is no release, lists the commands read from the binary's USAGE text (held to --help by a test), shows the real language card and a picture drawn by hand that is labelled as such, and links the roadmap. The site build fails on a page wider than its window, and on a Lighthouse median under 95 for performance or accessibility on the landing page.
+
+## 2026-11-25
+
+Fix round 1: check-lighthouse holds performance only when CI is set; accessibility fails everywhere. Rule in site/lib/lighthouse.ts, tests in site/tests/lighthouse.test.ts (6 pass). scripts/task check exit 0 locally, load 9-13: all four scores 100 (runs 100, 100, 100).
