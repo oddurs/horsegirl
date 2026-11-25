@@ -35,3 +35,7 @@ A check warns on a thing whose name ends in `/` and whose braces hold one bare n
 ## 2026-11-25
 
 Added W0108 in check.rs (reads the tree). cargo test -p horsegirl-core --test check printed 24 passed, 0 failed, including a_path_read_as_a_group_gets_a_warning_with_the_quote_fix (one W0108 at the line, suggested fix "GET /users/{id}", fix applied removes it), a_group_with_a_name_that_does_not_end_in_a_slash_gives_no_path_warning (Services { Orders } and 5 other forms give none), and the_reference_file_gives_no_diagnostic_from_the_checks (only W0010). scripts/task check exit 0.
+
+## 2026-11-25
+
+Correction: the check test file ran 27 tests, not 24; all passed.
