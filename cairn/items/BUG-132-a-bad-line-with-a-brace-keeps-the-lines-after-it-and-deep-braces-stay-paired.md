@@ -62,3 +62,7 @@ Round 1 review: criterion 2 held only for two layouts. 'G { A' repeated 70 times
 ## 2026-11-25
 
 Review round 2: a name that needs quotes, a space and a { with a part after it (G@x { A / B / }) now keeps its group in the recovery; a { after a label stays a stray mark and its later } gives E0003, held by a test and stated in the changelog. scripts/task check exited 0: 297 tests run, 297 passed, including a_name_that_needs_quotes_keeps_its_group_across_lines and the fuzz test with G@x { A in the seed. The new test failed without the parser change (left [Error, Things, Error, Things], right [Error, Things]).
+
+## 2026-11-25
+
+Round 3: opens_block decides by place. A brace is stray only in a label or a value (last text, or an arrow then a colon outside blocks before it). Added G@x, H { A / G@x{ A / { A to a_name_that_needs_quotes_keeps_its_group_across_lines and A@b -> C: uses {braces to the stray test; the group test failed on the round 2 parser (left: [Error, Things, Error, Things]) and passes now. scripts/task check exit 0.
