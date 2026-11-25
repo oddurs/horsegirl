@@ -3,12 +3,12 @@ id: 21
 uid: 82c3e088-3d2e-4c5c-a0e1-9498797c3b52
 title: Which MCP library, and what shape is a tool result?
 type: spike
-status: doing
+status: done
 milestone: v0.1
 assignee: Oddur Sigurdsson
-claimed: 2026-11-25
 created: 2026-11-25
 updated: 2026-11-25
+closed_at: 2026-11-25
 priority: p1
 risk: medium
 surface: mcp
