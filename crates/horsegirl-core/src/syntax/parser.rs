@@ -32,6 +32,7 @@ pub(super) fn parse(source: &str) -> Parse<'_> {
         tokens,
         pos: 0,
         last: None,
+        habits: Vec::new(),
         diagnostics: Vec::new(),
     };
     let mut children = Vec::new();
@@ -180,6 +181,9 @@ struct Parser<'s> {
     /// The first token of the last text that the current fact read, and what
     /// the text is. A `@` or an arrow that cannot be read is a part of it.
     last: Option<(usize, Text)>,
+    /// The edits that turn the Mermaid habits of the current fact into the
+    /// canonical form. See `note_habits`.
+    habits: Vec<Edit>,
     diagnostics: Vec<Diagnostic>,
 }
 
@@ -229,14 +233,16 @@ impl<'s> Parser<'s> {
         self.is_word(index, "?")
             && matches!(
                 self.kind_at(self.skip(index + 1)),
-                None | Some(TokenKind::Newline | TokenKind::At | TokenKind::Close)
+                None | Some(
+                    TokenKind::Newline | TokenKind::At | TokenKind::Close | TokenKind::Semi
+                )
             )
     }
 
     fn at_line_end(&self) -> bool {
         matches!(
             self.next(),
-            None | Some(TokenKind::Newline | TokenKind::Close)
+            None | Some(TokenKind::Newline | TokenKind::Close | TokenKind::Semi)
         )
     }
 
@@ -276,8 +282,14 @@ impl<'s> Parser<'s> {
     fn statement(&mut self, depth: usize, into: &mut Children<'s>) {
         let mut children = Vec::new();
         self.last = None;
+        let start = self.pos;
+        let outer = std::mem::take(&mut self.habits);
+        let mut habits = None;
         let kind = match self.fact(depth, &mut children) {
-            Ok(kind) => kind,
+            Ok(kind) => {
+                habits = Some(kind);
+                kind
+            }
             Err(error) => {
                 self.diagnostics.push(error);
                 loop {
@@ -295,6 +307,11 @@ impl<'s> Parser<'s> {
                 NodeKind::Error
             }
         };
+        let edits = std::mem::replace(&mut self.habits, outer);
+        // A line that failed to read states nothing, so it has no canonical form.
+        if let Some(kind) = habits {
+            self.note_habits(start, kind, edits);
+        }
         into.push(Element::Node(Node { kind, children }));
     }
 
@@ -314,6 +331,20 @@ impl<'s> Parser<'s> {
             }
             kind
         };
+        if self.next() == Some(TokenKind::Semi) {
+            // Mermaid ends a line with `;`. The mark is no part of a text.
+            let mut before = self.pos;
+            while before > 0 && self.kind_at(before - 1) == Some(TokenKind::Space) {
+                before -= 1;
+            }
+            let semi = self.span_at(self.skip(self.pos));
+            self.habits.push(Edit {
+                span: self.span_at(before).start..semi.end,
+                text: String::new(),
+            });
+            self.spaces(into);
+            self.bump(into);
+        }
         if self.at_line_end() {
             return Ok(kind);
         }
@@ -357,12 +388,25 @@ impl<'s> Parser<'s> {
             Some(arrow @ (TokenKind::Arrow | TokenKind::Cross)) => {
                 wrap(into, 0, NodeKind::Names);
                 self.spaces(into);
+                let at = self.pos;
                 self.bump(into);
+                if arrow == TokenKind::Arrow && self.tokens[at].text != "->" {
+                    self.habits.push(Edit {
+                        span: self.tokens[at].span(),
+                        text: "->".to_owned(),
+                    });
+                }
                 self.spaces(into);
                 let from = into.len();
                 self.list(false, into)?;
                 wrap(into, from, NodeKind::Names);
                 if self.next() == Some(TokenKind::Colon) {
+                    if self.kind() == Some(TokenKind::Space) {
+                        self.habits.push(Edit {
+                            span: self.tokens[self.pos].span(),
+                            text: String::new(),
+                        });
+                    }
                     self.spaces(into);
                     self.bump(into);
                     self.label(into)?;
@@ -435,7 +479,24 @@ impl<'s> Parser<'s> {
         };
         let start = self.pos;
         match self.kind() {
-            Some(TokenKind::Quoted) => self.bump(into),
+            Some(TokenKind::Quoted) => {
+                let token = self.tokens[self.pos];
+                let inside = &token.text[1..token.text.len() - 1];
+                // A bare name joins what follows it, so the quotes stay unless a
+                // space, the line end or a reserved character comes next:
+                // `"a-"->B` would become the arrow `-->`.
+                let parted = self.source[token.span().end..]
+                    .chars()
+                    .next()
+                    .is_none_or(|c| " \n\r;:,{}".contains(c));
+                if kind == NodeKind::Name && parted && bare_is_safe(inside) {
+                    self.habits.push(Edit {
+                        span: token.span(),
+                        text: inside.to_owned(),
+                    });
+                }
+                self.bump(into);
+            }
             Some(TokenKind::Word) if !self.is_guess(self.pos) => {
                 self.bump(into);
                 // A bare name has spaces, so it runs on while words follow.
@@ -506,7 +567,13 @@ impl<'s> Parser<'s> {
                     return self.needs_quotes(start..end, Text::Name);
                 }
                 None
-                | Some(TokenKind::Newline | TokenKind::Comma | TokenKind::Close | TokenKind::At) => {
+                | Some(
+                    TokenKind::Newline
+                    | TokenKind::Comma
+                    | TokenKind::Close
+                    | TokenKind::At
+                    | TokenKind::Semi,
+                ) => {
                     break;
                 }
                 Some(TokenKind::Space) => {}
@@ -536,6 +603,7 @@ impl<'s> Parser<'s> {
                     | TokenKind::At
                     | TokenKind::Open
                     | TokenKind::Close
+                    | TokenKind::Semi
                     // An unclosed quote is a mistake in a label too.
                     | TokenKind::Unclosed,
                 ) => break,
@@ -580,6 +648,7 @@ impl<'s> Parser<'s> {
                     | TokenKind::Open
                     | TokenKind::Close
                     | TokenKind::At
+                    | TokenKind::Semi
             )
         ) {
             end += 1;
@@ -602,7 +671,7 @@ impl<'s> Parser<'s> {
         }
         matches!(
             self.kind_at(index),
-            None | Some(TokenKind::Newline | TokenKind::Close)
+            None | Some(TokenKind::Newline | TokenKind::Close | TokenKind::Semi)
         )
     }
 
@@ -871,7 +940,9 @@ impl<'s> Parser<'s> {
         let mut reserved = false;
         loop {
             let kind = match self.kind_at(index) {
-                None | Some(TokenKind::Newline | TokenKind::Close) => return end,
+                None | Some(TokenKind::Newline | TokenKind::Close | TokenKind::Semi) => {
+                    return end;
+                }
                 Some(kind) => kind,
             };
             let stops = match kind {
@@ -915,6 +986,59 @@ impl<'s> Parser<'s> {
             }
             index += 1;
         }
+    }
+
+    /// Says that a fact is written in a habit of Mermaid, and what the canonical
+    /// line is. The note has a safe fix, and the file still reads as it is.
+    fn note_habits(&mut self, start: usize, kind: NodeKind, edits: Vec<Edit>) {
+        if edits.is_empty() {
+            return;
+        }
+        // A group states its parts on the lines inside its braces. Those lines
+        // have their own notes.
+        let stop = if kind == NodeKind::Things {
+            (start..self.pos)
+                .find(|&index| self.kind_at(index) == Some(TokenKind::Open))
+                .unwrap_or(self.pos)
+        } else {
+            self.pos
+        };
+        let last = (start..stop)
+            .rev()
+            .find(|&index| {
+                !matches!(
+                    self.kind_at(index),
+                    Some(TokenKind::Space | TokenKind::Newline)
+                )
+            })
+            .unwrap_or(start);
+        // An edit can lie after the last token, such as the `;` after a group's `}`.
+        let end = edits
+            .iter()
+            .map(|edit| edit.span.end)
+            .fold(self.span_at(last).end, usize::max);
+        let span = self.span_at(start).start..end;
+        let mut canonical = String::new();
+        let mut from = span.start;
+        for edit in &edits {
+            canonical.push_str(&self.source[from..edit.span.start]);
+            canonical.push_str(&edit.text);
+            from = edit.span.end;
+        }
+        canonical.push_str(&self.source[from..span.end]);
+        let message = format!(
+            "`{}` is written the way Mermaid writes it. horsegirl reads it, and the canonical form is `{}`.",
+            quote(&self.source[span.clone()]),
+            quote(&canonical)
+        );
+        self.diagnostics.push(Diagnostic {
+            fix: Some(Fix {
+                confidence: Confidence::Safe,
+                description: "Write the line in the canonical form.".to_owned(),
+                edits,
+            }),
+            ..diagnostic("N0101", span, message)
+        });
     }
 
     fn needs_quotes(&self, span: Range<usize>, text: Text) -> Diagnostic {
@@ -988,4 +1112,23 @@ impl<'s> Parser<'s> {
             ),
         }
     }
+}
+
+/// Whether a name that holds `text` reads the same without double quotes. The
+/// reader gives a bare name back with one space between words, so `text` must
+/// already be written that way. It also must not hold a mark that a bare name
+/// cannot, or a word that a bare line reads as something else.
+fn bare_is_safe(text: &str) -> bool {
+    let plain = text.split(' ').all(|word| {
+        !word.is_empty()
+            && !word
+                .contains(|c: char| c.is_whitespace() || c == '\u{feff}' || ",:{}@\";".contains(c))
+            && !matches!(word, "?" | "-x")
+            && !word.contains("->")
+    });
+    plain
+        && !text.starts_with('#')
+        && !text.starts_with("show")
+        && !text.starts_with("story")
+        && !text.contains("->")
 }

@@ -475,3 +475,174 @@ fn braces_that_nest_too_deep_are_an_error_and_not_a_crash() {
     assert_eq!(parse.tree.to_string(), source);
     assert!(parse.diagnostics.iter().any(|d| d.code == "E0007"));
 }
+
+/// Asserts that `source` has no diagnostic.
+fn silent(source: &str) {
+    let diagnostics = parse(source).diagnostics;
+    assert!(diagnostics.is_empty(), "{source:?} gave {diagnostics:?}");
+}
+
+const MERMAID_LINE: &str = "\"Web app\" --> \"API gateway\" : HTTPS;\n";
+
+#[test]
+fn a_mermaid_link_reads_as_one_link_with_its_label() {
+    let model = horsegirl_core::model::lower(&parse(MERMAID_LINE).tree);
+    let names: Vec<&str> = model.things.iter().map(|t| t.name.as_str()).collect();
+    assert_eq!(names, ["Web app", "API gateway"]);
+    assert_eq!(model.links.len(), 1);
+    assert_eq!(model.links[0].labels, ["HTTPS"]);
+}
+
+#[test]
+fn a_mermaid_link_gets_one_note_whose_fix_rewrites_the_line() {
+    let note = only(MERMAID_LINE);
+    assert_eq!(note.code, "N0101");
+    assert_eq!(note.span, 0..MERMAID_LINE.len() - 1);
+    let fix = note.fix.expect("the note carries a fix");
+    assert_eq!(fix.confidence, horsegirl_core::syntax::Confidence::Safe);
+    assert_eq!(fix.apply(MERMAID_LINE), "Web app -> API gateway: HTTPS\n");
+}
+
+#[test]
+fn the_canonical_line_has_no_note() {
+    let canonical = "Web app -> API gateway: HTTPS\n";
+    silent(canonical);
+}
+
+#[test]
+fn each_habit_alone_gets_its_own_rewrite() {
+    for (habit, canonical) in [
+        ("A --> B\n", "A -> B\n"),
+        ("A ---> B\n", "A -> B\n"),
+        ("A-->B\n", "A->B\n"),
+        ("A -> B;\n", "A -> B\n"),
+        ("A -> B ;\n", "A -> B\n"),
+        ("A, B;\n", "A, B\n"),
+        ("A -> B: go;  \n", "A -> B: go  \n"),
+        ("\"A b\" -> C\n", "A b -> C\n"),
+        ("A -> B : go\n", "A -> B: go\n"),
+        ("show flow;\n", "show flow\n"),
+        ("A -> B ? @ src/a.ts:1;\n", "A -> B ? @ src/a.ts:1\n"),
+        ("A --> \"B\";\n", "A -> B\n"),
+        ("\"A\" -> \"B\": x\n", "A -> B: x\n"),
+        ("\"a\";\n", "a\n"),
+        ("\"a b\" ->\"c d\";\n", "a b ->c d\n"),
+    ] {
+        let note = only(habit);
+        assert_eq!(note.code, "N0101", "{habit:?}");
+        assert_eq!(note.fix.unwrap().apply(habit), canonical, "{habit:?}");
+        silent(canonical);
+        assert_eq!(meaning(habit), meaning(canonical), "{habit:?}");
+    }
+}
+
+/// The model without its spans: a fix moves text, and it must not change meaning.
+fn meaning(source: &str) -> String {
+    let model = horsegirl_core::model::lower(&parse(source).tree);
+    let things: Vec<_> = model
+        .things
+        .iter()
+        .map(|t| format!("{:?} {:?} {:?}", t.name, t.parent, t.facts))
+        .collect();
+    let links: Vec<_> = model
+        .links
+        .iter()
+        .map(|l| format!("{} {} {:?}", l.from, l.to, l.labels))
+        .collect();
+    format!("{things:?} {links:?} {:?}", model.shows)
+}
+
+#[test]
+fn a_double_semicolon_is_not_a_mark() {
+    for source in [
+        "A, b;;\n",
+        "A -> B;;;\n",
+        "A -> B: go;;\n",
+        "A -> B; ;\n",
+        "A, b; ;\n",
+        "A -> B: go; ;\n",
+        "A { owner: x; ; }\n",
+        "A -> B ? ; ;\n",
+    ] {
+        silent(source);
+    }
+    let lowered = horsegirl_core::model::lower(&parse("A, b;;\n").tree);
+    assert_eq!(lowered.things[1].name, "b;;");
+}
+
+#[test]
+fn a_semicolon_after_a_group_does_not_panic() {
+    for source in ["A { x };\n", "A {};\n", "A {} ;\n", "story S {A{}; "] {
+        let _ = parse(source);
+    }
+}
+
+#[test]
+fn quotes_stay_where_the_name_needs_them() {
+    for source in [
+        "\"Sensors: wind\" -> Hub\n",
+        "\"a, b\" -> C\n",
+        "\"show\" -> C\n",
+        "\"show it\" -> C\n",
+        "\"two  spaces\" -> C\n",
+        "\"-x\" -> C\n",
+        "\"?\" -> C\n",
+        "\"#tag\" -> C\n",
+        "\"\" -> C\n",
+        "\"a->b\" -> C\n",
+        "A { owner: \"Team A\" }\n",
+        "\"a-\"->B\n",
+        "A, \"b-\"->C\n",
+        "\"a-\"-x B\n",
+    ] {
+        silent(source);
+    }
+}
+
+#[test]
+fn a_fix_never_joins_a_name_to_an_arrow() {
+    let habit = "\"x-\"-->B\n";
+    let fixed = only(habit).fix.unwrap().apply(habit);
+    assert_eq!(fixed, "\"x-\"->B\n");
+    let before = horsegirl_core::model::lower(&parse(habit).tree);
+    let after = horsegirl_core::model::lower(&parse(&fixed).tree);
+    assert_eq!(before.things[0].name, "x-");
+    assert_eq!(after.things[0].name, "x-");
+}
+
+#[test]
+fn a_group_and_its_parts_get_separate_notes() {
+    let source = "\"Services\" {\n  \"Orders\" --> Payments;\n}\n";
+    let notes = parse(source).diagnostics;
+    assert_eq!(notes.len(), 2, "{notes:?}");
+    assert!(notes.iter().all(|note| note.code == "N0101"));
+    let mut edits: Vec<_> = notes
+        .iter()
+        .flat_map(|note| note.fix.iter().flat_map(|fix| fix.edits.iter()))
+        .collect();
+    edits.sort_by_key(|edit| edit.span.start);
+    let mut out = String::new();
+    let mut from = 0;
+    for edit in edits {
+        out.push_str(&source[from..edit.span.start]);
+        out.push_str(&edit.text);
+        from = edit.span.end;
+    }
+    out.push_str(&source[from..]);
+    assert_eq!(out, "Services {\n  Orders -> Payments\n}\n");
+}
+
+#[test]
+fn a_semicolon_inside_a_line_is_a_character_of_the_name() {
+    let source = "a;b -> C\n";
+    silent(source);
+    let model = horsegirl_core::model::lower(&parse(source).tree);
+    assert_eq!(model.things[0].name, "a;b");
+}
+
+#[test]
+fn a_line_with_a_mistake_gets_the_mistake_and_no_note() {
+    let diagnostics = parse("\"A\" --> B -> C;\n").diagnostics;
+    assert_eq!(diagnostics.len(), 1, "{diagnostics:?}");
+    assert_eq!(diagnostics[0].code, "E0001");
+}
