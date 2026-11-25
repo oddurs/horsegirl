@@ -457,7 +457,29 @@ mod draw {
         assert_eq!(text(&out.stdout), "");
         let stderr = text(&out.stderr);
         assert!(
-            stderr.contains("`show matrix`") && stderr.contains("It draws: flow."),
+            stderr.contains("error[E0302]")
+                && stderr.contains("`show matrix`")
+                && stderr.contains("It draws: flow.")
+                && stderr.contains(" --> <stdin>:2:6"),
+            "{stderr}"
+        );
+    }
+
+    #[test]
+    fn a_lens_this_version_does_not_draw_is_one_json_object_with_json() {
+        let out = run(&["--json"], "A -> B\nshow matrix\n");
+        assert_eq!(out.status.code(), Some(1));
+        assert_eq!(text(&out.stdout), "");
+        let stderr = text(&out.stderr);
+        let lines: Vec<&str> = stderr.lines().collect();
+        assert_eq!(lines.len(), 1, "{stderr}");
+        assert!(
+            lines[0].starts_with('{') && lines[0].contains(r#""code":"E0302""#),
+            "{stderr}"
+        );
+        assert!(
+            lines[0]
+                .contains(r#""span":{"end":{"column":12,"line":2},"start":{"column":6,"line":2}}"#),
             "{stderr}"
         );
     }

@@ -12,7 +12,7 @@ named for gaits: Walk, Trot, Canter, Gallop.
 
 ## v0.1 — Walk
 
-`··········` 0% · 0 of 20 done · due 2027-01-31
+`··········` 0% · 0 of 19 done · due 2027-01-31
 
 An agent writes a horsegirl file, checks it, applies the fixes, and draws a flow diagram as SVG, from the command line or over MCP.
 
@@ -28,7 +28,6 @@ An agent writes a horsegirl file, checks it, applies the fixes, and draws a flow
 - [ ] [`0141`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0141-a-group-box-is-wide-enough-for-its-name.md) A group box is wide enough for its name <sup>feature · p2 · layout</sup>
 - [ ] [`BUG-152`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/BUG-152-a-link-label-stays-legible-where-it-sits-on-its-own-line.md) A link label stays legible where it sits on its own line <sup>bug · p2 · render</sup>
 - [ ] [`BUG-158`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/BUG-158-a-label-keeps-the-white-space-that-its-measured-width-counts.md) A label keeps the white space that its measured width counts <sup>bug · p1 · render</sup>
-- [ ] [`0159`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0159-draw-names-a-lens-it-cannot-draw-with-a-diagnostic-code.md) draw names a lens it cannot draw with a diagnostic code <sup>feature · p2 · cli</sup>
 - [ ] [`BUG-161`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/BUG-161-a-written-against-the-name-marks-a-guess-or-says-why-not.md) A ? written against the name marks a guess, or says why not <sup>bug · p2 · language</sup>
 - [ ] [`0163`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0163-a-label-that-holds-a-second-link-gets-a-warning-that-splits-it.md) A label that holds a second link gets a warning that splits it <sup>feature · p2 · check</sup>
 - [ ] [`BUG-164`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/BUG-164-the-test-of-the-limit-of-the-pass-search-does-not-read-the-clock.md) The test of the limit of the pass search does not read the clock <sup>bug · p1 · layout</sup>

@@ -343,7 +343,7 @@ impl Horsegirl {
     ) -> Result<Json<DrawResult>, String> {
         let checked = CheckResult::of(&source, &check(&source));
         let svg = if checked.errors == 0 {
-            Some(crate::picture(&source, "diagram")?)
+            Some(crate::picture(&source, "diagram").map_err(|d| d.message)?)
         } else {
             None
         };
