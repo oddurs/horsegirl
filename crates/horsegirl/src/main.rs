@@ -3,7 +3,7 @@ use std::path::{Path, PathBuf};
 use std::process::ExitCode;
 
 use horsegirl_core::check::check;
-use horsegirl_core::diagnostic::{Diagnostic, LineIndex, Severity, apply_safe};
+use horsegirl_core::diagnostic::{Diagnostic, Fixed, LineIndex, Severity, apply_safe};
 use horsegirl_core::model::lower;
 use horsegirl_core::syntax::parse;
 use horsegirl_core::text::Style;
@@ -49,6 +49,7 @@ const FIX_USAGE: &str = "\
 Usage: horsegirl fix [--json] [FILE]
 
 Applies every safe fix that check gives for FILE, and changes no other byte.
+Then checks again and applies each safe fix that appears, until none is left.
 Writes FILE in place, or prints the result when the input is standard input.
 Then prints to standard error each diagnostic that is left. A suggested fix
 is left for you to decide. Exits 1 when an error is left.
@@ -295,9 +296,32 @@ fn check_command(options: &Options) -> ExitCode {
     exit(&diagnostics)
 }
 
+/// The most passes of `check` and `apply_safe` that `fix` makes. Each pass
+/// that applies a fix removes a diagnostic, so a real file stops long before.
+const FIX_PASSES: usize = 16;
+
+/// `source` with every safe fix made. One fix can reveal another: a fix that
+/// overlaps an earlier one is left out of a pass, so `fix` checks again until a
+/// pass applies none.
+fn fix_all(source: &str) -> Fixed {
+    let mut fixed = Fixed {
+        text: source.to_owned(),
+        applied: 0,
+    };
+    for _ in 0..FIX_PASSES {
+        let pass = apply_safe(&fixed.text, &check(&fixed.text));
+        if pass.applied == 0 {
+            break;
+        }
+        fixed.text = pass.text;
+        fixed.applied += pass.applied;
+    }
+    fixed
+}
+
 fn fix(options: &Options) -> ExitCode {
     let input = &options.input;
-    let fixed = apply_safe(&input.source, &check(&input.source));
+    let fixed = fix_all(&input.source);
     if let Some(path) = &input.path {
         if fixed.text != input.source
             && let Err(error) = std::fs::write(path, &fixed.text)
@@ -360,6 +384,10 @@ fn draw(options: &Options) -> ExitCode {
     let diagnostics = check(&input.source);
     eprint!("{}", report(input, &diagnostics, options.json));
     let count = errors(&diagnostics);
+    // With --json the error stream holds JSON lines and nothing else.
+    if count > 0 && options.json {
+        return ExitCode::FAILURE;
+    }
     if count > 0 {
         let s = if count == 1 { "" } else { "s" };
         eprintln!(

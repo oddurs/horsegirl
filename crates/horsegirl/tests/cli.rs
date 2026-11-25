@@ -280,6 +280,21 @@ mod fix {
     }
 
     #[test]
+    fn applies_a_safe_fix_that_appears_after_another() {
+        // The N0101 fix overlaps the E0004 fix, so check gives it only after
+        // the name is quoted.
+        let out = run(&["--json"], "C --> API@v2\n");
+        assert_eq!(text(&out.stdout), "C -> \"API@v2\"\n");
+        assert_eq!(out.status.code(), Some(0));
+        assert_eq!(text(&out.stderr), "");
+        let out = run(&[], "C --> API@v2\n");
+        assert_eq!(
+            text(&out.stderr),
+            "<stdin>: 2 safe fixes applied; left: 0 errors, 0 warnings, 0 notes\n"
+        );
+    }
+
+    #[test]
     fn writes_a_file_in_place() {
         let path = scratch("fix_in_place").join("shop.horse");
         std::fs::write(&path, FIXABLE).unwrap();
@@ -420,7 +435,18 @@ mod draw {
         let out = run(&["--json"], FIXABLE);
         assert_eq!(out.status.code(), Some(1));
         assert_eq!(text(&out.stdout), "");
-        assert!(text(&out.stderr).starts_with("{\"code\":\"E0412\""));
+        let stderr = text(&out.stderr);
+        let codes: Vec<&str> = stderr
+            .lines()
+            .map(|line| {
+                assert!(
+                    line.starts_with("{\"code\":\"") && line.ends_with('}'),
+                    "not a JSON object: {line:?}"
+                );
+                &line[9..14]
+            })
+            .collect();
+        assert_eq!(codes, ["E0412", "E0004", "E0300"], "{stderr}");
     }
 
     #[test]
