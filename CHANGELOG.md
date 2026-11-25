@@ -13,6 +13,10 @@ the project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   `outputSchema`, and a diagnostic has the shape of the `--json` line.
   `horsegirl mcp --config` prints the entry for the configuration of a client.
   `docs/mcp.md` states each shape.
+- A version tag publishes static binaries for Linux and macOS on x86_64 and
+  aarch64, with `SHA256SUMS` and a build attestation. `install.sh` installs
+  the binary to `~/.local/bin` and refuses an archive whose checksum does not
+  match.
 - `horsegirl check [--json] [FILE]` prints every diagnostic of a file, as text
   or as one JSON object per line. `horsegirl fix [--json] [FILE]` applies every
   safe fix in place, changes no other byte, and prints what is left.
