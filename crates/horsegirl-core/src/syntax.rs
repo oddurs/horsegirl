@@ -12,6 +12,8 @@ mod parser;
 use std::fmt;
 use std::ops::Range;
 
+pub use crate::diagnostic::{Confidence, Diagnostic, Edit, Fix};
+
 /// What a token is.
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum TokenKind {
@@ -154,31 +156,13 @@ impl fmt::Debug for Node<'_> {
     }
 }
 
-/// One replacement that repairs a diagnostic.
-#[derive(Clone, Debug, PartialEq, Eq)]
-pub struct Fix {
-    /// The bytes of the source to replace.
-    pub span: Range<usize>,
-    pub text: String,
-}
-
-/// Something the parser has to say about the source.
-#[derive(Clone, Debug, PartialEq, Eq)]
-pub struct Diagnostic {
-    /// A stable code: `E` for an error, `W` for a warning.
-    pub code: &'static str,
-    /// The bytes of the source that the diagnostic is about.
-    pub span: Range<usize>,
-    pub message: String,
-    pub fix: Option<Fix>,
-}
-
 /// The result of reading one file.
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct Parse<'s> {
     /// The `File` node. It prints back to the source byte for byte.
     pub tree: Node<'s>,
-    /// Every diagnostic, in the order of the source.
+    /// Every diagnostic, sorted by the start of its span and then by code.
+    /// No two fixes overlap, so a tool can apply them all.
     pub diagnostics: Vec<Diagnostic>,
 }
 

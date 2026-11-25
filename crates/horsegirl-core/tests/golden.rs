@@ -59,9 +59,14 @@ fn diagnostics_json(source: &str, diagnostics: &[Diagnostic]) -> String {
                 None => "null".to_owned(),
                 Some(fix) => format!(
                     "{{\n      \"span\": [{}, {}],\n      \"text\": {}\n    }}",
-                    fix.span.start,
-                    fix.span.end,
-                    string(&fix.text),
+                    fix.span().start,
+                    fix.span().end,
+                    string(
+                        &fix.edits
+                            .iter()
+                            .map(|e| e.text.as_str())
+                            .collect::<String>()
+                    ),
                 ),
             };
             [

@@ -1,0 +1,11 @@
+Café -> Payments -> Ledger
+Web app -> API@v2
+A ->
+A { B @ x } -> C
+	owner: Commerce
+Orders -> "Postgres
+show flow of
+story checkout {
+  A -> B: pay
+}
+}

@@ -10,6 +10,7 @@
 //! The test of long inputs parses about 100 KB in each round, so it has its
 //! own number: `HORSEGIRL_FUZZ_LONG_ROUNDS`. 300 rounds take about one second.
 
+use horsegirl_core::diagnostic::LineIndex;
 use horsegirl_core::syntax::{Diagnostic, Element, Node, NodeKind, Token, parse};
 
 const CHECKOUT: &str = include_str!("../../../examples/checkout.horse");
@@ -170,11 +171,8 @@ fn exercise(source: &str) {
 
     let mut last = 0;
     for diagnostic in &result.diagnostics {
-        let spans = [
-            Some(&diagnostic.span),
-            diagnostic.fix.as_ref().map(|fix| &fix.span),
-        ];
-        for span in spans.into_iter().flatten() {
+        let edits = diagnostic.fix.iter().flat_map(|fix| &fix.edits);
+        for span in std::iter::once(&diagnostic.span).chain(edits.map(|edit| &edit.span)) {
             // `get` is `None` for a span that is reversed, past the end, or inside a character.
             assert!(
                 source.get(span.clone()).is_some(),
@@ -190,6 +188,23 @@ fn exercise(source: &str) {
 
     assert!(parse(source) == result, "two runs differ on {source:?}");
 
+    // Both forms take any diagnostic, and no two fixes of one parse overlap.
+    let lines = LineIndex::new(source);
+    let mut fixed_to = 0;
+    for diagnostic in &result.diagnostics {
+        let json = diagnostic.to_json(&lines);
+        assert!(!json.contains('\n'), "{json} is not one line");
+        let text = diagnostic.render(&lines, "fuzz.horse");
+        assert!(text.contains(diagnostic.code), "{text}");
+        if let Some(fix) = &diagnostic.fix {
+            assert!(
+                fix.span().start >= fixed_to,
+                "the fix of {diagnostic:?} overlaps an earlier fix in {source:?}"
+            );
+            fixed_to = fix.span().end;
+        }
+    }
+
     // A fix that adds quotes repairs its text and breaks nothing else.
     let errors = errors(&result.diagnostics);
     for diagnostic in &result.diagnostics {
@@ -200,12 +215,7 @@ fn exercise(source: &str) {
         else {
             continue;
         };
-        let fixed = format!(
-            "{}{}{}",
-            &source[..fix.span.start],
-            fix.text,
-            &source[fix.span.end..]
-        );
+        let fixed = fix.apply(source);
         let after = errors_of(&fixed);
         assert!(
             after <= errors,
@@ -262,7 +272,8 @@ fn a_long_input_gives_a_bounded_text_for_each_diagnostic() {
             result.diagnostics.len()
         );
         for diagnostic in &result.diagnostics {
-            let fix = diagnostic.fix.as_ref().map_or(0, |fix| fix.text.len());
+            let fix = diagnostic.fix.iter().flat_map(|fix| &fix.edits);
+            let fix: usize = fix.map(|edit| edit.text.len()).sum();
             assert!(
                 diagnostic.message.len() + fix < 1_000,
                 "{diagnostic:?} is long, in {start:?}"

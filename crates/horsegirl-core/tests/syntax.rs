@@ -1,6 +1,6 @@
 //! The parser against the reference file, the corpus and bad input.
 
-use horsegirl_core::syntax::{Diagnostic, Element, Node, NodeKind, parse};
+use horsegirl_core::syntax::{Diagnostic, Element, Fix, Node, NodeKind, parse};
 
 const CHECKOUT: &str = include_str!("../../../examples/checkout.horse");
 const CHECKOUT_TREE: &str = include_str!("checkout.tree");
@@ -23,12 +23,12 @@ fn only(source: &str) -> Diagnostic {
 /// The source after the fix of its one diagnostic.
 fn fixed(source: &str) -> String {
     let fix = only(source).fix.expect("the diagnostic carries a fix");
-    format!(
-        "{}{}{}",
-        &source[..fix.span.start],
-        fix.text,
-        &source[fix.span.end..]
-    )
+    fix.apply(source)
+}
+
+/// The bytes that the edits of a fix write.
+fn fix_len(fix: &Fix) -> usize {
+    fix.edits.iter().map(|edit| edit.text.len()).sum()
 }
 
 fn kinds(node: &Node<'_>) -> Vec<NodeKind> {
@@ -362,7 +362,7 @@ fn linear(source: &str) {
     let text = parse
         .diagnostics
         .iter()
-        .map(|d| d.message.len() + d.fix.as_ref().map_or(0, |fix| fix.text.len()));
+        .map(|d| d.message.len() + d.fix.as_ref().map_or(0, fix_len));
     let text: usize = text.sum();
     assert!(
         text < 100 * source.len(),

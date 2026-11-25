@@ -1,0 +1,61 @@
+error[E0001]: A line holds one arrow, and this `->` is a second one. Write each link on its own line. A name that holds `->` is written in double quotes.
+ --> mistakes.horse:1:18
+  |
+1 | Café -> Payments -> Ledger
+  |                  ^^
+
+error[E0004]: `API@v2` holds a character that a bare name cannot hold. Write the name in double quotes. A citation is a space, `@`, a path and a line number at the end of the line, as in ` @ src/app.ts:17`.
+ --> mistakes.horse:2:12
+  |
+2 | Web app -> API@v2
+  |            ^^^^^^
+  = safe fix: Write the name in double quotes.
+
+error[E0006]: A name is missing at the end of the line. Write the name there.
+ --> mistakes.horse:3:5
+  |
+3 | A ->
+  |     ^
+
+error[E0004]: `A { B @ x }` holds a character that a bare name cannot hold. Write the name in double quotes. A citation is a space, `@`, a path and a line number at the end of the line, as in ` @ src/app.ts:17`.
+ --> mistakes.horse:4:1
+  |
+4 | A { B @ x } -> C
+  | ^^^^^^^^^^^
+  = safe fix: Write the name in double quotes.
+
+error[E0004]: `B @ x` holds a character that a bare name cannot hold. Write the name in double quotes. A citation is a space, `@`, a path and a line number at the end of the line, as in ` @ src/app.ts:17`.
+ --> mistakes.horse:4:5
+  |
+4 | A { B @ x } -> C
+  |     ^^^^^
+
+error[E0009]: A fact goes inside braces after a name, as in `Payments { owner: Commerce }`. A name that holds `:` is written in double quotes.
+ --> mistakes.horse:5:2
+  |
+5 | 	owner: Commerce
+  | 	^^^^^^^^^^^^^^^
+
+error[E0005]: A double quote opens here and does not close. Add the closing `"` on the same line.
+ --> mistakes.horse:6:11
+  |
+6 | Orders -> "Postgres
+  |           ^^^^^^^^^
+
+error[E0008]: A `show` line is `show` and a lens, as in `show flow`, or with `of`, `from` or `by` and a name, as in `show sequence of checkout`. A thing with the name `show` is written `"show"`.
+ --> mistakes.horse:7:1
+  |
+7 | show flow of
+  | ^^^^^^^^^^^^
+
+warning[W0010]: Stories arrive in v0.2. This version parses the story `checkout` and does not order its links. You do not need to change the file.
+ --> mistakes.horse:8:1
+  |
+8 | story checkout {
+  | ^^^^^^^^^^^^^^
+
+error[E0003]: This `}` closes nothing. Remove it, or add the `{` that it closes.
+  --> mistakes.horse:11:1
+   |
+11 | }
+   | ^

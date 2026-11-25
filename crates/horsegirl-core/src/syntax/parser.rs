@@ -6,7 +6,7 @@
 use std::ops::Range;
 
 use super::lexer::lex;
-use super::{Diagnostic, Element, Fix, Node, NodeKind, Parse, Token, TokenKind};
+use super::{Confidence, Diagnostic, Edit, Element, Fix, Node, NodeKind, Parse, Token, TokenKind};
 
 /// Braces nest this deep and no deeper. The parser calls itself once for each
 /// level, so a file of ten thousand `{` must not reach the end of the stack.
@@ -52,13 +52,35 @@ pub(super) fn parse(source: &str) -> Parse<'_> {
     }
     // An unclosed brace is reported at the end of the file. Sorting puts it
     // back where the brace is.
-    parser.diagnostics.sort_by_key(|d| d.span.start);
+    parser.diagnostics.sort_by_key(|d| (d.span.start, d.code));
+    drop_overlapping_fixes(&mut parser.diagnostics);
     Parse {
         tree: Node {
             kind: NodeKind::File,
             children,
         },
         diagnostics: parser.diagnostics,
+    }
+}
+
+/// Takes the fix off each diagnostic whose fix overlaps the fix of an earlier
+/// one, so that a tool can apply every fix of one parse.
+///
+/// The earlier fix is the outer one: in `A { B @ x } -> C` the line and the
+/// block inside it each need quotes. Quotes around the whole name repair both,
+/// and the inner fix would cut into them.
+fn drop_overlapping_fixes(diagnostics: &mut [Diagnostic]) {
+    let mut end = 0;
+    for diagnostic in diagnostics {
+        let Some(fix) = &diagnostic.fix else {
+            continue;
+        };
+        let span = fix.span();
+        if span.start < end {
+            diagnostic.fix = None;
+        } else {
+            end = span.end;
+        }
     }
 }
 
@@ -908,8 +930,12 @@ impl<'s> Parser<'s> {
             ""
         };
         let fix = (text.len() <= MAX_FIX && !text.contains('"')).then(|| Fix {
-            span: span.clone(),
-            text: format!("{space}\"{text}\""),
+            confidence: Confidence::Safe,
+            description: format!("Write the {what} in double quotes."),
+            edits: vec![Edit {
+                span: span.clone(),
+                text: format!("{space}\"{text}\""),
+            }],
         });
         let text = quote(text);
         Diagnostic {
@@ -926,10 +952,15 @@ impl<'s> Parser<'s> {
 
     fn missing(&self, what: &str) -> Diagnostic {
         let index = self.skip(self.pos);
-        let span = self.span_at(index);
+        let mut span = self.span_at(index);
         let place = match self.kind_at(index) {
             Some(TokenKind::Unclosed) => return self.unexpected(index),
-            None | Some(TokenKind::Newline) => "at the end of the line".to_owned(),
+            None | Some(TokenKind::Newline) => {
+                // The span is the place where the text goes, and not the line
+                // break after it.
+                span.end = span.start;
+                "at the end of the line".to_owned()
+            }
             Some(_) => format!("before `{}`", quote(&self.source[span.clone()])),
         };
         diagnostic(
