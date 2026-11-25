@@ -443,6 +443,37 @@ fn a_show_line_names_a_lens_and_an_argument() {
 }
 
 #[test]
+fn a_show_line_with_a_mistake_in_its_argument_is_still_a_show_line() {
+    for (source, quoted) in [
+        (
+            "show rings from GET /users/{id}",
+            "show rings from \"GET /users/{id}\"",
+        ),
+        (
+            "show rings from Sensors: wind",
+            "show rings from \"Sensors: wind\"",
+        ),
+        ("show sequence of a@b", "show sequence of \"a@b\""),
+    ] {
+        let error = only(source);
+        assert_eq!(error.code, "E0004", "{source}");
+        assert_eq!(fixed(source), quoted);
+        let (tree, codes) = read(quoted);
+        assert_eq!(codes, [""; 0], "{quoted}");
+        assert_eq!(kinds(&parse(quoted).tree), [NodeKind::Show], "{tree}");
+    }
+    let error = only("show sequence of S, T");
+    assert_eq!(error.code, "E0008");
+    assert!(error.message.contains("one name"), "{}", error.message);
+    assert_eq!(error.fix, None);
+    // Without a lens and `of`, `from` or `by`, `show` is a word of a name.
+    let (tree, codes) = read("show, A -> B\nshow { owner: X }\n");
+    assert_eq!(codes, [""; 0]);
+    assert!(tree.contains("Name \"show\""), "{tree}");
+    assert!(!tree.contains("Show"), "{tree}");
+}
+
+#[test]
 fn each_mistake_has_its_own_code() {
     for (source, code) in [
         ("A -> B -> C", "E0001"),
