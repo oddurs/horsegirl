@@ -1,0 +1,24 @@
+# Converted from corpus/flowcharts/0061.mmd by corpus/convert.py.
+Chat UI -> REST + SSE Router: POST /messages
+useSSE Hook -> REST + SSE Router: GET /events?after=N
+REST + SSE Router -> SessionManager
+SessionManager -> SQLite DB: store events + messages
+SessionManager -> asyncio.Event: notify
+asyncio.Event -> REST + SSE Router: wake up
+REST + SSE Router -> useSSE Hook: SSE stream
+SessionManager -> SandboxManager: create / run / terminate
+SandboxManager -> agent_runner.py: sb.exec() in thread
+agent_runner.py -> asyncio.Queue: NDJSON stdout
+asyncio.Queue -> SessionManager: yield events
+agent_runner.py -> Claude Agent SDK
+Claude Agent SDK -> Claude Model: query + resume
+Claude Model -> Read / Write / Edit / Bash / Glob / Grep: tool calls
+Claude Agent SDK -> SDK Session Store: session_id
+pre-push hook -> agent_runner.py: /tmp/endo-push-request
+SessionManager -> SandboxManager: "sb.exec: write /tmp/endo-push-response"
+Chat UI -> REST + SSE Router: POST /permission
+
+Frontend (Next.js) { Chat UI, useSSE Hook }
+Backend (FastAPI) { REST + SSE Router, SessionManager, SandboxManager, SQLite DB, asyncio.Event, asyncio.Queue }
+Modal Cloud Sandbox { agent_runner.py, Claude Agent SDK, Read / Write / Edit / Bash / Glob / Grep, pre-push hook, code-server }
+Anthropic API { Claude Model, SDK Session Store }

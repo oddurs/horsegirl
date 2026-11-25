@@ -1,0 +1,7 @@
+# Converted from corpus/flowcharts/0214.mmd by corpus/convert.py.
+Outlook 15 Profile -> extract_outlook.py
+extract_outlook.py -> Maildir/cur/
+extract_outlook.py -> attachments/
+extract_outlook.py -> summary.csv
+Maildir/cur/ -> emailindex/ingest.py
+emailindex/ingest.py -> emails.db

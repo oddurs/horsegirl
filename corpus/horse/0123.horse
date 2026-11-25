@@ -1,0 +1,16 @@
+# Converted from corpus/flowcharts/0123.mmd by corpus/convert.py.
+Receipt CSV -> core.read_csv
+core.read_csv -> core.validate_rows
+core.validate_rows -> ledger.import_csv
+ledger.import_csv -> LedgerEntry
+LedgerEntry -> LedgerDatabase.append_entries
+LedgerDatabase.append_entries -> Authoritative JSONL ledger
+LedgerDatabase.append_entries -> SQLite query cache
+Receipt CSV -> core.calculate_indices
+Authoritative JSONL ledger -> LedgerDatabase queries
+SQLite query cache -> LedgerDatabase queries
+LedgerDatabase queries -> CLI output
+LedgerDatabase queries -> dashboard.create_dashboard
+LedgerDatabase queries -> dashboard.compute_inflation_and_welfare
+dashboard.create_dashboard -> Interactive HTML
+dashboard.compute_inflation_and_welfare -> Interactive HTML

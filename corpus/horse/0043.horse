@@ -1,0 +1,4 @@
+# Converted from corpus/flowcharts/0043.mmd by corpus/convert.py.
+Editor event -> hook_runner.py
+hook_runner.py -> "Snoozed, debounced"
+"Snoozed, debounced" -> Sound · toast · speech · webhook: no

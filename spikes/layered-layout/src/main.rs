@@ -2,6 +2,7 @@
 //!
 //! ```text
 //! cargo run --release -- draw   # writes pictures/<candidate>/<diagram>.svg and prints the scores
+//! cargo run --release -- draw <corpus> <pictures>   # the same for another directory of files
 //! cargo run --release -- seed   # adds one thing to each diagram and counts the things that move,
 //!                               # then seeds each diagram with its own picture and no edit
 //! ```
@@ -16,9 +17,9 @@ use std::fs;
 
 use model::{Graph, Picture, Seed};
 
-fn corpus() -> Result<Vec<(String, Graph)>, String> {
-    let mut paths: Vec<_> = fs::read_dir("corpus")
-        .map_err(|e| format!("corpus: {e}"))?
+fn corpus(directory: &str) -> Result<Vec<(String, Graph)>, String> {
+    let mut paths: Vec<_> = fs::read_dir(directory)
+        .map_err(|e| format!("{directory}: {e}"))?
         .filter_map(|entry| entry.ok().map(|entry| entry.path()))
         .collect();
     paths.sort();
@@ -35,7 +36,7 @@ fn corpus() -> Result<Vec<(String, Graph)>, String> {
     Ok(graphs)
 }
 
-fn draw() -> Result<(), String> {
+fn draw(corpus_directory: &str, pictures: &str) -> Result<(), String> {
     let candidates = ["own", "dagre", "graphlay", "elk"];
     println!(
         "| diagram | things | links | candidate | size | overlaps | touching | group faults | \
@@ -43,7 +44,7 @@ fn draw() -> Result<(), String> {
     );
     println!("| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |");
     let mut totals = [[0usize; 6]; 4];
-    for (name, graph) in corpus()? {
+    for (name, graph) in corpus(corpus_directory)? {
         for (index, candidate) in candidates.iter().enumerate() {
             let picture = match *candidate {
                 "own" => own::layout(&graph, None),
@@ -51,7 +52,7 @@ fn draw() -> Result<(), String> {
                 "graphlay" => crates::graphlay(&graph, None)?,
                 _ => crates::elk(&graph, None)?,
             };
-            let directory = format!("pictures/{candidate}");
+            let directory = format!("{pictures}/{candidate}");
             fs::create_dir_all(&directory).map_err(|e| format!("{directory}: {e}"))?;
             let path = format!("{directory}/{name}.svg");
             fs::write(&path, svg::draw(&graph, &picture)).map_err(|e| format!("{path}: {e}"))?;
@@ -171,7 +172,7 @@ fn seed() -> Result<(), String> {
     let mut totals = [[0usize; 3]; 7];
     let mut unedited_rows = Vec::new();
     let mut unedited_totals = [[0usize; 3]; 3];
-    for (name, mut graph) in corpus()? {
+    for (name, mut graph) in corpus("corpus")? {
         let things = graph.nodes.len();
         let before = [
             own::layout(&graph, None),
@@ -284,10 +285,13 @@ fn seed() -> Result<(), String> {
 }
 
 fn main() {
-    let result = match std::env::args().nth(1).as_deref() {
-        Some("draw") => draw(),
-        Some("seed") => seed(),
-        _ => Err("usage: layered-layout-spike draw|seed".to_string()),
+    let args: Vec<String> = std::env::args().skip(1).collect();
+    let args: Vec<&str> = args.iter().map(String::as_str).collect();
+    let result = match args.as_slice() {
+        ["draw"] => draw("corpus", "pictures"),
+        ["draw", corpus, pictures] => draw(corpus, pictures),
+        ["seed"] => seed(),
+        _ => Err("usage: layered-layout-spike draw [<corpus> <pictures>] | seed".to_string()),
     };
     if let Err(message) = result {
         eprintln!("{message}");

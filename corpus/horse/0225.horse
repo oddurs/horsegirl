@@ -1,0 +1,29 @@
+# Converted from corpus/flowcharts/0225.mmd by corpus/convert.py.
+Request -> P0 Triage
+P0 Triage -> Direct edit + existing rails: trivial
+P0 Triage -> P3 Rail: bounded bug
+P0 Triage -> P1 Interrogate: substantial
+P1 Interrogate -> "GATE: spec-lint clean +"
+"GATE: spec-lint clean +" -> P2 Decompose
+P2 Decompose -> "GATE: coldstart per ticket +"
+"GATE: spec-lint clean +" -> P1 Interrogate: divergence high
+"GATE: coldstart per ticket +" -> P2 Decompose: gaps
+"GATE: coldstart per ticket +" -> P3 Rail
+P3 Rail -> "GATE: suite RED for the right reasons +"
+"GATE: suite RED for the right reasons +" -> "preflight: environment determinism"
+"preflight: environment determinism" -> P4 Build
+P4 Build -> "GATE: rails green + build + lint +"
+"GATE: rails green + build + lint +" -> P4 Build: "flail or fail: regenerate"
+"GATE: rails green + build + lint +" -> P5 Prosecute
+P5 Prosecute -> "verify each finding:"
+"verify each finding:" -> fix tickets: verified findings
+fix tickets -> P4 Build
+"verify each finding:" -> "GATE: 2 consecutive dry passes +": dry
+"GATE: 2 consecutive dry passes +" -> P6 Integrate
+P6 Integrate -> P7 Distill
+P7 Distill -> P1 Interrogate: lessons → lints and skills priors → model-router questions → P1 templates
+Direct edit + existing rails -> P5 Prosecute
+
+SPECIFY — human + best-available judgment { P1 Interrogate, "GATE: spec-lint clean +", P2 Decompose, "GATE: coldstart per ticket +" }
+RAIL + BUILD — mid/cheap models inside structure { P3 Rail, "GATE: suite RED for the right reasons +", "preflight: environment determinism", P4 Build, "GATE: rails green + build + lint +" }
+PROSECUTE — pooled fresh contexts { P5 Prosecute, "verify each finding:", "GATE: 2 consecutive dry passes +", fix tickets }

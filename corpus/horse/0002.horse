@@ -1,0 +1,18 @@
+# Converted from corpus/flowcharts/0002.mmd by corpus/convert.py.
+N-Bus Transmission Network & Branches -> SecurityConstrainedOptimalPowerFlow
+SecurityConstrainedOptimalPowerFlow -> DynamicLineRatingScheduler
+"Weather Telemetry: Crosswind V_w, Angle phi, Solar Irradiance, T_amb" -> DynamicLineRatingScheduler
+DynamicLineRatingScheduler -> SecurityConstrainedOptimalPowerFlow: Dynamic Thermal Limit
+24-Hour Regional Load Profile D_t -> UnitCommitmentThermalBatterySolver
+Grid-Scale Battery Energy Storage (BESS) -> UnitCommitmentThermalBatterySolver
+SecurityConstrainedOptimalPowerFlow -> UnitCommitmentThermalBatterySolver: LMP Signals
+Aggregated DER Portfolio -> VirtualPowerPlantCoOptimizer
+UnitCommitmentThermalBatterySolver -> VirtualPowerPlantCoOptimizer: System Imbalance
+Poloidal Field (PF) Coils (ITER/SPARC Geometry) -> TokamakPlasmaMHDEquilibriumSolver
+TokamakPlasmaMHDEquilibriumSolver -> N-Bus Transmission Network & Branches: Fusion Baseload MW
+
+1. Bulk Transmission Grid & N-1 Security { N-Bus Transmission Network & Branches, SecurityConstrainedOptimalPowerFlow }
+2. Multi-Period Mixed-Integer Scheduling (UC-ED) { 24-Hour Regional Load Profile D_t, Grid-Scale Battery Energy Storage (BESS), UnitCommitmentThermalBatterySolver }
+3. Virtual Power Plant (VPP) Dual-Market Trading { Aggregated DER Portfolio, VirtualPowerPlantCoOptimizer }
+4. Tokamak Fusion Plasma MHD Control { Poloidal Field (PF) Coils (ITER/SPARC Geometry), TokamakPlasmaMHDEquilibriumSolver }
+5. Dynamic Line Rating (DLR) Ampacity { "Weather Telemetry: Crosswind V_w, Angle phi, Solar Irradiance, T_amb", DynamicLineRatingScheduler }

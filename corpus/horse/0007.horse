@@ -1,0 +1,10 @@
+# Converted from corpus/flowcharts/0007.mmd by corpus/convert.py.
+Internal server -> acme-proxy
+IoT device -> acme-proxy
+Traefik / Caddy -> acme-proxy
+acme-proxy -> Embedded CA
+acme-proxy -> Upstream ACME CA
+acme-proxy -> Your script
+
+Your network { Internal server, IoT device, Traefik / Caddy }
+One of these actually signs { Embedded CA, Upstream ACME CA, Your script }

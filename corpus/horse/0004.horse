@@ -1,0 +1,6 @@
+# Converted from corpus/flowcharts/0004.mmd by corpus/convert.py.
+🏢 Manufacturer -> 💊 Drug: PRODUCES
+💊 Drug -> 🧪 Ingredient: CONTAINS
+🏢 Manufacturer -> 🚚 Distributor: "SUPPLIES {lead_time_days}"
+🚚 Distributor -> 🏥 Pharmacy: "DISTRIBUTES_TO {frequency}"
+💊 Drug -> 💊 Drug: "SUBSTITUTABLE_WITH {therapeutic_equiv}"

@@ -1,0 +1,4 @@
+# Converted from corpus/flowcharts/0117.mmd by corpus/convert.py.
+Start -> Decision
+Decision -> OK: Yes
+Decision -> Cancel: No

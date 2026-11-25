@@ -1,0 +1,24 @@
+# Converted from corpus/flowcharts/0055.mmd by corpus/convert.py.
+tcp_server_t -> tcp_server_create
+tcp_server_t -> tcp_server_run
+tcp_server_t -> tcp_server_send
+epoll_event_t -> epoll_event_handle
+epoll_event_handle -> epoll_event_dispatch
+epoll_event_dispatch -> on_accept
+epoll_event_dispatch -> on_read
+epoll_event_dispatch -> on_write
+epoll_event_dispatch -> on_error
+connection_t -> connection_create
+connection_t -> connection_recv
+connection_t -> connection_set_state
+connection_t -> 读写缓冲管理
+main.c -> tcp_server_send
+tcp_server_run -> epoll_event_handle
+epoll_event_dispatch -> connection_recv
+epoll_event_dispatch -> connection_create
+epoll_event_handle -> connection_set_state: 查询/修改
+
+应用层 { main.c }
+tcp_server.h - 全局协调器 { tcp_server_t, tcp_server_create, tcp_server_run, tcp_server_send }
+epoll_event.h - 事件分发器 { epoll_event_t, epoll_event_handle, epoll_event_dispatch, on_accept, on_read, on_write, on_error }
+connection.h - 连接管理器 { connection_t, connection_create, connection_recv, connection_set_state, 读写缓冲管理 }

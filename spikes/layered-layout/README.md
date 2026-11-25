@@ -133,6 +133,51 @@ b -> a
 
 own draws `e` at y -128 to -92 and `a` at y -92 to -56.
 
+## The public flowcharts
+
+Item 0125 checks the scores on flowcharts that the author of the prototype did not write:
+the Mermaid corpus of SPIKE-17 in `corpus/flowcharts`. `mermaid.py` converts each flowchart
+to the subset above, with the tokenizer of `corpus/measure.py`. The prototype does not change.
+
+```sh
+python3 -I mermaid.py ../../corpus/flowcharts target/public
+cargo run --release -- draw target/public target/pictures
+```
+
+The converter keeps the rules of Mermaid that change the picture:
+
+- A node is a thing. Its name is the first line of its label, or its id when it has no label.
+- A node is in the first subgraph that closes around it, so an inner subgraph wins.
+- Two nodes with one name stay two things. The second gets the suffix ` 2`.
+- `->`, `,`, `:`, `{` and `}` in a name become `=>`, `;`, `;`, `(` and `)`. The spike parser
+  splits names at them. A replacement of the same length keeps the width of the box.
+
+It drops what the subset cannot hold: 7 links from a node to itself, and 4 nodes with no
+link and no subgraph. A flowchart with a link that ends at a subgraph does not convert,
+because every link of the spike ends at a thing.
+
+Of 239 flowcharts, 216 convert and 23 do not. All 23 have a link that ends at a subgraph.
+The 216 hold 2279 things, 2463 links and 269 groups. 79 have groups, and 10 nest them.
+
+| candidate | overlaps | touching | group faults | links through a box | crossings | bends |
+| --- | --- | --- | --- | --- | --- | --- |
+| own | 0 | 4 | 0 | 0 | 395 | 3470 |
+| dagre | 0 | 0 | 0 | 101 | 406 | 2098 |
+| graphlay | 0 | 0 | 0 | 0 | 541 | 3030 |
+| elk | 0 | 0 | 0 | 0 | 228 | 3194 |
+
+- own overlaps no boxes and breaks no group. It draws 4 touching pairs, in `0097`, `0142` and
+  `0157`. That is the fault of the group marker above, which item 0032 must fix.
+- own has 1.7 times the crossings of elk. On the ten spike diagrams it had 2.2 times.
+- own and elk have the same crossings on 163 flowcharts. own has fewer on 11 and more on 42.
+- One flowchart, `0235`, holds 134 of the 395 crossings of own and 47 of the 228 of elk.
+  Without it the ratio is 1.4.
+- On the 79 flowcharts with groups, own has 288 crossings and elk 135: 2.1 times. On the 10
+  with nested groups, own has 56 and elk 30. The order phase is weakest with groups, as on
+  the spike diagrams.
+
+Two runs gave the same report and the same pictures.
+
 ## The seed experiment
 
 Each row adds one thing, `New step`, with one link from the middle thing of the file.

@@ -1,0 +1,11 @@
+# Converted from corpus/flowcharts/0076.mmd by corpus/convert.py.
+Downgrade class -> POODLE
+Downgrade class -> Logjam
+Record layer leakage -> Lucky Thirteen
+Record layer leakage -> SWEET32
+Authentication binding failure -> Triple Handshake
+Authentication binding failure -> Transcript Collision
+Implementation failure -> Heartbleed
+Ecosystem accountability -> Sunlight and CT
+Human and social context -> Rogaway
+Human and social context -> Mickens

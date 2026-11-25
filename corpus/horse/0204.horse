@@ -1,0 +1,19 @@
+# Converted from corpus/flowcharts/0204.mmd by corpus/convert.py.
+complete-filtered_stops -> complete-device_counties
+complete-filtered_stops -> complete-semantic_stops
+complete-filtered_stops -> complete-stop_reporting
+complete-initial_stops -> complete-filtered_stops
+complete-initial_stops -> complete-stop_reporting
+complete-speed_based_filter -> complete-initial_stops
+data/gpsping/ubermedia/complete.dvc -> complete-h3_hour_aggregate
+data/gpsping/ubermedia/complete.dvc -> complete-speed_based_filter
+data/gpsping/ubermedia/complete.dvc -> complete-stop_reporting
+data/gpsping/ubermedia/non_covid_tuesday.dvc -> small-h3_hour_aggregate
+data/gpsping/ubermedia/non_covid_tuesday.dvc -> small-speed_based_filter
+data/gpsping/ubermedia/non_covid_tuesday.dvc -> small-stop_reporting
+small-filtered_stops -> small-device_counties
+small-filtered_stops -> small-semantic_stops
+small-filtered_stops -> small-stop_reporting
+small-initial_stops -> small-filtered_stops
+small-initial_stops -> small-stop_reporting
+small-speed_based_filter -> small-initial_stops

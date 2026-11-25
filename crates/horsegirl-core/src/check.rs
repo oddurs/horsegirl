@@ -2,11 +2,13 @@
 //!
 //! A thing exists from its first mention, so a typo makes a new thing with no
 //! error from the parser. The checks read the model and report a typo, a thing
-//! with no link, a link that breaks a `-x` rule, a guess and an unknown lens.
+//! with no link, a link that breaks a `-x` rule, a guess, an unknown lens and
+//! a lens whose facts the file does not state.
 
 use crate::diagnostic::{Confidence, Diagnostic, Edit, Fix, LineIndex};
+use crate::lens::Need;
 use crate::model::{Model, Thing, ThingId, lower};
-use crate::syntax::parse;
+use crate::syntax::{Element, Node, NodeKind, parse};
 
 /// Every lens that a `show` line can pick, as the language card lists them.
 pub const LENSES: &[&str] = &["flow", "sequence", "lanes", "matrix", "rings", "seams"];
@@ -18,6 +20,7 @@ pub fn check(source: &str) -> Vec<Diagnostic> {
     let parse = parse(source);
     let mut diagnostics = parse.diagnostics;
     diagnostics.extend(of_model(source, &lower(&parse.tree)));
+    diagnostics.extend(paths(&parse.tree));
     sort(&mut diagnostics);
     diagnostics
 }
@@ -32,6 +35,7 @@ pub fn of_model(source: &str, model: &Model) -> Vec<Diagnostic> {
     diagnostics.extend(broken_rules(source, model));
     diagnostics.extend(guesses(model));
     diagnostics.extend(lenses(model));
+    diagnostics.extend(needs(model));
     sort(&mut diagnostics);
     diagnostics
 }
@@ -57,7 +61,11 @@ fn typos(source: &str, model: &Model) -> Vec<(ThingId, Diagnostic)> {
         let near: Vec<&Thing> = model
             .things
             .iter()
-            .filter(|known| known.mentions.len() > 1 && distance(&thing.name, &known.name) == 1)
+            .filter(|known| {
+                known.mentions.len() > 1
+                    && distance(&thing.name, &known.name) == 1
+                    && !siblings(&thing.name, &known.name)
+            })
             .collect();
         let diagnostic = match near.as_slice() {
             [] => continue,
@@ -102,6 +110,26 @@ fn typos(source: &str, model: &Model) -> Vec<(ThingId, Diagnostic)> {
         found.push((id, diagnostic));
     }
     found
+}
+
+/// Two names that differ only in a final word that is a number or one letter
+/// (`Service A` and `Service B`, `Deploy #1` and `Deploy #2`), or that are both
+/// shorter than three characters, are a numbered or lettered series, not a typo.
+fn siblings(a: &str, b: &str) -> bool {
+    if a.chars().count() < 3 && b.chars().count() < 3 {
+        return true;
+    }
+    let is_marker = |word: &str| {
+        let digits = word.strip_prefix('#').unwrap_or(word);
+        (!digits.is_empty() && digits.chars().all(|c| c.is_ascii_digit()))
+            || word.chars().count() == 1
+    };
+    match (a.rsplit_once(' '), b.rsplit_once(' ')) {
+        (Some((head_a, last_a)), Some((head_b, last_b))) => {
+            head_a == head_b && is_marker(last_a) && is_marker(last_b)
+        }
+        _ => false,
+    }
 }
 
 /// W0107: a thing that no link and no rule names. A group needs no link of
@@ -160,6 +188,105 @@ fn broken_rules(source: &str, model: &Model) -> Vec<Diagnostic> {
     found
 }
 
+/// W0108: a name that ends in `/` followed by braces that hold one bare name,
+/// as in `GET /users/{id}`. The parser reads a group `GET /users/` with the
+/// part `id`, and cannot tell it from a path. The fix writes the whole text in
+/// double quotes. It is only suggested, because the writer may mean a group.
+/// This reads the tree, because the model keeps no span for the braces.
+fn paths(tree: &Node<'_>) -> Vec<Diagnostic> {
+    let mut found = Vec::new();
+    path_lines(tree, &mut found);
+    found
+}
+
+fn path_lines(node: &Node<'_>, found: &mut Vec<Diagnostic>) {
+    for inner in node.children.iter().filter_map(|element| match element {
+        Element::Node(inner) => Some(inner),
+        Element::Token(_) => None,
+    }) {
+        if inner.kind == NodeKind::Things
+            && let Some(diagnostic) = path(inner)
+        {
+            found.push(diagnostic);
+        }
+        path_lines(inner, found);
+    }
+}
+
+fn path(things: &Node<'_>) -> Option<Diagnostic> {
+    let names = child_of(things, NodeKind::Names)?;
+    let block = child_of(things, NodeKind::Block)?;
+    let [Element::Node(name)] = names.children.as_slice() else {
+        return None;
+    };
+    let name_text = name.to_string();
+    if !name_text.ends_with('/') || name_text.starts_with('"') {
+        return None;
+    }
+    // The braces hold one line, and that line is one bare name: no link, no
+    // fact, no block and no second name.
+    let lines: Vec<&Node<'_>> = block
+        .children
+        .iter()
+        .filter_map(|element| match element {
+            Element::Node(node) => Some(node),
+            Element::Token(_) => None,
+        })
+        .collect();
+    let [line] = lines.as_slice() else {
+        return None;
+    };
+    let part = match (line.kind, child_of(line, NodeKind::Names)) {
+        (NodeKind::Things, Some(names)) if child_of(line, NodeKind::Block).is_none() => {
+            match names.children.as_slice() {
+                [Element::Node(part)] if part.kind == NodeKind::Name => part,
+                _ => return None,
+            }
+        }
+        _ => return None,
+    };
+    if part.to_string().starts_with('"') {
+        return None;
+    }
+    let part = part.to_string();
+    let text = things.to_string();
+    if text.contains('\n') || text.contains('"') {
+        return None;
+    }
+    let start = first_start(things)?;
+    let span = start..start + text.len();
+    Some(Diagnostic {
+        code: "W0108",
+        span: span.clone(),
+        message: format!(
+            "`{text}` reads as the group `{name_text}` with the part `{part}`, and not as one name. If you mean one name, write it in double quotes: `\"{text}\"`. If you mean a group, write a name that does not end in `/`."
+        ),
+        fix: Some(Fix {
+            confidence: Confidence::Suggested,
+            description: format!("Write `{text}` in double quotes."),
+            edits: vec![Edit {
+                span,
+                text: format!("\"{text}\""),
+            }],
+        }),
+    })
+}
+
+fn child_of<'a, 's>(node: &'a Node<'s>, kind: NodeKind) -> Option<&'a Node<'s>> {
+    node.children.iter().find_map(|element| match element {
+        Element::Node(inner) if inner.kind == kind => Some(inner),
+        _ => None,
+    })
+}
+
+/// The byte offset of the first token under a node.
+fn first_start(node: &Node<'_>) -> Option<usize> {
+    node.children.iter().find_map(|element| match element {
+        Element::Token(token) => Some(token.start),
+        Element::Node(inner) => first_start(inner),
+    })
+}
+
 /// N0200: a link or a rule that every statement marks with a final `?`.
 fn guesses(model: &Model) -> Vec<Diagnostic> {
     let name = |id: ThingId| &model.things[id].name;
@@ -216,6 +343,33 @@ fn lenses(model: &Model) -> Vec<Diagnostic> {
             }
         })
         .collect()
+}
+
+/// E0301: a `show` line whose lens needs facts that the file does not state.
+/// The message names each missing fact, so the picture is never drawn empty
+/// without a reason.
+fn needs(model: &Model) -> Vec<Diagnostic> {
+    let mut found = Vec::new();
+    for show in &model.shows {
+        let Some(lens) = crate::lens::find(&show.lens) else {
+            continue;
+        };
+        for need in lens.missing(model) {
+            let message = match need {
+                Need::Links => format!(
+                    "`show {}` orders things by their links, and this file has no link, so there is nothing to order. Add a link with `->`, as in `Web app -> API gateway`.",
+                    lens.name
+                ),
+            };
+            found.push(Diagnostic {
+                code: "E0301",
+                span: show.span.clone(),
+                message,
+                fix: None,
+            });
+        }
+    }
+    found
 }
 
 /// The number of edits between two names: a character added, removed or

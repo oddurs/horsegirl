@@ -1,0 +1,4 @@
+# Converted from corpus/flowcharts/0047.mmd by corpus/convert.py.
+Internet -> Caddy: HTTPS 443
+Caddy -> Spring83 Server: "127.0.0.1:8083"
+Spring83 Server -> Flat-file boards store: Local Access

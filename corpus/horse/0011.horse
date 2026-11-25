@@ -1,0 +1,12 @@
+# Converted from corpus/flowcharts/0011.mmd by corpus/convert.py.
+src/router.tsx - getRouter -> Start Document Shell - __root.tsx
+Start Document Shell - __root.tsx -> Provider - Chakra Theme
+Provider - Chakra Theme -> QueryClientProvider
+QueryClientProvider -> Layout Component
+Layout Component -> Header
+Layout Component -> Page Content via Outlet
+Layout Component -> Footer
+Page Content via Outlet -> Route-Specific Page Component
+Route-Specific Page Component -> Page Sub-Components
+Page Sub-Components -> UI Components
+UI Components -> Chakra UI Primitives

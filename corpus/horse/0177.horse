@@ -1,0 +1,15 @@
+# Converted from corpus/flowcharts/0177.mmd by corpus/convert.py.
+🎯 -> 🔧 status
+🎯 -> 🔧 log
+🎯 -> 🔧 diff
+🎯 -> 🔧 branches
+🎯 -> 🔧 branch
+🎯 -> ✅ checkout
+🎯 -> 🗑️ delete
+🎯 -> ✏️ add
+🎯 -> 🔧 commit
+🎯 -> 📤 push
+🎯 -> 🔧 pull
+
+📦 Git { 🎯, 🔧 status, 🔧 log, 🔧 diff, 🔧 branches, 🔧 branch, ✅ checkout, 🗑️ delete, ✏️ add, 🔧 commit, 📤 push, 🔧 pull }
+Dependencies { 📚 simple-git }

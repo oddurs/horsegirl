@@ -1,0 +1,12 @@
+# Converted from corpus/flowcharts/0146.mmd by corpus/convert.py.
+All consumers -> SEGMENT 1 - UENT
+All consumers -> SEGMENT 2 - UEDR
+All consumers -> SEGMENT 3 - FSTY
+All consumers -> Thick file
+Thick file -> DFH score: DRG_SCORE <= 600 high derogatory risk
+Thick file -> DFL score: DRG_SCORE > 600 low derogatory risk
+DFH score -> SEGMENT 4 - FSHH: DFH <= 545
+DFH score -> SEGMENT 5 - FSHL: DFH > 545
+DFL score -> SEGMENT 6 - FSLH: DFL <= 670
+DFL score -> SEGMENT 7 - FSLL: DFL > 670
+SEGMENT 7 - FSLL -> Each of the seven scorecards is a separate

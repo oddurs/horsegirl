@@ -1,0 +1,8 @@
+# Converted from corpus/flowcharts/0085.mmd by corpus/convert.py.
+Caught exception in a refresh / session catch -> Error == Unknown or LobbyPatcher stale-index?
+Error == Unknown or LobbyPatcher stale-index? -> "BENIGN — swallow silently, retry next tick": yes
+Error == Unknown or LobbyPatcher stale-index? -> 429 or RateLimited?: no
+429 or RateLimited? -> "RATE-LIMIT — back off 2x, keep session ref": yes
+429 or RateLimited? -> 404 or NotFound or NotInLobby?: no
+404 or NotFound or NotInLobby? -> DEFINITE — LeavePartyKeepHost → fresh solo session + OnHostConnectionLost: yes
+404 or NotFound or NotInLobby? -> "TRANSIENT — log, increment counter, retry next tick": no

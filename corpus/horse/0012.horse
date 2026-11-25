@@ -1,0 +1,20 @@
+# Converted from corpus/flowcharts/0012.mmd by corpus/convert.py.
+Entry Block 0 -> "Branch Gate: condition"
+"Branch Gate: condition" -> Then Block 1: true branch
+"Branch Gate: condition" -> Else/Merge Block 2: false branch
+Then Block 1 -> Else/Merge Block 2
+Else/Merge Block 2 -> Exit Return Block 3
+Entry Block 0 -> "Branch Gate: condition"
+"Branch Gate: condition" -> Then Block 1: true branch
+"Branch Gate: condition" -> Else/Merge Block 2: false branch
+Then Block 1 -> Else/Merge Block 2
+Else/Merge Block 2 -> Exit Return Block 3
+Entry Block 0 -> "Branch Gate: condition"
+"Branch Gate: condition" -> Then Block 1: true branch
+"Branch Gate: condition" -> Else/Merge Block 2: false branch
+Then Block 1 -> Else/Merge Block 2
+Else/Merge Block 2 -> Exit Return Block 3
+
+"Function CFG: state()" { Entry Block 0, "Branch Gate: condition", Then Block 1, Else/Merge Block 2, Exit Return Block 3 }
+"Function CFG: this()" { Entry Block 0, "Branch Gate: condition", Then Block 1, Else/Merge Block 2, Exit Return Block 3 }
+"Function CFG: path()" { Entry Block 0, "Branch Gate: condition", Then Block 1, Else/Merge Block 2, Exit Return Block 3 }

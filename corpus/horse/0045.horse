@@ -1,0 +1,29 @@
+# Converted from corpus/flowcharts/0045.mmd by corpus/convert.py.
+CLI Interface -> Core
+Core -> Parsers
+Core -> Generators
+Core -> LLMClient
+Core -> FormatConverter
+Parsers -> PDFParser
+Parsers -> HTMLParser
+Parsers -> YouTubeParser
+Parsers -> DOCXParser
+Parsers -> PPTParser
+Parsers -> TXTParser
+Generators -> QAGenerator
+Generators -> COTGenerator
+Configuration -> CLI Interface
+Configuration -> Core
+Configuration -> LLMClient
+Configuration -> Generators
+Utilities -> TextProcessing
+Utilities -> LLMProcessing
+Utilities -> ConfigUtils
+Utilities -> FormatConverter
+Utilities -> HF Dataset Utils
+LLMClient -> Batch Processing
+LLMProcessing -> Parse QA Pairs
+LLMProcessing -> Enhanced Rating Parser
+LLMProcessing -> Conversation Format Utils
+Environment Variables -> Core
+Environment Variables -> LLMProcessing

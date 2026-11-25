@@ -57,8 +57,12 @@ pub const CATALOGUE: &[Code] = &[
         summary: "A `show` line names a lens that does not exist. The message lists the lenses, and a lens one edit from a known lens gets a safe fix.",
     },
     Code {
+        code: "E0301",
+        summary: "A `show` line picks a lens that needs facts the file does not state, such as `show flow` in a file with no link. The message names the missing facts.",
+    },
+    Code {
         code: "E0412",
-        summary: "A name is written once and is one edit from a name written more often, so it is likely a typo that makes a new thing. The safe fix writes the other name. When more than one such name is one edit away, the message names each and there is no fix.",
+        summary: "A name is written once and is one edit from a name written more often, so it is likely a typo that makes a new thing. The safe fix writes the other name. When more than one such name is one edit away, the message names each and there is no fix. Two names are not a typo when they differ only in a final word that is a number or one letter (`Service A` and `Service B`), or when both are shorter than three characters.",
     },
     Code {
         code: "E0500",
@@ -79,6 +83,10 @@ pub const CATALOGUE: &[Code] = &[
     Code {
         code: "W0107",
         summary: "A thing has no link and no rule, so it stands alone in every picture. A group needs no link of its own.",
+    },
+    Code {
+        code: "W0108",
+        summary: "A name that ends in `/` is followed by braces that hold one bare name, as in `GET /users/{id}`. The parser reads a group, and the writer likely meant one name. The suggested fix writes the whole text in double quotes.",
     },
 ];
 

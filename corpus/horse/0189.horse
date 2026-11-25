@@ -1,0 +1,16 @@
+# Converted from corpus/flowcharts/0189.mmd by corpus/convert.py.
+PlannedAction spawn_engineer -> identity/read-only rails
+identity/read-only rails -> assigned/live engineer checks
+assigned/live engineer checks -> resolve target repo
+resolve target repo -> overlap/resource admission
+overlap/resource admission -> "EngineerWorktree::allocate"
+"EngineerWorktree::allocate" -> ensure_amplihack_fresh
+ensure_amplihack_fresh -> spawn_subordinate
+spawn_subordinate -> tmux or direct child
+tmux or direct child -> simard engineer run single-process
+simard engineer run single-process -> build_agent_prompt + standards
+build_agent_prompt + standards -> amplihack copilot/RustyClawd
+amplihack copilot/RustyClawd -> git/gh PR creation by agent
+git/gh PR creation by agent -> merge authority/operator
+merge authority/operator -> self-deploy candidate
+spawn_subordinate -> subagent_sessions registry

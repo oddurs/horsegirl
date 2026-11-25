@@ -1,0 +1,7 @@
+# Converted from corpus/flowcharts/0141.mmd by corpus/convert.py.
+A -> Decision
+Decision -> Done: Yes
+Decision -> Step 1: No
+Step 1 -> Again?
+Again? -> Done: Yes
+Again? -> Stop: No

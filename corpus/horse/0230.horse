@@ -1,0 +1,9 @@
+# Converted from corpus/flowcharts/0230.mmd by corpus/convert.py.
+设备 -> IoT Explorer 接入: 协议终结/认证
+IoT Explorer 接入 -> 统一语义: 数据模板归一
+统一语义 -> 规则引擎
+规则引擎 -> CKafka: 转发
+规则引擎 -> 云数据库: 存储
+规则引擎 -> 云函数 SCF: 触发
+IoT Explorer 接入 -> 设备影子: 影子
+IoT Explorer 接入 -> 腾讯连连/微信: 小程序直连

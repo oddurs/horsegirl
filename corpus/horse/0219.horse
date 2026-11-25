@@ -1,0 +1,9 @@
+# Converted from corpus/flowcharts/0219.mmd by corpus/convert.py.
+使用者瀏覽器 -> Spring Boot Web 伺服器: HTTP 請求
+Spring Boot Web 伺服器 -> 使用者瀏覽器: Thymeleaf 渲染
+Spring Boot Web 伺服器 -> 控制器層: API 請求
+控制器層 -> 服務層: 調用
+服務層 -> IBM MQ 伺服器: 連接
+服務層 -> 排程器: 調用
+排程器 -> IBM MQ 伺服器: 定期檢查
+服務層 -> PDF 報表: 生成

@@ -1,0 +1,10 @@
+# Converted from corpus/flowcharts/0212.mmd by corpus/convert.py.
+Human -> Markdown
+Markdown -> MAM Parser
+MAM Parser -> MAM AST
+MAM AST -> Compiler
+Compiler -> Runtime
+Runtime -> Execution
+
+Human Identity { Markdown }
+System Identity { MAM AST }

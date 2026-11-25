@@ -1,0 +1,4 @@
+# Converted from corpus/flowcharts/0077.mmd by corpus/convert.py.
+🌐 Api — Controller · Program.cs -> ⚙️ Infrastructure — EF Core · MassTransit · Consumer
+⚙️ Infrastructure — EF Core · MassTransit · Consumer -> 📋 Application — Command · Query · Handler · interface'ler
+📋 Application — Command · Query · Handler · interface'ler -> 💎 Domain — Entity + iş kuralları

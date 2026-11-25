@@ -30,11 +30,15 @@ A page sets `--hg-scheme` to `light` or `dark` to force one.
 
 The font is `--hg-font`. Its value is `Arial, "Liberation Sans", Helvetica,
 sans-serif`, the face the core measures in. A theme can name another face.
-Positions stay the same.
+Positions stay the same. Each label carries `textLength`, its measured width,
+so a wider or narrower face is squeezed or spread to fit its box. A label with
+a character outside the metrics table carries neither attribute and keeps its
+natural width.
 
 ## The palette and the `owner` fact
 
-The palette follows the `owner` fact. The owners are numbered in the order
+The palette follows the fact that the lens binds to `colour`. The flow lens
+binds `colour: owner`, so the palette follows the `owner` fact. The owners are numbered in the order
 that their things appear in the picture. The first owner gets `--hg-c1` and
 the accent stroke, the second gets `--hg-c2` and `--hg-s2`, and the third gets
 `--hg-c3` and `--hg-s3`. A fourth owner starts again at the first. A thing

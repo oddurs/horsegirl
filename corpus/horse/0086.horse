@@ -1,0 +1,14 @@
+# Converted from corpus/flowcharts/0086.mmd by corpus/convert.py.
+"true, true" -> true: returns
+"true, false" -> false: returns
+"false, true" -> false: returns
+"false, false" -> false: returns
+"true, true" -> true: returns
+"true, false" -> true: returns
+"false, true" -> true: returns
+"false, false" -> false: returns
+Boolean × Boolean → Boolean -> AND: implemented as
+Boolean × Boolean → Boolean -> OR: implemented as
+
+AND { "true, true", true, "true, false", false, "false, true", false, "false, false", false }
+OR { "true, true", true, "true, false", true, "false, true", true, "false, false", false }

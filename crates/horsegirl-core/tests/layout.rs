@@ -17,9 +17,10 @@ use std::fmt::Write as _;
 use horsegirl_core::layout::{
     GROUP_TITLE, Graph, Group, LABEL_CLEAR, Layout, NODE_GAP, Node, RANK_GAP, layout,
 };
+use horsegirl_core::lens;
 use horsegirl_core::model::{Link, Model, Thing, lower};
 use horsegirl_core::overlap::{Kind, overlaps};
-use horsegirl_core::scene::{Placement, Point, Rect, Scene, build};
+use horsegirl_core::scene::{Point, Rect, Scene, build};
 use horsegirl_core::syntax::parse;
 use horsegirl_core::text::{Style, measure};
 
@@ -73,55 +74,17 @@ fn flow(source: &str) -> Flow {
     flow_of(lower(&parse(source).tree))
 }
 
-/// The graph of the flow of a model.
-///
-/// A thing that holds something is a group, and every other thing is a node
-/// as wide as its name. A link that starts or ends at a group is left out:
-/// item 0123 draws it.
+/// The graph of the flow of a model, as the flow lens binds it.
 fn flow_of(model: Model) -> Flow {
-    let group_ids = model.groups();
-    let group_of = |thing: usize| group_ids.iter().position(|&g| g == thing);
-    let node_ids: Vec<usize> = (0..model.things.len())
-        .filter(|&thing| group_of(thing).is_none())
-        .collect();
-    let node_of = |thing: usize| node_ids.iter().position(|&n| n == thing);
-    let parent = |thing: usize| model.things[thing].parent.and_then(group_of);
-    let links: Vec<(usize, (usize, usize))> = model
-        .links
-        .iter()
-        .enumerate()
-        .filter_map(|(id, link)| Some(id).zip(node_of(link.from).zip(node_of(link.to))))
-        .collect();
-    let label = |&(id, _): &(usize, _)| {
-        let labels = &model.links[id].labels;
-        (!labels.is_empty()).then(|| measure(&labels.join(", "), STYLE))
-    };
-    let graph = Graph {
-        nodes: node_ids
-            .iter()
-            .map(|&thing| Node {
-                width: measure(&model.things[thing].name, STYLE).width + 28.0,
-                height: 36.0,
-                group: parent(thing),
-            })
-            .collect(),
-        groups: group_ids
-            .iter()
-            .map(|&thing| Group {
-                parent: parent(thing),
-            })
-            .collect(),
-        labels: links.iter().map(label).collect(),
-        links: links.iter().map(|&(_, ends)| ends).collect(),
-    };
+    let bound = lens::bind(&model, &lens::FLOW, STYLE);
     let name = |&thing: &usize| model.things[thing].name.clone();
     Flow {
-        nodes: node_ids.iter().map(name).collect(),
-        groups: group_ids.iter().map(name).collect(),
-        graph,
-        link_ids: links.iter().map(|&(id, _)| id).collect(),
-        node_ids,
-        group_ids,
+        nodes: bound.nodes.iter().map(name).collect(),
+        groups: bound.groups.iter().map(name).collect(),
+        graph: bound.graph,
+        link_ids: bound.links,
+        node_ids: bound.nodes,
+        group_ids: bound.groups,
         model,
     }
 }
@@ -129,22 +92,17 @@ fn flow_of(model: Model) -> Flow {
 /// The scene of a picture: what a backend draws and the overlap detector
 /// reads.
 fn scene(flow: &Flow, picture: &Layout) -> Scene {
-    let mut placement = Placement {
-        things: vec![None; flow.model.things.len()],
-        links: vec![Vec::new(); flow.model.links.len()],
-        labels: vec![None; flow.model.links.len()],
+    let bound = lens::Bound {
+        graph: flow.graph.clone(),
+        nodes: flow.node_ids.clone(),
+        groups: flow.group_ids.clone(),
+        links: flow.link_ids.clone(),
     };
-    for (&thing, node) in flow.node_ids.iter().zip(&picture.nodes) {
-        placement.things[thing] = Some(*node);
-    }
-    for (&thing, group) in flow.group_ids.iter().zip(&picture.groups) {
-        placement.things[thing] = *group;
-    }
-    for (link, &id) in flow.link_ids.iter().enumerate() {
-        placement.links[id].clone_from(&picture.paths[link]);
-        placement.labels[id] = picture.labels[link];
-    }
-    build(&flow.model, &placement, STYLE)
+    build(
+        &flow.model,
+        &lens::place(&flow.model, &bound, picture),
+        STYLE,
+    )
 }
 
 /// Every collision that the overlap detector finds in a picture, in words,

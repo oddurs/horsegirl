@@ -1,0 +1,8 @@
+# Converted from corpus/flowcharts/0107.mmd by corpus/convert.py.
+process_C -> Process_D
+process_A -> process_B
+process_B -> container_Beta: via_AWSBatch
+process_A -> process_C: messages
+
+container_Beta { process_C, Process_D }
+container_Alpha { container_Beta, process_A, process_B }

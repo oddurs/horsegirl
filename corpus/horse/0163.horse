@@ -1,0 +1,13 @@
+# Converted from corpus/flowcharts/0163.mmd by corpus/convert.py.
+kubectl apply -> API Server
+API Server -> Admission Webhook
+Admission Webhook -> Gatekeeper Controller
+Gatekeeper Controller -> OPA Engine
+Constraint Templates -> OPA Engine
+Constraints -> OPA Engine
+OPA Engine -> Admission Webhook: Allow/Deny
+Admission Webhook -> API Server: Allow/Deny
+
+User Request { kubectl apply }
+API Server { API Server, Admission Webhook }
+Gatekeeper { Gatekeeper Controller, Constraint Templates, Constraints, OPA Engine }

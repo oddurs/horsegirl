@@ -107,6 +107,29 @@ fn a_name_one_edit_from_two_known_names_has_no_fix_when_one_is_written_more() {
 }
 
 #[test]
+fn sibling_names_are_not_typos() {
+    for source in [
+        "Service A -> Gateway\nGateway -> Service A\nService B -> Gateway\n",
+        "Deploy EC2 #1 -> Log\nLog -> Deploy EC2 #1\nDeploy EC2 #2 -> Log\n",
+        "1 -> 2\n2 -> 1\n3 -> 1\n",
+    ] {
+        assert_eq!(codes(&check(source)), [""; 0], "{source}");
+    }
+}
+
+#[test]
+fn the_sibling_pairs_of_the_corpus_are_not_typos() {
+    // From corpus/flowcharts 0143, 0191 and 0198, written as horsegirl.
+    for source in [
+        "CI -> Deploy EC2 #1\nDeploy EC2 #1 -> Done\nCI -> Deploy EC2 #2\n",
+        "Service A -> Sidecar Proxy\nSidecar Proxy -> Service B\nSidecar Proxy -> Service A\n",
+        "Request A -> Event loop\nEvent loop -> Request B\nRequest B -> Request C\nRequest C -> Request D\nRequest D -> Request E\nRequest B -> Event loop\n",
+    ] {
+        assert_eq!(codes(&check(source)), [""; 0], "{source}");
+    }
+}
+
+#[test]
 fn a_name_two_edits_away_is_not_a_typo() {
     let source = "A -> Payments\nPayments -> B\nC -> Paymts\n";
     assert_eq!(codes(&check(source)), [""; 0]);
@@ -210,6 +233,24 @@ fn a_lens_one_edit_from_a_known_lens_gets_a_safe_fix() {
 }
 
 #[test]
+fn the_comment_form_is_on_the_language_card_and_reads_as_written() {
+    // ADR-130: an agent that reads only the card must know that a line
+    // which starts with `#` is a comment, or a name such as `#1 priority`
+    // disappears without a diagnostic.
+    let stated: Vec<&str> = horsegirl_core::SPEC
+        .lines()
+        .filter(|line| line.contains('#') && line.contains("comment"))
+        .collect();
+    assert_eq!(stated.len(), 1, "one card line states the comment form");
+
+    let source = "# a remark -> not a link\n  # an indented remark\nA -> B\n";
+    assert_eq!(codes(&check(source)), [""; 0]);
+    let model = lower(&parse(source).tree);
+    assert!(model.find("A").is_some() && model.find("B").is_some());
+    assert!(model.find("a remark").is_none() && model.find("not a link").is_none());
+}
+
+#[test]
 fn every_lens_is_on_the_language_card() {
     for lens in LENSES {
         assert!(
@@ -233,4 +274,41 @@ fn parse_and_check_diagnostics_come_sorted_by_place() {
 fn two_runs_give_the_same_diagnostics() {
     let source = "A -> Payments\nPayments -> B\nC -> Paymnts\nLonely\nD -> E ?\nshow flwo\n";
     assert_eq!(check(source), check(source));
+}
+
+#[test]
+fn a_path_read_as_a_group_gets_a_warning_with_the_quote_fix() {
+    let source = "Web app -> GET /users/{id}\nGET /users/{id}\n";
+    let diagnostics = check(source);
+    let found: Vec<&Diagnostic> = diagnostics.iter().filter(|d| d.code == "W0108").collect();
+    assert_eq!(found.len(), 1, "{diagnostics:#?}");
+    // Only the line that stands alone is a group to the parser.
+    assert_eq!(&source[found[0].span.clone()], "GET /users/{id}");
+    assert_eq!(found[0].span.start, source.rfind("GET").unwrap());
+    let fix = found[0].fix.as_ref().expect("a path carries a fix");
+    assert_eq!(fix.confidence, Confidence::Suggested);
+    assert_eq!(fix.edits[0].text, "\"GET /users/{id}\"");
+    assert_eq!(
+        fix.apply(source),
+        "Web app -> GET /users/{id}\n\"GET /users/{id}\"\n"
+    );
+    assert!(!codes(&check(&fix.apply(source))).contains(&"W0108"));
+}
+
+#[test]
+fn a_group_with_a_name_that_does_not_end_in_a_slash_gives_no_path_warning() {
+    for source in [
+        "Services { Orders }\n",
+        "Services/ { Orders, Payments }\n",
+        "Services/ { owner: Commerce }\n",
+        "Services/ { Orders -> Payments }\n",
+        "Services/ {\n  Orders\n}\n",
+        "\"GET /users/{id}\"\n",
+    ] {
+        assert!(
+            !codes(&check(source)).contains(&"W0108"),
+            "{source:?}: {:#?}",
+            check(source)
+        );
+    }
 }

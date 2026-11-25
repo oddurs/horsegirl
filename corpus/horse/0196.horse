@@ -1,0 +1,6 @@
+# Converted from corpus/flowcharts/0196.mmd by corpus/convert.py.
+Metrics -> Recording rules
+Recording rules -> Classify nodes
+Classify nodes -> Descheduler
+Descheduler -> Live migration
+Live migration -> Metrics

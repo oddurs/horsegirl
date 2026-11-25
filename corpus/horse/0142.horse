@@ -1,0 +1,70 @@
+# Converted from corpus/flowcharts/0142.mmd by corpus/convert.py.
+index.ts -> express-adapter.ts
+crud.integration.test.ts -> test-helpers.ts
+test-helpers.ts -> connection.ts
+test-helpers.ts -> schema.ts
+test-helpers.ts -> index.ts
+test-helpers.ts -> logger.ts
+embedding.integration.test.ts -> test-helpers.ts
+filtering.integration.test.ts -> test-helpers.ts
+hooks.integration.test.ts -> connection.ts
+hooks.integration.test.ts -> schema.ts
+hooks.integration.test.ts -> index.ts
+hooks.integration.test.ts -> test-helpers.ts
+http-methods.integration.test.ts -> test-helpers.ts
+pagination.integration.test.ts -> test-helpers.ts
+sorting.integration.test.ts -> test-helpers.ts
+react-router-adapter.test.ts -> connection.ts
+react-router-adapter.test.ts -> schema.ts
+react-router-adapter.test.ts -> react-router-adapter.ts
+base-action.ts -> response-helper.ts
+create.ts -> action.types.ts
+create.ts -> base-action.ts
+delete.ts -> action.types.ts
+delete.ts -> base-action.ts
+get-many.ts -> query-builder.ts
+get-many.ts -> query-parser.ts
+get-many.ts -> response-helper.ts
+get-many.ts -> action.types.ts
+get-many.ts -> base-action.ts
+query-builder.ts -> embed-builder.ts
+query-builder.ts -> filter-builder.ts
+get-one.ts -> action.types.ts
+get-one.ts -> base-action.ts
+index.ts -> action.types.ts
+index.ts -> create.ts
+index.ts -> delete.ts
+index.ts -> get-many.ts
+index.ts -> get-one.ts
+index.ts -> replace.ts
+index.ts -> update.ts
+replace.ts -> action.types.ts
+replace.ts -> base-action.ts
+update.ts -> action.types.ts
+update.ts -> base-action.ts
+core-adapter.ts -> index.ts
+core-adapter.ts -> logger.ts
+core-adapter.ts -> request-helpers.ts
+core-adapter.ts -> schema-inspector.ts
+request-helpers.test.ts -> request-helpers.ts
+schema-inspector.test.ts -> schema.ts
+schema-inspector.test.ts -> schema-inspector.ts
+index.ts -> core-adapter.ts
+
+packages { adapters, core }
+adapters { express, react-router }
+express { src, drizzle.config.ts }
+src { db, integration-tests, express-adapter.ts, index.ts, logger.ts }
+db { connection.ts, schema.ts }
+integration-tests { crud.integration.test.ts, test-helpers.ts, embedding.integration.test.ts, filtering.integration.test.ts, hooks.integration.test.ts, http-methods.integration.test.ts, pagination.integration.test.ts, sorting.integration.test.ts }
+react-router { src }
+src { db, react-router-adapter.test.ts, react-router-adapter.ts }
+db { connection.ts, schema.ts }
+core { src }
+src { core, integration-tests, index.ts }
+core { actions, utils, types, core-adapter.ts, logger.ts, hooks.ts }
+actions { action.types.ts, base-action.ts, create.ts, delete.ts, get-many.ts, get-one.ts, index.ts, replace.ts, update.ts }
+utils { schema-inspector, response-helper.ts, query-builder.ts, embed-builder.ts, filter-builder.ts, query-parser.ts, request-helpers.ts, query.types.ts, request-helpers.test.ts }
+schema-inspector { schema-inspector.ts, schema-inspector.test.ts, schema.ts }
+types { adapter.types.ts, handler.types.ts }
+integration-tests { hooks.integration.test.ts, test-helpers.ts }

@@ -1,0 +1,9 @@
+# Converted from corpus/flowcharts/0104.mmd by corpus/convert.py.
+Application Load Balancer -> ECS Cluster
+ECS Cluster -> Data Layer
+ECS Cluster -> Messaging
+
+AWS Staging { ECS Cluster, Data Layer, Messaging }
+ECS Cluster { Web App Tasks, API Tasks, Worker Tasks }
+Data Layer { RDS PostgreSQL, ElastiCache Redis, S3 Bucket }
+Messaging { SQS Queues, SNS Topics }

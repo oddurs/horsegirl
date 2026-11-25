@@ -51,6 +51,13 @@ pub fn measure(text: &str, style: Style) -> Size {
     }
 }
 
+/// Whether the table holds every character of `text`, so that [`measure`]
+/// gives its width and not the one-em estimate for an unknown character.
+#[must_use]
+pub fn holds(text: &str) -> bool {
+    text.chars().all(|c| entry(c).is_some())
+}
+
 /// The distance from the top of a line to its baseline: the ascender of the
 /// face. A backend that places text by its baseline puts the line in the same
 /// box that [`measure`] gives, in any renderer.
@@ -75,7 +82,7 @@ fn pair(left: Entry, right: Entry) -> i16 {
 
 #[cfg(test)]
 mod tests {
-    use super::{ADVANCES, Style, UNITS_PER_EM, entry, measure, pair};
+    use super::{ADVANCES, Style, UNITS_PER_EM, entry, holds, measure, pair};
 
     fn width(text: &str) -> f64 {
         measure(text, Style { size: 12.0 }).width
@@ -92,6 +99,14 @@ mod tests {
         assert_eq!(measure("\u{4e00}", size).width, 12.0);
         assert_eq!(measure("\u{4e00}\u{4e01}", size).width, 24.0);
         assert!(entry('\u{4e00}').is_none());
+    }
+
+    #[test]
+    fn the_table_holds_a_latin_label_and_not_one_with_an_unknown_character() {
+        assert!(holds("POST /checkout"));
+        assert!(holds(""));
+        assert!(!holds("Payments \u{4e00}"));
+        assert!(!holds("\u{645}\u{631}\u{62d}\u{628}\u{627}"));
     }
 
     #[test]

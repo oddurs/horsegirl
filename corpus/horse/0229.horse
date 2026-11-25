@@ -1,0 +1,4 @@
+# Converted from corpus/flowcharts/0229.mmd by corpus/convert.py.
+User Config -> AgentProfile: "device_id, server_url capabilities, metadata"
+AIP Registration -> AgentProfile: "platform, registration_time"
+Device Telemetry -> AgentProfile: "system_info, features"

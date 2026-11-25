@@ -13,6 +13,17 @@ categories = ["command-line-utilities", "visualization"]
 
 [dependencies]
 horsegirl-core = { path = "../horsegirl-core" }
+# The MCP server. SPIKE-21 chose rmcp and pins it exactly: its tool shapes are
+# a public contract. rmcp brings schemars, which derives the tool schemas.
+rmcp = { version = "=3.11.0", default-features = false, features = ["server", "macros", "transport-io"] }
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+tokio = { version = "1", default-features = false, features = ["rt"] }
+
+# The example is the corpus gate; its own tests run with the workspace tests.
+[[example]]
+name = "corpus"
+test = true
 
 [lints]
 workspace = true

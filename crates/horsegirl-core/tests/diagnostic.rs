@@ -1,7 +1,10 @@
 //! The two forms of a diagnostic, held by snapshots, and the catalogue of codes.
 
+use horsegirl_core::check::check;
 use horsegirl_core::codes::{CATALOGUE, catalogue_markdown};
-use horsegirl_core::diagnostic::{Diagnostic, LineIndex, Severity};
+use horsegirl_core::diagnostic::{
+    Confidence, Diagnostic, Edit, Fix, LineIndex, Severity, apply_safe,
+};
 use horsegirl_core::syntax::parse;
 
 const MISTAKES: &str = include_str!("diagnostics/mistakes.horse");
@@ -240,4 +243,68 @@ fn every_code_in_the_source_is_in_the_catalogue() {
 fn the_scan_finds_a_code_in_a_string_and_nothing_else() {
     let text = r#"diagnostic("E0042", span) "W1234" E0001 "E001" "X0001" "N0003""#;
     assert_eq!(codes_in(text), ["E0042", "W1234", "N0003"]);
+}
+
+/// A diagnostic at `span` whose fix writes `text` there.
+fn fixable(span: std::ops::Range<usize>, text: &str, confidence: Confidence) -> Diagnostic {
+    Diagnostic {
+        code: "E0412",
+        span: span.clone(),
+        message: String::new(),
+        fix: Some(Fix {
+            confidence,
+            description: String::new(),
+            edits: vec![Edit {
+                span,
+                text: text.to_owned(),
+            }],
+        }),
+    }
+}
+
+#[test]
+fn apply_safe_makes_every_safe_fix_and_changes_nothing_else() {
+    // A typo, a Mermaid habit, a lens one edit off and a name that needs
+    // quotes, each with a safe fix, among lines that need none.
+    let source = "# keep this\nWeb app -> Payments\nPayments -> Bank\nOrders -> Paymnts\nA --> B\nC -> API@v2\nshow flwo\n";
+    let diagnostics = check(source);
+    let safe = diagnostics
+        .iter()
+        .filter(|d| {
+            d.fix
+                .as_ref()
+                .is_some_and(|f| f.confidence == Confidence::Safe)
+        })
+        .count();
+    assert_eq!(safe, 4, "{diagnostics:#?}");
+    let fixed = apply_safe(source, &diagnostics);
+    assert_eq!(fixed.applied, 4);
+    assert_eq!(
+        fixed.text,
+        "# keep this\nWeb app -> Payments\nPayments -> Bank\nOrders -> Payments\nA -> B\nC -> \"API@v2\"\nshow flow\n"
+    );
+    let left = check(&fixed.text);
+    assert!(left.iter().all(|d| d.fix.is_none()), "{left:#?}");
+}
+
+#[test]
+fn apply_safe_leaves_a_suggested_fix_and_an_overlapping_fix() {
+    let source = "abcdef";
+    let diagnostics = [
+        fixable(0..2, "X", Confidence::Safe),
+        fixable(1..3, "Y", Confidence::Safe),
+        fixable(4..5, "Z", Confidence::Suggested),
+        fixable(5..6, "W", Confidence::Safe),
+    ];
+    let fixed = apply_safe(source, &diagnostics);
+    assert_eq!(fixed.text, "XcdeW");
+    assert_eq!(fixed.applied, 2);
+}
+
+#[test]
+fn apply_safe_with_no_fix_returns_the_source() {
+    let source = "A -> B\nC\n";
+    let fixed = apply_safe(source, &check(source));
+    assert_eq!(fixed.text, source);
+    assert_eq!(fixed.applied, 0);
 }

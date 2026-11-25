@@ -1,0 +1,16 @@
+# Converted from corpus/flowcharts/0203.mmd by corpus/convert.py.
+Health checks per region + DNS read routing + failover orchestration -> us-east-1 (PRIMARY - holds lease)
+Health checks per region + DNS read routing + failover orchestration -> us-west-2 (STANDBY)
+Health checks per region + DNS read routing + failover orchestration -> eu-west-1 (STANDBY)
+S3 (primary) -> S3 (replica): CRR + RTC
+S3 (replica) -> S3 (replica): CRR + RTC
+DDB Global Table replica -> DDB Global Table replica: Global Tables replication
+DDB Global Table replica -> DDB Global Table replica: Global Tables replication
+"ECS Fargate: idle / lease-aware standby (writes -> 503)" -> DDB Global Table replica: monitor lease (read-only)
+"ECS Fargate: idle / lease-aware standby (writes -> 503)" -> DDB Global Table replica: monitor lease (read-only)
+"ECS Fargate: CA Service (full write path)" -> DDB Global Table replica: renew lease every 20s (60s TTL)
+
+Control Plane (Route 53) { Health checks per region + DNS read routing + failover orchestration }
+us-east-1 (PRIMARY - holds lease) { "ECS Fargate: CA Service (full write path)", "Lambda: proof + glue", CloudHSM, S3 (primary), DDB Global Table replica }
+us-west-2 (STANDBY) { "ECS Fargate: idle / lease-aware standby (writes -> 503)", "Lambda: proof + glue", CloudHSM, S3 (replica), DDB Global Table replica }
+eu-west-1 (STANDBY) { "ECS Fargate: idle / lease-aware standby (writes -> 503)", "Lambda: proof + glue", CloudHSM, S3 (replica), DDB Global Table replica }

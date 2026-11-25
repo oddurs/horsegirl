@@ -7,6 +7,27 @@ the project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Added
 
+- `horsegirl mcp` serves the tools `spec`, `check`, `fix` and `draw` over MCP
+  on standard input and standard output. Each tool takes the whole text of a
+  file. `check`, `fix` and `draw` return `structuredContent` with an
+  `outputSchema`, and a diagnostic has the shape of the `--json` line.
+  `horsegirl mcp --config` prints the entry for the configuration of a client.
+  `docs/mcp.md` states each shape.
+- A version tag publishes static binaries for Linux and macOS on x86_64 and
+  aarch64, with `SHA256SUMS` and a build attestation. `install.sh` installs
+  the binary to `~/.local/bin` and refuses an archive whose checksum does not
+  match.
+- `horsegirl check [--json] [FILE]` prints every diagnostic of a file, as text
+  or as one JSON object per line. `horsegirl fix [--json] [FILE]` applies every
+  safe fix in place, changes no other byte, and prints what is left.
+  `horsegirl draw [--to svg] [-o OUT] [--json] [FILE]` writes the picture
+  beside the file or to `OUT`, and refuses a file with an error. Each command
+  exits 0 when the file has no error, 1 when it has one, and 2 for a usage
+  mistake. `horsegirl_core::diagnostic::apply_safe` makes the safe fixes.
+- `horsegirl fmt` prints the errors of a file in the text form of a diagnostic.
+- `W0108`: a name that ends in `/` followed by braces that hold one bare name,
+  as in `GET /users/{id}`. The parser reads a group; the warning suggests
+  writing the whole text in double quotes.
 - `horsegirl fmt [--check] [FILE]` and `horsegirl_core::format::format` print a
   file in one canonical form: one statement on each line, one space around an
   arrow, the facts of a statement in the order of their keys, and quotes only
@@ -29,7 +50,7 @@ the project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   parser's and five checks on the model. `E0412`: a name written once that is
   one edit from a name written more often, with a safe fix that writes the
   other name; when two or more such names are one edit away, the message names
-  each and there is no fix. `W0107`: a thing that no link and no rule names. `E0500`: a link
+  each and there is no fix. `E0412` leaves sibling names alone: names that differ only in a final number or one-letter word (`Service A`, `Service B`), and two names shorter than three characters. `W0107`: a thing that no link and no rule names. `E0500`: a link
   that breaks a `-x` rule. `N0200`: a guess. `E0300`: a `show` line with an
   unknown lens; the message lists the lenses, and a lens one edit from a known
   lens gets a safe fix.
@@ -42,8 +63,13 @@ the project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   them. A page that holds the SVG inline sets them to restyle it, or sets
   `--hg-scheme` to `light` or `dark`. Each shape has the class of its role
   (`thing`, `group`, `link`, `label`) and one class for each fact, such as
-  `owner-commerce`. A thing with an `owner` also has `slot-1`, `slot-2` or
-  `slot-3`, the palette slot of its owner.
+  `owner-commerce`. When the scene names a colour fact, as the flow lens names
+  `owner`, a thing with that fact also has `slot-1`, `slot-2` or `slot-3`,
+  the palette slot of its value. Each label has `textLength` set to its
+  measured width and `lengthAdjust="spacingAndGlyphs"`, so a face other than
+  the measured one draws the label at the same width. A label with a
+  character outside the metrics table has neither attribute and keeps its
+  natural width.
 - The parser reads habits from Mermaid and says what it changed with the note
   `N0101`. It reads `-->` as `->`, a final `;` at the end of a line, double
   quotes around a name that does not need them, and a space before the colon
@@ -56,9 +82,25 @@ the project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   in common that lie on each other, a label on the box of another thing, a
   label across the border of a group, a link label that is not on its link,
   and two labels that overlap.
+- The flow lens. `horsegirl_core::lens::FLOW` declares it as data: the
+  question it answers, its dials (`x: depth`, `inside: group`,
+  `colour: owner`), the facts it needs and its solver. `lens::draw` reads the
+  dials, places the model with the layered layout and gives the scene.
+  `docs/lenses.md` lists each lens with its dials, from the same data.
+- The error `E0301`: a `show` line picks a lens that needs facts the file does
+  not state. `show flow` in a file with no link gives it, because there is
+  nothing to order.
+- `Scene::colour` names the fact whose value picks the palette slot of a
+  thing, and the scene JSON holds it as `"colour"`. The flow lens sets it to
+  `owner`.
 
 ### Changed
 
+- An unclosed double quote in a citation path (`A -> B @ "src/a.rs:3`) gives
+  `E0005` and no `Cite` node. A path that holds an unpaired double quote is no
+  citation.
+- The language card states the comment form: a line that starts with `#` is a
+  comment (ADR-130). The parser reads comments as before.
 - A missing name at the end of a line (`E0006`) has an empty span at the end of
   the line, and not the line break.
 - When two fixes of one parse overlap, the outer one keeps its fix and the

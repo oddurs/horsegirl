@@ -1,6 +1,6 @@
 //! The SVG backend, held by a snapshot of the reference flow.
 //!
-//! The placement comes from the stand-in for the layout in `support`. To
+//! The placement comes from the layered layout, through the flow lens. To
 //! accept a change to `checkout.svg`, run:
 //!
 //! ```sh
@@ -9,10 +9,22 @@
 //!
 //! Then open the file in a browser and look at it before you commit it.
 
-mod support;
-
+use horsegirl_core::lens::{self, FLOW};
+use horsegirl_core::model::{Model, lower};
+use horsegirl_core::scene::{Role, Scene};
 use horsegirl_core::svg::draw;
-use support::{model, scene};
+use horsegirl_core::syntax::parse;
+use horsegirl_core::text::{Style, measure};
+
+const STYLE: Style = Style { size: 12.0 };
+
+fn model(source: &str) -> Model {
+    lower(&parse(source).tree)
+}
+
+fn scene(source: &str) -> Scene {
+    lens::draw(&model(source), &FLOW, STYLE)
+}
 
 const CHECKOUT: &str = include_str!("../../../examples/checkout.horse");
 const CHECKOUT_SVG: &str = include_str!("checkout.svg");
@@ -125,6 +137,54 @@ fn each_shape_has_a_class_for_its_role_and_for_its_facts() {
             thing.name
         );
     }
+}
+
+#[test]
+fn each_label_is_held_to_its_measured_width() {
+    let svg = checkout();
+    let labels: Vec<&str> = svg.lines().filter(|l| l.starts_with("<text ")).collect();
+    let shapes = scene(CHECKOUT).shapes;
+    let texts: Vec<&str> = shapes
+        .iter()
+        .filter(|s| s.role == Role::Label)
+        .map(|s| s.text.as_str())
+        .collect();
+    assert_eq!(labels.len(), texts.len());
+    for (line, text) in labels.iter().zip(texts) {
+        let (_, rest) = line.split_once(" textLength=\"").expect(line);
+        let (length, rest) = rest.split_once('"').unwrap();
+        assert!(
+            rest.starts_with(" lengthAdjust=\"spacingAndGlyphs\""),
+            "{line}"
+        );
+        let length: f64 = length.parse().unwrap();
+        // The SVG writes two decimals.
+        let width = measure(text, STYLE).width;
+        assert!((length - width).abs() <= 0.005, "{line}: {width}");
+    }
+}
+
+// The table measures an unknown character as one em. Held to that width, an
+// Arabic label draws at more than twice its natural width.
+#[test]
+fn a_label_outside_the_metrics_table_keeps_its_natural_width() {
+    let svg = draw(&scene("\"مرحبا بالعالم\" -> B\n"), "arabic");
+    let arabic = svg
+        .lines()
+        .find(|l| l.ends_with(">مرحبا بالعالم</text>"))
+        .expect(&svg);
+    assert!(!arabic.contains("textLength"), "{arabic}");
+    assert!(!arabic.contains("lengthAdjust"), "{arabic}");
+    let latin = svg.lines().find(|l| l.ends_with(">B</text>")).expect(&svg);
+    assert!(latin.contains(" textLength=\""), "{latin}");
+}
+
+// Zero is not a width a renderer can stretch text to.
+#[test]
+fn an_empty_label_has_no_text_length() {
+    let svg = draw(&scene("\"\" -> B\n"), "empty");
+    let empty = svg.lines().find(|l| l.ends_with("></text>")).expect(&svg);
+    assert!(!empty.contains("textLength"), "{empty}");
 }
 
 #[test]

@@ -332,6 +332,8 @@ fn a_long_line_of_quoted_names_parses_in_linear_time() {
         "{A -> B: x {y} ",
         "{a: b {y} } ",
         "A @b {x} ",
+        "A @ a\"b:1 ",
+        "A @ a:1 @ \"b ",
     ] {
         linear(&piece.repeat(60_000 / piece.len()));
     }
@@ -440,6 +442,53 @@ fn a_show_line_names_a_lens_and_an_argument() {
     }
     // `show` is a word of a name when the line is a link.
     assert_eq!(read("show room -> Hall\n").1, [""; 0]);
+}
+
+#[test]
+fn a_show_line_with_a_mistake_in_its_argument_is_still_a_show_line() {
+    for (source, quoted) in [
+        (
+            "show rings from GET /users/{id}",
+            "show rings from \"GET /users/{id}\"",
+        ),
+        (
+            "show rings from Sensors: wind",
+            "show rings from \"Sensors: wind\"",
+        ),
+        ("show sequence of a@b", "show sequence of \"a@b\""),
+        // With no space after the join word, the fix adds one.
+        ("show rings from{id}", "show rings from \"{id}\""),
+        // A name may hold a colon in double quotes, so the fix keeps every byte.
+        ("show rings from: x", "show rings from \": x\""),
+    ] {
+        let error = only(source);
+        assert_eq!(error.code, "E0004", "{source}");
+        assert_eq!(fixed(source), quoted);
+        let (tree, codes) = read(quoted);
+        assert_eq!(codes, [""; 0], "{quoted}");
+        assert_eq!(kinds(&parse(quoted).tree), [NodeKind::Show], "{tree}");
+    }
+    for source in ["show sequence of S, T", "show rings from, T"] {
+        let error = only(source);
+        assert_eq!(error.code, "E0008", "{source}");
+        assert!(error.message.contains("one name"), "{}", error.message);
+        assert_eq!(error.fix, None, "{source}");
+        assert_eq!(kinds(&parse(source).tree), [NodeKind::Error], "{source}");
+    }
+    // A link or a group after the lens is an error in the show line too.
+    for (source, code) in [
+        ("show flow of A -> B", "E0004"),
+        ("show lanes by X { a, b }", "E0008"),
+    ] {
+        let (tree, codes) = read(source);
+        assert_eq!(codes, [code], "{source}");
+        assert_eq!(kinds(&parse(source).tree), [NodeKind::Error], "{tree}");
+    }
+    // Without a lens and `of`, `from` or `by`, `show` is a word of a name.
+    let (tree, codes) = read("show, A -> B\nshow { owner: X }\n");
+    assert_eq!(codes, [""; 0]);
+    assert!(tree.contains("Name \"show\""), "{tree}");
+    assert!(!tree.contains("Show"), "{tree}");
 }
 
 #[test]
@@ -645,4 +694,42 @@ fn a_line_with_a_mistake_gets_the_mistake_and_no_note() {
     let diagnostics = parse("\"A\" --> B -> C;\n").diagnostics;
     assert_eq!(diagnostics.len(), 1, "{diagnostics:?}");
     assert_eq!(diagnostics[0].code, "E0001");
+}
+
+#[test]
+fn a_citation_path_with_paired_quotes_stays_a_citation() {
+    for source in ["A -> B @ src/\"a\".rs:3", "A -> B @ \"src a.rs\":3"] {
+        let (tree, codes) = read(source);
+        assert_eq!(codes, [""; 0], "{source:?}");
+        assert!(tree.contains("Cite"), "{source:?}: {tree}");
+    }
+}
+
+#[test]
+fn a_bad_citation_with_paired_quotes_is_not_an_unclosed_quote() {
+    for source in [
+        "A -> B @ src/\"a\".rs",
+        "A -> B @ \"src a.rs\"",
+        "A -> B @ \"x\" y",
+    ] {
+        let codes: Vec<&str> = parse(source).diagnostics.iter().map(|d| d.code).collect();
+        assert!(!codes.contains(&"E0005"), "{source:?}: {codes:?}");
+    }
+}
+
+#[test]
+fn an_unclosed_quote_in_a_citation_is_an_error() {
+    for source in [
+        "A -> B @ \"src/a.rs:3",
+        "A { owner: X @ \"src/a.rs:3\n}\n",
+        "A -> B @ src/\"a.rs:3",
+        "A -> B @ src/\"a\"/\"b.rs:3",
+        "A -> B @ a\"b\"c\"d.rs:3",
+    ] {
+        let parse = parse(source);
+        let codes: Vec<&str> = parse.diagnostics.iter().map(|d| d.code).collect();
+        assert_eq!(codes, ["E0005"], "{source:?}");
+        assert_eq!(parse.tree.to_string(), source);
+        assert!(!format!("{:?}", parse.tree).contains("Cite"), "{source:?}");
+    }
 }

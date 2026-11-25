@@ -1,0 +1,18 @@
+# Converted from corpus/flowcharts/0190.mmd by corpus/convert.py.
+Any incoming ask -> Trivial?
+Trivial? -> "Do it, one check,": yes
+Trivial? -> "FIT GATE (new in v1.4):": "no, or unsure"
+"FIT GATE (new in v1.4):" -> What shape is the ask?: in reachable sources
+"FIT GATE (new in v1.4):" -> "Research it first,": unknown technique
+"FIT GATE (new in v1.4):" -> Say so. No faked rigor.: only my own inference
+"FIT GATE (new in v1.4):" -> Make a skill (fable-domain): specialized + recurring
+"Research it first," -> What shape is the ask?
+What shape is the ask? -> Diagnose only.: question
+What shape is the ask? -> Plan artifact.: plan-first
+What shape is the ask? -> Evidence → decide → act: task
+Evidence → decide → act -> "Act with forced artifacts:"
+"Act with forced artifacts:" -> Verify by observation
+Verify by observation -> "TWIN CHECK (new in v1.4):"
+"TWIN CHECK (new in v1.4):" -> "Judge pass: every claim"
+Diagnose only. -> "Judge pass: every claim"
+"Judge pass: every claim" -> "Report, outcome first,"

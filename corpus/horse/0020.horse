@@ -1,0 +1,12 @@
+# Converted from corpus/flowcharts/0020.mmd by corpus/convert.py.
+👤 User arrives at Landing -> Wallet connected?
+Wallet connected? -> 🔐 Connect Wallet: No
+🔐 Connect Wallet -> User exists?
+Wallet connected? -> User exists?: Yes
+User exists? -> 🏠 Go to Aquarium: ✅ Yes
+User exists? -> 📝 Onboarding: ❌ No
+📝 Onboarding -> 👤 Create Username
+👤 Create Username -> 🐠 Select 2 Fish
+🐠 Select 2 Fish -> 🏠 Create Aquarium
+🏠 Create Aquarium -> 🏠 Go to Aquarium
+🏠 Go to Aquarium -> 🎮 Complete Experience

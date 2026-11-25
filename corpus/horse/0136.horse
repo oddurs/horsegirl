@@ -1,0 +1,12 @@
+# Converted from corpus/flowcharts/0136.mmd by corpus/convert.py.
+Source Code -> TypeScript Compilation
+TypeScript Compilation -> Vite Build
+Vite Build -> Custom Build Script
+Custom Build Script -> Dist Directory
+Custom Build Script -> Move compiled files
+Move compiled files -> Fix import paths
+Fix import paths -> Update package.json
+Update package.json -> Copy CSS files
+Copy CSS files -> Dist Directory
+
+Build Steps { Move compiled files, Fix import paths, Update package.json, Copy CSS files }

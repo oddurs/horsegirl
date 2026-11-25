@@ -1,0 +1,23 @@
+# Converted from corpus/flowcharts/0023.mmd by corpus/convert.py.
+Lead Scraper Automation -> Select Batch (e.g. 10 Daily Leads)
+Team Leads Pipeline -> Team Clients & Projects: Won / Deal Closed
+Team Clients & Projects -> Team Revenue & Invoices
+Team Revenue & Invoices -> Project Budget & Milestones: Auto-Sync Revenue
+Project Budget & Milestones -> "Project Direct Expenses (Hosting, APIs, Tools, Contractors)"
+"Project Direct Expenses (Hosting, APIs, Tools, Contractors)" -> Team Net Profit & Cash Reserves
+Team Net Profit & Cash Reserves -> Founder Payout Distribution
+Personal Leads & Side Projects -> Personal Clients & Billing
+Personal Inflow (Team Payout Share + Personal Projects) -> "Personal Expenses (Living, Tools, Subscriptions)"
+"Personal Expenses (Living, Tools, Subscriptions)" -> Personal Savings & Budget Runway
+Select Batch (e.g. 10 Daily Leads) -> Team Leads Pipeline: Route to Team
+Select Batch (e.g. 10 Daily Leads) -> Personal Leads & Side Projects: Route to Personal
+Founder Payout Distribution -> Personal Inflow (Team Payout Share + Personal Projects): Automatic / 1-Click Payout Transfer
+
+🌐 Workspace Context Controller (Global Mode Switcher) { "Mode: [Team Workspace] ↔ [Personal Workspace]" }
+1. Lead Ingestion { Lead Scraper Automation, Select Batch (e.g. 10 Daily Leads) }
+2. 🏢 TEAM WORKSPACE (Agency Core) { Team CRM Module, Team Expenses Module }
+Team CRM Module { Team Leads Pipeline, Team Clients & Projects, Team Revenue & Invoices }
+Team Expenses Module { Project Budget & Milestones, "Project Direct Expenses (Hosting, APIs, Tools, Contractors)", Team Net Profit & Cash Reserves, Founder Payout Distribution }
+3. 👤 PERSONAL WORKSPACE (Founder Private Space) { Personal CRM Module, Personal Expenses Module }
+Personal CRM Module { Personal Leads & Side Projects, Personal Clients & Billing }
+Personal Expenses Module { Personal Inflow (Team Payout Share + Personal Projects), "Personal Expenses (Living, Tools, Subscriptions)", Personal Savings & Budget Runway }

@@ -1,0 +1,7 @@
+# Converted from corpus/flowcharts/0143.mmd by corpus/convert.py.
+Push/Merge to main -> "CI: ShellCheck + Docker Build"
+"CI: ShellCheck + Docker Build" -> CI Pass?
+CI Pass? -> "CD: Build & Push to GHCR": Yes
+"CD: Build & Push to GHCR" -> Deploy EC2 #1
+"CD: Build & Push to GHCR" -> Deploy EC2 #2
+CI Pass? -> Stop ✗: No

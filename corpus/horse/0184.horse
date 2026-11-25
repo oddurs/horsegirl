@@ -1,0 +1,23 @@
+# Converted from corpus/flowcharts/0184.mmd by corpus/convert.py.
+12-Tool Registry -> Episode Runner
+Tool-call Parser -> Episode Runner
+Claude-generated Tasks -> BFS Solver
+BFS Solver -> toolsmith-tasks
+toolsmith-tasks -> SFT Warm-Start
+SFT Warm-Start -> Decision-Point
+Decision-Point -> Step-Level GRPO
+Composite Reward -> Step-Level GRPO
+Episode Runner -> Composite Reward
+Step-Level GRPO -> Eval Runner
+Eval Runner -> BFCL AST subsets
+Eval Runner -> LLM Judge
+Eval Runner -> Bootstrap CIs + Plots
+Step-Level GRPO -> GGUF Export
+GGUF Export -> FastMCP Server
+GGUF Export -> Gradio Space
+
+Sandbox Environment (Phase 1) { 12-Tool Registry, Tool-call Parser, Episode Runner }
+Task Data (Phase 2) { Claude-generated Tasks, BFS Solver, toolsmith-tasks }
+Training (Phases 3-4) { SFT Warm-Start, Decision-Point, Step-Level GRPO, Composite Reward }
+Evaluation (Phase 5) { Eval Runner, BFCL AST subsets, LLM Judge, Bootstrap CIs + Plots }
+Serving + Demo (Phase 7) { GGUF Export, FastMCP Server, Gradio Space }

@@ -1,0 +1,15 @@
+# Converted from corpus/flowcharts/0129.mmd by corpus/convert.py.
+命令行输入 -> Runtime Facade
+Runtime Facade -> Contracts
+Contracts -> Model Provider
+Model Provider -> Contracts
+Contracts -> Event Bus
+Event Bus -> Conversation State
+Registry -> Contracts
+Runtime Facade -> 终端输出
+Test Tool -> Registry: 注册能力
+File / Shell -> Registry: 注册能力
+
+CLI / 上层入口 { 命令行输入, 终端输出 }
+M0 Core Kernel { Runtime Facade, Contracts, Registry, Event Bus, Conversation State }
+外部能力 { Model Provider, Test Tool, File / Shell }

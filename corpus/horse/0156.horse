@@ -1,0 +1,7 @@
+# Converted from corpus/flowcharts/0156.mmd by corpus/convert.py.
+Feature PR opened -> Squash-merge to master: "CI: full run"
+Squash-merge to master -> Versioning opens/updates Release PR: "CI: full run, live acceptance skipped if the PR already passed it on this exact tree"
+Versioning opens/updates Release PR -> Maintainer merges Release PR: "CI: gate skips all test jobs"
+Maintainer merges Release PR -> Versioning creates vX.Y.Z tag: "CI: gate skips all test jobs"
+Versioning creates vX.Y.Z tag -> GoReleaser publishes signed binaries: Release workflow
+GoReleaser publishes signed binaries -> Terraform Registry indexes the version

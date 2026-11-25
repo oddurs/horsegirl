@@ -1,0 +1,7 @@
+# Converted from corpus/flowcharts/0067.mmd by corpus/convert.py.
+module-completion.md -> graduation.md: offer after export
+export-results -> graduation.md: include graduation report
+bootcamp_preferences.yaml -> graduation.md: "language, track, platform"
+bootcamp_progress.json -> graduation.md: modules completed
+steering-index.yaml -> graduation.md: "keyword: graduate"
+POWER.md -> graduation.md: listed in steering files

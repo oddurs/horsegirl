@@ -1,0 +1,18 @@
+# Converted from corpus/flowcharts/0025.mmd by corpus/convert.py.
+Engineering Manager / Developer -> React + Vite SPA
+React + Vite SPA -> HTTP layer — api/: /api/* + X-Api-Key
+HTTP layer — api/ -> apiKeyAuth · rateLimiter · sanitiser
+apiKeyAuth · rateLimiter · sanitiser -> Business logic — backend/metrics/
+Business logic — backend/metrics/ -> AI insights — AI/skills/
+Background sync job — jobs/ -> Business logic — backend/metrics/
+Business logic — backend/metrics/ -> atlassianFetch
+Business logic — backend/metrics/ -> JSON file cache
+Background sync job — jobs/ -> JSON file cache
+atlassianFetch -> Jira Server / DC: Bearer PAT
+atlassianFetch -> Bitbucket Server / DC: Bearer PAT
+AI insights — AI/skills/ -> LLM provider (optional): only if AI_INSIGHTS_ENABLED numeric aggregates only
+
+Client { Engineering Manager / Developer, React + Vite SPA }
+Node / Express backend { HTTP layer — api/, apiKeyAuth · rateLimiter · sanitiser, Business logic — backend/metrics/, AI insights — AI/skills/, Background sync job — jobs/ }
+Data access — databaselayer/ { atlassianFetch, JSON file cache }
+External systems { Jira Server / DC, Bitbucket Server / DC, LLM provider (optional) }

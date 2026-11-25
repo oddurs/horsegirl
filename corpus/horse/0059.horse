@@ -1,0 +1,10 @@
+# Converted from corpus/flowcharts/0059.mmd by corpus/convert.py.
+"Browser: public/ app" -> server.mjs: session cookie
+server.mjs -> generation.mjs + providers.mjs
+server.mjs -> publishing.mjs
+server.mjs -> media.mjs
+server.mjs -> "configuration.mjs: local settings"
+server.mjs -> ".data: SQLite, media, access.key"
+generation.mjs + providers.mjs -> OpenAI / Claude / QwenCloud / Gemini / compatible API: brief
+publishing.mjs -> LinkedIn / Facebook / Instagram: API
+media.mjs -> "FFmpeg, if installed": ffprobe

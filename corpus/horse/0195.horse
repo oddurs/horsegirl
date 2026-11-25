@@ -1,0 +1,14 @@
+# Converted from corpus/flowcharts/0195.mmd by corpus/convert.py.
+__start__ -> check_price
+analyze_sentiment -> fetch_news
+check_price -> reflect
+council -> save
+fetch_fundamentals -> analyze_sentiment
+fetch_fundamentals -> budget_exhausted
+fetch_fundamentals -> ignore
+fetch_news -> predict
+predict -> council
+reflect -> fetch_fundamentals
+budget_exhausted -> __end__
+ignore -> __end__
+save -> __end__

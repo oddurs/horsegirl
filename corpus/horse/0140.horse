@@ -1,0 +1,4 @@
+# Converted from corpus/flowcharts/0140.mmd by corpus/convert.py.
+A -> B
+B -> C
+A -> C

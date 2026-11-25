@@ -1,0 +1,10 @@
+# Converted from corpus/flowcharts/0093.mmd by corpus/convert.py.
+Raw Dataset -> prepare_dataset.py
+prepare_dataset.py -> Train split 90%
+Train split 90% -> Load base model
+Load base model -> Apply LoRA config
+Apply LoRA config -> SFTTrainer
+SFTTrainer -> LoRA adapter
+SFTTrainer -> Training loss curve
+LoRA adapter -> eval.py
+eval.py -> eval_results.json

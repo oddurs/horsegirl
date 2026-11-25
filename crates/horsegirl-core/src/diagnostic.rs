@@ -104,6 +104,47 @@ impl Fix {
     }
 }
 
+/// A source with the safe fixes of its diagnostics made.
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub struct Fixed {
+    pub text: String,
+    /// How many fixes were made.
+    pub applied: usize,
+}
+
+/// `source` with the edits of every safe fix of `diagnostics` made, and no
+/// other byte changed. A suggested fix is left for an agent to decide.
+///
+/// The fixes of one file do not overlap, as `docs/diagnostics.md` states. A
+/// fix that overlaps one made before it is still left out, so the edits always
+/// refer to bytes of the original source.
+#[must_use]
+pub fn apply_safe(source: &str, diagnostics: &[Diagnostic]) -> Fixed {
+    let mut fixes: Vec<&Fix> = diagnostics
+        .iter()
+        .filter_map(|diagnostic| diagnostic.fix.as_ref())
+        .filter(|fix| fix.confidence == Confidence::Safe && !fix.edits.is_empty())
+        .collect();
+    // A stable sort keeps the order of the diagnostics for two equal starts.
+    fixes.sort_by_key(|fix| fix.span().start);
+    let mut text = String::with_capacity(source.len());
+    let mut from = 0;
+    let mut applied = 0;
+    for fix in fixes {
+        if fix.span().start < from {
+            continue;
+        }
+        for edit in &fix.edits {
+            text.push_str(&source[from..edit.span.start]);
+            text.push_str(&edit.text);
+            from = edit.span.end;
+        }
+        applied += 1;
+    }
+    text.push_str(&source[from..]);
+    Fixed { text, applied }
+}
+
 /// Something the tool has to say about the source.
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct Diagnostic {

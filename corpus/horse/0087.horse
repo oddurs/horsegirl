@@ -1,0 +1,7 @@
+# Converted from corpus/flowcharts/0087.mmd by corpus/convert.py.
+Start -> Prioritize
+Prioritize -> Simplify
+Simplify -> Substitute
+Substitute -> Is Expression
+Is Expression -> Prioritize: No
+Is Expression -> Done!: Yes

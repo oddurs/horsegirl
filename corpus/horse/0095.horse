@@ -1,0 +1,25 @@
+# Converted from corpus/flowcharts/0095.mmd by corpus/convert.py.
+Banca Móvil -> API Gateway / ESB
+Banca Web -> API Gateway / ESB
+Red de ATMs -> API Gateway / ESB
+Puntos de Venta -> API Gateway / ESB
+Sucursales -> API Gateway / ESB
+API Gateway / ESB -> Core Bancario
+Gestión de Cuentas -> Procesamiento de Transacciones
+Procesamiento de Transacciones -> Gestión de Clientes
+Gestión de Clientes -> Gestión de Productos
+Gestión de Cuentas -> Contabilidad
+Core Bancario -> SWIFT
+Core Bancario -> Cámara de Compensación
+Core Bancario -> Burós de Crédito
+Core Bancario -> Reguladores
+Core Bancario -> CRM
+Core Bancario -> Gestión de Riesgo
+Core Bancario -> Anti Lavado de Dinero
+Core Bancario -> Tesorería
+Core Bancario -> Reportería
+
+Canales de Acceso { Banca Móvil, Banca Web, Red de ATMs, Puntos de Venta, Sucursales }
+Core Bancario { Gestión de Cuentas, Procesamiento de Transacciones, Gestión de Clientes, Gestión de Productos, Contabilidad }
+Sistemas Externos { SWIFT, Cámara de Compensación, Burós de Crédito, Reguladores }
+Sistemas de Soporte { CRM, Gestión de Riesgo, Anti Lavado de Dinero, Tesorería, Reportería }

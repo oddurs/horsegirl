@@ -1,0 +1,12 @@
+# Converted from corpus/flowcharts/0006.mmd by corpus/convert.py.
+Client requests POST /analyze -> Retrieve Top-K vectors
+Retrieve Top-K vectors -> Build LLM Prompt
+Build LLM Prompt -> Ollama Inference
+Ollama Inference -> Pydantic Valid?
+Pydantic Valid? -> Max Stages Hit?: No
+Max Stages Hit? -> Build LLM Prompt: No
+Max Stages Hit? -> Return partial/error result: Yes
+Pydantic Valid? -> Goal Validated?: Yes
+Goal Validated? -> Max Stages Hit?: No
+Goal Validated? -> Save AnalysisResult: Yes
+Save AnalysisResult -> Return Analysis

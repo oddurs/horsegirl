@@ -1,0 +1,21 @@
+# Converted from corpus/flowcharts/0128.mmd by corpus/convert.py.
+ランタイムでタスクを進める -> ChatRequest
+ChatRequest -> OpenAI Adapter
+ChatRequest -> Anthropic Adapter
+ChatRequest -> Local Adapter
+OpenAI Adapter -> OpenAI API
+Anthropic Adapter -> Anthropic API
+Local Adapter -> Local Server
+OpenAI API -> OpenAI Adapter
+Anthropic API -> Anthropic Adapter
+Local Server -> Local Adapter
+OpenAI Adapter -> ModelEvent
+Anthropic Adapter -> ModelEvent
+Local Adapter -> ModelEvent
+ModelEvent -> イベントバス統合イベント
+イベントバス統合イベント -> セッション状態の事実と状況
+
+Agent Core { ランタイムでタスクを進める, セッション状態の事実と状況, イベントバス統合イベント }
+Provider Contract { ChatRequest, ModelEvent, ProviderError }
+Provider Adapters { OpenAI Adapter, Anthropic Adapter, Local Adapter }
+Model APIs { OpenAI API, Anthropic API, Local Server }

@@ -1,0 +1,16 @@
+# Converted from corpus/flowcharts/0100.mmd by corpus/convert.py.
+User Message -> classifyIntent
+classifyIntent -> Intent Classified?
+Intent Classified? -> buildExecutionPlan: Yes
+Intent Classified? -> Default to greeting intent: "No, fallback"
+Default to greeting intent -> buildExecutionPlan
+buildExecutionPlan -> Budget Check
+Budget Check -> optimizePlanForBudget: Over budget
+Budget Check -> executePlan: Within budget
+optimizePlanForBudget -> executePlan
+executePlan -> topologicalLevels
+topologicalLevels -> Execute Level 0 in parallel
+Execute Level 0 in parallel -> Execute Level 1 in parallel
+Execute Level 1 in parallel -> Execute Level N in parallel
+Execute Level N in parallel -> synthesizeResponse
+synthesizeResponse -> SupervisorResult

@@ -1,0 +1,43 @@
+# Converted from corpus/flowcharts/0168.mmd by corpus/convert.py.
+ServoController构造函数 -> Initialize初始化
+Initialize初始化 -> WriteAngle写入角度
+Initialize初始化 -> InitializeTools注册MCP工具
+SetAngle设置角度 -> IsValidAngle验证角度
+SetAngle设置角度 -> ConstrainAngle限制角度
+SetAngle设置角度 -> 发送CMD_SET_ANGLE到队列
+RotateClockwise顺时针旋转 -> 发送CMD_ROTATE_CW到队列
+RotateCounterclockwise逆时针旋转 -> 发送CMD_ROTATE_CCW到队列
+SweepBetween扫描模式 -> IsValidAngle验证角度
+SweepBetween扫描模式 -> 发送CMD_SWEEP到队列
+Stop停止 -> 发送CMD_STOP到队列
+Reset复位 -> 发送CMD_RESET到队列
+ServoTask静态任务函数 -> ProcessCommands处理命令
+ProcessCommands处理命令 -> ExecuteSetAngle执行设置角度
+ProcessCommands处理命令 -> ExecuteRotate执行旋转
+ProcessCommands处理命令 -> ExecuteSweep执行扫描
+ExecuteSetAngle执行设置角度 -> SmoothMoveTo平滑移动
+ExecuteRotate执行旋转 -> ConstrainAngle限制角度
+ExecuteRotate执行旋转 -> SmoothMoveTo平滑移动
+ExecuteSweep执行扫描 -> SmoothMoveTo平滑移动
+SmoothMoveTo平滑移动 -> ConstrainAngle限制角度
+SmoothMoveTo平滑移动 -> WriteAngle写入角度
+WriteAngle写入角度 -> ConstrainAngle限制角度
+WriteAngle写入角度 -> AngleToCompare角度转PWM
+WriteAngle写入角度 -> ESP32 LEDC API
+InitializeTools注册MCP工具 -> "McpServer::GetInstance"
+InitializeTools注册MCP工具 -> SetAngle设置角度
+InitializeTools注册MCP工具 -> RotateClockwise顺时针旋转
+InitializeTools注册MCP工具 -> RotateCounterclockwise逆时针旋转
+InitializeTools注册MCP工具 -> SweepBetween扫描模式
+InitializeTools注册MCP工具 -> Stop停止
+InitializeTools注册MCP工具 -> Reset复位
+InitializeTools注册MCP工具 -> GetCurrentAngle获取当前角度
+InitializeTools注册MCP工具 -> IsMoving是否移动中
+InitializeTools注册MCP工具 -> IsSweeping是否扫描中
+发送CMD_SET_ANGLE到队列 -> ProcessCommands处理命令
+发送CMD_ROTATE_CW到队列 -> ProcessCommands处理命令
+发送CMD_ROTATE_CCW到队列 -> ProcessCommands处理命令
+发送CMD_SWEEP到队列 -> ProcessCommands处理命令
+发送CMD_STOP到队列 -> ProcessCommands处理命令
+发送CMD_RESET到队列 -> ProcessCommands处理命令
+ESP32 LEDC API -> SG90舵机硬件

@@ -1,0 +1,8 @@
+# Converted from corpus/flowcharts/0158.mmd by corpus/convert.py.
+__start__ -> observe
+execute -> finalise
+observe -> propose
+propose -> validate
+validate -> execute
+validate -> propose
+finalise -> __end__

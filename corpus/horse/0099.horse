@@ -1,0 +1,39 @@
+# Converted from corpus/flowcharts/0099.mmd by corpus/convert.py.
+CLI Entry -> Default Orchestrator
+CLI Entry -> LangGraph Runtime
+CLI Entry -> CrewAI Runtime
+HTTP/SSE Server -> Default Orchestrator
+HTTP/SSE Server -> LangGraph Runtime
+HTTP/SSE Server -> CrewAI Runtime
+HTTP/SSE Server -> A2A Protocol
+Next.js Frontend -> Gemini Service
+Default Orchestrator -> Supervisor
+Supervisor -> Agent Registry
+Supervisor -> Routing Strategy
+Agent Registry -> Agent Loop
+Agent Loop -> MCP Server
+Agent Loop -> Error Recovery
+Error Recovery -> Handoff Protocol
+LangGraph Runtime -> MCP Server
+LangGraph Runtime -> Pinecone
+LangGraph Runtime -> Neo4j
+MCP Server -> Pinecone
+MCP Server -> Neo4j
+MCP Server -> MongoDB
+MCP Server -> Web Tools
+Gemini Service -> Pinecone
+Gemini Service -> Neo4j
+Gemini Service -> MongoDB
+Context Engineering -> Neo4j
+Agent Loop -> Distributed Tracer
+Agent Loop -> Metrics Registry
+Agent Loop -> Cost Tracker
+Health Aggregator -> Agent Registry
+
+User Interfaces { CLI Entry, HTTP/SSE Server, Next.js Frontend }
+Orchestration Layer { Supervisor, Agent Registry, Agent Loop, Routing Strategy, Error Recovery, Handoff Protocol }
+Runtime Engines { Default Orchestrator, LangGraph Runtime, CrewAI Runtime }
+Tool Layer { MCP Server, A2A Protocol, Web Tools }
+Data Layer { Pinecone, Neo4j, MongoDB, Context Engineering }
+Backend AI { Gemini Service }
+Observability { Distributed Tracer, Metrics Registry, Cost Tracker, Health Aggregator }

@@ -1,0 +1,13 @@
+# Converted from corpus/flowcharts/0188.mmd by corpus/convert.py.
+Configuration File -> Config Loader
+Config Loader -> Directory Scanner
+Source Directories -> Directory Scanner
+Directory Scanner -> Filename Matcher
+Filename Matcher -> File Classifier
+File Classifier -> File Organizer
+File Organizer -> Target Directories
+File Organizer -> For Review Directory
+
+Input { Configuration File, Source Directories }
+Core { Config Loader, Directory Scanner, Filename Matcher, File Classifier, File Organizer }
+Output { Target Directories, For Review Directory }

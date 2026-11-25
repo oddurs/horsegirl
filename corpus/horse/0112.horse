@@ -1,0 +1,7 @@
+# Converted from corpus/flowcharts/0112.mmd by corpus/convert.py.
+FoodItems -> RecipeIngredients
+RecipeIngredients -> CustomRecipes
+CustomRecipes -> FoodEntryItems: copied as recipe snapshot
+FoodItems -> FoodEntryItems
+FoodEntryItems -> FoodEntries
+FoodPhotos -> FoodEntries

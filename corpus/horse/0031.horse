@@ -1,0 +1,11 @@
+# Converted from corpus/flowcharts/0031.mmd by corpus/convert.py.
+Collector -> Auditor
+Auditor -> Metrics
+Kubernetes API -> Collector
+Auditor -> Kubernetes API
+kubectl -> Kubernetes API
+
+OPA Gatekeeper { Collector, Auditor }
+Metrics { Metrics }
+Kubernetes API { Kubernetes API }
+kubectl { kubectl }

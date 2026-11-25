@@ -1,0 +1,16 @@
+# Converted from corpus/flowcharts/0088.mmd by corpus/convert.py.
+Browser (Player) -> CDN (Static Hosting): Requests static files
+UI Screens -> Scene Manager
+Scene Manager -> ECS
+ECS -> Systems
+Systems -> Renderer
+Client State -> UI Screens
+Client State -> ECS
+Parts Registry -> UI Screens
+Parts Registry -> ECS
+Persistence -> Client State
+Asset Loader -> Renderer
+Content Packs (JSON/TS) -> Parts Registry
+CDN (Static Hosting) -> Static App (React + TypeScript): Serves app & assets
+
+Static App (React + TypeScript) { UI Screens, Scene Manager, Renderer, ECS, Systems, Client State, Parts Registry, Persistence, Asset Loader, Content Packs (JSON/TS) }

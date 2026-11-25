@@ -1,0 +1,6 @@
+# Converted from corpus/flowcharts/0013.mmd by corpus/convert.py.
+.claude-plugin/marketplace.json -> plugins/ · 9: lists
+plugins/ · 9 -> skills · agents · commands · hooks · rules: ships
+cli/ · aidd -> .claude-plugin/marketplace.json: reads
+cli/ · aidd -> a project's AI tool dir: installs
+AI coding tool -> skills · agents · commands · hooks · rules: invokes

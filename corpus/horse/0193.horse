@@ -1,0 +1,17 @@
+# Converted from corpus/flowcharts/0193.mmd by corpus/convert.py.
+VALUES ?assay -> ?assay
+"https://purl.org/okn/frink/kg/spoke-genelab/node/OSD-100-061ffc525c9e17c392b5ed0b4e770133" -> VALUES ?assay
+"https://purl.org/okn/frink/kg/spoke-genelab/node/OSD-162-8d9c16a7a8374294c91e68646804fdd6" -> VALUES ?assay
+"https://purl.org/okn/frink/kg/spoke-genelab/node/OSD-194-7c13deab3d43973b1f8c841dbe0ee047" -> VALUES ?assay
++2 more -> VALUES ?assay
+"?adj_p <= '0.05^^xsd:decimal' && abs(?log2fc) >= '1^^xsd:integer'" -> ?adj_p
+"?adj_p <= '0.05^^xsd:decimal' && abs(?log2fc) >= '1^^xsd:integer'" -> ?log2fc
+?stmt -> "gl:MEASURED_DIFFERENTIAL_EXPRESSION_ASmMG": "rdf:predicate"
+?stmt -> ?gene: "rdf:object"
+?stmt -> ?assay: "rdf:subject"
+?stmt -> ?adj_p: "gl:adj_p_value"
+?stmt -> ?log2fc: "gl:log2fc"
+?gene -> ?symbol: "gl:symbol"
+?gene -> ?taxonomy: "gl:taxonomy"
+
+"GRAPH https://purl.org/okn/frink/kg/spoke-genelab" { ?adj_p, ?assay, ?gene, ?log2fc, ?stmt, ?symbol, ?taxonomy, "gl:MEASURED_DIFFERENTIAL_EXPRESSION_ASmMG", "?adj_p <= '0.05^^xsd:decimal' && abs(?log2fc) >= '1^^xsd:integer'" }

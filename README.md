@@ -6,9 +6,9 @@
 An agent-first diagram language. An agent states the facts about a system once.
 A lens turns the same facts into a flow, a sequence, a matrix, or another picture.
 
-**Status: the start of the roadmap.** The binary prints the language card and
-nothing else. The parser, the checks and the first picture are the work of
-[v0.1](ROADMAP.md).
+**Status: the start of the roadmap.** The binary checks a file, applies the
+safe fixes, formats it and draws it as a flow in SVG, from the command line or
+over MCP. The rest of [v0.1](ROADMAP.md) is in progress.
 
 ## Why it exists
 
@@ -30,7 +30,22 @@ the plan.
 
 ## Install
 
-There is no release yet. Build from a checkout with the Rust toolchain named in
+On Linux or macOS, on x86_64 or aarch64:
+
+```sh
+curl -fsSL https://raw.githubusercontent.com/oddurs/horsegirl/main/install.sh | sh
+```
+
+The script downloads the archive for your machine from the latest release,
+checks it against the `SHA256SUMS` file of that release, and puts `horsegirl`
+in `~/.local/bin`. It stops and installs nothing when the checksum does not
+match. Set `HORSEGIRL_VERSION=v0.1.0` to install one release, which is
+necessary for a pre-release, and `HORSEGIRL_INSTALL_DIR` to choose another
+directory. Each release also carries a build attestation:
+`gh attestation verify <archive> --repo oddurs/horsegirl` checks it.
+
+There is no release yet, so the script has nothing to download. Until the
+first release, build from a checkout with the Rust toolchain named in
 `rust-toolchain.toml`:
 
 ```sh
@@ -42,11 +57,21 @@ cargo install --path crates/horsegirl --locked
 ## Quickstart
 
 ```sh
-horsegirl spec
+horsegirl spec                     # the language card: read it first
+horsegirl check shop.horse         # every diagnostic, each with its fix
+horsegirl check --json shop.horse  # the same, one JSON object per line
+horsegirl fix shop.horse           # apply every safe fix in place
+horsegirl fmt shop.horse           # print the one canonical form
+horsegirl draw shop.horse          # write shop.svg beside the file
 ```
 
-This prints the one-page language card: the five rules an agent reads before it
-writes a file.
+An agent in an MCP client calls the same commands as tools. Run
+`horsegirl mcp --config` and add what it prints to the configuration of the
+client. [docs/mcp.md](docs/mcp.md) states the shape of each tool.
+
+Each command reads standard input when the file is `-` or absent. It exits 0
+when the file has no error, 1 when it has one, and 2 for a mistake in the
+command line. `horsegirl <command> --help` names the options of one command.
 
 ## Development
 

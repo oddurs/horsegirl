@@ -40,7 +40,7 @@ A lens binds a field to a channel. That is the whole mechanism.
 
 | Lens | Dials | Solver |
 | --- | --- | --- |
-| flow | `x: depth`, `inside: group` | layered |
+| flow | `x: depth`, `inside: group`, `colour: owner` | layered |
 | sequence | `x: thing`, `y: step` | grid |
 | lanes | `x: step`, `y: owner` | grid |
 | matrix | `x: to`, `y: from` | grid |

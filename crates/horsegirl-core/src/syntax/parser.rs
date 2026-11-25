@@ -7,6 +7,7 @@ use std::ops::Range;
 
 use super::lexer::lex;
 use super::{Confidence, Diagnostic, Edit, Element, Fix, Node, NodeKind, Parse, Token, TokenKind};
+use crate::check::LENSES;
 
 /// Braces nest this deep and no deeper. The parser calls itself once for each
 /// level, so a file of ten thousand `{` must not reach the end of the stack.
@@ -638,8 +639,29 @@ impl<'s> Parser<'s> {
             return None;
         }
         let path = self.skip(index + 1);
+        let end = self.path_end(path);
+        // A path that meets an unclosed quote is no citation. `cite` says why.
+        if self.kind_at(end) == Some(TokenKind::Unclosed) {
+            return None;
+        }
+        let text = &self.source[self.span_at(path).start..self.span_at(end).start];
+        // An odd count of quotes means one quote has no partner. Paired quotes
+        // stay part of the path. The check reads the path and no more, so it
+        // stays linear on a line of many `@`.
+        if text.bytes().filter(|&byte| byte == b'"').count() % 2 == 1 {
+            return None;
+        }
+        let (file, line) = text.rsplit_once(':')?;
+        let numbered = !line.is_empty() && line.bytes().all(|byte| byte.is_ascii_digit());
+        (numbered && !file.is_empty()).then_some(end)
+    }
+
+    /// The index where a citation path that starts at `path` stops. The path
+    /// stops at a second `@`, so a row of them is read once. It also stops
+    /// before an unclosed quote, which holds the rest of the line, so the scan
+    /// reads each token once.
+    fn path_end(&self, path: usize) -> usize {
         let mut end = path;
-        // The path stops at a second `@`, so a row of them is read once.
         while !matches!(
             self.kind_at(end),
             None | Some(
@@ -649,14 +671,31 @@ impl<'s> Parser<'s> {
                     | TokenKind::Close
                     | TokenKind::At
                     | TokenKind::Semi
+                    | TokenKind::Unclosed
             )
         ) {
             end += 1;
         }
-        let text = &self.source[self.span_at(path).start..self.span_at(end).start];
-        let (file, line) = text.rsplit_once(':')?;
-        let numbered = !line.is_empty() && line.bytes().all(|byte| byte.is_ascii_digit());
-        (numbered && !file.is_empty()).then_some(end)
+        end
+    }
+
+    /// The span from the last double quote inside the path tokens `from..to` to the
+    /// end of its line, when the path holds an odd count of double quotes. An even
+    /// count means every quote has a partner, so none is unclosed. The lexer reads a quote
+    /// inside a word as a character of the word, so no `Unclosed` token marks
+    /// it. The scan runs once, on the line that gives the error.
+    fn stray_quote(&self, from: usize, to: usize) -> Option<std::ops::Range<usize>> {
+        let start = self.span_at(from).start;
+        let end = self.span_at(to).start;
+        let path = &self.source[start..end];
+        if path.matches('"').count().is_multiple_of(2) {
+            return None;
+        }
+        let quote = start + path.rfind('"')?;
+        let line = self.source[quote..]
+            .find('\n')
+            .map_or(self.source.len(), |n| quote + n);
+        Some(quote..line)
     }
 
     /// Whether the fact ends at `index`: only a guess mark and a citation
@@ -679,6 +718,13 @@ impl<'s> Parser<'s> {
     fn cite(&mut self, into: &mut Children<'s>) -> Result<(), Diagnostic> {
         let at = self.skip(self.pos);
         let Some(end) = self.cite_end(at) else {
+            let stop = self.path_end(self.skip(at + 1));
+            if self.kind_at(stop) == Some(TokenKind::Unclosed) {
+                return Err(self.unexpected(stop));
+            }
+            if let Some(span) = self.stray_quote(self.skip(at + 1), stop) {
+                return Err(diagnostic("E0005", span, UNCLOSED));
+            }
             let alone = matches!(
                 self.kind_at(self.skip(at + 1)),
                 None | Some(TokenKind::Newline | TokenKind::Close)
@@ -787,7 +833,12 @@ impl<'s> Parser<'s> {
 
     /// A line that starts with `show` is a `show` line unless it holds an
     /// arrow, a comma, a colon or a brace. Then `show` is a word of a name.
+    /// `show`, a lens and `of`, `from` or `by` always start a `show` line, so
+    /// a reserved character after them is a mistake in the argument.
     fn is_show_line(&self) -> bool {
+        if self.show_argument().is_some() {
+            return true;
+        }
         let mut index = self.pos + 1;
         loop {
             match self.kind_at(index) {
@@ -804,16 +855,75 @@ impl<'s> Parser<'s> {
         }
     }
 
+    /// The first token after `show`, a lens and `of`, `from` or `by`, when the
+    /// line starts that way.
+    fn show_argument(&self) -> Option<usize> {
+        let lens = self.pos + 2;
+        let spaced = |index: usize| self.kind_at(index) == Some(TokenKind::Space);
+        let is_lens =
+            self.kind_at(lens) == Some(TokenKind::Word) && LENSES.contains(&self.tokens[lens].text);
+        if !spaced(self.pos + 1) || !is_lens || !spaced(lens + 1) {
+            return None;
+        }
+        let word = self.skip(lens + 1);
+        let joins = ["of", "from", "by"]
+            .iter()
+            .any(|join| self.is_word(word, join));
+        // A word token is whole, so a comma, a colon or a brace straight after
+        // the join word is a mistake in the argument, not a longer word.
+        joins.then(|| self.skip(word + 1))
+    }
+
     fn show(&mut self, into: &mut Children<'s>) -> Result<NodeKind, Diagnostic> {
         let start = self.pos;
+        let argument = self.show_argument();
         if self.show_parts(into) {
             return Ok(NodeKind::Show);
+        }
+        if let Some(first) = argument
+            && let Some(error) = self.bad_argument(first)
+        {
+            return Err(error);
         }
         Err(diagnostic(
             "E0008",
             self.span_at(start).start..self.span_at(self.extent(start, Text::Label) - 1).end,
             "A `show` line is `show` and a lens, as in `show flow`, or with `of`, `from` or `by` and a name, as in `show sequence of checkout`. A thing with the name `show` is written `\"show\"`.",
         ))
+    }
+
+    /// The error for an argument of a `show` line that holds a comma, or a
+    /// character that only a name in double quotes can hold.
+    fn bad_argument(&self, first: usize) -> Option<Diagnostic> {
+        // A label runs to the end of the line and keeps the braces that close
+        // on it, so the span holds the whole argument.
+        let end = self.extent(first, Text::Label);
+        if end <= first {
+            return None;
+        }
+        let tokens = &self.tokens[first..end];
+        let span = self.span_at(first).start..self.span_at(end - 1).end;
+        if tokens.iter().any(|token| token.kind == TokenKind::Comma) {
+            return Some(diagnostic(
+                "E0008",
+                span,
+                "A `show` line takes one name after `of`, `from` or `by`. Write one `show` line for each name. A name that holds a comma is written in double quotes.",
+            ));
+        }
+        let reserved = tokens.iter().any(|token| {
+            matches!(
+                token.kind,
+                TokenKind::At
+                    | TokenKind::Open
+                    | TokenKind::Close
+                    | TokenKind::Colon
+                    | TokenKind::Arrow
+                    | TokenKind::Cross
+            )
+        });
+        // A quoted name with more after it is not cured by more quotes.
+        let quoted = self.kind_at(first) == Some(TokenKind::Quoted);
+        (reserved && !quoted).then(|| self.needs_quotes(span, Text::Name))
     }
 
     fn show_parts(&mut self, into: &mut Children<'s>) -> bool {
@@ -1046,13 +1156,13 @@ impl<'s> Parser<'s> {
         let text = &self.source[span.clone()];
         // A quoted name cannot hold a double quote, so no fix exists then.
         // A text longer than `MAX_FIX` gets no fix either.
-        // In `A -x@b` the quote would touch the `-x` and make one word of the
-        // two, so a space goes between them.
-        let space = if self.source[..span.start].ends_with("-x") {
-            " "
-        } else {
-            ""
-        };
+        // In `A -x@b` or `show rings from{id}` the quote would touch the word
+        // before it and make one word of the two, so a space goes between them.
+        let touches = self.source[..span.start]
+            .chars()
+            .next_back()
+            .is_some_and(char::is_alphanumeric);
+        let space = if touches { " " } else { "" };
         let fix = (text.len() <= MAX_FIX && !text.contains('"')).then(|| Fix {
             confidence: Confidence::Safe,
             description: format!("Write the {what} in double quotes."),
@@ -1098,11 +1208,7 @@ impl<'s> Parser<'s> {
         let span = self.span_at(index);
         let text = quote(&self.source[span.clone()]);
         match self.kind_at(index) {
-            Some(TokenKind::Unclosed) => diagnostic(
-                "E0005",
-                span,
-                "A double quote opens here and does not close. Add the closing `\"` on the same line.",
-            ),
+            Some(TokenKind::Unclosed) => diagnostic("E0005", span, UNCLOSED),
             _ => diagnostic(
                 "E0001",
                 span,
@@ -1113,6 +1219,9 @@ impl<'s> Parser<'s> {
         }
     }
 }
+
+const UNCLOSED: &str =
+    "A double quote opens here and does not close. Add the closing `\"` on the same line.";
 
 /// Whether a name that holds `text` reads the same without double quotes. The
 /// reader gives a bare name back with one space between words, so `text` must

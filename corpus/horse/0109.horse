@@ -1,0 +1,7 @@
+# Converted from corpus/flowcharts/0109.mmd by corpus/convert.py.
+Browser/App -> CDN
+CDN -> Frontend - Next.js
+Frontend - Next.js -> API Layer
+API Layer -> Database
+API Layer -> Redis
+API Layer -> File Storage

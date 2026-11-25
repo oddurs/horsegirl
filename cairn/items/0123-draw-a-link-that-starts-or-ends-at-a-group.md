@@ -30,3 +30,7 @@ Decide how the flow lens draws a link whose end is a group, and build it in the 
 - [ ] `G -> A` draws a path that starts at the border of the box of `G`.
 - [ ] A link from a thing inside `G` to `G` itself gives a diagnostic or a picture, and the choice is written in the lens reference.
 - [ ] No two boxes overlap on a diagram that has such links.
+
+## 2026-11-25
+
+The corpus gate (crates/horsegirl/examples/corpus.rs, item 0040) counts a file as clean only when its picture draws every link. On 2026-11-25 the flow lens leaves out 113 links in 25 corpus files, because lens::bind drops a link whose end is a group. When this item draws those links, the count of clean files can rise or fall: a link that is now drawn can cross a box or a label. Run cargo run -p horsegirl --example corpus and set BASELINE to the new count.

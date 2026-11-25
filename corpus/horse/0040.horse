@@ -1,0 +1,11 @@
+# Converted from corpus/flowcharts/0040.mmd by corpus/convert.py.
+cloudflared -> Caddy
+Caddy -> blog
+Caddy -> shop
+Caddy -> api
+blog -> shared MySQL / Postgres
+api -> shared MySQL / Postgres
+🌍 visitor -> ☁️ Cloudflare edge
+☁️ Cloudflare edge -> cloudflared
+
+💻 your laptop — docker compose -p roost { cloudflared, Caddy, blog, shop, api, shared MySQL / Postgres }

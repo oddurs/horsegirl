@@ -1,0 +1,14 @@
+# Converted from corpus/flowcharts/0232.mmd by corpus/convert.py.
+用户操作 -> 主题模式
+主题模式 -> 系统偏好: 自动
+主题模式 -> toggleCssDarkMode(false): 亮色
+主题模式 -> toggleCssDarkMode(true): 暗色
+系统偏好 -> usePreferredColorScheme
+usePreferredColorScheme -> 返回系统主题
+返回系统主题 -> 系统主题
+系统主题 -> toggleCssDarkMode(true): 暗色
+系统主题 -> toggleCssDarkMode(false): 亮色
+toggleCssDarkMode(false) -> 移除html的dark类
+toggleCssDarkMode(true) -> 添加html的dark类
+移除html的dark类 -> UnoCSS应用亮色样式
+添加html的dark类 -> UnoCSS应用暗色样式

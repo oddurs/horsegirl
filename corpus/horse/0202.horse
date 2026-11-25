@@ -1,0 +1,10 @@
+# Converted from corpus/flowcharts/0202.mmd by corpus/convert.py.
+Incoming HTTP Request -> Rate Limiter (Redis)
+Rate Limiter (Redis) -> 429 Too Many Requests: Exceeded
+Rate Limiter (Redis) -> Authentication Guard: Allowed
+Authentication Guard -> Execute Controller Handler: Public route
+Authentication Guard -> Validate JWT Bearer Token: Protected route
+Validate JWT Bearer Token -> 401 Unauthorized: Invalid or Expired
+Validate JWT Bearer Token -> Check Crop Ownership: Valid
+Check Crop Ownership -> 404 Not Found (Prevent ID Enumeration): Not owned
+Check Crop Ownership -> Execute Controller Handler: Owned

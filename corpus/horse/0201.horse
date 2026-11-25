@@ -1,0 +1,11 @@
+# Converted from corpus/flowcharts/0201.mmd by corpus/convert.py.
+SmartPot-Web-React -> Spring MVC Controllers: REST + JWT
+Spring MVC Controllers -> Spring Security + JWT
+Spring Security + JWT -> Domain Services Layer
+Domain Services Layer -> MongoDB 8.0/7.0
+Domain Services Layer -> Redis 8
+Spring Integration MQTT -> Mosquitto 2.1
+Domain Services Layer -> Spring Integration MQTT
+Domain Services Layer -> SmartPot-AI-Python: HTTP REST
+
+SmartPot-API-Java · Spring Boot 4.1 · Java 21 { Spring MVC Controllers, Spring Security + JWT, Spring Integration MQTT, Domain Services Layer }

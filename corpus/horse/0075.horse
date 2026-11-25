@@ -1,0 +1,11 @@
+# Converted from corpus/flowcharts/0075.mmd by corpus/convert.py.
+TLS and Web PKI security -> Protocol design
+TLS and Web PKI security -> Primitive choice
+TLS and Web PKI security -> Implementation behavior
+TLS and Web PKI security -> Operational scale
+TLS and Web PKI security -> Human incentives
+Protocol design -> Downgrade and transcript binding bugs
+Primitive choice -> CBC 64 bit blocks MD5 SHA 1 weak groups
+Implementation behavior -> Timing leaks memory disclosure parser mistakes
+Operational scale -> CT log scale patching revocation monitoring
+Human incentives -> Usability ethics threat model realism

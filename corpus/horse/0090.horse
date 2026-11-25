@@ -1,0 +1,9 @@
+# Converted from corpus/flowcharts/0090.mmd by corpus/convert.py.
+Browser/Client -> App Convex funcs: calls app wrappers
+App Convex funcs -> Component functions: ctx.runMutation/query/action
+Component functions -> Component tables
+Component functions -> Convex storage
+Component functions -> Cloudflare R2
+App Convex funcs -> Optional HTTP routes
+Browser/Client -> Optional HTTP routes
+Optional HTTP routes -> Component functions

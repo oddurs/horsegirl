@@ -1,0 +1,9 @@
+# Converted from corpus/flowcharts/0101.mmd by corpus/convert.py.
+Git Repository -> GitHub: Push
+GitHub -> EventBridge: Webhook
+EventBridge -> Lambda Sync: Trigger
+Lambda Sync -> ArgoCD: Update
+ArgoCD -> EKS Cluster: Deploy
+EKS Cluster -> S3 Bucket: Read Manifests
+ArgoCD -> Git Repository: Monitor
+ArgoCD -> EKS Cluster: Self-Heal

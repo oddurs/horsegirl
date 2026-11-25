@@ -1,0 +1,7 @@
+# Converted from corpus/flowcharts/0010.mmd by corpus/convert.py.
+Closed sprint inventory -> Source and GitHub evidence
+Source and GitHub evidence -> Specialist review lanes
+Specialist review lanes -> Separate findings-first packets
+Separate findings-first packets -> Cross-sprint synthesis
+Cross-sprint synthesis -> Canonical review register handoff
+Cross-sprint synthesis -> Separate remediation issues

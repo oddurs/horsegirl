@@ -22,8 +22,8 @@ const MARGIN: f64 = 1.0;
 /// The style of every picture. Each rule is scoped to the `horsegirl` class,
 /// so a page that holds the SVG inline keeps its own `.label` and `.link`.
 ///
-/// The first three owners take the palette slots 1 to 3, and a fourth owner
-/// takes slot 1 again. `color-scheme` lets `light-dark()` follow the reader's
+/// The first three values of the colour fact take the palette slots 1 to 3,
+/// and a fourth value takes slot 1 again. `color-scheme` lets `light-dark()` follow the reader's
 /// mode; a page sets `--hg-scheme` to `light` or `dark` to force one.
 fn style() -> String {
     let v = theme::var;
@@ -95,15 +95,16 @@ pub fn draw(scene: &Scene, title: &str) -> String {
         size: scene.font_size,
     };
     let owners = owners(scene);
+    let colour = scene.colour.as_deref();
     for shape in &scene.shapes {
-        out.push_str(&element(shape, style, &owners));
+        out.push_str(&element(shape, style, colour, &owners));
     }
     out.push_str("</svg>\n");
     out
 }
 
-fn element(shape: &Shape, style: Style, owners: &[&str]) -> String {
-    let class = class(shape, owners);
+fn element(shape: &Shape, style: Style, colour: Option<&str>, owners: &[&str]) -> String {
+    let class = class(shape, colour, owners);
     let r = shape.rect;
     match shape.role {
         Role::Group | Role::Thing => format!(
@@ -126,21 +127,44 @@ fn element(shape: &Shape, style: Style, owners: &[&str]) -> String {
         }
         // The baseline comes from the measured face, not from
         // `dominant-baseline`, which renderers treat differently.
-        Role::Label => format!(
-            "<text class=\"{class}\" x=\"{}\" y=\"{}\" text-anchor=\"middle\">{}</text>\n",
-            number(r.x + r.width / 2.0),
-            number(r.y + text::ascent(style)),
-            escape(&shape.text)
-        ),
+        //
+        // The width of a label box is its measured width. `textLength` holds
+        // the drawn text to that width, so a viewer that falls back to a
+        // wider or narrower face squeezes or spreads the label to fit its box
+        // instead of overflowing it. In a face with Arial metrics the change
+        // is too small to see (SPIKE-19).
+        //
+        // A character outside the metrics table measures as one em, an
+        // over-estimate. Held to that width, an Arabic label draws at twice
+        // its natural width, so such a label keeps its natural width.
+        Role::Label => {
+            let length = if text::holds(&shape.text) && r.width > 0.0 {
+                format!(
+                    " textLength=\"{}\" lengthAdjust=\"spacingAndGlyphs\"",
+                    number(r.width)
+                )
+            } else {
+                String::new()
+            };
+            format!(
+                "<text class=\"{class}\" x=\"{}\" y=\"{}\" text-anchor=\"middle\"{length}>{}</text>\n",
+                number(r.x + r.width / 2.0),
+                number(r.y + text::ascent(style)),
+                escape(&shape.text)
+            )
+        }
     }
 }
 
-/// The role of a shape, the palette slot of its owner, then `key-value` for
-/// each of its facts.
-fn class(shape: &Shape, owners: &[&str]) -> String {
+/// The role of a shape, the palette slot of its colour fact, then
+/// `key-value` for each of its facts.
+fn class(shape: &Shape, colour: Option<&str>, owners: &[&str]) -> String {
     let mut class = shape.role.as_str().to_owned();
     if shape.role == Role::Thing {
-        let owner = shape.facts.iter().find(|fact| fact.key == "owner");
+        let owner = shape
+            .facts
+            .iter()
+            .find(|fact| Some(fact.key.as_str()) == colour);
         if let Some(at) = owner.and_then(|fact| owners.iter().position(|o| *o == fact.value)) {
             write!(class, " slot-{}", at % 3 + 1).expect("a String takes any write");
         }
@@ -169,16 +193,19 @@ fn token(text: &str) -> String {
         .collect()
 }
 
-/// Each distinct `owner` value in the scene, in the order of the shapes, so
-/// the same file gets the same colours on every run.
+/// Each distinct value of the colour fact of the scene, in the order of the
+/// shapes, so the same file gets the same colours on every run.
 fn owners(scene: &Scene) -> Vec<&str> {
     let mut owners: Vec<&str> = Vec::new();
+    let Some(key) = &scene.colour else {
+        return owners;
+    };
     let things = scene
         .shapes
         .iter()
         .filter(|shape| shape.role == Role::Thing);
     let facts = things.flat_map(|shape| &shape.facts);
-    for fact in facts.filter(|fact| fact.key == "owner") {
+    for fact in facts.filter(|fact| &fact.key == key) {
         if !owners.contains(&fact.value.as_str()) {
             owners.push(&fact.value);
         }

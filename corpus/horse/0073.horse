@@ -1,0 +1,11 @@
+# Converted from corpus/flowcharts/0073.mmd by corpus/convert.py.
+discojs-node -> discojs: extends
+discojs-web -> discojs: extends
+webapp -> discojs-web: uses
+custom browser implementation -> discojs-web: uses
+server -> discojs-node: uses
+cli -> discojs-node: uses
+custom Node.js scripts -> discojs-node: uses
+
+discojs library { discojs-node, discojs, discojs-web }
+User Interface { webapp, custom browser implementation, server, cli, custom Node.js scripts }

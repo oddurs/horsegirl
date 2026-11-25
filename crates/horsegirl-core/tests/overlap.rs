@@ -42,6 +42,7 @@ fn found(shapes: Vec<Shape>) -> Vec<(Kind, usize, usize)> {
         width: 400.0,
         height: 400.0,
         font_size: 12.0,
+        colour: None,
         shapes,
     };
     let of = |overlap: &Overlap| (overlap.kind, overlap.shapes[0], overlap.shapes[1]);
@@ -260,6 +261,7 @@ fn a_collision_reads_as_a_sentence_with_both_names() {
         width: 300.0,
         height: 100.0,
         font_size: 12.0,
+        colour: None,
         shapes: vec![
             thing("c", (100.0, 0.0, 60.0, 36.0)),
             link("a", "b", &[(60.0, 18.0), (200.0, 18.0)]),

@@ -1,0 +1,7 @@
+# Converted from corpus/flowcharts/0210.mmd by corpus/convert.py.
+你的笔记 -> 加密数据: 加密
+加密数据 -> 云端存储
+云端存储 -> 加密数据
+加密数据 -> 其他设备: 解密
+你的笔记 -> 加密数据: 使用密码
+加密数据 -> 其他设备: 使用密码
