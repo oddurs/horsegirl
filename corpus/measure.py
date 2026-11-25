@@ -245,6 +245,14 @@ def plain(raw, first_line=False):
     return " ".join(text.split())
 
 
+def rest_of_label(raw):
+    """The lines after the first: what a converter writes as a note fact."""
+    parts = BREAK.split(decode(unquote(raw)))
+    first = next((i for i, part in enumerate(parts) if TAG.sub("", part).strip()), len(parts))
+    text = ICON.sub("", TAG.sub("", " ".join(parts[first + 1 :])))
+    return " ".join(text.split())
+
+
 def rewrites(raw):
     text = decode(unquote(raw))
     found = []
@@ -349,6 +357,9 @@ def main():
         1 for n in quoted if causes(n[3]) == ["colon"] and not re.search(r":(\s|$)", n[3])
     )
     first = sum(1 for n in names if causes(n[4]))
+    # A fact value sits inside braces, so a comma, a colon or a brace in it is reserved too.
+    saved = [n for n in quoted if not causes(n[4])]
+    moved = sum(1 for n in saved if {"comma", "colon", "brace"} & set(causes(rest_of_label(n[2]))))
     rewritten = sum(1 for n in names if rewrites(n[2]))
     question = sum(1 for n in names if n[3].endswith("?") and not n[3].endswith(" ?"))
     by_cause = collections.Counter(c for n in names for c in causes(n[3]))
@@ -366,6 +377,8 @@ def main():
     row("  names that also hold a line break", multi)
     row("  names whose only colon has no space after", colon_tight)
     row("names whose first line needs quotes", first, pct(first, total))
+    row("  names that line one alone saves", len(saved), pct(len(saved), len(quoted)) + " of names that need quotes")
+    row("    other lines hold a comma, colon or brace", moved, pct(moved, len(saved)))
     row("names that need a safe rewrite", rewritten, pct(rewritten, total))
     row("names that end in '?' with no space", question, pct(question, total) + ", item 26 keeps them bare")
     row("labels that E0412 would call a typo", typo_names,

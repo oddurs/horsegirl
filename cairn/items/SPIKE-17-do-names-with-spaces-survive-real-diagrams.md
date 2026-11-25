@@ -75,8 +75,11 @@ the mark.
   for example `api<br/><sub>django :8000</sub>` or `wally<br/>install, list`.
   When the name is
   only the first line, 187 names (6.1%) still need quotes. A converter that
-  keeps the first line as the name and the rest as a fact halves the problem.
-  It does not remove it.
+  keeps the first line as the name frees 133 names (42% of the 320). It does
+  not remove the problem: 130 of those 133 hold a comma, a colon or a brace
+  in the other lines, and a converter writes those lines as a fact value
+  inside braces. The reserved character moves from the name to the fact
+  value. ADR-119 therefore covers fact values as well as names.
 - Only 27 of the colon names have no space after the colon, as in
   `up:Disease`. A rule that only `: ` with a space starts a label would save
   those 27 and no more. That is not worth a subtle rule.
@@ -112,8 +115,8 @@ the mark.
 
 ### Follow-up
 
-- ADR-119: a quoted form for names that hold a reserved character. The parser
-  (item 23) now depends on it.
+- ADR-119: a quoted form for names and fact values that hold a reserved
+  character. The parser (item 23) now depends on it.
 - Item 121: `convert` keeps the first line of a label as the name, and gives
   distinct names to nodes that share a label.
 - Item 120: the typo check E0412 leaves sibling names alone.
@@ -136,3 +139,7 @@ Ran: python3 -I -B corpus/measure.py. It printed: 3052 names, 0 lines not unders
 ## 2026-11-25
 
 Follow-ups filed: ADR-119 (quoted form for names with a reserved character; 0023 now depends on it), 0120 (typo check leaves sibling names alone), 0121 (convert Mermaid labels that a bare name cannot hold). cairn check printed: ok: 117 item(s), 0 warning(s).
+
+## 2026-11-25
+
+Fix round 1 (review of PR #14): ran python3 -I -B corpus/measure.py. New rows printed: 'names that line one alone saves 133 41.6% of names that need quotes' and 'other lines hold a comma, colon or brace 130 97.7%'. All earlier rows are unchanged. Two runs gave the same sha256 of the report (d7266678dd131997...). ADR-119 now covers fact values and has a criterion for them; item 121 has a criterion for each example.
