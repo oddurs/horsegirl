@@ -230,6 +230,19 @@ fn a_label_must_match_when_the_checker_has_one() {
 }
 
 #[test]
+fn a_reason_must_match_when_the_checker_has_one() {
+    let expected = expectations("A -> B\nB -x A: no cycles\n");
+    assert_eq!(
+        missing(&expected, "A -> B\nB -x A: no cycles\n"),
+        Vec::<String>::new()
+    );
+    assert_eq!(
+        missing(&expected, "A -> B\nB -x A\n"),
+        ["B -x A: no cycles"]
+    );
+}
+
+#[test]
 fn a_score_applies_one_fix_before_the_checker() {
     let task = task("Gateway -> API\nAPI { note: \"django :8000\" }\n");
     let answer = score(&task, Some("Gateway -> API\nAPI { note: django :8000 }\n"))

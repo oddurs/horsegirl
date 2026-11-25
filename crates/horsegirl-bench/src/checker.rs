@@ -34,6 +34,7 @@ pub enum Expectation {
     Rule {
         from: String,
         to: String,
+        reason: Option<String>,
     },
     Show {
         lens: String,
@@ -63,7 +64,10 @@ impl Expectation {
                 let guess = if *guess { " ?" } else { "" };
                 format!("{from} -> {to}{label}{guess}")
             }
-            Expectation::Rule { from, to } => format!("{from} -x {to}"),
+            Expectation::Rule { from, to, reason } => match reason {
+                Some(reason) => format!("{from} -x {to}: {reason}"),
+                None => format!("{from} -x {to}"),
+            },
             Expectation::Show { lens, arg } => match arg {
                 Some(arg) => format!("show {lens} {arg}"),
                 None => format!("show {lens}"),
@@ -106,6 +110,7 @@ pub fn expectations(checker: &str) -> Vec<Expectation> {
         all.push(Expectation::Rule {
             from: name(rule.from),
             to: name(rule.to),
+            reason: rule.reason.clone(),
         });
     }
     for show in &model.shows {
@@ -163,14 +168,19 @@ fn meets(answer: &Model, expectation: &Expectation) -> bool {
                         .all(|label| link.labels.iter().any(|known| same(known, label)))
             })
         }
-        Expectation::Rule { from, to } => {
+        Expectation::Rule { from, to, reason } => {
             let (Some(from), Some(to)) = (find(answer, from), find(answer, to)) else {
                 return false;
             };
-            answer
-                .rules
-                .iter()
-                .any(|rule| rule.from == from && rule.to == to)
+            answer.rules.iter().any(|rule| {
+                rule.from == from
+                    && rule.to == to
+                    && reason.as_ref().is_none_or(|reason| {
+                        rule.reason
+                            .as_ref()
+                            .is_some_and(|known| same(known, reason))
+                    })
+            })
         }
         Expectation::Show { lens, arg } => answer.shows.iter().any(|show| {
             let shown = show

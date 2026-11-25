@@ -122,7 +122,7 @@ Counted on the first try. "Left" counts the replies that still have the code aft
 | 091 | A matrix | invalid | valid | 7/7 | E0300 |  |
 | 092 | Rings around a thing | no reply | no reply | | | |
 | 093 | Two lenses | no reply | no reply | | | |
-| 094 | A whole shop | valid | valid | 21/23 |  | `Web app -x Postgres` |
+| 094 | A whole shop | valid | valid | 21/23 |  | `Web app -x Postgres: never directly` |
 | 095 | A data platform | no reply | no reply | | | |
 | 096 | A bank transfer | no reply | no reply | | | |
 | 097 | Quotes and owners | no reply | no reply | | | |

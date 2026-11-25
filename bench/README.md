@@ -30,9 +30,10 @@ API gateway -> Orders
 The first line is the title. The description follows, up to a line that is
 `---` alone. The description writes each name and each label in backticks.
 The checker follows the `---` line. It is a horsegirl file. Each thing, part,
-fact, link, label, guess, `-x` rule and `show` line in it is one expected fact.
-An answer may state more than the checker. Names, labels and values match
-without regard to case.
+fact, link, `-x` rule and `show` line in it is one expected fact. A link must
+match its label and its guess mark, and a rule its reason, where the checker
+states them. An answer may state more than the checker. Names, labels and
+values match without regard to case.
 
 The checker does not see the order of a story or a citation, because the model
 does not hold them yet. A story task is checked by its links.
