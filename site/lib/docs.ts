@@ -47,6 +47,12 @@ function headings(tokens: Token[]): string[] {
   return ids;
 }
 
+// "guide/roadmap-intro.md" becomes "Roadmap intro".
+function titleFromFile(file: string): string {
+  const name = (file.split("/").pop() ?? file).replace(/\.md$/, "").replaceAll(/[-_]+/g, " ");
+  return name.charAt(0).toUpperCase() + name.slice(1);
+}
+
 function markdownFiles(dir: string): string[] {
   const found: string[] = [];
   for (const entry of readdirSync(dir, { withFileTypes: true })) {
@@ -64,15 +70,19 @@ export function loadPages(docsDir = join(process.cwd(), "..", "docs")): Page[] {
     .map((path) => relative(docsDir, path).split(sep).join("/"))
     .sort()
     .map((file) => {
-      const source = readFileSync(join(docsDir, file), "utf8");
+      const text = readFileSync(join(docsDir, file), "utf8");
       const first = new Marked()
-        .lexer(source)
+        .lexer(text)
         .find((t): t is Tokens.Heading => t.type === "heading" && t.depth === 1);
+      // A page needs one level-one heading. A file that has none gets one from
+      // its name, so a file that another tool reads as is (the roadmap header)
+      // stays unchanged on disk.
+      const title = first ? plain(first.tokens) : titleFromFile(file);
       return {
         slug: file.replace(/\.md$/, ""),
         file,
-        title: first ? plain(first.tokens) : file.replace(/\.md$/, ""),
-        source,
+        title,
+        source: first ? text : `# ${title}\n\n${text}`,
       };
     });
 }
