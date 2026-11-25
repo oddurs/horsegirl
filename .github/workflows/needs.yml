@@ -1,0 +1,90 @@
+name: needs
+
+# Reports what the backlog needs from a person in one issue. It opens or
+# updates the issue while the list has entries and closes it when the list is
+# empty. A schedule runs only from the default branch.
+on:
+  schedule:
+    - cron: "17 6 * * *"
+  workflow_dispatch:
+
+# The workflow writes to issues and nothing else. Setting one scope sets every
+# other scope to none. The repository is public, so checkout needs no token.
+permissions:
+  issues: write
+
+concurrency:
+  group: needs
+  cancel-in-progress: false
+
+env:
+  CAIRN_VERSION: 1.0.0-alpha.1
+  HARROW_VERSION: 0.2.0-alpha.1
+  ISSUE_TITLE: Backlog needs a person
+
+jobs:
+  report:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install the backlog tool
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          asset="cairn-${CAIRN_VERSION}-x86_64-unknown-linux-musl.tar.gz"
+          dir="$(mktemp -d)"
+          gh release download "v${CAIRN_VERSION}" --repo oddurs/cairn --dir "$dir" \
+            --pattern "$asset" --pattern SHA256SUMS
+          (cd "$dir" && grep " $asset\$" SHA256SUMS | sha256sum --check -)
+          tar -xzf "$dir/$asset" -C "$dir"
+          install -m 755 "$(find "$dir" -type f -name cairn)" /usr/local/bin/cairn
+          cairn --version
+      - name: Install the backlog viewer
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          asset="harrow-${HARROW_VERSION}-x86_64-unknown-linux-musl.tar.gz"
+          dir="$(mktemp -d)"
+          gh release download "v${HARROW_VERSION}" --repo oddurs/harrow --dir "$dir" \
+            --pattern "$asset" --pattern SHA256SUMS
+          (cd "$dir" && grep " $asset\$" SHA256SUMS | sha256sum --check -)
+          tar -xzf "$dir/$asset" -C "$dir"
+          install -m 755 "$(find "$dir" -type f -name harrow)" /usr/local/bin/harrow
+          harrow --version
+      - name: Collect what needs a person
+        run: |
+          harrow --plain --lens needs > needs.txt
+          # A failed check is a finding, not a failed job.
+          if cairn check --strict > check.txt 2>&1; then
+            : > check.txt
+          fi
+          {
+            if [ -s needs.txt ]; then
+              printf '## Waiting for a decision\n\n```\n'
+              cat needs.txt
+              printf '```\n\n'
+            fi
+            if [ -s check.txt ]; then
+              printf '## cairn check --strict fails\n\n```\n'
+              cat check.txt
+              printf '```\n\n'
+            fi
+          } > body.md
+          if [ -s body.md ]; then
+            echo 'Updated by the needs workflow. Run "harrow --lens needs" for the live list.' >> body.md
+          fi
+      - name: Open, update or close the issue
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          number="$(gh issue list --state open --search "\"${ISSUE_TITLE}\" in:title" \
+            --json number,title --jq "map(select(.title == \"${ISSUE_TITLE}\")) | first | .number // empty")"
+          if [ -s body.md ]; then
+            if [ -n "$number" ]; then
+              gh issue edit "$number" --body-file body.md
+            else
+              gh issue create --title "$ISSUE_TITLE" --body-file body.md
+            fi
+          elif [ -n "$number" ]; then
+            gh issue close "$number" --comment "Nothing needs a person now."
+          fi
