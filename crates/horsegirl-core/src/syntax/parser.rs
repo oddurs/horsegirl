@@ -639,8 +639,28 @@ impl<'s> Parser<'s> {
             return None;
         }
         let path = self.skip(index + 1);
+        let end = self.path_end(path);
+        // A path that meets an unclosed quote is no citation. `cite` says why.
+        if self.kind_at(end) == Some(TokenKind::Unclosed) {
+            return None;
+        }
+        let text = &self.source[self.span_at(path).start..self.span_at(end).start];
+        // A path holds no quote. The check reads the path and no more, so it
+        // stays linear on a line of many `@`.
+        if text.contains('"') {
+            return None;
+        }
+        let (file, line) = text.rsplit_once(':')?;
+        let numbered = !line.is_empty() && line.bytes().all(|byte| byte.is_ascii_digit());
+        (numbered && !file.is_empty()).then_some(end)
+    }
+
+    /// The index where a citation path that starts at `path` stops. The path
+    /// stops at a second `@`, so a row of them is read once. It also stops
+    /// before an unclosed quote, which holds the rest of the line, so the scan
+    /// reads each token once.
+    fn path_end(&self, path: usize) -> usize {
         let mut end = path;
-        // The path stops at a second `@`, so a row of them is read once.
         while !matches!(
             self.kind_at(end),
             None | Some(
@@ -650,14 +670,26 @@ impl<'s> Parser<'s> {
                     | TokenKind::Close
                     | TokenKind::At
                     | TokenKind::Semi
+                    | TokenKind::Unclosed
             )
         ) {
             end += 1;
         }
-        let text = &self.source[self.span_at(path).start..self.span_at(end).start];
-        let (file, line) = text.rsplit_once(':')?;
-        let numbered = !line.is_empty() && line.bytes().all(|byte| byte.is_ascii_digit());
-        (numbered && !file.is_empty()).then_some(end)
+        end
+    }
+
+    /// The span from a double quote inside the path tokens `from..to` to the
+    /// end of its line, when nothing closes the quote. The lexer reads a quote
+    /// inside a word as a character of the word, so no `Unclosed` token marks
+    /// it. The scan runs once, on the line that gives the error.
+    fn stray_quote(&self, from: usize, to: usize) -> Option<std::ops::Range<usize>> {
+        let start = self.span_at(from).start;
+        let end = self.span_at(to).start;
+        let quote = start + self.source[start..end].find('"')?;
+        let line = self.source[quote..]
+            .find('\n')
+            .map_or(self.source.len(), |n| quote + n);
+        (!self.source[quote + 1..line].contains('"')).then_some(quote..line)
     }
 
     /// Whether the fact ends at `index`: only a guess mark and a citation
@@ -680,6 +712,13 @@ impl<'s> Parser<'s> {
     fn cite(&mut self, into: &mut Children<'s>) -> Result<(), Diagnostic> {
         let at = self.skip(self.pos);
         let Some(end) = self.cite_end(at) else {
+            let stop = self.path_end(self.skip(at + 1));
+            if self.kind_at(stop) == Some(TokenKind::Unclosed) {
+                return Err(self.unexpected(stop));
+            }
+            if let Some(span) = self.stray_quote(self.skip(at + 1), stop) {
+                return Err(diagnostic("E0005", span, UNCLOSED));
+            }
             let alone = matches!(
                 self.kind_at(self.skip(at + 1)),
                 None | Some(TokenKind::Newline | TokenKind::Close)
@@ -1163,11 +1202,7 @@ impl<'s> Parser<'s> {
         let span = self.span_at(index);
         let text = quote(&self.source[span.clone()]);
         match self.kind_at(index) {
-            Some(TokenKind::Unclosed) => diagnostic(
-                "E0005",
-                span,
-                "A double quote opens here and does not close. Add the closing `\"` on the same line.",
-            ),
+            Some(TokenKind::Unclosed) => diagnostic("E0005", span, UNCLOSED),
             _ => diagnostic(
                 "E0001",
                 span,
@@ -1178,6 +1213,9 @@ impl<'s> Parser<'s> {
         }
     }
 }
+
+const UNCLOSED: &str =
+    "A double quote opens here and does not close. Add the closing `\"` on the same line.";
 
 /// Whether a name that holds `text` reads the same without double quotes. The
 /// reader gives a bare name back with one space between words, so `text` must

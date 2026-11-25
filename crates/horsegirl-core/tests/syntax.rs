@@ -332,6 +332,8 @@ fn a_long_line_of_quoted_names_parses_in_linear_time() {
         "{A -> B: x {y} ",
         "{a: b {y} } ",
         "A @b {x} ",
+        "A @ a\"b:1 ",
+        "A @ a:1 @ \"b ",
     ] {
         linear(&piece.repeat(60_000 / piece.len()));
     }
@@ -692,4 +694,22 @@ fn a_line_with_a_mistake_gets_the_mistake_and_no_note() {
     let diagnostics = parse("\"A\" --> B -> C;\n").diagnostics;
     assert_eq!(diagnostics.len(), 1, "{diagnostics:?}");
     assert_eq!(diagnostics[0].code, "E0001");
+}
+
+#[test]
+fn an_unclosed_quote_in_a_citation_is_an_error() {
+    for source in [
+        "A -> B @ \"src/a.rs:3",
+        "A { owner: X @ \"src/a.rs:3\n}\n",
+        "A -> B @ src/\"a.rs:3",
+    ] {
+        let parse = parse(source);
+        let codes: Vec<&str> = parse.diagnostics.iter().map(|d| d.code).collect();
+        assert_eq!(codes, ["E0005"], "{source:?}");
+        assert_eq!(parse.tree.to_string(), source);
+        assert!(
+            !format!("{:?}", kinds(&parse.tree)).contains("Cite"),
+            "{source:?}"
+        );
+    }
 }
