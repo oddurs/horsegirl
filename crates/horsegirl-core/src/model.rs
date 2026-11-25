@@ -83,6 +83,8 @@ pub struct Show {
     pub lens: String,
     /// `of`, `from` or `by`, and the name after it.
     pub arg: Option<(String, String)>,
+    /// The bytes of the lens name, so a check can point at an unknown lens.
+    pub span: Range<usize>,
 }
 
 impl Model {
@@ -303,6 +305,7 @@ impl Lowering {
         self.model.shows.push(Show {
             lens: text(lens),
             arg,
+            span: span(lens),
         });
     }
 

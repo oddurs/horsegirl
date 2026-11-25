@@ -53,8 +53,28 @@ pub const CATALOGUE: &[Code] = &[
         summary: "A fact stands outside braces, or a line mixes names and facts.",
     },
     Code {
+        code: "E0300",
+        summary: "A `show` line names a lens that does not exist. The message lists the lenses, and a lens one edit from a known lens gets a safe fix.",
+    },
+    Code {
+        code: "E0412",
+        summary: "A name is written once and is one edit from a name written more often, so it is likely a typo that makes a new thing. The fix writes the other name.",
+    },
+    Code {
+        code: "E0500",
+        summary: "A link breaks a `-x` rule in the same direction.",
+    },
+    Code {
+        code: "N0200",
+        summary: "A link or a rule ends in `?` in every statement, so it is a guess.",
+    },
+    Code {
         code: "W0010",
         summary: "A story is parsed, and this version does not order its links.",
+    },
+    Code {
+        code: "W0107",
+        summary: "A thing has no link and no rule, so it stands alone in every picture. A group needs no link of its own.",
     },
 ];
 

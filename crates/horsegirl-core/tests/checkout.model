@@ -257,6 +257,7 @@ Model {
         Show {
             lens: "flow",
             arg: None,
+            span: 551..555,
         },
     ],
 }
