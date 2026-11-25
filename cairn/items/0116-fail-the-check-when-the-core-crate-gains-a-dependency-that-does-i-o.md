@@ -3,12 +3,12 @@ id: 116
 uid: e3c21ab5-79a6-4854-a8b4-394f052cbb20
 title: Fail the check when the core crate gains a dependency that does I/O
 type: chore
-status: doing
+status: done
 milestone: v0.1
 assignee: Oddur Sigurdsson
-claimed: 2026-11-25
 created: 2026-11-25
 updated: 2026-11-25
+closed_at: 2026-11-25
 priority: p2
 risk: low
 surface: none
