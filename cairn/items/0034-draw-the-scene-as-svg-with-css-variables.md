@@ -58,3 +58,7 @@ Criterion 3: headless Chromium, host page with checkout.svg inline: getComputedS
 ## 2026-11-25
 
 Golden harness: no golden case draws until the layered layout (0032) is in the core, so the SVG is not in OUTPUTS yet. Filed 0145 for that.
+
+## 2026-11-25
+
+Review round 1: escape let U+FFFE and U+FFFF through, so criterion 2 was false for a name such as "a￿b". Unticked 2 and reopened. escape now writes U+FFFD for both; the test checker well_formed now rejects any character outside the XML Char production. With the fix removed, a_character_xml_cannot_hold_is_drawn_as_a_replacement FAILED; with the fix, cargo test -p horsegirl-core --test svg printed 9 passed, and scripts/task check exited 0.

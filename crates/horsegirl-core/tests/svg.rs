@@ -52,6 +52,14 @@ fn the_svg_is_well_formed_xml() {
 }
 
 #[test]
+fn a_character_xml_cannot_hold_is_drawn_as_a_replacement() {
+    let svg = draw(&scene("\"a\u{1}\u{fffe}\u{ffff}b\" -> B\n"), "a\u{ffff}");
+    well_formed(&svg).unwrap_or_else(|e| panic!("{e}\n{svg}"));
+    assert!(svg.contains(">a\u{fffd}\u{fffd}\u{fffd}b</text>"), "{svg}");
+    assert!(svg.contains("<title>a\u{fffd}</title>"), "{svg}");
+}
+
+#[test]
 fn the_svg_has_no_script_and_loads_nothing() {
     let svg = checkout().to_lowercase();
     for banned in [
@@ -142,15 +150,26 @@ fn the_check_for_well_formed_xml_rejects_what_xml_does_not_allow() {
         "<a b=\"1\" b=\"2\"/>",
         "<a b=1/>",
         "x<a/>",
+        "<a>\u{ffff}</a>",
+        "<a b=\"\u{fffe}\"/>",
+        "<a>\u{1}</a>",
     ] {
         assert!(well_formed(bad).is_err(), "{bad}");
     }
 }
 
 /// Checks that `xml` is one element with balanced tags, quoted attributes and
-/// only the five predefined entities. It reads the subset of XML that the
-/// backend writes: no comments, no CDATA and no declarations.
+/// only the five predefined entities, and that every character is one the
+/// XML `Char` production allows. It reads the subset of XML that the backend
+/// writes: no comments, no CDATA and no declarations.
 fn well_formed(xml: &str) -> Result<(), String> {
+    // A Rust char is never a surrogate, so these are the only gaps in `Char`.
+    if let Some(c) = xml.chars().find(|&c| {
+        matches!(c, '\u{fffe}' | '\u{ffff}')
+            || (u32::from(c) < 0x20 && !matches!(c, '\t' | '\n' | '\r'))
+    }) {
+        return Err(format!("{c:?} is not an XML character"));
+    }
     let mut open: Vec<&str> = Vec::new();
     let mut roots = 0;
     let mut rest = xml;

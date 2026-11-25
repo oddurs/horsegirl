@@ -146,6 +146,7 @@ fn escape(text: &str) -> String {
             '"' => out.push_str("&quot;"),
             '\'' => out.push_str("&apos;"),
             // XML 1.0 has no form for these, not even as a reference.
+            '\u{fffe}' | '\u{ffff}' => out.push('\u{fffd}'),
             c if u32::from(c) < 0x20 && !matches!(c, '\t' | '\n' | '\r') => out.push('\u{fffd}'),
             c => out.push(c),
         }
@@ -160,8 +161,8 @@ mod tests {
     #[test]
     fn escape_replaces_markup_and_drops_characters_xml_cannot_hold() {
         assert_eq!(
-            escape("a<b & \"c\" 'd'>\u{1}"),
-            "a&lt;b &amp; &quot;c&quot; &apos;d&apos;&gt;\u{fffd}"
+            escape("a<b & \"c\" 'd'>\u{1}\u{fffe}\u{ffff}"),
+            "a&lt;b &amp; &quot;c&quot; &apos;d&apos;&gt;\u{fffd}\u{fffd}\u{fffd}"
         );
     }
 
