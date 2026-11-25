@@ -169,6 +169,14 @@ fn a_label_outside_the_metrics_table_keeps_its_natural_width() {
     assert!(latin.contains(" textLength=\""), "{latin}");
 }
 
+// Zero is not a width a renderer can stretch text to.
+#[test]
+fn an_empty_label_has_no_text_length() {
+    let svg = draw(&scene("\"\" -> B\n"), "empty");
+    let empty = svg.lines().find(|l| l.ends_with("></text>")).expect(&svg);
+    assert!(!empty.contains("textLength"), "{empty}");
+}
+
 #[test]
 fn the_svg_has_a_title_and_a_desc() {
     let svg = checkout();

@@ -46,7 +46,9 @@ the project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   `owner`, a thing with that fact also has `slot-1`, `slot-2` or `slot-3`,
   the palette slot of its value. Each label has `textLength` set to its
   measured width and `lengthAdjust="spacingAndGlyphs"`, so a face other than
-  the measured one draws the label at the same width.
+  the measured one draws the label at the same width. A label with a
+  character outside the metrics table has neither attribute and keeps its
+  natural width.
 - The parser reads habits from Mermaid and says what it changed with the note
   `N0101`. It reads `-->` as `->`, a final `;` at the end of a line, double
   quotes around a name that does not need them, and a space before the colon
