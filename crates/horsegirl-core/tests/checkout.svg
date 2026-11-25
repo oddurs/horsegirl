@@ -2,16 +2,21 @@
 <title>checkout</title>
 <desc>9 things, 1 group and 9 links.</desc>
 <style>
-.horsegirl{font-family:var(--hg-font,Arial,"Liberation Sans",Helvetica,sans-serif)}
-.horsegirl .group{fill:var(--hg-group,#F1EAF1);stroke:var(--hg-line,#6E5F72)}
-.horsegirl .thing{fill:var(--hg-surface,#FFFFFF);stroke:var(--hg-line,#6E5F72)}
-.horsegirl .link{fill:none;stroke:var(--hg-line,#6E5F72)}
-.horsegirl .head{fill:var(--hg-accent,#D4246F)}
-.horsegirl .label{fill:var(--hg-ink,#241627)}
+.horsegirl{color-scheme:var(--hg-scheme,light dark);font-family:var(--hg-font,Arial,"Liberation Sans",Helvetica,sans-serif)}
+.horsegirl .page{fill:var(--hg-paper,light-dark(#FFFFFF,#15171B))}
+.horsegirl .group{fill:var(--hg-c0,light-dark(#F3F4F6,#23272E));stroke:var(--hg-line,light-dark(#D8DCE2,#343941))}
+.horsegirl .thing{fill:var(--hg-paper,light-dark(#FFFFFF,#15171B));stroke:var(--hg-muted,light-dark(#667080,#9AA4B2))}
+.horsegirl .link{fill:none;stroke:var(--hg-ink,light-dark(#1F2328,#E6E8EB))}
+.horsegirl .head{fill:var(--hg-accent,light-dark(#2F5FD0,#7AA2FF))}
+.horsegirl .label{fill:var(--hg-ink,light-dark(#1F2328,#E6E8EB))}
+.horsegirl .thing.slot-1{fill:var(--hg-c1,light-dark(#E1EAFB,#1D2B47));stroke:var(--hg-accent,light-dark(#2F5FD0,#7AA2FF))}
+.horsegirl .thing.slot-2{fill:var(--hg-c2,light-dark(#E0F2E8,#17322A));stroke:var(--hg-s2,light-dark(#1F7A55,#5FCB9B))}
+.horsegirl .thing.slot-3{fill:var(--hg-c3,light-dark(#FAEFD6,#3A2F17));stroke:var(--hg-s3,light-dark(#A8621B,#E3A75C))}
 </style>
 <defs>
 <marker id="hg-head" viewBox="0 0 8 8" refX="8" refY="4" markerWidth="8" markerHeight="8" markerUnits="userSpaceOnUse" orient="auto"><path class="head" d="M0,0 L8,4 L0,8 z"/></marker>
 </defs>
+<rect class="page" x="-1" y="-1" width="1322" height="126"/>
 <rect class="group" x="392" y="0" width="536" height="72" rx="4"/>
 <polyline class="link" points="120,46 160,46 160,46 200,46" marker-end="url(#hg-head)"/>
 <polyline class="link" points="120,106 160,106 160,46 200,46" marker-end="url(#hg-head)"/>
@@ -22,15 +27,15 @@
 <polyline class="link" points="720,46 760,46 760,46 800,46" marker-end="url(#hg-head)"/>
 <polyline class="link" points="920,46 960,46 960,46 1000,46" marker-end="url(#hg-head)"/>
 <polyline class="link" points="1120,46 1160,46 1160,46 1200,46" marker-end="url(#hg-head)"/>
-<rect class="thing owner-apps" x="0" y="28" width="120" height="36" rx="4"/>
-<rect class="thing owner-apps" x="0" y="88" width="120" height="36" rx="4"/>
-<rect class="thing owner-platform" x="200" y="28" width="120" height="36" rx="4"/>
-<rect class="thing owner-commerce" x="600" y="28" width="120" height="36" rx="4"/>
-<rect class="thing owner-platform" x="600" y="88" width="120" height="36" rx="4"/>
-<rect class="thing owner-commerce" x="400" y="28" width="120" height="36" rx="4"/>
-<rect class="thing owner-growth" x="800" y="28" width="120" height="36" rx="4"/>
-<rect class="thing owner-platform" x="1000" y="28" width="120" height="36" rx="4"/>
-<rect class="thing owner-external" x="1200" y="28" width="120" height="36" rx="4"/>
+<rect class="thing slot-1 owner-apps" x="0" y="28" width="120" height="36" rx="4"/>
+<rect class="thing slot-1 owner-apps" x="0" y="88" width="120" height="36" rx="4"/>
+<rect class="thing slot-2 owner-platform" x="200" y="28" width="120" height="36" rx="4"/>
+<rect class="thing slot-3 owner-commerce" x="600" y="28" width="120" height="36" rx="4"/>
+<rect class="thing slot-2 owner-platform" x="600" y="88" width="120" height="36" rx="4"/>
+<rect class="thing slot-3 owner-commerce" x="400" y="28" width="120" height="36" rx="4"/>
+<rect class="thing slot-1 owner-growth" x="800" y="28" width="120" height="36" rx="4"/>
+<rect class="thing slot-2 owner-platform" x="1000" y="28" width="120" height="36" rx="4"/>
+<rect class="thing slot-2 owner-external" x="1200" y="28" width="120" height="36" rx="4"/>
 <text class="label" x="423.01" y="18.86" text-anchor="middle">Services</text>
 <text class="label owner-apps" x="60" y="50.16" text-anchor="middle">Web app</text>
 <text class="label owner-apps" x="60" y="110.16" text-anchor="middle">Mobile app</text>

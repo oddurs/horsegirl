@@ -35,11 +35,15 @@ the project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   lens gets a safe fix.
 - `horsegirl_core::svg::draw` draws a scene as one SVG document with a `title`
   and a `desc`, no script and no external resource. Each colour and the font
-  is a CSS variable with a fallback: `--hg-font`, `--hg-ink`, `--hg-line`,
-  `--hg-surface`, `--hg-group` and `--hg-accent`. A page that holds the SVG
-  inline sets them to restyle it. Each shape has the class of its role
+  is a CSS variable with a fallback. The fallbacks are the plain theme, in
+  light and dark mode: twelve colour tokens (`--hg-ink`, `--hg-paper`,
+  `--hg-line`, `--hg-muted`, `--hg-accent`, `--hg-accent-ink`, `--hg-c0` to
+  `--hg-c3`, `--hg-s2` and `--hg-s3`) and `--hg-font`. `docs/theme.md` lists
+  them. A page that holds the SVG inline sets them to restyle it, or sets
+  `--hg-scheme` to `light` or `dark`. Each shape has the class of its role
   (`thing`, `group`, `link`, `label`) and one class for each fact, such as
-  `owner-commerce`.
+  `owner-commerce`. A thing with an `owner` also has `slot-1`, `slot-2` or
+  `slot-3`, the palette slot of its owner.
 - The parser reads habits from Mermaid and says what it changed with the note
   `N0101`. It reads `-->` as `->`, a final `;` at the end of a line, double
   quotes around a name that does not need them, and a space before the colon
