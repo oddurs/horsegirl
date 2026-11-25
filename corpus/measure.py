@@ -308,6 +308,18 @@ def row(label, n, note=""):
     print(f"{label:44}{n:>6}  {note}".rstrip())
 
 
+def siblings(a, b):
+    # Mirrors check.rs: a numbered or lettered series is not a typo.
+    if len(a) < 3 and len(b) < 3:
+        return True
+
+    def marker(w):
+        return bool(re.fullmatch(r"#?[0-9]+", w)) or len(w) == 1
+
+    pa, pb = a.rsplit(" ", 1), b.rsplit(" ", 1)
+    return len(pa) == 2 and len(pb) == 2 and pa[0] == pb[0] and marker(pa[1]) and marker(pb[1])
+
+
 def main():
     files = sorted(CORPUS.glob("*.mmd"))
     if not files:
@@ -340,7 +352,7 @@ def main():
         for nid in chart.order:
             if chart.labels[nid] is not None:
                 used[plain(chart.labels[nid])] += chart.mentions[nid]
-        flagged = [a for a in used if used[a] == 1 and any(one_edit(a, b) for b in used)]
+        flagged = [a for a in used if used[a] == 1 and any(one_edit(a, b) and not siblings(a, b) for b in used)]
         typo_names += len(flagged)
         charts_with_typo += bool(flagged)
         for raw in chart.groups:

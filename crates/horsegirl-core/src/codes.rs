@@ -62,7 +62,7 @@ pub const CATALOGUE: &[Code] = &[
     },
     Code {
         code: "E0412",
-        summary: "A name is written once and is one edit from a name written more often, so it is likely a typo that makes a new thing. The safe fix writes the other name. When more than one such name is one edit away, the message names each and there is no fix.",
+        summary: "A name is written once and is one edit from a name written more often, so it is likely a typo that makes a new thing. The safe fix writes the other name. When more than one such name is one edit away, the message names each and there is no fix. Two names are not a typo when they differ only in a final word that is a number or one letter (`Service A` and `Service B`), or when both are shorter than three characters.",
     },
     Code {
         code: "E0500",

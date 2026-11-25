@@ -60,7 +60,11 @@ fn typos(source: &str, model: &Model) -> Vec<(ThingId, Diagnostic)> {
         let near: Vec<&Thing> = model
             .things
             .iter()
-            .filter(|known| known.mentions.len() > 1 && distance(&thing.name, &known.name) == 1)
+            .filter(|known| {
+                known.mentions.len() > 1
+                    && distance(&thing.name, &known.name) == 1
+                    && !siblings(&thing.name, &known.name)
+            })
             .collect();
         let diagnostic = match near.as_slice() {
             [] => continue,
@@ -105,6 +109,26 @@ fn typos(source: &str, model: &Model) -> Vec<(ThingId, Diagnostic)> {
         found.push((id, diagnostic));
     }
     found
+}
+
+/// Two names that differ only in a final word that is a number or one letter
+/// (`Service A` and `Service B`, `Deploy #1` and `Deploy #2`), or that are both
+/// shorter than three characters, are a numbered or lettered series, not a typo.
+fn siblings(a: &str, b: &str) -> bool {
+    if a.chars().count() < 3 && b.chars().count() < 3 {
+        return true;
+    }
+    let is_marker = |word: &str| {
+        let digits = word.strip_prefix('#').unwrap_or(word);
+        (!digits.is_empty() && digits.chars().all(|c| c.is_ascii_digit()))
+            || word.chars().count() == 1
+    };
+    match (a.rsplit_once(' '), b.rsplit_once(' ')) {
+        (Some((head_a, last_a)), Some((head_b, last_b))) => {
+            head_a == head_b && is_marker(last_a) && is_marker(last_b)
+        }
+        _ => false,
+    }
 }
 
 /// W0107: a thing that no link and no rule names. A group needs no link of

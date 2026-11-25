@@ -12,14 +12,13 @@ named for gaits: Walk, Trot, Canter, Gallop.
 
 ## v0.1 — Walk
 
-`··········` 0% · 0 of 34 done · due 2027-01-31
+`··········` 0% · 0 of 33 done · due 2027-01-31
 
 An agent writes a horsegirl file, checks it, applies the fixes, and draws a flow diagram as SVG, from the command line or over MCP.
 
 - [ ] [`0115`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0115-reserve-the-horsegirl-name-on-crates-io-and-npm.md) Reserve the horsegirl name on crates.io and npm <sup>chore · p2 · release</sup>
 - [ ] [`0117`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0117-the-mcp-tool-schemas-are-a-reviewed-contract-in-both-protocol-eras.md) The MCP tool schemas are a reviewed contract in both protocol eras <sup>feature · p2 · mcp</sup>
 - [ ] [`0118`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0118-hold-each-svg-label-to-its-measured-width-in-any-font.md) Hold each SVG label to its measured width in any font <sup>feature · p0 · render</sup>
-- [ ] [`0120`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0120-the-typo-check-leaves-sibling-names-alone.md) The typo check leaves sibling names alone <sup>feature · p2 · check</sup>
 - [ ] [`0122`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0122-fewer-crossings-in-the-layered-layout-measured-against-a-reference.md) Fewer crossings in the layered layout, measured against a reference <sup>feature · p2 · layout</sup>
 - [ ] [`0123`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0123-draw-a-link-that-starts-or-ends-at-a-group.md) Draw a link that starts or ends at a group <sup>feature · p2 · layout</sup>
 - [ ] [`0124`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0124-reserve-room-for-link-labels-in-the-layered-layout.md) Reserve room for link labels in the layered layout <sup>feature · p2 · layout</sup>
@@ -53,7 +52,7 @@ An agent writes a horsegirl file, checks it, applies the fixes, and draws a flow
 
 ## later — Later
 
-`··········` 0% · 0 of 22 done
+`··········` 0% · 0 of 23 done
 
 Nothing on a date. Good ideas wait here until a release needs them.
 
@@ -79,6 +78,7 @@ Nothing on a date. Good ideas wait here until a release needs them.
 - [ ] [`0149`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0149-the-overlap-detector-reports-a-thing-in-the-box-of-a-group-that-does-not-hold-it.md) The overlap detector reports a thing in the box of a group that does not hold it <sup>feature · p2 · check</sup>
 - [ ] [`0150`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0150-the-route-phase-orders-the-upright-lines-of-a-corridor-in-less-than-cubic-time.md) The route phase orders the upright lines of a corridor in less than cubic time <sup>chore · p2 · layout</sup>
 - [ ] [`0151`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0151-a-comment-line-that-reads-as-a-link-or-a-block-gets-a-warning.md) A comment line that reads as a link or a block gets a warning <sup>feature · p2 · check</sup>
+- [ ] [`0153`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0153-e0412-leaves-a-plural-beside-its-singular-alone.md) E0412 leaves a plural beside its singular alone <sup>chore · p2 · check</sup>
 
 ## v0.2 — Trot
 

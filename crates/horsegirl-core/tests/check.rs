@@ -107,6 +107,29 @@ fn a_name_one_edit_from_two_known_names_has_no_fix_when_one_is_written_more() {
 }
 
 #[test]
+fn sibling_names_are_not_typos() {
+    for source in [
+        "Service A -> Gateway\nGateway -> Service A\nService B -> Gateway\n",
+        "Deploy EC2 #1 -> Log\nLog -> Deploy EC2 #1\nDeploy EC2 #2 -> Log\n",
+        "1 -> 2\n2 -> 1\n3 -> 1\n",
+    ] {
+        assert_eq!(codes(&check(source)), [""; 0], "{source}");
+    }
+}
+
+#[test]
+fn the_sibling_pairs_of_the_corpus_are_not_typos() {
+    // From corpus/flowcharts 0143, 0191 and 0198, written as horsegirl.
+    for source in [
+        "CI -> Deploy EC2 #1\nDeploy EC2 #1 -> Done\nCI -> Deploy EC2 #2\n",
+        "Service A -> Sidecar Proxy\nSidecar Proxy -> Service B\nSidecar Proxy -> Service A\n",
+        "Request A -> Event loop\nEvent loop -> Request B\nRequest B -> Request C\nRequest C -> Request D\nRequest D -> Request E\nRequest B -> Event loop\n",
+    ] {
+        assert_eq!(codes(&check(source)), [""; 0], "{source}");
+    }
+}
+
+#[test]
 fn a_name_two_edits_away_is_not_a_typo() {
     let source = "A -> Payments\nPayments -> B\nC -> Paymts\n";
     assert_eq!(codes(&check(source)), [""; 0]);
