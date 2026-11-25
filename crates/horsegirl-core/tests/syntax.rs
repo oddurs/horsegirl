@@ -554,11 +554,27 @@ fn meaning(source: &str) -> String {
 
 #[test]
 fn a_double_semicolon_is_not_a_mark() {
-    for source in ["A, b;;\n", "A -> B;;;\n", "A -> B: go;;\n"] {
+    for source in [
+        "A, b;;\n",
+        "A -> B;;;\n",
+        "A -> B: go;;\n",
+        "A -> B; ;\n",
+        "A, b; ;\n",
+        "A -> B: go; ;\n",
+        "A { owner: x; ; }\n",
+        "A -> B ? ; ;\n",
+    ] {
         silent(source);
     }
     let lowered = horsegirl_core::model::lower(&parse("A, b;;\n").tree);
     assert_eq!(lowered.things[1].name, "b;;");
+}
+
+#[test]
+fn a_semicolon_after_a_group_does_not_panic() {
+    for source in ["A { x };\n", "A {};\n", "A {} ;\n", "story S {A{}; "] {
+        let _ = parse(source);
+    }
 }
 
 #[test]

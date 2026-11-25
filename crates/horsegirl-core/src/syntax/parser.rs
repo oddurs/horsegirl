@@ -1012,7 +1012,12 @@ impl<'s> Parser<'s> {
                 )
             })
             .unwrap_or(start);
-        let span = self.span_at(start).start..self.span_at(last).end;
+        // An edit can lie after the last token, such as the `;` after a group's `}`.
+        let end = edits
+            .iter()
+            .map(|edit| edit.span.end)
+            .fold(self.span_at(last).end, usize::max);
+        let span = self.span_at(start).start..end;
         let mut canonical = String::new();
         let mut from = span.start;
         for edit in &edits {
