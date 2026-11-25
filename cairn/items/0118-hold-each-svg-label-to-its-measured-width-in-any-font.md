@@ -3,12 +3,14 @@ id: 118
 uid: 7ed8e545-58a3-49b6-8767-902975f17b48
 title: Hold each SVG label to its measured width in any font
 type: feature
-status: backlog
+status: done
 milestone: v0.1
+assignee: Oddur Sigurdsson
 depends_on:
 - 34
 created: 2026-11-25
 updated: 2026-11-25
+closed_at: 2026-11-25
 priority: p0
 risk: low
 surface: svg
@@ -28,9 +30,9 @@ Put `textLength` on each SVG `text` element, set to the measured width, with `le
 
 ## Acceptance criteria
 
-- [ ] Every SVG `text` element that draws a label carries `textLength` equal to its measured width and `lengthAdjust="spacingAndGlyphs"`, held by the SVG snapshot.
-- [ ] In headless Chromium, Firefox and WebKit, the reference flow drawn in DejaVu Sans has each label's bounding box within 1 pixel of its measured width.
-- [ ] A screenshot of the reference flow in DejaVu Sans shows no label outside its box.
+- [x] Every SVG `text` element that draws a label whose characters the metrics table holds carries `textLength` equal to its measured width and `lengthAdjust="spacingAndGlyphs"`, held by the SVG snapshot. A label with a character outside the table carries neither attribute, held by a test.
+- [x] In headless Chromium, Firefox and WebKit, the reference flow drawn in DejaVu Sans has each label's bounding box within 1 pixel of its measured width.
+- [x] A screenshot of the reference flow in DejaVu Sans shows no label outside its box.
 
 ## Proposed priority: p2 -> p0 (Oddur Sigurdsson, 2026-11-25)
 
@@ -39,3 +41,35 @@ Most SVG viewers lack the measured face unless it is Arial-compatible; without t
 ## Accepted priority: p0 (Oddur Sigurdsson, 2026-11-25)
 
 Proposed by Oddur Sigurdsson on 2026-11-25.
+
+## 2026-11-25
+
+Criterion 1: svg::draw writes textLength=<label rect width> lengthAdjust="spacingAndGlyphs" on each label text; the label rect width is text::measure of its text. tests/svg.rs each_label_is_held_to_its_measured_width reads each <text> line of the checkout SVG and compares textLength to measure(text) within 0.005 (two decimals); before the change it FAILED, after it cargo test -p horsegirl-core --test svg printed 12 passed. tests/checkout.svg was blessed and holds the 17 labels byte for byte. scripts/task check exited 0.
+
+## 2026-11-25
+
+Criterion 2: playwright-core 1.65.1 (Chromium 1255, Firefox 1572, WebKit 2388 WPE) drew tests/checkout.svg inline in a host page with :root{--hg-font:"DejaVu Sans"}; computed font-family was DejaVu Sans in each. For all 17 labels, getBBox().width minus textLength was at most 0.27 px in Chromium (POST /checkout 87.42 vs 87.15), 0.00 px in Firefox and 0.03 px in WebKit. With textLength removed, the same labels were 7.7 to 15.7 percent wider than measured, so the face was in use. WebKit ran with its missing system libraries extracted from Debian packages into a private directory; nothing was installed on the host.
+
+## 2026-11-25
+
+Criterion 3: screenshots of the reference flow in DejaVu Sans in Chromium, Firefox and WebKit show every thing and group label inside its box; the bounding-box check agreed (each label bbox inside the rect that holds its anchor). Link labels have no box of their own. In the stand-in placement, POST /checkout (87 px) sits on an 80 px gap and touches the edges of Web app and API gateway in every face, as it does in Liberation Sans; that is the stand-in layout, which 0145 replaces.
+
+## 2026-11-25
+
+Exception to criterion 1, from review of #43: the table measures a character it does not hold as one em, an over-estimate. With textLength, "مرحبا بالعالم" at 12 px drew at 147.33 px against a natural 62.75 to 64.35 px in Chromium, Firefox and WebKit. svg::draw now writes textLength and lengthAdjust only when text::holds(label) is true and the width is above 0; any other label keeps its natural width. Criterion 1 now states this exception. Arabic, Thai and Devanagari labels take this path; a CJK label also takes it, although one em is close to its natural width.
+
+## 2026-11-25
+
+Criterion 1 again, after review fix: tests/svg.rs a_label_outside_the_metrics_table_keeps_its_natural_width draws "مرحبا بالعالم" -> B and asserts the Arabic text has no textLength or lengthAdjust and B has textLength. With svg.rs reverted it FAILED (12 passed, 1 failed); with the fix cargo test -p horsegirl-core --test svg printed 13 passed. The checkout.svg snapshot is unchanged and each_label_is_held_to_its_measured_width still passes. scripts/task check exited 0.
+
+## 2026-11-25
+
+Fix round 2: merged origin/main (#42, #44) into the branch as c4c8f94, resolved CHANGELOG.md, ran cairn render. scripts/task check exited 0 on the merged tree; cairn check printed 'ok: 152 item(s), 0 warning(s)'.
+
+## 2026-11-25
+
+Fix round 3: merged origin/main 9b7101a (#41), ran cairn render (ROADMAP.md drops the closed 0116 line). scripts/task check exit 0; scripts/check-core-deps exit 0; cairn check: ok, 152 items, 0 warnings.
+
+## 2026-11-25
+
+Round 4. Added the test an_empty_label_has_no_text_length. With '&& r.width > 0.0' removed from svg.rs the test fails on textLength="0"; with the guard it passes (14 tests pass in --test svg). CHANGELOG.md and docs/theme.md now state that a label with a character outside the metrics table has neither attribute. Filed BUG-158 for white space that SVG collapses. Merged origin/main at 75e7e58 and rendered the roadmap.

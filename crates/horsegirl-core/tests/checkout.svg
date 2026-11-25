@@ -36,21 +36,21 @@
 <rect class="thing slot-1 owner-growth" x="800" y="28" width="120" height="36" rx="4"/>
 <rect class="thing slot-2 owner-platform" x="1000" y="28" width="120" height="36" rx="4"/>
 <rect class="thing slot-2 owner-external" x="1200" y="28" width="120" height="36" rx="4"/>
-<text class="label" x="423.01" y="18.86" text-anchor="middle">Services</text>
-<text class="label owner-apps" x="60" y="50.16" text-anchor="middle">Web app</text>
-<text class="label owner-apps" x="60" y="110.16" text-anchor="middle">Mobile app</text>
-<text class="label owner-platform" x="260" y="50.16" text-anchor="middle">API gateway</text>
-<text class="label owner-commerce" x="660" y="50.16" text-anchor="middle">Payments</text>
-<text class="label owner-platform" x="660" y="110.16" text-anchor="middle">Postgres</text>
-<text class="label owner-commerce" x="460" y="50.16" text-anchor="middle">Orders</text>
-<text class="label owner-growth" x="860" y="50.16" text-anchor="middle">Notify</text>
-<text class="label owner-platform" x="1060" y="50.16" text-anchor="middle">Events</text>
-<text class="label owner-external" x="1260" y="50.16" text-anchor="middle">Email provider</text>
-<text class="label" x="160" y="50.16" text-anchor="middle">POST /checkout</text>
-<text class="label" x="360" y="50.16" text-anchor="middle">create</text>
-<text class="label" x="560" y="50.16" text-anchor="middle">charge</text>
-<text class="label" x="560" y="80.16" text-anchor="middle">save</text>
-<text class="label" x="760" y="50.16" text-anchor="middle">paid</text>
-<text class="label" x="960" y="50.16" text-anchor="middle">publish</text>
-<text class="label" x="1160" y="50.16" text-anchor="middle">send</text>
+<text class="label" x="423.01" y="18.86" text-anchor="middle" textLength="46.01" lengthAdjust="spacingAndGlyphs">Services</text>
+<text class="label owner-apps" x="60" y="50.16" text-anchor="middle" textLength="47.81" lengthAdjust="spacingAndGlyphs">Web app</text>
+<text class="label owner-apps" x="60" y="110.16" text-anchor="middle" textLength="58.71" lengthAdjust="spacingAndGlyphs">Mobile app</text>
+<text class="label owner-platform" x="260" y="50.16" text-anchor="middle" textLength="67.37" lengthAdjust="spacingAndGlyphs">API gateway</text>
+<text class="label owner-commerce" x="660" y="50.16" text-anchor="middle" textLength="53.36" lengthAdjust="spacingAndGlyphs">Payments</text>
+<text class="label owner-platform" x="660" y="110.16" text-anchor="middle" textLength="47.36" lengthAdjust="spacingAndGlyphs">Postgres</text>
+<text class="label owner-commerce" x="460" y="50.16" text-anchor="middle" textLength="36.67" lengthAdjust="spacingAndGlyphs">Orders</text>
+<text class="label owner-growth" x="860" y="50.16" text-anchor="middle" textLength="30.67" lengthAdjust="spacingAndGlyphs">Notify</text>
+<text class="label owner-platform" x="1060" y="50.16" text-anchor="middle" textLength="36.69" lengthAdjust="spacingAndGlyphs">Events</text>
+<text class="label owner-external" x="1260" y="50.16" text-anchor="middle" textLength="76.69" lengthAdjust="spacingAndGlyphs">Email provider</text>
+<text class="label" x="160" y="50.16" text-anchor="middle" textLength="87.15" lengthAdjust="spacingAndGlyphs">POST /checkout</text>
+<text class="label" x="360" y="50.16" text-anchor="middle" textLength="33.35" lengthAdjust="spacingAndGlyphs">create</text>
+<text class="label" x="560" y="50.16" text-anchor="middle" textLength="36.69" lengthAdjust="spacingAndGlyphs">charge</text>
+<text class="label" x="560" y="80.16" text-anchor="middle" textLength="25.35" lengthAdjust="spacingAndGlyphs">save</text>
+<text class="label" x="760" y="50.16" text-anchor="middle" textLength="22.69" lengthAdjust="spacingAndGlyphs">paid</text>
+<text class="label" x="960" y="50.16" text-anchor="middle" textLength="38.03" lengthAdjust="spacingAndGlyphs">publish</text>
+<text class="label" x="1160" y="50.16" text-anchor="middle" textLength="26.02" lengthAdjust="spacingAndGlyphs">send</text>
 </svg>
