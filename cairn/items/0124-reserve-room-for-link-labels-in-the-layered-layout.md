@@ -36,3 +36,7 @@ From item 0033: the route phase already places each label. A label is centred on
 ## 2026-11-25
 
 From item 0033, review round 3: a link label can lie on the name of a group. The layout now moves a label that lies across the top border of a group, or in the 30 px band under it that holds the name (GROUP_TITLE), to 3 px above the border or 3 px under the band. Cases that remain for this item: the upright line of the label has no clear height (a short line), or the label is on a level step in the corridor and so is on no upright line. Measured on 3000 graphs from the generator of no_generated_graph_has_a_fault with each group named 'Services and stores N': 10 link labels lie on a group name in 10 graphs (49 in 44 graphs before the change). The detector reports them as kind Labels, which the corpus test and the generated-graph test allow. The same run has 92 cases of a group name across the border or the name of another group: item 0141 has that.
+
+## 2026-11-25
+
+From review round 4 of item 0033: a loop label has 0.2 px to the link that leaves the same box. Input 'G {\n  a\n}\na -> a: again\na -> b\n': the label box ends at y 47.82 and 'a -> b' leaves at y 48, so the line runs under the whole word, and no detector kind sees it. Also: the box of a label can start above y 0 ('a -> d: skip\na -> b\nb -> c\nc -> d\n' gives y -7.82 to 7.82), because to_origin reads no label. scene::build moves the scene to its own bounds, so the SVG is correct.

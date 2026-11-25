@@ -69,7 +69,8 @@ pub struct Group {
 /// Where everything is. Each list has the order of its list in the [`Graph`].
 ///
 /// The top left corner of the picture is at `0, 0`: no box and no bend has a
-/// negative position.
+/// negative position. The box of a label can pass that corner, when the
+/// label is on the topmost line of the picture.
 #[derive(Clone, Debug, Default, PartialEq)]
 pub struct Layout {
     pub nodes: Vec<Rect>,
@@ -166,7 +167,21 @@ pub fn layout(graph: &Graph, _seed: Option<&Layout>) -> Layout {
     let (paths, mut labels) = paths(graph, &net, &nodes, &columns, &routes, &loops);
     for (link, centre) in labels.iter_mut().enumerate() {
         if let (Some(centre), Some(size)) = (centre.as_mut(), label(graph, link)) {
-            centre.y = off_borders(*centre, size, &paths[link], &groups);
+            let (from, to) = graph.links[link];
+            let ends = [graph.nodes[from].group, graph.nodes[to].group];
+            let around: Vec<usize> = ends
+                .iter()
+                .flatten()
+                .flat_map(|&g| &chains[g])
+                .copied()
+                .collect();
+            let other: Vec<Rect> = groups
+                .iter()
+                .enumerate()
+                .filter(|(g, _)| !around.contains(g))
+                .filter_map(|(_, group)| *group)
+                .collect();
+            centre.y = off_borders(*centre, size, &paths[link], &groups, &other);
         }
     }
     let bends = bends(&net, &centres, &columns);
@@ -600,10 +615,26 @@ fn paths(
 /// across a border moves along its upright line to the nearest height where
 /// it is [`LABEL_CLEAR`] from every border that it would lie across. It
 /// stays where it is when the line has no such height.
-fn off_borders(centre: Point, size: Size, path: &[Point], groups: &[Option<Rect>]) -> f64 {
+///
+/// `other` has the groups that hold neither end of the link. A height
+/// outside all of them comes before a nearer height inside one: a label
+/// inside such a group reads as a label of that group, and the overlap
+/// detector does not see it there.
+fn off_borders(
+    centre: Point,
+    size: Size,
+    path: &[Point],
+    groups: &[Option<Rect>],
+    other: &[Rect],
+) -> f64 {
     let half = size.width / 2.0;
     let beside =
         |group: &&Rect| group.x < centre.x + half && centre.x - half < group.x + group.width;
+    let other: Vec<(f64, f64)> = other
+        .iter()
+        .filter(beside)
+        .map(|group| (group.y, group.y + group.height))
+        .collect();
     let borders: Vec<(f64, f64)> = groups
         .iter()
         .flatten()
@@ -631,11 +662,18 @@ fn off_borders(centre: Point, size: Size, path: &[Point], groups: &[Option<Rect>
         return centre.y;
     };
     let reach = half + LABEL_CLEAR;
+    let inside = |y: f64| {
+        let mut other = other.iter();
+        other.any(|&(top, bottom)| top < y + half && y - half < bottom)
+    };
     borders
         .iter()
         .flat_map(|&(top, bottom)| [top - reach, bottom + reach])
         .filter(|&y| top <= y && y <= bottom && !across(y))
-        .min_by(|a, b| (a - centre.y).abs().total_cmp(&(b - centre.y).abs()))
+        .min_by(|a, b| {
+            let far = (a - centre.y).abs().total_cmp(&(b - centre.y).abs());
+            inside(*a).cmp(&inside(*b)).then(far)
+        })
         .unwrap_or(centre.y)
 }
 

@@ -165,6 +165,32 @@ fn through_groups(flow: &Flow, picture: &Layout) -> usize {
     kinds.filter(|&kind| kind == Kind::LinkThroughGroup).count()
 }
 
+/// How many labels share room with a group that holds neither end of their
+/// link. Such a label lies across no border, so it is wholly inside the
+/// group, and the overlap detector does not report it.
+fn labels_in_other_groups(graph: &Graph, picture: &Layout) -> usize {
+    let inside = |link: usize, centre: &Point| {
+        let size = graph.labels[link].unwrap();
+        let label = Rect {
+            x: centre.x - size.width / 2.0,
+            y: centre.y - size.height / 2.0,
+            width: size.width,
+            height: size.height,
+        };
+        let (from, to) = graph.links[link];
+        let mut own = around(graph, graph.nodes[from].group);
+        own.extend(around(graph, graph.nodes[to].group));
+        let groups = picture.groups.iter().enumerate();
+        let mut other = groups.filter_map(|(g, group)| group.filter(|_| !own.contains(&g)));
+        other.any(|group| room(&group, &label) < 0.0)
+    };
+    let labels = picture.labels.iter().enumerate();
+    let labels = labels.filter_map(|(link, centre)| Some(link).zip(centre.as_ref()));
+    labels
+        .filter(|&(link, centre)| inside(link, centre))
+        .count()
+}
+
 /// The file with a label on every link.
 fn labelled(source: &str) -> Flow {
     let mut model = lower(&parse(source).tree);
@@ -380,10 +406,12 @@ fn no_path_crosses_the_box_of_a_thing_on_any_corpus_diagram() {
 // room. A box is the box of a thing or of a group: no label lies on the box
 // of a thing or across the border of a group. A label can still be inside a
 // group that holds neither end of its link, when the link passes through
-// that group.
+// that group: 4 labels on one diagram. The count falls with the work on those
+// links.
 #[test]
 fn each_link_label_sits_on_its_path_and_overlaps_no_box() {
     let mut labels = 0;
+    let mut inside = Vec::new();
     for (name, source) in DIAGRAMS {
         let flow = labelled(source);
         let picture = layout(&flow.graph, None);
@@ -392,14 +420,12 @@ fn each_link_label_sits_on_its_path_and_overlaps_no_box() {
         assert!(faults.is_empty(), "{name}: {faults:#?}");
         let collisions = collisions(&flow, &picture, &[Kind::LinkThroughGroup, Kind::Labels]);
         assert!(collisions.is_empty(), "{name}: {collisions:#?}");
+        inside.push(labels_in_other_groups(&flow.graph, &picture));
     }
     assert_eq!(labels, 255);
+    assert_eq!(inside, [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4]);
 }
 
-// Each of the two links from `a` ends at the height where a link from `b`
-// starts, and each of the two from `b` ends where a link from `a` starts. No
-// order of the two upright lines keeps the level lines apart, so one link
-// arrives beside the middle of its box.
 // The smallest input from the review of this phase. The upright line of
 // `a -> c` leaves the group through its top, and the middle of the line is
 // 3 px from that border. The name of the group is drawn under that border,
@@ -429,6 +455,10 @@ fn a_label_on_a_line_that_leaves_a_group_is_off_the_border_of_the_group() {
     }
 }
 
+// Each of the two links from `a` ends at the height where a link from `b`
+// starts, and each of the two from `b` ends where a link from `a` starts. No
+// order of the two upright lines keeps the level lines apart, so one link
+// arrives beside the middle of its box.
 #[test]
 fn two_pairs_of_links_that_cross_do_not_lie_on_each_other() {
     let flow = flow("a -> c, d\nb -> c, d\n");

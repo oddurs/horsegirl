@@ -52,3 +52,7 @@ Criterion 1 of item 0033 (p0) says no path crosses a box on any corpus diagram. 
 ## 2026-11-25
 
 About the note before this one: the two numbers of the experiment (0 on 07-compiler, 17 on 10-platform) were measured. The order of the top groups with no pass and the 2 passes inside Services were worked out by hand from the ranks, and no run has shown them.
+
+## 2026-11-25
+
+From review round 4 of item 0033: a label follows its link into the group. With a label on every link, 4 labels on 10-platform are wholly inside a group that holds neither end of their link. The overlap detector does not report a label there. The test each_link_label_sits_on_its_path_and_overlaps_no_box holds the count for each file in 'inside', and the count must fall with the links. The review counted, on 3000 generated graphs (seed 7), 82 labels across the border of such a group before the label move.

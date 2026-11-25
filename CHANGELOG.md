@@ -71,6 +71,8 @@ the project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   loop at the right side of its box. `Graph::labels` gives the size of the
   label of each link, and the layout gives the centre of each label on its
   path, with a gap between two ranks that is wide enough for the label. A
-  label that would lie across the border of a group moves along its upright
-  line to 3 px from that border. The paths are in `Layout::paths` and the
-  labels in `Layout::labels`.
+  label that would lie across the border of a group, or on the band that
+  holds the name of the group, moves along its upright line to 3 px from that
+  border or that band. When the line has more than one such height, the
+  label takes one outside every group that holds neither end of its link.
+  The paths are in `Layout::paths` and the labels in `Layout::labels`.
