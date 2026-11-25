@@ -43,3 +43,7 @@ Criterion 2: sh tests/install.sh exits 0 (run by scripts/task test, which passed
 ## 2026-11-25
 
 Criterion 3: README.md Install section now leads with curl -fsSL https://raw.githubusercontent.com/oddurs/horsegirl/main/install.sh | sh and keeps cargo install as the build-from-source path. scripts/task check exited 0. actionlint 1.7.12 on release.yml exited 0.
+
+## 2026-11-25
+
+Criterion 1 stays unticked: it needs a real tag, and this work pushes no tag. Dry-run evidence: gh workflow run release.yml --ref chore/0042-release-binaries-with-checksums-and-an-i -f dry-run=true gave run 45626307500, conclusion success. check, the four build jobs and sums passed; publish was skipped. The release artifact held the four archives, SHA256SUMS and install.sh; sha256sum -c SHA256SUMS printed OK for each archive; install.sh installed the x86_64 Linux archive from that artifact and the binary printed 'horsegirl 0.0.0'. The first dry run (45625754373) failed because file printed 'statically linked' for aarch64 musl, which the old pattern did not match; the step now checks for an INTERP program header. The publish job (attestation, gh release create) is untested until the first pre-release tag.
