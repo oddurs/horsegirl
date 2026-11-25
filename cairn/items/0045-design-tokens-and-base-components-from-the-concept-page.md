@@ -57,3 +57,7 @@ The site has the concept page tokens in site/app/tokens.css, held to the concept
 ## 2026-11-25
 
 Fix round 1 for PR #20. Criteria 2 and 3 were false once the branch met main: check-a11y failed 4 times on /docs/design/ (contrast of pre > code in dark, scrollable pre without focus at 390px), and the Tab walk stopped at the first repeated name, so it skipped controls. After the merge and the fix, scripts/task check exits 0 and prints 'check-a11y: 24 page loads, no serious finding, focus visible at every stop'. /docs/design/ now reports 16 focus stops, equal to its tabbable count. With the old name-based walk restored, the new assertion fails: 'Tab made 5 stops, the page has 16 tabbable elements'. With the nested <main> restored, the check fails 32 times on landmark-main-is-top-level and landmark-no-duplicate-main.
+
+## 2026-11-25
+
+Review round 2: the tokens.css reset took the margins off docs headings and paragraphs. check-a11y now fails when two adjacent .docs text blocks have a gap under 8px or a .docs h2 has a max-width. Before the docs.css fix, pnpm run build printed '104 failure(s) in 24 page loads'. After it, scripts/task check exited 0 with 'check-a11y: 24 page loads, no serious finding, focus visible at every stop'.

@@ -166,6 +166,29 @@ const countTabbable = `[...document.querySelectorAll("*")].filter((el) =>
   el.tabIndex >= 0 && !el.disabled && !el.inert && el.getClientRects().length > 0 &&
   el.checkVisibility({ visibilityProperty: true })).length`;
 
+// The global reset in tokens.css takes the margins off headings and paragraphs,
+// so prose that sets no spacing of its own runs together. In a docs page, two
+// text blocks that follow each other must have a gap, and an h2 must use the
+// full width of its column.
+const checkProse = `(() => {
+  const failures = [];
+  const blocks = [...document.querySelectorAll(".docs :is(h1, h2, h3, h4, p)")];
+  for (const el of blocks) {
+    const next = el.nextElementSibling;
+    if (!next || !next.matches("h1, h2, h3, h4, p")) continue;
+    const gap = next.getBoundingClientRect().top - el.getBoundingClientRect().bottom;
+    if (gap < 8) failures.push(el.tagName.toLowerCase() + " " +
+      JSON.stringify(el.textContent.trim().slice(0, 40)) + " has a " + gap + "px gap to the next " +
+      next.tagName.toLowerCase());
+  }
+  for (const h2 of document.querySelectorAll(".docs h2")) {
+    if (getComputedStyle(h2).maxWidth !== "none")
+      failures.push("h2 " + JSON.stringify(h2.textContent.trim().slice(0, 40)) +
+        " has max-width " + getComputedStyle(h2).maxWidth);
+  }
+  return failures;
+})()`;
+
 async function tab(cdp) {
   const key = { key: "Tab", code: "Tab", windowsVirtualKeyCode: 9 };
   await cdp.send("Input.dispatchKeyEvent", { type: "keyDown", ...key });
@@ -217,6 +240,7 @@ try {
         await evaluate(cdp, axeSource);
         const violations = await evaluate(cdp, runAxe);
         const focus = await focusFailures(cdp);
+        const prose = await evaluate(cdp, checkProse);
         runs++;
         for (const v of violations) {
           const line = `${where}: ${v.impact} ${v.id}: ${v.help}\n    ${v.nodes.join("\n    ")}`;
@@ -227,7 +251,7 @@ try {
             console.log(`check-a11y: note: ${line}`);
           }
         }
-        for (const failure of focus.failures) {
+        for (const failure of [...focus.failures, ...prose]) {
           failed++;
           console.error(`check-a11y: ${where}: ${failure}`);
         }

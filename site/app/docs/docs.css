@@ -14,6 +14,21 @@
 .docs nav li {
   margin: 0.4rem 0;
 }
+/* tokens.css takes the margins off headings and paragraphs for the designed
+   pages. Prose needs them back, and a docs h2 is not a display heading, so it
+   uses the full column. */
+.docs :is(h1, h2, h3, h4, p) {
+  margin-block: var(--s2);
+}
+.docs :is(h1, h2, h3, h4) {
+  margin-block-start: var(--s4);
+}
+.docs :is(h1, h2, h3, h4, p):first-child {
+  margin-block-start: 0;
+}
+.docs h2 {
+  max-width: none;
+}
 .docs pre {
   overflow-x: auto;
   padding: 0.75rem;
