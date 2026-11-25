@@ -34,3 +34,7 @@ Set Dependabot pull requests for patch and minor updates to merge themselves whe
 ## 2026-11-25
 
 Added .github/workflows/dependabot-automerge.yml and scripts/dependabot-update-type. scripts/task check passes, including tests/dependabot.sh (8 cases: patch, minor, group, major, mixed group, unknown kind, no metadata, empty). I watched no real Dependabot pull request, so criteria 1 and 2 stay unticked.
+
+## 2026-11-25
+
+Round 1: added scripts/dependabot-automerge (disables auto-merge on manual) and tests/automerge.sh; scripts/task check passed.
