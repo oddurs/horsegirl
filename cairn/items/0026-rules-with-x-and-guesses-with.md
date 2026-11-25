@@ -3,14 +3,14 @@ id: 26
 uid: fddc7b46-da30-4974-9716-6380d1c2ae0c
 title: Rules with -x and guesses with ?
 type: feature
-status: doing
+status: done
 milestone: v0.1
 assignee: Oddur Sigurdsson
-claimed: 2026-11-25
 depends_on:
 - 25
 created: 2026-11-25
 updated: 2026-11-25
+closed_at: 2026-11-25
 priority: p1
 risk: low
 surface: language
@@ -32,7 +32,7 @@ Add the crossed arrow `-x` as a rule and a final `?` as a guess, in the parser a
 
 - [x] `A -x B: reason` is stored as a rule with its reason.
 - [x] `A -> B ?` is stored as a link marked as a guess; a label that ends in a question mark with no space before it is not a guess.
-- [ ] Both forms survive the formatter unchanged.
+- [x] Both forms survive the formatter unchanged.
 
 ## 2026-11-25
 
@@ -41,3 +41,7 @@ Criteria 1 and 2 watched pass: cargo test --test model, tests a_rule_is_stored_w
 ## 2026-11-25
 
 Criterion 3 not ticked: no formatter exists on main (item 29 is not merged). The tree prints back the exact source, which the syntax tests hold, but that is not the formatter. Item 29 must keep -x and a final ? when it lands.
+
+## 2026-11-25
+
+Criterion 3: crates/horsegirl-core/tests/format.rs holds 'A -x B: reason' and 'A -> B ?' unchanged through the formatter (item 0029, pull request 29). scripts/task check passed on main at c8ebb1c.
