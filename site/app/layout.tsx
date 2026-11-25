@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import type { ReactNode } from "react";
 import { Shell } from "../components/Shell";
 import "./tokens.css";
+import "./highlight.css";
 
 export const metadata: Metadata = {
   title: "horsegirl",
@@ -9,6 +10,7 @@ export const metadata: Metadata = {
 };
 
 const nav = [
+  { href: "/docs/", label: "Docs" },
   { href: "/design/", label: "Design" },
   { href: "https://github.com/oddurs/horsegirl", label: "GitHub" },
 ];
