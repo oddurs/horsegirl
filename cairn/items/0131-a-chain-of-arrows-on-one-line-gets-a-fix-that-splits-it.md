@@ -45,3 +45,7 @@ Ran cargo test -p horsegirl-core --test syntax -- chain name_in_quotes_that_hold
 ## 2026-11-25
 
 Follow-up filed: 0163, a label that holds a second link ('A -> B: pay -> C: ship') gets a warning that splits it. The review note on this item asked for that chain; it is a different code path (the label reader) and a possible false positive on labels such as 'calls -> returns', so it is its own item.
+
+## 2026-11-25
+
+Review round 1: middle name lists that start with # or end with ; or ? now get no fix. scripts/task check exited 0; new test a_chain_whose_middle_name_reads_differently_gets_no_fix failed before the parser change and passes after.
