@@ -545,9 +545,23 @@ fn quotes_stay_where_the_name_needs_them() {
         "\"\" -> C\n",
         "\"a->b\" -> C\n",
         "A { owner: \"Team A\" }\n",
+        "\"a-\"->B\n",
+        "A, \"b-\"->C\n",
+        "\"a-\"-x B\n",
     ] {
         silent(source);
     }
+}
+
+#[test]
+fn a_fix_never_joins_a_name_to_an_arrow() {
+    let habit = "\"x-\"-->B\n";
+    let fixed = only(habit).fix.unwrap().apply(habit);
+    assert_eq!(fixed, "\"x-\"->B\n");
+    let before = horsegirl_core::model::lower(&parse(habit).tree);
+    let after = horsegirl_core::model::lower(&parse(&fixed).tree);
+    assert_eq!(before.things[0].name, "x-");
+    assert_eq!(after.things[0].name, "x-");
 }
 
 #[test]

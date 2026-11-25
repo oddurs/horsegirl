@@ -40,6 +40,11 @@ the project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   inline sets them to restyle it. Each shape has the class of its role
   (`thing`, `group`, `link`, `label`) and one class for each fact, such as
   `owner-commerce`.
+- The parser reads habits from Mermaid and says what it changed with the note
+  `N0101`. It reads `-->` as `->`, a final `;` at the end of a line, double
+  quotes around a name that does not need them, and a space before the colon
+  of a label. Each note carries a safe fix. A quoted name stays quoted when a
+  bare name would join the next character, as in `"a-"->B`.
 
 ### Changed
 

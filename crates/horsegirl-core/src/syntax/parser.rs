@@ -482,7 +482,14 @@ impl<'s> Parser<'s> {
             Some(TokenKind::Quoted) => {
                 let token = self.tokens[self.pos];
                 let inside = &token.text[1..token.text.len() - 1];
-                if kind == NodeKind::Name && bare_is_safe(inside) {
+                // A bare name joins what follows it, so the quotes stay unless a
+                // space or the line end comes next: `"a-"->B` would become the
+                // arrow `-->`.
+                let parted = self.source[token.span().end..]
+                    .chars()
+                    .next()
+                    .is_none_or(|c| c == ' ' || c == '\n' || c == '\r');
+                if kind == NodeKind::Name && parted && bare_is_safe(inside) {
                     self.habits.push(Edit {
                         span: token.span(),
                         text: inside.to_owned(),
