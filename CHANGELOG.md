@@ -12,7 +12,9 @@ the project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   file. `check`, `fix` and `draw` return `structuredContent` with an
   `outputSchema`, and a diagnostic has the shape of the `--json` line.
   `horsegirl mcp --config` prints the entry for the configuration of a client.
-  `docs/mcp.md` states each shape.
+  `docs/mcp.md` states each shape. The tool schemas are committed in
+  `crates/horsegirl/tests/golden/tools.json`, and a test holds the server to
+  them for clients of `2025-11-25` and of `2026-07-28`.
 - A version tag publishes static binaries for Linux and macOS on x86_64 and
   aarch64, with `SHA256SUMS` and a build attestation. `install.sh` installs
   the binary to `~/.local/bin` and refuses an archive whose checksum does not
