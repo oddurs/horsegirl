@@ -64,7 +64,9 @@ export async function crawl(origin) {
     }
     if (!(res.headers.get("content-type") ?? "").startsWith("text/html")) continue;
     pages.push(path);
-    const html = await res.text();
+    // Next writes <link rel="preconnect" href="/"> once a style sheet names a font
+    // file. It points at the host root, not at a page of this site.
+    const html = (await res.text()).replace(/<link rel="preconnect"[^>]*>/g, "");
     for (const [, url] of html.matchAll(/\s(?:href|src)="([^"]+)"/g)) {
       const target = new URL(url, origin + path);
       if (target.origin !== origin || seen.has(target.pathname)) continue;
