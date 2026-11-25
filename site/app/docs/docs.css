@@ -14,42 +14,62 @@
 .docs nav li {
   margin: 0.4rem 0;
 }
+/* tokens.css takes the margins off headings and paragraphs for the designed
+   pages. Prose needs them back, and a docs h2 is not a display heading, so it
+   uses the full column. */
+.docs :is(h1, h2, h3, h4, p) {
+  margin-block: var(--s2);
+}
+.docs :is(h1, h2, h3, h4) {
+  margin-block-start: var(--s4);
+}
+.docs :is(h1, h2, h3, h4, p):first-child {
+  margin-block-start: 0;
+}
+.docs h2 {
+  max-width: none;
+}
 .docs pre {
   overflow-x: auto;
   padding: 0.75rem;
-  background: #f4f4f5;
+  background: var(--code-bg);
+  color: var(--code-fg);
+  border: 1px solid var(--line);
+  border-radius: var(--r2);
 }
 .docs table {
   border-collapse: collapse;
 }
 .docs th,
 .docs td {
-  border: 1px solid #d4d4d8;
+  border: 1px solid var(--line);
   padding: 0.25rem 0.5rem;
 }
+/* opacity, not visibility: a hidden element leaves the Tab order, and the
+   anchor must stay reachable from the keyboard. */
 .docs .anchor {
-  visibility: hidden;
+  opacity: 0;
   text-decoration: none;
 }
 .docs :is(h1, h2, h3, h4):hover .anchor,
-.docs .anchor:focus {
-  visibility: visible;
+.docs .anchor:focus-visible {
+  opacity: 1;
 }
 .hg-keyword {
-  color: #7c3aed;
+  color: var(--code-k);
   font-weight: 600;
 }
 .hg-arrow {
-  color: #b45309;
+  color: var(--code-w);
 }
 .hg-key {
-  color: #0369a1;
+  color: var(--code-s);
 }
 .hg-evidence {
-  color: #52525b;
+  color: var(--muted);
 }
 .hg-punct {
-  color: #71717a;
+  color: var(--muted);
 }
 @media (max-width: 40rem) {
   .docs {

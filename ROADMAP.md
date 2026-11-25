@@ -12,7 +12,7 @@ named for gaits: Walk, Trot, Canter, Gallop.
 
 ## v0.1 — Walk
 
-`··········` 0% · 0 of 35 done · due 2027-01-31
+`··········` 0% · 0 of 36 done · due 2027-01-31
 
 An agent writes a horsegirl file, checks it, applies the fixes, and draws a flow diagram as SVG, from the command line or over MCP.
 
@@ -22,6 +22,8 @@ An agent writes a horsegirl file, checks it, applies the fixes, and draws a flow
 - [ ] [`0118`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0118-hold-each-svg-label-to-its-measured-width-in-any-font.md) Hold each SVG label to its measured width in any font <sup>feature · p2 · render</sup>
 - [ ] [`ADR-119`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/ADR-119-names-that-hold-a-reserved-character-are-written-in-quotes.md) Names that hold a reserved character are written in quotes <sup>decision · p2 · language</sup>
 - [ ] [`0120`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0120-the-typo-check-leaves-sibling-names-alone.md) The typo check leaves sibling names alone <sup>feature · p2 · check</sup>
+- [ ] [`0126`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0126-the-site-sets-its-type-in-the-concept-page-fonts.md) The site sets its type in the concept page fonts <sup>feature · p2 · site</sup>
+- [ ] [`BUG-127`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/BUG-127-every-docs-page-has-a-level-one-heading.md) Every docs page has a level-one heading <sup>bug · p2 · site</sup>
 - [ ] [`SPIKE-18`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/SPIKE-18-which-layered-layout-design-do-we-build-on.md) Which layered layout design do we build on? <sup>spike · p0 · layout</sup>
 - [ ] [`0023`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0023-parse-names-links-braces-and-show-lines.md) Parse names, links, braces and show lines <sup>feature · p0 · language</sup>
 - [ ] [`0024`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0024-diagnostics-with-stable-codes-spans-and-fixes.md) Diagnostics with stable codes, spans and fixes <sup>feature · p0 · check</sup>
@@ -44,7 +46,6 @@ An agent writes a horsegirl file, checks it, applies the fixes, and draws a flow
 - [ ] [`0041`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0041-the-first-benchmark-can-a-model-write-it-from-the-card.md) The first benchmark: can a model write it from the card? <sup>feature · p1 · bench</sup>
 - [ ] [`0042`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0042-release-binaries-with-checksums-and-an-install-script.md) Release binaries with checksums and an install script <sup>chore · p0 · release</sup>
 - [ ] [`0043`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0043-quickstart-and-language-reference-for-v0-1.md) Quickstart and language reference for v0.1 <sup>docs · p1 · language</sup>
-- [ ] [`0045`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0045-design-tokens-and-base-components-from-the-concept-page.md) Design tokens and base components from the concept page <sup>feature · p1 · site</sup>
 - [ ] [`0046`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0046-the-landing-page.md) The landing page <sup>feature · p1 · site</sup>
 - [ ] [`0049`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0049-an-honest-gallery-drawn-by-ci.md) An honest gallery, drawn by CI <sup>feature · p2 · site</sup>
 - [ ] [`0052`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0052-a-daily-report-of-what-the-backlog-needs-from-a-person.md) A daily report of what the backlog needs from a person <sup>feature · p2 · workflow</sup>

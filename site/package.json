@@ -8,7 +8,7 @@
   },
   "scripts": {
     "dev": "next dev --port 3044",
-    "build": "next build && node scripts/check-export.mjs",
+    "build": "next build && node scripts/check-export.mjs && node scripts/check-a11y.mjs",
     "fmt": "biome format --write",
     "fmt:check": "biome format",
     "lint": "biome lint --error-on-warnings",
@@ -26,6 +26,7 @@
     "@types/node": "24.19.2",
     "@types/react": "19.3.0",
     "@types/react-dom": "19.3.0",
+    "axe-core": "4.14.0",
     "typescript": "7.0.2"
   }
 }

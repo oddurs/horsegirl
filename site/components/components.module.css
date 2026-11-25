@@ -1,0 +1,223 @@
+/* The base components of the concept page. Every value is a token from app/tokens.css. */
+
+.skip {
+  position: absolute;
+  left: var(--s2);
+  top: -100px;
+  z-index: 30;
+  background: var(--surface);
+  color: var(--ink);
+  border: 1px solid var(--line);
+  border-radius: var(--r1);
+  padding: var(--s1) var(--s2);
+}
+.skip:focus {
+  top: var(--s1);
+}
+
+.header {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  background: color-mix(in srgb, var(--ground) 86%, transparent);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--line);
+}
+.headerInner {
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: var(--s1) max(20px, env(safe-area-inset-right, 0px)) var(--s1)
+    max(20px, env(safe-area-inset-left, 0px));
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s2);
+}
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  text-decoration: none;
+  color: var(--ink);
+  border-radius: var(--r1);
+}
+.brand svg {
+  width: 24px;
+  height: auto;
+  flex: none;
+}
+.wordmark {
+  font-family: var(--display);
+  font-weight: 800;
+  font-size: 1.2rem;
+  letter-spacing: -0.03em;
+}
+.nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s1) 1.2rem;
+  font-size: 0.9rem;
+}
+.nav a {
+  color: var(--muted);
+  text-decoration: none;
+  border-radius: 2px;
+}
+.nav a:hover,
+.nav a:focus-visible {
+  color: var(--ink);
+}
+
+.main {
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: var(--s4) max(20px, env(safe-area-inset-right, 0px)) var(--s5)
+    max(20px, env(safe-area-inset-left, 0px));
+  display: flex;
+  flex-direction: column;
+  gap: var(--s6);
+}
+
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s4);
+  scroll-margin-top: 4.5rem;
+}
+.sectionHead {
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+}
+.eyebrow {
+  color: var(--muted);
+  font-weight: 500;
+  font-size: 0.9rem;
+}
+.lede {
+  font-size: 1.05rem;
+  color: var(--muted);
+}
+
+.code {
+  min-width: 0;
+}
+.code pre {
+  margin: 0;
+  background: var(--code-bg);
+  color: var(--code-fg);
+  font-family: var(--mono);
+  font-size: 0.8rem;
+  line-height: 1.6;
+  font-variant-ligatures: none;
+  padding: 1.1rem 1.2rem;
+  border: 1px solid var(--line);
+  border-radius: var(--r2);
+  overflow-x: auto;
+}
+.file {
+  display: block;
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  color: var(--muted);
+  margin-bottom: 0.6rem;
+}
+
+.figure {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  min-width: 0;
+}
+.canvas {
+  background: var(--d-paper);
+  border: 1px solid var(--line);
+  border-radius: var(--r2);
+  padding: var(--s2);
+  min-width: 0;
+}
+.canvas svg {
+  display: block;
+  max-width: 100%;
+  height: auto;
+  margin: 0 auto;
+}
+.caption {
+  font-size: 0.88rem;
+  color: var(--muted);
+  max-width: 70ch;
+}
+
+.tableWrap {
+  overflow-x: auto;
+  border: 1px solid var(--line);
+  border-radius: var(--r2);
+  background: var(--surface);
+}
+.table {
+  border-collapse: collapse;
+  width: 100%;
+  min-width: 640px;
+  font-size: 0.92rem;
+}
+.table caption {
+  text-align: left;
+  padding: 0.6rem 0.9rem 0;
+  font-size: 0.88rem;
+  color: var(--muted);
+}
+.table th,
+.table td {
+  text-align: left;
+  padding: 0.6rem 0.9rem;
+  border-bottom: 1px solid var(--line);
+  vertical-align: top;
+}
+.table th {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--muted);
+}
+.table td:first-child {
+  font-family: var(--display);
+  font-weight: 700;
+  white-space: nowrap;
+}
+.table td code {
+  background: var(--t-neutral);
+  padding: 0.08rem 0.32rem;
+  border-radius: 4px;
+}
+.table tr:last-child td {
+  border-bottom: 0;
+}
+
+.seg {
+  margin: 0;
+  padding: 0;
+  min-inline-size: 0;
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-self: flex-start;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--surface);
+  overflow: hidden;
+}
+.seg button {
+  font: 500 0.85rem var(--body);
+  background: transparent;
+  color: var(--ink);
+  border: 0;
+  padding: 0.5rem 0.95rem;
+  cursor: pointer;
+}
+.seg button[aria-pressed="true"] {
+  background: var(--ink);
+  color: var(--ground);
+}
+/* The group clips its children, so the ring is drawn inside the button. */
+.seg button:focus-visible {
+  outline-offset: -3px;
+}

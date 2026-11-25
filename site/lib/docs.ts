@@ -97,7 +97,8 @@ export function renderPages(pages: Page[]): RenderedPage[] {
             language === "horsegirl" || language === "horse"
               ? highlightHorsegirl(text)
               : escapeHtml(text);
-          return `<pre><code${language ? ` class="language-${escapeHtml(language)}"` : ""}>${body}\n</code></pre>\n`;
+          // A long line scrolls inside the block, so the block takes keyboard focus.
+          return `<pre tabindex="0"><code${language ? ` class="language-${escapeHtml(language)}"` : ""}>${body}\n</code></pre>\n`;
         },
         link({ href, title, tokens }) {
           const target = resolveLink(page, href);
