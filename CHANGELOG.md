@@ -51,3 +51,9 @@ the project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   pixels, in Arial metrics, from a table bundled in the core. It gives the same
   result on Linux, macOS and in WebAssembly. A character outside the table
   measures as one em.
+- `horsegirl_core::layout::layout` places the boxes and the groups of a flow
+  in ranks from left to right. A link goes to a higher rank, and the link that
+  closes a loop is the one that turns. Two boxes of one rank are at least
+  24 px apart, and a group box holds its own boxes and no other. The layout
+  routes no link. It takes an earlier picture as a seed and does not read it
+  yet.
