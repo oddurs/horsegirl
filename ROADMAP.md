@@ -16,11 +16,11 @@ named for gaits: Walk, Trot, Canter, Gallop.
 
 An agent writes a horsegirl file, checks it, applies the fixes, and draws a flow diagram as SVG, from the command line or over MCP.
 
+- [ ] [`0115`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0115-reserve-the-horsegirl-name-on-crates-io-and-npm.md) Reserve the horsegirl name on crates.io and npm <sup>chore · p2 · release</sup>
 - [ ] [`ADR-16`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/ADR-16-confirm-the-licence-before-the-first-release.md) Confirm the licence before the first release <sup>decision · p1 · release</sup>
 - [ ] [`SPIKE-17`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/SPIKE-17-do-names-with-spaces-survive-real-diagrams.md) Do names with spaces survive real diagrams? <sup>spike · p0 · language</sup>
 - [ ] [`SPIKE-18`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/SPIKE-18-which-layered-layout-design-do-we-build-on.md) Which layered layout design do we build on? <sup>spike · p0 · layout</sup>
 - [ ] [`SPIKE-19`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/SPIKE-19-how-do-we-measure-text-without-a-browser.md) How do we measure text without a browser? <sup>spike · p0 · render</sup>
-- [ ] [`SPIKE-20`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/SPIKE-20-is-the-name-free-on-the-package-registries.md) Is the name free on the package registries? <sup>spike · p1 · release</sup>
 - [ ] [`SPIKE-21`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/SPIKE-21-which-mcp-library-and-what-shape-is-a-tool-result.md) Which MCP library, and what shape is a tool result? <sup>spike · p1 · mcp</sup>
 - [ ] [`0022`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0022-split-the-crate-into-a-workspace-with-a-pure-core.md) Split the crate into a workspace with a pure core <sup>chore · p0 · workflow</sup>
 - [ ] [`0023`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0023-parse-names-links-braces-and-show-lines.md) Parse names, links, braces and show lines <sup>feature · p0 · language</sup>
