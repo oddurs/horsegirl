@@ -466,6 +466,15 @@ fn a_show_line_with_a_mistake_in_its_argument_is_still_a_show_line() {
     assert_eq!(error.code, "E0008");
     assert!(error.message.contains("one name"), "{}", error.message);
     assert_eq!(error.fix, None);
+    // A link or a group after the lens is an error in the show line too.
+    for (source, code) in [
+        ("show flow of A -> B", "E0004"),
+        ("show lanes by X { a, b }", "E0008"),
+    ] {
+        let (tree, codes) = read(source);
+        assert_eq!(codes, [code], "{source}");
+        assert_eq!(kinds(&parse(source).tree), [NodeKind::Error], "{tree}");
+    }
     // Without a lens and `of`, `from` or `by`, `show` is a word of a name.
     let (tree, codes) = read("show, A -> B\nshow { owner: X }\n");
     assert_eq!(codes, [""; 0]);
