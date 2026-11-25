@@ -7,8 +7,8 @@ An agent-first diagram language. An agent states the facts about a system once.
 A lens turns the same facts into a flow, a sequence, a matrix, or another picture.
 
 **Status: the start of the roadmap.** The binary checks a file, applies the
-safe fixes, formats it and draws it as a flow in SVG. The rest of
-[v0.1](ROADMAP.md) is in progress.
+safe fixes, formats it and draws it as a flow in SVG, from the command line or
+over MCP. The rest of [v0.1](ROADMAP.md) is in progress.
 
 ## Why it exists
 
@@ -49,6 +49,10 @@ horsegirl fix shop.horse           # apply every safe fix in place
 horsegirl fmt shop.horse           # print the one canonical form
 horsegirl draw shop.horse          # write shop.svg beside the file
 ```
+
+An agent in an MCP client calls the same commands as tools. Run
+`horsegirl mcp --config` and add what it prints to the configuration of the
+client. [docs/mcp.md](docs/mcp.md) states the shape of each tool.
 
 Each command reads standard input when the file is `-` or absent. It exits 0
 when the file has no error, 1 when it has one, and 2 for a mistake in the
