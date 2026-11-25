@@ -1,0 +1,13 @@
+File
+  Error "A -> B: \"never closed"
+  Rule
+    Names
+      Name "C"
+    Cross "-x"
+    Names
+      Name "D"
+    Colon ":"
+    Label "forbidden?"
+  Show
+    Keyword "show"
+    Lens "flow"

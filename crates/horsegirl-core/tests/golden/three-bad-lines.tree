@@ -1,0 +1,32 @@
+File
+  Link
+    Names
+      Name "Web app"
+    Arrow "->"
+    Names
+      Name "API gateway"
+  Error "owner: Commerce"
+  Link
+    Names
+      Name "API gateway"
+    Arrow "->"
+    Names
+      Name "Orders"
+    Colon ":"
+    Label "create"
+  Error "Orders -> -> Payments"
+  Things
+    Names
+      Name "Services"
+    Block
+      Open "{"
+      Things
+        Names
+          Name "Orders"
+          Comma ","
+          Name "Payments"
+      Close "}"
+  Error "Payments -> Notify -> Events"
+  Show
+    Keyword "show"
+    Lens "flow"

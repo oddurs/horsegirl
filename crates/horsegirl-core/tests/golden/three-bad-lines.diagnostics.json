@@ -1,0 +1,29 @@
+[
+  {
+    "code": "E0009",
+    "line": 2,
+    "column": 1,
+    "span": [23, 38],
+    "text": "owner: Commerce",
+    "message": "A fact goes inside braces after a name, as in `Payments { owner: Commerce }`. A name that holds `:` is written in double quotes.",
+    "fix": null
+  },
+  {
+    "code": "E0006",
+    "line": 4,
+    "column": 11,
+    "span": [79, 81],
+    "text": "->",
+    "message": "A name is missing before `->`. Write the name there.",
+    "fix": null
+  },
+  {
+    "code": "E0001",
+    "line": 6,
+    "column": 20,
+    "span": [140, 142],
+    "text": "->",
+    "message": "A line holds one arrow, and this `->` is a second one. Write each link on its own line. A name that holds `->` is written in double quotes.",
+    "fix": null
+  }
+]

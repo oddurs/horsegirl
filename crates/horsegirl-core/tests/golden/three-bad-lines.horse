@@ -1,0 +1,7 @@
+Web app -> API gateway
+owner: Commerce
+API gateway -> Orders: create
+Orders -> -> Payments
+Services { Orders, Payments }
+Payments -> Notify -> Events
+show flow
