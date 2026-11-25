@@ -311,9 +311,9 @@ impl<'s> Parser<'s> {
                 loop {
                     match self.kind() {
                         None | Some(TokenKind::Newline | TokenKind::Close) => break,
-                        // A `{` that neither closes on its line nor ends it is
-                        // a stray mark of the bad line. A block for it would
-                        // swallow the good lines after it.
+                        // Any other `{` is a stray mark of the bad line, as in
+                        // `A -> B: uses {braces`. A block for it would swallow
+                        // the good lines after it.
                         Some(TokenKind::Open) if self.opens_block() => {
                             if depth < MAX_DEPTH {
                                 self.block(depth, &mut children);
@@ -1150,9 +1150,16 @@ impl<'s> Parser<'s> {
         Ok(())
     }
 
-    /// Whether the `{` at the current token closes on its line or ends it.
+    /// Whether the `{` at the current token opens a block of a bad line: it
+    /// closes on its line, it ends the line, or a space puts it after the name
+    /// that failed, as in `G@x { A`. Quotes make that name good, and then the
+    /// `{` opens a group, so the recovery reads the same block.
     fn opens_block(&self) -> bool {
-        self.closes[self.pos].is_some()
+        let after_name = matches!(self.last, Some((first, Text::Name))
+            if self.kind_at(self.pos - 1) == Some(TokenKind::Space)
+                && self.skip(self.extent(first, Text::Name)) == self.pos);
+        after_name
+            || self.closes[self.pos].is_some()
             || matches!(
                 self.kind_at(self.skip(self.pos + 1)),
                 None | Some(TokenKind::Newline)

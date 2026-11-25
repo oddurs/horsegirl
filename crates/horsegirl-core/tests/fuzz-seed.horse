@@ -30,6 +30,9 @@ A -> B: x {
 A -> B: uses {braces
 C -> D
 show flow
+G@x { A
+B
+}
 G {
 G {
 G {

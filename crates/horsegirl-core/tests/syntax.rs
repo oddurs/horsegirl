@@ -548,6 +548,41 @@ fn a_bad_line_keeps_a_block_whose_brace_ends_the_line() {
 }
 
 #[test]
+fn a_name_that_needs_quotes_keeps_its_group_across_lines() {
+    for source in ["G@x { A\nB\n}\nafter\n", "Team: x { A\nB\n}\nafter\n"] {
+        let parse = parse(source);
+        assert_eq!(parse.tree.to_string(), source);
+        assert_eq!(
+            kinds(&parse.tree),
+            [NodeKind::Error, NodeKind::Things],
+            "{source:?}"
+        );
+        let codes: Vec<_> = parse.diagnostics.iter().map(|d| d.code).collect();
+        assert_eq!(codes, ["E0004"], "{source:?}");
+    }
+}
+
+#[test]
+fn a_brace_after_a_label_is_a_stray_mark_even_with_a_part_after_it() {
+    // A label cannot open a group, so the `{` opens no block, and the `}`
+    // that the author meant for it closes nothing.
+    let source = "A -> B: x { C\nD\n}\nafter\n";
+    let parse = parse(source);
+    assert_eq!(parse.tree.to_string(), source);
+    assert_eq!(
+        kinds(&parse.tree),
+        [
+            NodeKind::Error,
+            NodeKind::Things,
+            NodeKind::Error,
+            NodeKind::Things
+        ]
+    );
+    let codes: Vec<_> = parse.diagnostics.iter().map(|d| d.code).collect();
+    assert_eq!(codes, ["E0001", "E0003"]);
+}
+
+#[test]
 fn braces_past_the_depth_limit_stay_paired() {
     let lines = format!("{}{}after\n", "G {\n".repeat(70), "}\n".repeat(70));
     let one_line = format!("{}{}\nafter\n", "G { ".repeat(70), "} ".repeat(70));

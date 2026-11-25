@@ -113,10 +113,12 @@ the project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Changed
 
-- A bad line keeps a `{` as a block only when the `{` closes on its line or
-  ends it. A `{` that does neither is a mark of the bad line, so the lines
-  after it are read as their own facts. Before, `A -> B: uses {braces` held
-  the rest of the file in its error.
+- A bad line keeps a `{` as a block only when the `{` closes on its line, ends
+  it, or follows the bad name after a space, as in `G@x { A`. Any other `{` is
+  a mark of the bad line, so the lines after it are read as their own facts.
+  Before, `A -> B: uses {braces` held the rest of the file in its error. A
+  `{` after a label with a part after it, as in `A -> B: x { C`, is such a
+  mark, so the `}` on a later line gives `E0003`.
 - A group that nests past 64 levels gives one `E0007`, and the parser reads
   the group to its own `}`. Each `}` after it closes the group it belongs to,
   so 70 nested groups give no `E0003`.
