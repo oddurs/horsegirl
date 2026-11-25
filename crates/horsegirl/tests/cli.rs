@@ -8,7 +8,7 @@ fn horsegirl() -> Command {
 fn spec_prints_the_card() {
     let out = horsegirl().arg("spec").output().expect("the binary runs");
     assert!(out.status.success());
-    assert_eq!(String::from_utf8_lossy(&out.stdout), horsegirl::SPEC);
+    assert_eq!(String::from_utf8_lossy(&out.stdout), horsegirl_core::SPEC);
 }
 
 #[test]

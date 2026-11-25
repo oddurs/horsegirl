@@ -30,6 +30,6 @@
 
 ## The language
 
-- The language card in `src/spec.txt` is the specification an agent reads.
+- The language card in `crates/horsegirl-core/src/spec.txt` is the specification an agent reads.
   A change to it is a change to the language and needs a `decision` item.
 - A new piece of syntax must not lower the benchmark score.

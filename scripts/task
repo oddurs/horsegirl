@@ -20,7 +20,7 @@ fmt() { cargo fmt --all; }
 fmt_check() { cargo fmt --all -- --check; }
 
 lint() {
-  cargo clippy --all-targets --locked -- -D warnings
+  cargo clippy --workspace --all-targets --locked -- -D warnings
   if optional shellcheck; then
     shellcheck scripts/task scripts/agent scripts/setup .githooks/* tests/agent.sh
   fi
@@ -32,14 +32,14 @@ lint() {
 
 test_all() {
   if command -v cargo-nextest >/dev/null 2>&1; then
-    cargo nextest run --locked
+    cargo nextest run --workspace --locked
   else
-    cargo test --locked
+    cargo test --workspace --locked
   fi
   sh tests/agent.sh
 }
 
-build() { cargo build --locked; }
+build() { cargo build --workspace --locked; }
 
 case "${1:-}" in
   fmt) fmt ;;
