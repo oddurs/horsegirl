@@ -354,7 +354,7 @@ fn list(items: impl Iterator<Item = String>) -> String {
 /// A number rounded to two decimals, with no trailing zero. Two decimals hide
 /// the last bits of a sum, which can differ between two orders of the same
 /// additions, and are finer than any screen draws.
-fn number(value: f64) -> String {
+pub(crate) fn number(value: f64) -> String {
     let fixed = format!("{value:.2}");
     let trimmed = fixed.trim_end_matches('0').trim_end_matches('.');
     if trimmed == "-0" {
