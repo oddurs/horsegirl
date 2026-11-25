@@ -21,6 +21,9 @@ fn model(source: &str) -> Model {
     for rule in &mut model.rules {
         rule.span = 0..0;
     }
+    for show in &mut model.shows {
+        show.span = 0..0;
+    }
     model
 }
 
