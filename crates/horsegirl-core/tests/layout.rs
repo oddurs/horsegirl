@@ -351,13 +351,14 @@ fn no_two_boxes_are_closer_than_the_node_gap_on_any_corpus_diagram() {
 }
 
 // The overlap detector reads each of the eleven pictures as a backend does.
-// One kind of collision remains: the order phase puts a link on one side of
-// a group in one rank and on the other side in the next, and the path then
-// passes through the group. The backlog item "No link passes through a group
-// that holds neither of its ends" has that work, and the counts here fall
-// with it.
+// This test holds the box of each thing only. A path does cross the box of a
+// group, 18 times on two diagrams: the order phase puts a link on one side
+// of a group in one rank and on the other side in the next, and the path
+// then passes through the group. The backlog item "No link passes through a
+// group that holds neither of its ends" has that work, and the counts here
+// fall with it.
 #[test]
-fn no_path_crosses_a_box_on_any_corpus_diagram() {
+fn no_path_crosses_the_box_of_a_thing_on_any_corpus_diagram() {
     let mut links = 0;
     let mut through = Vec::new();
     for (name, source) in DIAGRAMS {

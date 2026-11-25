@@ -65,7 +65,8 @@ the project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - The layout routes each link as a path at right angles. A path leaves the
   right side of a box, turns only between two ranks, and enters the left side
   of the next box, so it crosses no box of a thing. A link out of a group
-  crosses the border of the group once. A link from a thing to itself is a
+  crosses the border of the group once. A path can still pass through a group
+  that holds neither end of its link. A link from a thing to itself is a
   loop at the right side of its box. `Graph::labels` gives the size of the
   label of each link, and the layout gives the centre of each label on its
   path, with a gap between two ranks that is wide enough for the label. The

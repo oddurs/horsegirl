@@ -3,7 +3,8 @@
 //! A link leaves the right side of a box and enters the left side of the
 //! next. Between two ranks is a corridor that holds no box. A step that
 //! changes height turns twice in the corridor, so every upright line is in a
-//! corridor and no path crosses a box.
+//! corridor and no path crosses the box of a node. A corridor can be inside
+//! a group, so an upright line can cross a group that its link has no end in.
 //!
 //! The steps that leave one item share one upright line, their trunk. Two
 //! trunks whose heights overlap get different tracks, so no two upright lines

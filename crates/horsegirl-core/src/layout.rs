@@ -5,7 +5,8 @@
 //! sorts each rank to cross few links. The place phase sets the position of
 //! each node along its rank. A group stays in one piece: its box holds its
 //! nodes and no other node. The route phase draws each link as a path at
-//! right angles that crosses no box.
+//! right angles that crosses no box of a node. A path can still pass through
+//! a group that holds neither end of its link.
 //!
 //! The phases use sums, differences, halves and means only, and they iterate
 //! no hash map, so the same graph gives the same bits on every machine.
@@ -81,7 +82,9 @@ pub struct Layout {
     /// The path of each link: its points from its start to its end. Each
     /// part of a path is level or upright. A path starts on the border of
     /// the box of its first node, ends on the border of the box of its
-    /// second node, and crosses no box.
+    /// second node, and crosses no box of a node. It can pass through the box
+    /// of a group that holds neither of its two nodes: the order phase can
+    /// put a link above such a group in one rank and below it in the next.
     pub paths: Vec<Vec<Point>>,
     /// The centre of the label of each link that has one. It is on the path
     /// of the link, and a label of the size in the [`Graph`] overlaps no box

@@ -3,14 +3,13 @@ id: 33
 uid: 7978c04f-2397-4fe3-9dd3-28fda10516a3
 title: Route edges at right angles around boxes and groups
 type: feature
-status: done
+status: doing
 milestone: v0.1
 assignee: Oddur Sigurdsson
 depends_on:
 - 32
 created: 2026-11-25
 updated: 2026-11-25
-closed_at: 2026-11-25
 priority: p0
 risk: high
 surface: none
@@ -30,7 +29,7 @@ Route each link as an orthogonal path between ports on its two boxes. Paths avoi
 
 ## Acceptance criteria
 
-- [x] No path crosses a box on any corpus diagram.
+- [ ] No path crosses a box on any corpus diagram.
 - [x] Each link label sits on its path and overlaps no box.
 - [x] The overlap detector that the corpus test uses is part of this item.
 
@@ -57,3 +56,7 @@ What the next items need to know. Layout.paths has the points of each link and L
 ## Result
 
 The layout routes each link at right angles and turns only between two ranks, so no path crosses the box of a thing on the eleven test diagrams, and each label is on its path and off every box. horsegirl_core::overlap::overlaps reads a scene and reports each collision. 18 links still pass through a group that holds neither of their ends: item 0146.
+
+## 2026-11-25
+
+Review round 1: criterion 1 is unticked and the item is open again. Both reviews read 'box' as the box of a thing or of a group, as the title and the code do. With that meaning the criterion is not true: 18 links pass through a group that holds neither of their ends, 1 on 07-compiler and 17 on 10-platform. Zero is not possible on 10-platform with the route phase as it is, for a reason that no order removes. Shopping has ranks 3 to 5 and Fulfilment has ranks 3 to 6, both inside Services. Orders (rank 3, Fulfilment) links to Order database (rank 4, Stores), and Cart (rank 4, Shopping) links to Cache (rank 5, Stores). Stores is on one side of Services. Each of the two groups must then be on that side of the other, and a path that only goes to the right cannot go round. The criterion becomes true in one of two ways. The owner narrows it to 'the box of a thing', and item 0146 holds the group case. Or item 0146 lands first with a path that goes round a group, or with other ranks. The comments on Layout::paths, on the layout module and on the route module now say 'no box of a node' and name the group case. The test is now no_path_crosses_the_box_of_a_thing_on_any_corpus_diagram.
