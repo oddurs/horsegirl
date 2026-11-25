@@ -50,3 +50,7 @@ Criterion 3: required needs check; check runs scripts/task check, which runs bui
 ## 2026-11-25
 
 Criterion 1 is open: it can only be watched after a merge to main.
+
+## 2026-11-25
+
+CI run 45556101850 on head 376a90c: check pass (steps 'Run scripts/task check' and 'Upload the site' pass), required pass, pr-title pass, deploy skipped (PR event). PR mergeable.
