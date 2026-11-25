@@ -84,6 +84,10 @@ pub const CATALOGUE: &[Code] = &[
         code: "W0107",
         summary: "A thing has no link and no rule, so it stands alone in every picture. A group needs no link of its own.",
     },
+    Code {
+        code: "W0108",
+        summary: "A name that ends in `/` is followed by braces that hold one bare name, as in `GET /users/{id}`. The parser reads a group, and the writer likely meant one name. The suggested fix writes the whole text in double quotes.",
+    },
 ];
 
 /// The catalogue as a Markdown table, as `docs/diagnostics.md` holds it.

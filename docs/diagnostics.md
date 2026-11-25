@@ -100,4 +100,5 @@ code that the table does not hold. To regenerate it, run
 | `N0200` | note | A link or a rule ends in `?` in every statement, so it is a guess. |
 | `W0010` | warning | A story is parsed, and this version does not order its links. |
 | `W0107` | warning | A thing has no link and no rule, so it stands alone in every picture. A group needs no link of its own. |
+| `W0108` | warning | A name that ends in `/` is followed by braces that hold one bare name, as in `GET /users/{id}`. The parser reads a group, and the writer likely meant one name. The suggested fix writes the whole text in double quotes. |
 <!-- catalogue: end -->

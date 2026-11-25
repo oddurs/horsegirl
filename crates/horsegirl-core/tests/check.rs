@@ -275,3 +275,40 @@ fn two_runs_give_the_same_diagnostics() {
     let source = "A -> Payments\nPayments -> B\nC -> Paymnts\nLonely\nD -> E ?\nshow flwo\n";
     assert_eq!(check(source), check(source));
 }
+
+#[test]
+fn a_path_read_as_a_group_gets_a_warning_with_the_quote_fix() {
+    let source = "Web app -> GET /users/{id}\nGET /users/{id}\n";
+    let diagnostics = check(source);
+    let found: Vec<&Diagnostic> = diagnostics.iter().filter(|d| d.code == "W0108").collect();
+    assert_eq!(found.len(), 1, "{diagnostics:#?}");
+    // Only the line that stands alone is a group to the parser.
+    assert_eq!(&source[found[0].span.clone()], "GET /users/{id}");
+    assert_eq!(found[0].span.start, source.rfind("GET").unwrap());
+    let fix = found[0].fix.as_ref().expect("a path carries a fix");
+    assert_eq!(fix.confidence, Confidence::Suggested);
+    assert_eq!(fix.edits[0].text, "\"GET /users/{id}\"");
+    assert_eq!(
+        fix.apply(source),
+        "Web app -> GET /users/{id}\n\"GET /users/{id}\"\n"
+    );
+    assert!(!codes(&check(&fix.apply(source))).contains(&"W0108"));
+}
+
+#[test]
+fn a_group_with_a_name_that_does_not_end_in_a_slash_gives_no_path_warning() {
+    for source in [
+        "Services { Orders }\n",
+        "Services/ { Orders, Payments }\n",
+        "Services/ { owner: Commerce }\n",
+        "Services/ { Orders -> Payments }\n",
+        "Services/ {\n  Orders\n}\n",
+        "\"GET /users/{id}\"\n",
+    ] {
+        assert!(
+            !codes(&check(source)).contains(&"W0108"),
+            "{source:?}: {:#?}",
+            check(source)
+        );
+    }
+}
