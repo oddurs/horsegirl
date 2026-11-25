@@ -38,7 +38,6 @@ An agent writes a horsegirl file, checks it, applies the fixes, and draws a flow
 - [ ] [`BUG-137`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/BUG-137-an-unclosed-quote-in-a-citation-is-an-error.md) An unclosed quote in a citation is an error <sup>bug · p1 · language</sup>
 - [ ] [`BUG-139`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/BUG-139-a-thing-placed-in-two-groups-or-a-group-placed-inside-itself-is-an-error.md) A thing placed in two groups, or a group placed inside itself, is an error <sup>bug · p2 · check</sup>
 - [ ] [`BUG-140`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/BUG-140-a-quote-fix-for-a-link-target-keeps-the-label-outside-the-quotes.md) A quote fix for a link target keeps the label outside the quotes <sup>bug · p2 · language</sup>
-- [ ] [`0026`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0026-rules-with-x-and-guesses-with.md) Rules with -x and guesses with ? <sup>feature · p1 · model</sup>
 - [ ] [`0027`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0027-the-first-checks-typos-orphans-broken-rules-guesses.md) The first checks: typos, orphans, broken rules, guesses <sup>feature · p0 · check</sup>
 - [ ] [`0028`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0028-read-mermaid-habits-and-say-what-was-changed.md) Read Mermaid habits and say what was changed <sup>feature · p1 · check</sup>
 - [ ] [`0029`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0029-a-formatter-with-one-canonical-form.md) A formatter with one canonical form <sup>feature · p1 · language</sup>
@@ -57,6 +56,7 @@ An agent writes a horsegirl file, checks it, applies the fixes, and draws a flow
 - [ ] [`0049`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0049-an-honest-gallery-drawn-by-ci.md) An honest gallery, drawn by CI <sup>feature · p2 · site</sup>
 - [ ] [`0052`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0052-a-daily-report-of-what-the-backlog-needs-from-a-person.md) A daily report of what the backlog needs from a person <sup>feature · p2 · workflow</sup>
 - [ ] [`0054`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0054-cut-a-release-with-one-command.md) Cut a release with one command <sup>chore · p1 · workflow</sup>
+- [ ] [`0026`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0026-rules-with-x-and-guesses-with.md) Rules with -x and guesses with ? <sup>feature · p1 · model</sup>
 - [ ] [`0053`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0053-merge-passing-patch-and-minor-dependency-updates-automatically.md) Merge passing patch and minor dependency updates automatically <sup>chore · p2 · workflow</sup>
 
 ## later — Later
