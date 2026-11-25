@@ -105,10 +105,11 @@ struct Search<'a> {
 /// crossing, or until the work reaches `LIMIT`.
 ///
 /// `keys` are the numbers that gave the groups of `net.layers` their order.
-/// A net with no pass keeps its order.
-pub(super) fn keep_out(net: &mut Net, groups: &[Group], keys: &[f64]) {
+/// A net with no pass keeps its order. The result is the work that the
+/// search did, so a test can see that the search stopped at `LIMIT`.
+pub(super) fn keep_out(net: &mut Net, groups: &[Group], keys: &[f64]) -> usize {
     let Some(last) = net.layers.len().checked_sub(1) else {
-        return;
+        return 0;
     };
     let mut pairs = Vec::new();
     let mut checks: Vec<Vec<Check>> = net.layers.iter().map(|_| Vec::new()).collect();
@@ -165,7 +166,7 @@ pub(super) fn keep_out(net: &mut Net, groups: &[Group], keys: &[f64]) {
     };
     search.recount(0, last);
     if search.cost.0 == 0 {
-        return;
+        return search.work;
     }
     let mut tried = 0;
     loop {
@@ -173,7 +174,7 @@ pub(super) fn keep_out(net: &mut Net, groups: &[Group], keys: &[f64]) {
         for change in search.moves() {
             // Each move is kept or undone, so the order is whole here.
             if search.work > LIMIT {
-                return;
+                return search.work;
             }
             let cost = search.cost;
             let (low, high) = search.ranks(change);
@@ -209,7 +210,7 @@ pub(super) fn keep_out(net: &mut Net, groups: &[Group], keys: &[f64]) {
             }
         }
         if search.cost == before {
-            return;
+            return search.work;
         }
     }
 }

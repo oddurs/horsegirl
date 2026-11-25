@@ -702,9 +702,9 @@ fn sequence(seed: u32) -> impl FnMut(usize) -> usize {
 // with 390 links has hundreds of passes that no order removes. The search
 // took 40 times as long as every other phase together. The search now stops
 // at a limit on its work. The limit is a count, so the picture is the same
-// on every run.
+// on every run. A test in `src/layout.rs` shows that the search stops.
 #[test]
-fn a_dense_graph_stops_the_pass_search_at_its_limit() {
+fn a_dense_graph_has_no_fault_when_the_pass_search_stops() {
     let mut next = sequence(9);
     let nodes: Vec<Node> = (0..100)
         .map(|i| Node {
@@ -719,14 +719,9 @@ fn a_dense_graph_stops_the_pass_search_at_its_limit() {
         labels: Vec::new(),
         links: (0..390).map(|_| (next(100), next(100))).collect(),
     };
-    let start = std::time::Instant::now();
     let picture = layout(&graph, None);
-    let time = start.elapsed();
     let faults = faults(&graph, &picture);
     assert!(faults.is_empty(), "{faults:#?}");
-    // A debug build takes 2 seconds with the limit and 208 seconds with no
-    // limit.
-    assert!(time.as_secs() < 120, "the layout took {time:?}");
 }
 
 // From the fourth review of the pass search. A line of 400 nodes, each two

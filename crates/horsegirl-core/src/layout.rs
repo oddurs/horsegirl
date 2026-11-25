@@ -152,6 +152,11 @@ struct Net {
 /// names a group that is not in the graph.
 #[must_use]
 pub fn layout(graph: &Graph, _seed: Option<&Layout>) -> Layout {
+    lay_out(graph).0
+}
+
+/// The layout, and the work of the pass search.
+fn lay_out(graph: &Graph) -> (Layout, usize) {
     let reversed = orient(graph.nodes.len(), &graph.links);
     let forward: Vec<(usize, usize)> = graph
         .links
@@ -164,7 +169,7 @@ pub fn layout(graph: &Graph, _seed: Option<&Layout>) -> Layout {
     let chains = chains(&graph.groups);
     let loops = loops(graph);
     let mut net = build(graph, &chains, &forward, &ranks, &loops);
-    order::order(&mut net, &graph.groups);
+    let work = order::order(&mut net, &graph.groups);
     let (centres, edges) = place::place(&net, &graph.groups, &chains);
     let routes = route::route(&net, &centres, &label_widths(graph, &net));
     let columns = columns(&net, &graph.groups, &chains, &routes.gaps);
@@ -205,7 +210,7 @@ pub fn layout(graph: &Graph, _seed: Option<&Layout>) -> Layout {
         picture.paths[link].reverse();
     }
     to_origin(&mut picture);
-    picture
+    (picture, work)
 }
 
 fn label(graph: &Graph, link: usize) -> Option<Size> {
@@ -727,7 +732,37 @@ fn to_origin(picture: &mut Layout) {
 
 #[cfg(test)]
 mod tests {
-    use super::orient;
+    use super::{Graph, Group, Node, lay_out, orient};
+
+    // A net of 100 nodes in 10 groups with 390 links has hundreds of passes
+    // that no order removes, so the pass search must stop at its limit. The
+    // test reads the search, not a clock, so a slow runner cannot fail it.
+    #[test]
+    fn a_dense_graph_stops_the_pass_search_at_its_limit() {
+        let mut state: u32 = 9;
+        let mut next = |below: usize| {
+            state = state.wrapping_mul(1_664_525).wrapping_add(1_013_904_223);
+            (state >> 16) as usize % below
+        };
+        let graph = Graph {
+            nodes: (0..100)
+                .map(|i| Node {
+                    width: 50.0,
+                    height: 36.0,
+                    group: Some(i % 10),
+                })
+                .collect(),
+            groups: vec![Group { parent: None }; 10],
+            labels: Vec::new(),
+            links: (0..390).map(|_| (next(100), next(100))).collect(),
+        };
+        let work = lay_out(&graph).1;
+        // The numbers are literals, so a change to `LIMIT` fails this test
+        // and the person who makes it must read it. The search checks the
+        // limit before each move, so it can end a little past 1 000 000.
+        assert!(work > 1_000_000, "the search ended early, after {work}");
+        assert!(work < 2_000_000, "the search passed its limit: {work}");
+    }
 
     #[test]
     fn the_link_that_closes_a_loop_is_the_one_that_turns() {
