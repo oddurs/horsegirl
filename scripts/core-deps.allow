@@ -1,0 +1,4 @@
+# Crates that horsegirl-core may depend on, one name per line.
+# The core compiles to WebAssembly and gives the same bytes on every machine,
+# so a crate here must do no file, network, process or clock access.
+# Adding a name needs a review of that crate for I/O.

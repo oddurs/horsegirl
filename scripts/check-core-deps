@@ -1,0 +1,34 @@
+#!/bin/sh
+# Fails when horsegirl-core depends on a crate that is not in
+# scripts/core-deps.allow. The core must stay pure so it compiles to
+# WebAssembly. Dev dependencies are not checked: they never ship in the core.
+# With -, reads the output of `cargo tree --prefix none` from standard input.
+set -eu
+cd "$(dirname "$0")/.."
+
+allow=${CORE_DEPS_ALLOW:-scripts/core-deps.allow}
+
+if [ "${1:-}" = "-" ]; then
+  tree=$(cat)
+else
+  tree=$(cargo tree -p horsegirl-core --locked --prefix none -e normal,build --format '{p}')
+fi
+
+bad=$(printf '%s\n' "$tree" | awk -v allow="$allow" '
+  BEGIN {
+    while ((getline line < allow) > 0) {
+      sub(/#.*/, "", line)
+      gsub(/[ \t]/, "", line)
+      if (line != "") ok[line] = 1
+    }
+  }
+  $1 != "" && $1 != "horsegirl-core" && !($1 in ok) && !seen[$1]++ { print $1 }
+')
+
+if [ -n "$bad" ]; then
+  for name in $bad; do
+    echo "check-core-deps: horsegirl-core depends on '$name', which is not in $allow." >&2
+  done
+  echo "check-core-deps: the core must stay free of I/O. Remove the dependency, or review the crate for file, network and clock access and add its name to the allow list." >&2
+  exit 1
+fi
