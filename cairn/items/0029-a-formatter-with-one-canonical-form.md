@@ -31,3 +31,7 @@ A repository of files written by many agents drifts into many styles, and diffs 
 - [ ] `fmt` of a formatted file changes nothing.
 - [ ] `fmt` never changes the model: a property test compares the model before and after on the corpus.
 - [ ] `fmt --check` exits 1 when a file would change.
+
+## 2026-11-25
+
+Item 26 adds -x rules and ? guesses to the model. fmt must print both unchanged: add 'A -x B: reason' and 'A -> B ?' to its idempotence tests.
