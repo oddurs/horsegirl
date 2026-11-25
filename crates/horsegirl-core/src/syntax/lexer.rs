@@ -47,13 +47,12 @@ fn token(rest: &str, first: char, line_start: bool) -> (TokenKind, usize) {
         '}' => (TokenKind::Close, 1),
         '@' => (TokenKind::At, 1),
         '-' if rest.starts_with("->") => (TokenKind::Arrow, 2),
-        '"' => {
-            let line = line(rest);
-            match rest[1..line].find('"') {
-                Some(close) => (TokenKind::Quoted, close + 2),
-                None => (TokenKind::Unclosed, line),
-            }
-        }
+        // The scan stops at the closing quote. A scan to the end of the line
+        // for every quote makes a long line of quoted names quadratic.
+        '"' => match rest[1..].find(['"', '\n']) {
+            Some(close) if rest[close + 1..].starts_with('"') => (TokenKind::Quoted, close + 2),
+            _ => (TokenKind::Unclosed, line(rest)),
+        },
         _ => {
             let len = run(rest, |tail, c| {
                 is_space(c) || RESERVED.contains(&c) || tail.starts_with("->")

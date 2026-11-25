@@ -180,10 +180,72 @@ fn a_name_or_a_value_that_needs_quotes_gets_them_from_the_fix() {
         ),
         ("api {\n  note: a -> b\n}", "api {\n  note: \"a -> b\"\n}"),
         ("A -> B: returns {id}", "A -> B: \"returns {id}\""),
+        // `@` and a brace end a bare name too. An arrow after them is the
+        // first arrow of its line.
+        (
+            "Renderer PixiJS / @pixi/react",
+            "\"Renderer PixiJS / @pixi/react\"",
+        ),
+        (
+            "Renderer PixiJS / @pixi/react -> B",
+            "\"Renderer PixiJS / @pixi/react\" -> B",
+        ),
+        (
+            "A -> Renderer PixiJS / @pixi/react",
+            "A -> \"Renderer PixiJS / @pixi/react\"",
+        ),
+        ("@pixi/react, A -> B", "\"@pixi/react\", A -> B"),
+        (
+            "A -> B: email bob@example.com",
+            "A -> B: \"email bob@example.com\"",
+        ),
+        (
+            "A -> B: mail bob@example.com ? @ a.rs:3",
+            "A -> B: \"mail bob@example.com\" ? @ a.rs:3",
+        ),
+        (
+            "A { mail: bob@example.com, owner: X }",
+            "A { mail: \"bob@example.com\", owner: X }",
+        ),
+        // A citation is `@ path:line` after a space. A path with no line
+        // number is not one.
+        ("A -> B @ src/app.ts", "A -> \"B @ src/app.ts\""),
+        ("A @ a.rs:3 -> B", "\"A @ a.rs:3\" -> B"),
+        ("A {x} -> B", "\"A {x}\" -> B"),
+        ("A, GET /users/{id} -x B", "A, \"GET /users/{id}\" -x B"),
     ] {
         assert_eq!(only(source).code, "E0004", "{source}");
         assert_eq!(fixed(source), repaired);
         assert_eq!(read(repaired).1, [""; 0], "{repaired}");
+    }
+}
+
+// Only a line that already holds an arrow has a second one.
+#[test]
+fn an_arrow_after_a_block_is_not_called_a_second_arrow() {
+    for source in ["A { owner: X } -> B", "A {\n  B\n} -> C"] {
+        let stray = only(source);
+        assert_eq!(stray.code, "E0001", "{source}");
+        assert!(!stray.message.contains("second"), "{}", stray.message);
+        assert_eq!(stray.fix, None, "{source}");
+    }
+    let second = only("A -> B -> C");
+    assert!(second.message.contains("second"), "{}", second.message);
+}
+
+// A megabyte of JSON on one line can reach `check` through the MCP tool. The
+// lexer once read to the end of the line for every quote: 14 s for 320 KB.
+// The WebAssembly target has no clock to hold the bound with.
+#[cfg(not(target_family = "wasm"))]
+#[test]
+fn a_long_line_of_quoted_names_parses_in_linear_time() {
+    for piece in ["\"\" ", "\"a\",", "\"a\" @ a:1 ? ", "A @b "] {
+        let source = piece.repeat(60_000 / piece.len());
+        let start = std::time::Instant::now();
+        let parse = parse(&source);
+        let spent = start.elapsed();
+        assert!(parse.tree.to_string() == source, "lost a byte of {piece:?}");
+        assert!(spent.as_secs() < 5, "{piece:?} took {spent:?}");
     }
 }
 

@@ -25,6 +25,8 @@ show rings from \"API gateway\"
 owner: X
 A -> -> B
 A -> \"B
+Renderer PixiJS / @pixi/react -> B: mail bob@example.com
+A {x} -> B
 ";
 
 /// The pieces that random input is made from. The marks of the language come

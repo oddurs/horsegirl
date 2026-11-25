@@ -19,6 +19,7 @@ pub(super) fn parse(source: &str) -> Parse<'_> {
         source,
         tokens: lex(source),
         pos: 0,
+        last: None,
         diagnostics: Vec::new(),
     };
     let mut children = Vec::new();
@@ -88,10 +89,31 @@ struct Entry {
     end: usize,
 }
 
+/// A text that double quotes can hold.
+#[derive(Clone, Copy, PartialEq)]
+enum Text {
+    Name,
+    Value,
+    Label,
+}
+
+impl Text {
+    fn word(self) -> &'static str {
+        match self {
+            Text::Name => "name",
+            Text::Value => "value",
+            Text::Label => "label",
+        }
+    }
+}
+
 struct Parser<'s> {
     source: &'s str,
     tokens: Vec<Token<'s>>,
     pos: usize,
+    /// The first token of the last text that the current fact read, and what
+    /// the text is. A `@` or an arrow that cannot be read is a part of it.
+    last: Option<(usize, Text)>,
     diagnostics: Vec<Diagnostic>,
 }
 
@@ -187,6 +209,7 @@ impl<'s> Parser<'s> {
     /// runs to the end of its line.
     fn statement(&mut self, depth: usize, into: &mut Children<'s>) {
         let mut children = Vec::new();
+        self.last = None;
         let kind = match self.fact(depth, &mut children) {
             Ok(kind) => kind,
             Err(error) => {
@@ -221,16 +244,35 @@ impl<'s> Parser<'s> {
                 self.bump_as(Some(TokenKind::Guess), into);
             }
             if self.next() == Some(TokenKind::At) {
-                self.spaces(into);
                 self.cite(into)?;
             }
             kind
         };
         if self.at_line_end() {
-            Ok(kind)
-        } else {
-            Err(self.unexpected(self.skip(self.pos)))
+            return Ok(kind);
         }
+        let index = self.skip(self.pos);
+        let arrow = matches!(
+            self.kind_at(index),
+            Some(TokenKind::Arrow | TokenKind::Cross)
+        );
+        Err(match kind {
+            NodeKind::Link | NodeKind::Rule if arrow => {
+                let span = self.span_at(index);
+                let text = &self.source[span.clone()];
+                diagnostic(
+                    "E0001",
+                    span,
+                    format!(
+                        "A line holds one arrow, and this `{text}` is a second one. Write each link on its own line. A name that holds `{text}` is written in double quotes."
+                    ),
+                )
+            }
+            // No arrow came before this one, so a `@` or a brace ended the
+            // names too early.
+            NodeKind::Things if arrow => self.cut_short(index),
+            _ => self.unexpected(index),
+        })
     }
 
     fn names_or_link(
@@ -287,7 +329,7 @@ impl<'s> Parser<'s> {
             let start = self.pos;
             let from = into.len();
             if !self.name(NodeKind::Name, into) {
-                return Err(self.missing("name"));
+                return Err(self.missing_text(Text::Name));
             }
             let mut value = None;
             if facts && self.next() == Some(TokenKind::Colon) {
@@ -299,7 +341,7 @@ impl<'s> Parser<'s> {
                 self.spaces(into);
                 value = Some(self.pos);
                 if !self.name(NodeKind::Value, into) {
-                    return Err(self.missing("value"));
+                    return Err(self.missing_text(Text::Value));
                 }
                 wrap(into, from, NodeKind::Fact);
             }
@@ -320,6 +362,12 @@ impl<'s> Parser<'s> {
     /// Reads one quoted name or one bare name, and says whether one was there.
     fn name(&mut self, kind: NodeKind, into: &mut Children<'s>) -> bool {
         let from = into.len();
+        let text = if kind == NodeKind::Value {
+            Text::Value
+        } else {
+            Text::Name
+        };
+        let start = self.pos;
         match self.kind() {
             Some(TokenKind::Quoted) => self.bump(into),
             Some(TokenKind::Word) if !self.is_guess(self.pos) => {
@@ -336,6 +384,7 @@ impl<'s> Parser<'s> {
             }
             _ => return false,
         }
+        self.last = Some((start, text));
         wrap(into, from, kind);
         true
     }
@@ -349,8 +398,8 @@ impl<'s> Parser<'s> {
             && self.next() != Some(TokenKind::At)
             && !self.is_guess(self.skip(self.pos))
         {
-            let span = self.span_at(value).start..self.extent(value, true);
-            return Err(self.needs_quotes(span, "value"));
+            let span = self.span_at(value).start..self.extent(value, Text::Value);
+            return Err(self.needs_quotes(span, Text::Value));
         }
         let Some(name) = entries.iter().position(|entry| entry.value.is_none()) else {
             return Ok(());
@@ -369,7 +418,7 @@ impl<'s> Parser<'s> {
             .iter()
             .take_while(|entry| entry.value.is_none());
         let end = names.last().map_or(self.here(), |entry| entry.end);
-        Err(self.needs_quotes(self.span_at(value).start..end, "value"))
+        Err(self.needs_quotes(self.span_at(value).start..end, Text::Value))
     }
 
     /// The error for `key: value` outside braces. The colon is in a name when
@@ -382,7 +431,7 @@ impl<'s> Parser<'s> {
         loop {
             match self.kind_at(index) {
                 Some(TokenKind::Arrow | TokenKind::Cross | TokenKind::Open) => {
-                    return self.needs_quotes(start..end, "name");
+                    return self.needs_quotes(start..end, Text::Name);
                 }
                 None
                 | Some(TokenKind::Newline | TokenKind::Comma | TokenKind::Close | TokenKind::At) => {
@@ -404,6 +453,7 @@ impl<'s> Parser<'s> {
     /// and arrows as they are, because nothing follows a label on its line.
     fn label(&mut self, into: &mut Children<'s>) -> Result<(), Diagnostic> {
         let first = self.skip(self.pos);
+        self.last = Some((first, Text::Label));
         let mut end = first;
         let mut index = first;
         loop {
@@ -433,34 +483,117 @@ impl<'s> Parser<'s> {
         }
         // A brace would end a one-line block, so a label holds one in quotes only.
         if self.next() == Some(TokenKind::Open) {
-            let span = self.span_at(first).start..self.extent(first, false);
-            return Err(self.needs_quotes(span, "label"));
+            let span = self.span_at(first).start..self.extent(first, Text::Label);
+            return Err(self.needs_quotes(span, Text::Label));
         }
         Ok(())
     }
 
-    /// Reads `@` and the path after it. The path has no spaces.
-    fn cite(&mut self, into: &mut Children<'s>) -> Result<(), Diagnostic> {
-        let from = into.len();
-        let at = self.span_at(self.pos);
-        self.bump(into);
-        self.spaces(into);
-        let path = self.pos;
-        while !matches!(
-            self.kind(),
-            None | Some(TokenKind::Space | TokenKind::Newline | TokenKind::Open | TokenKind::Close)
-        ) {
-            self.bump(into);
+    /// The index after the citation that starts at `index`. A citation is the
+    /// form on the card: a space, `@`, and a path that ends in `:` and a line
+    /// number. Any other `@` is a character of a name, and needs quotes.
+    fn cite_end(&self, index: usize) -> Option<usize> {
+        let spaced =
+            index.checked_sub(1).and_then(|before| self.kind_at(before)) == Some(TokenKind::Space);
+        if self.kind_at(index) != Some(TokenKind::At) || !spaced {
+            return None;
         }
-        if self.pos == path {
+        let path = self.skip(index + 1);
+        let mut end = path;
+        // The path stops at a second `@`, so a row of them is read once.
+        while !matches!(
+            self.kind_at(end),
+            None | Some(
+                TokenKind::Space
+                    | TokenKind::Newline
+                    | TokenKind::Open
+                    | TokenKind::Close
+                    | TokenKind::At
+            )
+        ) {
+            end += 1;
+        }
+        let text = &self.source[self.span_at(path).start..self.span_at(end).start];
+        let (file, line) = text.rsplit_once(':')?;
+        let numbered = !line.is_empty() && line.bytes().all(|byte| byte.is_ascii_digit());
+        (numbered && !file.is_empty()).then_some(end)
+    }
+
+    /// Whether the fact ends at `index`: only a guess mark and a citation
+    /// follow on the line.
+    fn ends_fact(&self, index: usize) -> bool {
+        let mut index = self.skip(index);
+        if self.is_word(index, "?") {
+            index = self.skip(index + 1);
+        }
+        if let Some(end) = self.cite_end(index) {
+            index = self.skip(end);
+        }
+        matches!(
+            self.kind_at(index),
+            None | Some(TokenKind::Newline | TokenKind::Close)
+        )
+    }
+
+    /// Reads the `@` after a fact as a citation, or says what the `@` is.
+    fn cite(&mut self, into: &mut Children<'s>) -> Result<(), Diagnostic> {
+        let at = self.skip(self.pos);
+        let Some(end) = self.cite_end(at) else {
+            let alone = matches!(
+                self.kind_at(self.skip(at + 1)),
+                None | Some(TokenKind::Newline | TokenKind::Close)
+            );
+            if !alone {
+                return Err(self.cut_short(at));
+            }
             return Err(diagnostic(
                 "E0001",
-                at,
+                self.span_at(at),
                 "`@` cites evidence and nothing follows it. Write a path and a line after it, as in `@ src/app.ts:17`. A name that holds `@` is written in double quotes.",
             ));
+        };
+        self.spaces(into);
+        let from = into.len();
+        while self.pos < end {
+            self.bump(into);
         }
         wrap(into, from, NodeKind::Cite);
         Ok(())
+    }
+
+    /// The error for the token at `index`, which ended a bare text too early.
+    /// The text needs quotes when its line holds all of it.
+    fn cut_short(&self, index: usize) -> Diagnostic {
+        let Some((first, text)) = self.last else {
+            return self.unexpected(index);
+        };
+        let span = self.span_at(first).start..self.extent(first, text);
+        let held = &self.source[span.clone()];
+        // A block of many lines is not a part of a name.
+        let lines = self.source[span.start..self.span_at(index).start].contains('\n');
+        // `A { owner: X } -> B` is a thing with a fact and then a link. Quotes
+        // would make one name of the two facts.
+        if lines || (held.contains('{') && held.contains(':')) {
+            return self.unexpected(index);
+        }
+        let mut diagnostic = self.needs_quotes(span, text);
+        if held.contains('@') {
+            diagnostic.message.push_str(
+                " A citation is a space, `@`, a path and a line number at the end of the line, as in ` @ src/app.ts:17`.",
+            );
+        }
+        diagnostic
+    }
+
+    /// The error for a name or a value that is not there. A `@` with a word
+    /// after it is the start of a name that needs quotes.
+    fn missing_text(&mut self, text: Text) -> Diagnostic {
+        let word = self.kind_at(self.pos + 1) == Some(TokenKind::Word);
+        if self.kind() == Some(TokenKind::At) && word && self.cite_end(self.pos).is_none() {
+            self.last = Some((self.pos, text));
+            return self.cut_short(self.pos);
+        }
+        self.missing(text.word())
     }
 
     /// A line that starts with `show` is a `show` line unless it holds an
@@ -489,7 +622,7 @@ impl<'s> Parser<'s> {
         }
         Err(diagnostic(
             "E0008",
-            self.span_at(start).start..self.extent(start, false),
+            self.span_at(start).start..self.extent(start, Text::Label),
             "A `show` line is `show` and a lens, as in `show flow`, or with `of`, `from` or `by` and a name, as in `show sequence of checkout`. A thing with the name `show` is written `\"show\"`.",
         ))
     }
@@ -582,8 +715,12 @@ impl<'s> Parser<'s> {
     fn block(&mut self, depth: usize, into: &mut Children<'s>) {
         let open = self.span_at(self.pos);
         let from = into.len();
+        // The lines inside are facts of their own. The text before the block
+        // stays the last text of this fact.
+        let last = self.last;
         self.bump(into);
         self.lines(depth + 1, into);
+        self.last = last;
         if self.kind() == Some(TokenKind::Close) {
             self.bump(into);
         } else {
@@ -597,33 +734,41 @@ impl<'s> Parser<'s> {
     }
 
     /// The byte offset where the text that starts at token `from` ends: at the
-    /// end of the line, at `@`, or at the `}` that closes the block around it.
-    fn extent(&self, from: usize, stop_at_comma: bool) -> usize {
+    /// end of the line, at the `}` that closes the block around it, or at the
+    /// guess mark and the citation that end the fact. A value ends at a comma
+    /// too, and a name at a comma or an arrow.
+    fn extent(&self, from: usize, text: Text) -> usize {
         let mut end = self.span_at(from).start;
         let mut open = 0_usize;
         let mut index = from;
         loop {
-            match self.kind_at(index) {
-                None | Some(TokenKind::Newline | TokenKind::At) => return end,
-                Some(TokenKind::Comma) if stop_at_comma => return end,
-                Some(TokenKind::Space) => {}
-                Some(kind) => {
-                    if kind == TokenKind::Open {
-                        open += 1;
-                    } else if kind == TokenKind::Close {
-                        if open == 0 {
-                            return end;
-                        }
-                        open -= 1;
-                    }
-                    end = self.span_at(index).end;
-                }
+            let kind = match self.kind_at(index) {
+                None | Some(TokenKind::Newline) => return end,
+                Some(kind) => kind,
+            };
+            let stops = match kind {
+                TokenKind::Comma => open == 0 && text != Text::Label,
+                TokenKind::Arrow | TokenKind::Cross => open == 0 && text == Text::Name,
+                TokenKind::Close => open == 0,
+                _ => (kind == TokenKind::At || self.is_word(index, "?")) && self.ends_fact(index),
+            };
+            if stops {
+                return end;
+            }
+            match kind {
+                TokenKind::Open => open += 1,
+                TokenKind::Close => open -= 1,
+                _ => {}
+            }
+            if kind != TokenKind::Space {
+                end = self.span_at(index).end;
             }
             index += 1;
         }
     }
 
-    fn needs_quotes(&self, span: Range<usize>, what: &str) -> Diagnostic {
+    fn needs_quotes(&self, span: Range<usize>, text: Text) -> Diagnostic {
+        let what = text.word();
         let text = &self.source[span.clone()];
         // A quoted name cannot hold a double quote, so no fix exists then.
         let fix = (!text.contains('"')).then(|| Fix {
@@ -665,13 +810,6 @@ impl<'s> Parser<'s> {
                 "E0005",
                 span,
                 "A double quote opens here and does not close. Add the closing `\"` on the same line.",
-            ),
-            Some(TokenKind::Arrow | TokenKind::Cross) => diagnostic(
-                "E0001",
-                span,
-                format!(
-                    "A line holds one arrow, and this `{text}` is a second one. Write each link on its own line. A name that holds `{text}` is written in double quotes."
-                ),
             ),
             _ => diagnostic(
                 "E0001",
