@@ -14,7 +14,7 @@ fn main() -> ExitCode {
     let mut args = std::env::args().skip(1);
     match args.next().as_deref() {
         Some("spec") => {
-            print!("{}", horsegirl::SPEC);
+            print!("{}", horsegirl_core::SPEC);
             ExitCode::SUCCESS
         }
         Some("--version" | "-V") => {

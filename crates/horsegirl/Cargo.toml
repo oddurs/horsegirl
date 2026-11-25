@@ -1,0 +1,18 @@
+[package]
+name = "horsegirl"
+description = "An agent-first diagram language: state the facts once, choose a lens."
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+repository.workspace = true
+publish.workspace = true
+readme = "../../README.md"
+keywords = ["diagram", "diagrams-as-code", "visualization", "agents"]
+categories = ["command-line-utilities", "visualization"]
+
+[dependencies]
+horsegirl-core = { path = "../horsegirl-core" }
+
+[lints]
+workspace = true

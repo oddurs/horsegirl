@@ -20,7 +20,7 @@ at the end.
 
 ## The language
 
-The whole language is the card in `src/spec.txt`. `examples/checkout.horse` is
+The whole language is the card in `crates/horsegirl-core/src/spec.txt`. `examples/checkout.horse` is
 the reference file that the tests and the documents use.
 
 1. A name is a thing. Names can have spaces. A thing exists when it is first

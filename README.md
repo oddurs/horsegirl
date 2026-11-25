@@ -36,7 +36,7 @@ There is no release yet. Build from a checkout with the Rust toolchain named in
 ```sh
 git clone https://github.com/oddurs/horsegirl
 cd horsegirl
-cargo install --path .
+cargo install --path crates/horsegirl --locked
 ```
 
 ## Quickstart
