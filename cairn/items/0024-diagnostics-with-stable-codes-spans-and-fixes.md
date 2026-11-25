@@ -3,14 +3,14 @@ id: 24
 uid: bc2edf35-ff31-4884-9cb6-bc7a1ddf28ab
 title: Diagnostics with stable codes, spans and fixes
 type: feature
-status: doing
+status: done
 milestone: v0.1
 assignee: Oddur Sigurdsson
-claimed: 2026-11-25
 depends_on:
 - 23
 created: 2026-11-25
 updated: 2026-11-25
+closed_at: 2026-11-25
 priority: p0
 risk: medium
 surface: diagnostics
