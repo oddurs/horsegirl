@@ -3,12 +3,12 @@ id: 164
 uid: c1743a5f-9eb4-40cf-a9fa-f27ff4666367
 title: The test of the limit of the pass search does not read the clock
 type: bug
-status: doing
+status: done
 milestone: v0.1
 assignee: Oddur Sigurdsson
-claimed: 2026-11-25
 created: 2026-11-25
 updated: 2026-11-25
+closed_at: 2026-11-25
 priority: p1
 risk: low
 surface: none
