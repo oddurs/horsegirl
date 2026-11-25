@@ -1,0 +1,35 @@
+# Spike SPIKE-19: compare a bundled metrics table with a shaping crate.
+# This package is not part of the horsegirl build. It holds the evidence.
+[package]
+name = "text-metrics-spike"
+version = "0.0.0"
+edition = "2024"
+publish = false
+
+# An empty workspace keeps this package out of any workspace above it.
+[workspace]
+
+[dependencies]
+harfrust = { version = "=0.15.0", optional = true }
+
+# The table binary is built without the shaper, so its size holds no shaping code.
+[features]
+default = ["shape"]
+shape = ["dep:harfrust"]
+
+[[bin]]
+name = "shape"
+required-features = ["shape"]
+
+[[bin]]
+name = "compare"
+required-features = ["shape"]
+
+[build-dependencies]
+harfrust = "=0.15.0"
+
+[profile.release]
+codegen-units = 1
+lto = true
+panic = "abort"
+strip = true

@@ -1,0 +1,108 @@
+Web app
+Mobile app
+API gateway
+Payments
+Orders
+Postgres
+Notify
+Events
+Email provider
+Services
+Commerce
+Growth
+Platform
+Apps
+External
+never directly
+POST /checkout
+create
+charge
+save
+paid
+publish
+send
+Auth service
+Identity provider
+Session store
+Redis cache
+Rate limiter
+Load balancer
+CDN edge
+Search index
+Elasticsearch
+Kafka topic: orders.v2
+S3 bucket (eu-west-1)
+Billing worker
+Invoice PDF renderer
+Feature flags
+Audit log
+Metrics pipeline
+Grafana
+Alertmanager
+On-call pager
+Warehouse
+Fulfilment
+Shipping label API
+Tax calculator
+Fraud check
+Ledger
+Refunds
+Customer support
+Admin console
+GraphQL API
+gRPC: GetUser
+webhook retry
+dead-letter queue
+cron: nightly 02:00
+Batch export
+CSV importer
+Data lake
+dbt models
+Looker
+AVATAR upload
+Tower of Hanoi
+WAVE Yard
+Type-ahead
+VAT & duty
+Café menu
+Zürich DC
+São Paulo region
+Ørsted adapter
+naïve cache
+Crème brûlée
+Łódź office
+Kraków team
+Straße lookup
+Smörgåsbord
+Æsir
+Þórsmörk
+Reykjavík
+Ñandú
+façade
+“quoted” label
+it’s fine
+a – b
+1,024 req/s
+99.9% uptime
+p95 < 300 ms
+v1.2.3-rc.4
+#general
+user@example.com
+x = y + z
+[draft]
+{owner}
+OAuth2 / OIDC
+JSON-RPC over stdio
+fetch, retry and back off on failure
+The payments service charges the card once
+Integration test harness
+Mmmm wide letters
+iiii lll narrow
+Orders → Payments
+A→A
+ΔA latency
+ΑΥΤΟ
+Αθήνα region
+ГАТУ
+Москва DC
+Тест → ΔΓ

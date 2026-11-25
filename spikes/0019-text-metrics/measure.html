@@ -1,0 +1,42 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>Label widths</title>
+<style>
+  @font-face { font-family: "Ref"; src: url("font/InstrumentSans.ttf"); }
+</style>
+<svg id="s" width="2000" height="100"></svg>
+<pre id="out">pending</pre>
+<script>
+// Each label is drawn as SVG text, the way the SVG backend will draw it, and
+// the browser reports the advance it laid out. The fallback faces show how far
+// a viewer without the reference font drifts from the reference widths.
+const faces = [
+  ["instrument", '"Ref"'],
+  ["arial-metrics", '"Liberation Sans"'],
+  ["dejavu", '"DejaVu Sans"'],
+];
+const size = 12;
+async function run() {
+  const labels = (await (await fetch("labels.txt")).text()).split("\n").filter((l) => l !== "");
+  await document.fonts.load(`${size}px "Ref"`);
+  const svg = document.getElementById("s");
+  const rows = ["label\t" + faces.map((f) => f[0]).join("\t")];
+  for (const label of labels) {
+    const cells = [label];
+    for (const [, family] of faces) {
+      const t = document.createElementNS("http://www.w3.org/2000/svg", "text");
+      t.setAttribute("x", "0");
+      t.setAttribute("y", "50");
+      t.setAttribute("style", `font-family:${family};font-size:${size}px;font-weight:400`);
+      t.textContent = label;
+      svg.appendChild(t);
+      cells.push(t.getComputedTextLength().toFixed(4));
+      svg.removeChild(t);
+    }
+    rows.push(cells.join("\t"));
+  }
+  const ok = document.fonts.check(`${size}px "Ref"`);
+  document.getElementById("out").textContent = (ok ? "" : "FONT NOT LOADED\n") + rows.join("\n");
+}
+run();
+</script>

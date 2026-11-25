@@ -32,3 +32,7 @@ Write the SVG backend. Colours and fonts are CSS variables with fallbacks. Each 
 - [ ] The reference flow renders to an SVG that a snapshot test holds byte for byte.
 - [ ] The SVG is valid XML and uses no script and no external resource.
 - [ ] Setting `--hg-accent` in a host page changes the accent with no rebuild.
+
+## 2026-11-25
+
+SPIKE-19 answer: the SVG font stack is Arial, "Liberation Sans", Helvetica, sans-serif, because the core measures in Arial metrics. 0118 adds textLength to each label so other faces keep the measured width.

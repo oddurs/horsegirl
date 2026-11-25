@@ -30,3 +30,7 @@ Define the plain theme as twelve tokens with light and dark values, and bind the
 
 - [ ] The reference flow passes a contrast check of 4.5 to 1 for text in both modes.
 - [ ] The tokens are listed in the reference documentation.
+
+## 2026-11-25
+
+SPIKE-19 answer: the plain theme's label font is Arial, "Liberation Sans", Helvetica, sans-serif, the face the core measures in. A theme can name another face; 0118 keeps positions unchanged.
