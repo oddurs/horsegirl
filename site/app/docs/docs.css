@@ -1,0 +1,58 @@
+.docs {
+  display: grid;
+  grid-template-columns: 14rem minmax(0, 1fr);
+  gap: 2rem;
+  max-width: 64rem;
+  margin: 0 auto;
+  padding: 1rem;
+}
+.docs nav ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.docs nav li {
+  margin: 0.4rem 0;
+}
+.docs pre {
+  overflow-x: auto;
+  padding: 0.75rem;
+  background: #f4f4f5;
+}
+.docs table {
+  border-collapse: collapse;
+}
+.docs th,
+.docs td {
+  border: 1px solid #d4d4d8;
+  padding: 0.25rem 0.5rem;
+}
+.docs .anchor {
+  visibility: hidden;
+  text-decoration: none;
+}
+.docs :is(h1, h2, h3, h4):hover .anchor,
+.docs .anchor:focus {
+  visibility: visible;
+}
+.hg-keyword {
+  color: #7c3aed;
+  font-weight: 600;
+}
+.hg-arrow {
+  color: #b45309;
+}
+.hg-key {
+  color: #0369a1;
+}
+.hg-evidence {
+  color: #52525b;
+}
+.hg-punct {
+  color: #71717a;
+}
+@media (max-width: 40rem) {
+  .docs {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}

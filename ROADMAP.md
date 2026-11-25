@@ -12,7 +12,7 @@ named for gaits: Walk, Trot, Canter, Gallop.
 
 ## v0.1 — Walk
 
-`··········` 0% · 0 of 36 done · due 2027-01-31
+`··········` 0% · 0 of 35 done · due 2027-01-31
 
 An agent writes a horsegirl file, checks it, applies the fixes, and draws a flow diagram as SVG, from the command line or over MCP.
 
@@ -46,7 +46,6 @@ An agent writes a horsegirl file, checks it, applies the fixes, and draws a flow
 - [ ] [`0043`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0043-quickstart-and-language-reference-for-v0-1.md) Quickstart and language reference for v0.1 <sup>docs · p1 · language</sup>
 - [ ] [`0045`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0045-design-tokens-and-base-components-from-the-concept-page.md) Design tokens and base components from the concept page <sup>feature · p1 · site</sup>
 - [ ] [`0046`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0046-the-landing-page.md) The landing page <sup>feature · p1 · site</sup>
-- [ ] [`0047`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0047-render-the-docs-directory-as-site-pages.md) Render the docs directory as site pages <sup>feature · p1 · site</sup>
 - [ ] [`0048`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0048-deploy-the-site-to-github-pages.md) Deploy the site to GitHub Pages <sup>chore · p0 · workflow</sup>
 - [ ] [`0049`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0049-an-honest-gallery-drawn-by-ci.md) An honest gallery, drawn by CI <sup>feature · p2 · site</sup>
 - [ ] [`0052`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0052-a-daily-report-of-what-the-backlog-needs-from-a-person.md) A daily report of what the backlog needs from a person <sup>feature · p2 · workflow</sup>
