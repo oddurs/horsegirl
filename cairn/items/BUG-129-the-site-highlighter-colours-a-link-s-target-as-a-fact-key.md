@@ -3,10 +3,12 @@ id: 129
 uid: 2c984d5e-83f4-4dee-846f-166a65c60e6b
 title: The site highlighter colours a link's target as a fact key
 type: bug
-status: backlog
+status: done
 milestone: v0.1
+assignee: Oddur Sigurdsson
 created: 2026-11-25
 updated: 2026-11-25
+closed_at: 2026-11-25
 priority: p2
 risk: low
 surface: none
@@ -19,5 +21,9 @@ site/lib/highlight.ts colours any name before a colon as a fact key. In a labell
 
 ## Acceptance criteria
 
-- [ ] In `A -> B: label`, `B` is not marked `hg-key`, and a test in site/tests holds it.
-- [ ] In `A { owner: X }`, `owner` is still marked `hg-key`.
+- [x] In `A -> B: label`, `B` is not marked `hg-key`, and a test in site/tests holds it.
+- [x] In `A { owner: X }`, `owner` is still marked `hg-key`.
+
+## 2026-11-25
+
+Ran scripts/task check: exit 0, site tests 26 pass 0 fail. tests/highlight.test.ts holds both cases.
