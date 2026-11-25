@@ -162,18 +162,21 @@ Model {
                 "POST /checkout",
             ],
             span: 0..34,
+            guess: false,
         },
         Link {
             from: 1,
             to: 2,
             labels: [],
             span: 0..34,
+            guess: false,
         },
         Link {
             from: 2,
             to: 3,
             labels: [],
             span: 35..58,
+            guess: false,
         },
         Link {
             from: 2,
@@ -182,6 +185,7 @@ Model {
                 "create",
             ],
             span: 369..398,
+            guess: false,
         },
         Link {
             from: 6,
@@ -190,6 +194,7 @@ Model {
                 "charge",
             ],
             span: 401..427,
+            guess: false,
         },
         Link {
             from: 6,
@@ -198,6 +203,7 @@ Model {
                 "save",
             ],
             span: 430..454,
+            guess: false,
         },
         Link {
             from: 3,
@@ -206,6 +212,7 @@ Model {
                 "paid",
             ],
             span: 457..481,
+            guess: false,
         },
         Link {
             from: 7,
@@ -214,6 +221,7 @@ Model {
                 "publish",
             ],
             span: 484..509,
+            guess: false,
         },
         Link {
             from: 8,
@@ -222,6 +230,25 @@ Model {
                 "send",
             ],
             span: 512..542,
+            guess: false,
+        },
+    ],
+    rules: [
+        Rule {
+            from: 0,
+            to: 4,
+            reason: Some(
+                "never directly",
+            ),
+            span: 59..106,
+        },
+        Rule {
+            from: 1,
+            to: 4,
+            reason: Some(
+                "never directly",
+            ),
+            span: 59..106,
         },
     ],
     shows: [
