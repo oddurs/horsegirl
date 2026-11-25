@@ -716,6 +716,57 @@ fn a_chain_of_arrows_gets_a_safe_fix_that_splits_it() {
     ] {
         assert_eq!(fixed(source), repaired, "{source}");
         assert_eq!(parse(repaired).diagnostics, [], "{repaired}");
+        assert_eq!(
+            links(&parse(repaired).tree),
+            chain_links(source),
+            "{source}"
+        );
+    }
+}
+
+/// The name lists of each link and each rule in the tree under `node`.
+fn links(node: &Node<'_>) -> Vec<Vec<String>> {
+    let mut found = Vec::new();
+    if matches!(node.kind, NodeKind::Link | NodeKind::Rule) {
+        let names = node.children.iter().filter_map(|child| match child {
+            Element::Node(names) if names.kind == NodeKind::Names => {
+                Some(names.to_string().trim().to_owned())
+            }
+            _ => None,
+        });
+        found.push(names.collect());
+    }
+    for child in &node.children {
+        if let Element::Node(child) = child {
+            found.extend(links(child));
+        }
+    }
+    found
+}
+
+/// The name lists of each link that the one chain in `source` means.
+fn chain_links(source: &str) -> Vec<Vec<String>> {
+    let line = source
+        .lines()
+        .find(|line| line.contains(" -"))
+        .unwrap_or("");
+    let lists: Vec<String> = line
+        .trim()
+        .split(" -> ")
+        .flat_map(|part| part.split(" -x "))
+        .map(|list| list.trim().to_owned())
+        .collect();
+    lists.windows(2).map(<[String]>::to_vec).collect()
+}
+
+// A name list in the middle of a chain moves to the start of one line and the
+// end of another. A list that reads differently there gets no fix.
+#[test]
+fn a_chain_whose_middle_name_reads_differently_gets_no_fix() {
+    for source in ["A -> #ops -> C\n", "A -> B ? -> C\n", "A -> B; -> C\n"] {
+        let diagnostics = parse(source).diagnostics;
+        assert_eq!(diagnostics[0].code, "E0010", "{source}");
+        assert_eq!(diagnostics[0].fix, None, "{source}");
     }
 }
 

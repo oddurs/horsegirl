@@ -758,6 +758,8 @@ impl<'s> Parser<'s> {
     /// The fix for a chain of links that starts at token `start`, when the
     /// chain is plain enough to split: names, commas and arrows, and at the
     /// end a label, a guess mark or a citation. That end goes on each link.
+    /// Each name list must read the same at the start and at the end of a
+    /// line.
     fn split_chain(&self, start: usize) -> Option<Fix> {
         let line = self.source[..self.span_at(start).start]
             .rfind('\n')
@@ -787,6 +789,19 @@ impl<'s> Parser<'s> {
             index += 1;
         }
         let names: Vec<Range<usize>> = names.into_iter().collect::<Option<_>>()?;
+        // A name list in the middle ends one link and starts the next. At the
+        // start of a line `#` makes a comment, and at the end of a line a `?`
+        // is a guess mark and a `;` is a mark. The split would change what
+        // such a list means.
+        let mut middle = names.iter().skip(1).take(names.len().saturating_sub(2));
+        if middle.any(|list| {
+            let text = &self.source[list.clone()];
+            text.starts_with('#')
+                || text.ends_with(';')
+                || text.rsplit([' ', '\t', ',']).next() == Some("?")
+        }) {
+            return None;
+        }
         // What follows the last name: a label, a guess mark and a citation.
         let mut end = index;
         while !matches!(
