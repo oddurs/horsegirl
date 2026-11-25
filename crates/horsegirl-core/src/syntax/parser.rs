@@ -467,13 +467,20 @@ impl<'s> Parser<'s> {
     /// The error for `key: value` outside braces. The colon is in a name when
     /// an arrow or a brace follows it, and the line is a stray fact otherwise.
     fn colon_outside_braces(&self, entries: &[Entry]) -> Diagnostic {
-        let start = entries.last().map_or(self.pos, |entry| entry.start);
-        let start = self.span_at(start).start;
+        let first = entries.last().map_or(self.pos, |entry| entry.start);
+        let start = self.span_at(first).start;
         let mut end = self.here();
         let mut index = self.pos;
         loop {
             match self.kind_at(index) {
-                Some(TokenKind::Arrow | TokenKind::Cross | TokenKind::Open) => {
+                Some(TokenKind::Arrow | TokenKind::Cross) => {
+                    return self.needs_quotes(start..end, Text::Name);
+                }
+                Some(TokenKind::Open) => {
+                    // `story s: x {` is a story whose name needs quotes. The
+                    // keyword stays outside them.
+                    let name = self.after_story(first).filter(|name| *name < self.pos);
+                    let start = name.map_or(start, |name| self.span_at(name).start);
                     return self.needs_quotes(start..end, Text::Name);
                 }
                 None
@@ -621,12 +628,10 @@ impl<'s> Parser<'s> {
         }
         // `story s@x {` is a story whose name needs quotes. The keyword stays
         // outside them.
-        let name = self.skip(first + 1);
         let end = self.extent(first, text);
         if text == Text::Name
-            && self.is_word(first, "story")
-            && self.starts_line(first)
-            && (first + 2..end).contains(&name)
+            && let Some(name) = self.after_story(first)
+            && name < end
             && self.kind_at(self.skip(end)) == Some(TokenKind::Open)
         {
             first = name;
@@ -638,6 +643,14 @@ impl<'s> Parser<'s> {
             );
         }
         diagnostic
+    }
+
+    /// The index of the token after the keyword `story` and its space, when
+    /// the token at `first` is that keyword at the start of a fact.
+    fn after_story(&self, first: usize) -> Option<usize> {
+        let name = self.skip(first + 1);
+        (self.is_word(first, "story") && self.starts_line(first) && name > first + 1)
+            .then_some(name)
     }
 
     /// Whether the token at `index` is the first of its fact.

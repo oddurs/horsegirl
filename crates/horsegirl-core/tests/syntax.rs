@@ -249,7 +249,16 @@ fn a_name_or_a_value_that_needs_quotes_gets_them_from_the_fix() {
     let story = "story s@x { A }";
     assert_eq!(fixed(story), "story \"s@x\" { A }");
     assert_eq!(read(&fixed(story)).1, ["W0010"]);
+    // A colon in the name of a story takes the same fix.
+    let story = "story s: x {\n  A -> B\n}";
+    assert_eq!(fixed(story), "story \"s: x\" {\n  A -> B\n}");
+    assert_eq!(read(&fixed(story)).1, ["W0010"]);
+    let story = "story checkout: card { A -> B }";
+    assert_eq!(fixed(story), "story \"checkout: card\" { A -> B }");
+    assert_eq!(read(&fixed(story)).1, ["W0010"]);
+    assert_eq!(fixed("story: x {\n  A\n}"), "\"story: x\" {\n  A\n}");
     // Without a block, `story` is a word of the name.
+    assert_eq!(fixed("story s: x -> B"), "\"story s: x\" -> B");
     assert_eq!(fixed("story s@x -> B"), "\"story s@x\" -> B");
 }
 

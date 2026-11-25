@@ -6,6 +6,9 @@
 //! ```sh
 //! HORSEGIRL_FUZZ_ROUNDS=40000000 cargo test --release -p horsegirl-core --test fuzz
 //! ```
+//!
+//! The test of long inputs parses about 100 KB in each round, so it has its
+//! own number: `HORSEGIRL_FUZZ_LONG_ROUNDS`. 300 rounds take about one second.
 
 use horsegirl_core::syntax::{Diagnostic, Element, Node, NodeKind, Token, parse};
 
@@ -239,7 +242,7 @@ fn no_input_makes_the_parser_panic_or_lose_a_byte() {
 #[test]
 fn a_long_input_gives_a_bounded_text_for_each_diagnostic() {
     let rounds =
-        std::env::var("HORSEGIRL_FUZZ_ROUNDS").map_or(60, |rounds| rounds.parse().unwrap());
+        std::env::var("HORSEGIRL_FUZZ_LONG_ROUNDS").map_or(60, |rounds| rounds.parse().unwrap());
     let mut random = Random(0xD1B5_4A32_D192_ED03);
     for _ in 0..rounds {
         let mut source = String::new();
