@@ -158,11 +158,15 @@ fn collisions(flow: &Flow, picture: &Layout, allowed: &[Kind]) -> Vec<String> {
     counted.map(|overlap| overlap.describe(&scene)).collect()
 }
 
-/// How many links pass through a group that holds neither of their ends.
-fn through_groups(flow: &Flow, picture: &Layout) -> usize {
-    let found = overlaps(&scene(flow, picture));
-    let kinds = found.iter().map(|overlap| overlap.kind);
-    kinds.filter(|&kind| kind == Kind::LinkThroughGroup).count()
+/// Each link that passes through a group that holds neither of its ends, in
+/// words.
+fn through_groups(flow: &Flow, picture: &Layout) -> Vec<String> {
+    let scene = scene(flow, picture);
+    let found = overlaps(&scene);
+    let through = found
+        .iter()
+        .filter(|overlap| overlap.kind == Kind::LinkThroughGroup);
+    through.map(|overlap| overlap.describe(&scene)).collect()
 }
 
 /// How many labels share room with a group that holds neither end of their
@@ -379,39 +383,71 @@ fn no_two_boxes_are_closer_than_the_node_gap_on_any_corpus_diagram() {
 }
 
 // The overlap detector reads each of the eleven pictures as a backend does.
-// This test holds the box of each thing only. A path does cross the box of a
-// group, 18 times on two diagrams: the order phase puts a link on one side
-// of a group in one rank and on the other side in the next, and the path
-// then passes through the group. The backlog item "No link passes through a
-// group that holds neither of its ends" has that work, and the counts here
-// fall with it.
+// No path crosses the box of a thing. Two paths pass through a group that
+// holds neither of their ends, both on `10-platform`, and no order of the
+// ranks has fewer.
+//
+// `Shopping` and `Fulfilment` are both inside `Services`, and both have
+// ranks 3, 4 and 5. `Stores` is outside `Services`, so it is on one side of
+// both. Each of the two has a link to `Stores` between two of those ranks.
+// The one that is further from `Stores` then reaches it through the other. A
+// path turns between two ranks only, so it cannot go round. With `Shopping`
+// nearer, the two links of `Fulfilment` below pass. With `Fulfilment`
+// nearer, five links of `Shopping` would pass: `Cart -> Cache`, both links
+// from `Catalog` and one from `Pricing` to `Stores`, and
+// `Search -> Search index`.
 #[test]
 fn no_path_crosses_the_box_of_a_thing_on_any_corpus_diagram() {
     let mut links = 0;
-    let mut through = Vec::new();
     for (name, source) in DIAGRAMS {
         let flow = flow(source);
         links += flow.graph.links.len();
         let picture = layout(&flow.graph, None);
         let collisions = collisions(&flow, &picture, &[Kind::LinkThroughGroup]);
         assert!(collisions.is_empty(), "{name}: {collisions:#?}");
-        through.push(through_groups(&flow, &picture));
+        let through = through_groups(&flow, &picture);
+        if name == "10-platform" {
+            assert_eq!(
+                through,
+                [
+                    "link `Orders -> Order database` passes through group `Shopping`",
+                    "link `Inventory -> Inventory database` passes through group `Shopping`",
+                ]
+            );
+            let rank = |thing: &str| rank_of(&flow, &picture, thing);
+            assert_eq!((rank("Orders"), rank("Order database")), (3, 4));
+            assert_eq!((rank("Inventory"), rank("Inventory database")), (4, 5));
+            assert_eq!((rank("Cart"), rank("Cache")), (4, 5));
+        } else {
+            assert!(through.is_empty(), "{name}: {through:#?}");
+        }
     }
     assert_eq!(links, 255);
-    assert_eq!(through, [0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 17]);
+}
+
+// How many points two links cross at, on each of the eleven pictures. The
+// order phase removes a pass through a group before it removes a crossing,
+// and that must not cost a crossing here: before it removed a pass,
+// `07-compiler` had 2 crossings and `10-platform` had 49. A number that
+// falls is a better picture: write the new number here.
+#[test]
+fn the_crossings_of_each_corpus_diagram_do_not_rise() {
+    let crossed: Vec<usize> = DIAGRAMS
+        .iter()
+        .map(|(_, source)| crossings(&layout(&flow(source).graph, None)))
+        .collect();
+    assert_eq!(crossed, [0, 0, 0, 3, 0, 0, 4, 1, 23, 2, 18]);
 }
 
 // The ten diagrams of the spike have no label, so each link gets one here.
 // Two labels can still cover each other: item 0124 gives each label its own
 // room. A box is the box of a thing or of a group: no label lies on the box
-// of a thing or across the border of a group. A label can still be inside a
-// group that holds neither end of its link, when the link passes through
-// that group: 4 labels on one diagram. The count falls with the work on those
-// links.
+// of a thing or across the border of a group, and no label is inside a group
+// that holds neither end of its link. The two links of `10-platform` that
+// pass through `Shopping` have their labels outside it.
 #[test]
 fn each_link_label_sits_on_its_path_and_overlaps_no_box() {
     let mut labels = 0;
-    let mut inside = Vec::new();
     for (name, source) in DIAGRAMS {
         let flow = labelled(source);
         let picture = layout(&flow.graph, None);
@@ -420,10 +456,46 @@ fn each_link_label_sits_on_its_path_and_overlaps_no_box() {
         assert!(faults.is_empty(), "{name}: {faults:#?}");
         let collisions = collisions(&flow, &picture, &[Kind::LinkThroughGroup, Kind::Labels]);
         assert!(collisions.is_empty(), "{name}: {collisions:#?}");
-        inside.push(labels_in_other_groups(&flow.graph, &picture));
+        assert_eq!(labels_in_other_groups(&flow.graph, &picture), 0, "{name}");
     }
     assert_eq!(labels, 255);
-    assert_eq!(inside, [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4]);
+}
+
+// `n3 -> n0` is beside `g0`, which has the ranks of both ends. The sweeps put
+// `n3` above `g0` and `n0` below it, and the path went through the box of
+// `g0`. A file gives its things in another order, which the sweeps sort
+// well, so this graph is not from a file.
+#[test]
+fn a_link_beside_a_group_stays_on_one_side_of_it() {
+    let node = |group: Option<usize>| Node {
+        width: 50.0,
+        height: 36.0,
+        group,
+    };
+    let graph = Graph {
+        nodes: vec![node(None), node(Some(0)), node(Some(0)), node(None)],
+        groups: vec![Group { parent: None }],
+        links: vec![(3, 0), (0, 1)],
+        labels: Vec::new(),
+    };
+    let picture = layout(&graph, None);
+    assert_eq!(picture.ranks, [1, 2, 0, 0]);
+    let flow = named(graph, vec![None; 2]);
+    let collisions = collisions(&flow, &picture, &[]);
+    assert!(collisions.is_empty(), "{collisions:#?}");
+}
+
+// `Middle` has the ranks of both ends of `a -> c`. The sweeps put `Middle`
+// between `From` and `To`, and the path went through the box of `Middle`.
+// Each thing is in a group, so only another order of the groups keeps the
+// path out.
+#[test]
+fn no_group_stands_between_two_groups_that_a_link_joins() {
+    let source = "a -> d\na -> c\nTo {\n  c\n}\nFrom {\n  a\n}\nMiddle {\n  b, d\n}\n";
+    let flow = flow(source);
+    let picture = layout(&flow.graph, None);
+    let collisions = collisions(&flow, &picture, &[]);
+    assert!(collisions.is_empty(), "{collisions:#?}");
 }
 
 // The smallest input from the review of this phase. The upright line of
@@ -727,4 +799,31 @@ fn a_group_that_holds_no_node_has_no_box() {
     assert_eq!((group.x, group.y), (0.0, 0.0));
     assert!(holds(&group, &picture.nodes[0]));
     assert_eq!(picture.bends, [[]]);
+}
+
+/// How many points two links cross at: a level part of one path and an
+/// upright part of another, each strictly inside the other.
+fn crossings(picture: &Layout) -> usize {
+    let parts = |path: &[Point]| -> Vec<(Point, Point)> {
+        path.windows(2).map(|pair| (pair[0], pair[1])).collect()
+    };
+    let within = |x: f64, a: f64, b: f64| a.min(b) < x && x < a.max(b);
+    let cross = |level: &(Point, Point), upright: &(Point, Point)| {
+        level.0.y - level.1.y == 0.0
+            && upright.0.x - upright.1.x == 0.0
+            && within(upright.0.x, level.0.x, level.1.x)
+            && within(level.0.y, upright.0.y, upright.1.y)
+    };
+    let paths: Vec<Vec<(Point, Point)>> = picture.paths.iter().map(|path| parts(path)).collect();
+    let mut count = 0;
+    for (index, a) in paths.iter().enumerate() {
+        for b in &paths[index + 1..] {
+            for p in a {
+                for q in b {
+                    count += usize::from(cross(p, q) || cross(q, p));
+                }
+            }
+        }
+    }
+    count
 }
