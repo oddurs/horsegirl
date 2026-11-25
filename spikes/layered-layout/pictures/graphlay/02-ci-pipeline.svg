@@ -1,0 +1,68 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-16.0 -158.0 2619.2 322.0" width="2619" height="322" font-family="Helvetica, Arial, sans-serif" font-size="13">
+<defs><marker id="tip" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="#444"/></marker></defs>
+<rect x="-16.0" y="-158.0" width="2619.2" height="322.0" fill="#fff"/>
+<rect x="120.8" y="-112.0" width="852.8" height="200.0" rx="6" fill="#000" fill-opacity="0.04" stroke="#999"/>
+<text x="130.8" y="-93.0" fill="#555">Build</text>
+<rect x="1037.6" y="-142.0" width="375.2" height="260.0" rx="6" fill="#000" fill-opacity="0.04" stroke="#999"/>
+<text x="1047.6" y="-123.0" fill="#555">Verify</text>
+<rect x="1476.8" y="-82.0" width="939.2" height="140.0" rx="6" fill="#000" fill-opacity="0.04" stroke="#999"/>
+<text x="1486.8" y="-63.0" fill="#555">Release</text>
+<polyline points="56.8,-4.0 172.8,-4.0" fill="none" stroke="#444" stroke-width="1.2" marker-end="url(#tip)"/>
+<polyline points="258.4,-4.0 322.4,-4.0" fill="none" stroke="#444" stroke-width="1.2" marker-end="url(#tip)"/>
+<polyline points="444.0,-20.2 508.0,-20.2" fill="none" stroke="#444" stroke-width="1.2" marker-end="url(#tip)"/>
+<polyline points="444.0,-4.0 486.7,-4.0 486.7,44.0 997.1,44.0 997.1,86.0 1136.4,86.0" fill="none" stroke="#444" stroke-width="1.2" marker-end="url(#tip)"/>
+<polyline points="444.0,12.2 465.3,12.2 465.3,74.0 988.6,74.0 988.6,-94.0 1107.6,-94.0" fill="none" stroke="#444" stroke-width="1.2" marker-end="url(#tip)"/>
+<polyline points="586.4,-20.2 607.7,-20.2 607.7,-82.0 1022.6,-82.0 1022.6,-34.0 1114.8,-34.0" fill="none" stroke="#444" stroke-width="1.2" marker-end="url(#tip)"/>
+<polyline points="586.4,-4.0 629.1,-4.0 629.1,-52.0 1014.1,-52.0 1014.1,26.0 1089.6,26.0" fill="none" stroke="#444" stroke-width="1.2" marker-end="url(#tip)"/>
+<polyline points="586.4,12.2 650.4,12.2" fill="none" stroke="#444" stroke-width="1.2" marker-end="url(#tip)"/>
+<polyline points="1214.8,-34.0 1256.0,-34.0 1256.0,9.8 1304.0,9.8" fill="none" stroke="#444" stroke-width="1.2" marker-end="url(#tip)"/>
+<polyline points="1240.0,26.0 1304.0,26.0" fill="none" stroke="#444" stroke-width="1.2" marker-end="url(#tip)"/>
+<polyline points="1193.2,86.0 1332.4,86.0 1332.4,44.0" fill="none" stroke="#444" stroke-width="1.2" marker-end="url(#tip)"/>
+<polyline points="1222.0,-94.0 1332.4,-94.0 1332.4,8.0" fill="none" stroke="#444" stroke-width="1.2" marker-end="url(#tip)"/>
+<polyline points="757.6,-4.0 821.6,-4.0" fill="none" stroke="#444" stroke-width="1.2" marker-end="url(#tip)"/>
+<polyline points="921.6,-4.0 1005.6,-4.0 1005.6,148.0 1455.5,148.0 1455.5,-34.0 1528.8,-34.0" fill="none" stroke="#444" stroke-width="1.2" marker-end="url(#tip)"/>
+<polyline points="1360.8,26.0 1434.1,26.0 1434.1,-17.8 1528.8,-17.8" fill="none" stroke="#444" stroke-width="1.2" marker-end="url(#tip)"/>
+<polyline points="1628.8,-34.0 1692.8,-34.0" fill="none" stroke="#444" stroke-width="1.2" marker-end="url(#tip)"/>
+<polyline points="1821.6,-34.0 1885.6,-34.0" fill="none" stroke="#444" stroke-width="1.2" marker-end="url(#tip)"/>
+<polyline points="1992.8,-34.0 2064.0,-34.0" fill="none" stroke="#444" stroke-width="1.2" marker-end="url(#tip)"/>
+<polyline points="2142.4,-34.0 2213.6,-34.0" fill="none" stroke="#444" stroke-width="1.2" marker-end="url(#tip)"/>
+<polyline points="2364.0,-34.0 2437.3,-34.0 2437.3,-4.0 2480.0,-4.0" fill="none" stroke="#444" stroke-width="1.2" marker-end="url(#tip)"/>
+<polyline points="1992.8,-17.8 2024.8,-17.8 2024.8,26.0 2056.8,26.0" fill="none" stroke="#444" stroke-width="1.2" marker-end="url(#tip)"/>
+<polyline points="2149.6,26.0 2458.7,26.0 2458.7,12.2 2480.0,12.2" fill="none" stroke="#444" stroke-width="1.2" marker-end="url(#tip)"/>
+<rect x="0.0" y="-22.0" width="56.8" height="36.0" rx="4" fill="#fff" stroke="#222"/>
+<text x="28.4" y="-4.0" text-anchor="middle" dominant-baseline="central" fill="#111">Push</text>
+<rect x="172.8" y="-22.0" width="85.6" height="36.0" rx="4" fill="#fff" stroke="#222"/>
+<text x="215.6" y="-4.0" text-anchor="middle" dominant-baseline="central" fill="#111">Checkout</text>
+<rect x="322.4" y="-22.0" width="121.6" height="36.0" rx="4" fill="#fff" stroke="#222"/>
+<text x="383.2" y="-4.0" text-anchor="middle" dominant-baseline="central" fill="#111">Restore cache</text>
+<rect x="508.0" y="-22.0" width="78.4" height="36.0" rx="4" fill="#fff" stroke="#222"/>
+<text x="547.2" y="-4.0" text-anchor="middle" dominant-baseline="central" fill="#111">Compile</text>
+<rect x="1136.4" y="68.0" width="56.8" height="36.0" rx="4" fill="#fff" stroke="#222"/>
+<text x="1164.8" y="86.0" text-anchor="middle" dominant-baseline="central" fill="#111">Lint</text>
+<rect x="1107.6" y="-112.0" width="114.4" height="36.0" rx="4" fill="#fff" stroke="#222"/>
+<text x="1164.8" y="-94.0" text-anchor="middle" dominant-baseline="central" fill="#111">Format check</text>
+<rect x="1114.8" y="-52.0" width="100.0" height="36.0" rx="4" fill="#fff" stroke="#222"/>
+<text x="1164.8" y="-34.0" text-anchor="middle" dominant-baseline="central" fill="#111">Unit tests</text>
+<rect x="1089.6" y="8.0" width="150.4" height="36.0" rx="4" fill="#fff" stroke="#222"/>
+<text x="1164.8" y="26.0" text-anchor="middle" dominant-baseline="central" fill="#111">Integration tests</text>
+<rect x="650.4" y="-22.0" width="107.2" height="36.0" rx="4" fill="#fff" stroke="#222"/>
+<text x="704.0" y="-4.0" text-anchor="middle" dominant-baseline="central" fill="#111">Build image</text>
+<rect x="1304.0" y="8.0" width="56.8" height="36.0" rx="4" fill="#fff" stroke="#222"/>
+<text x="1332.4" y="26.0" text-anchor="middle" dominant-baseline="central" fill="#111">Gate</text>
+<rect x="821.6" y="-22.0" width="100.0" height="36.0" rx="4" fill="#fff" stroke="#222"/>
+<text x="871.6" y="-4.0" text-anchor="middle" dominant-baseline="central" fill="#111">Scan image</text>
+<rect x="1528.8" y="-52.0" width="100.0" height="36.0" rx="4" fill="#fff" stroke="#222"/>
+<text x="1578.8" y="-34.0" text-anchor="middle" dominant-baseline="central" fill="#111">Push image</text>
+<rect x="1692.8" y="-52.0" width="128.8" height="36.0" rx="4" fill="#fff" stroke="#222"/>
+<text x="1757.2" y="-34.0" text-anchor="middle" dominant-baseline="central" fill="#111">Deploy staging</text>
+<rect x="1885.6" y="-52.0" width="107.2" height="36.0" rx="4" fill="#fff" stroke="#222"/>
+<text x="1939.2" y="-34.0" text-anchor="middle" dominant-baseline="central" fill="#111">Smoke tests</text>
+<rect x="2064.0" y="-52.0" width="78.4" height="36.0" rx="4" fill="#fff" stroke="#222"/>
+<text x="2103.2" y="-34.0" text-anchor="middle" dominant-baseline="central" fill="#111">Approve</text>
+<rect x="2213.6" y="-52.0" width="150.4" height="36.0" rx="4" fill="#fff" stroke="#222"/>
+<text x="2288.8" y="-34.0" text-anchor="middle" dominant-baseline="central" fill="#111">Deploy production</text>
+<rect x="2480.0" y="-22.0" width="107.2" height="36.0" rx="4" fill="#fff" stroke="#222"/>
+<text x="2533.6" y="-4.0" text-anchor="middle" dominant-baseline="central" fill="#111">Notify team</text>
+<rect x="2056.8" y="8.0" width="92.8" height="36.0" rx="4" fill="#fff" stroke="#222"/>
+<text x="2103.2" y="26.0" text-anchor="middle" dominant-baseline="central" fill="#111">Roll back</text>
+</svg>

@@ -1,0 +1,54 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-16.0 -136.0 1786.4 164.0" width="1786" height="164" font-family="Helvetica, Arial, sans-serif" font-size="13">
+<defs><marker id="tip" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="#444"/></marker></defs>
+<rect x="-16.0" y="-136.0" width="1786.4" height="164.0" fill="#fff"/>
+<polyline points="56.8,-6.0 120.8,-6.0" fill="none" stroke="#444" stroke-width="1.2" marker-end="url(#tip)"/>
+<polyline points="192.0,-6.0 224.0,-6.0 224.0,-30.0 256.0,-30.0" fill="none" stroke="#444" stroke-width="1.2" marker-end="url(#tip)"/>
+<polyline points="392.0,-30.0 424.0,-30.0 424.0,-90.0 492.0,-90.0" fill="none" stroke="#444" stroke-width="1.2" marker-end="url(#tip)"/>
+<polyline points="392.0,-30.0 456.0,-30.0" fill="none" stroke="#444" stroke-width="1.2" marker-end="url(#tip)"/>
+<polyline points="456.0,-30.0 392.0,-30.0" fill="none" stroke="#444" stroke-width="1.2" marker-end="url(#tip)"/>
+<polyline points="584.8,-30.0 604.8,-30.0 604.8,-6.0 648.8,-6.0" fill="none" stroke="#444" stroke-width="1.2" marker-end="url(#tip)"/>
+<polyline points="548.8,-90.0 616.8,-90.0 616.8,-66.0 656.0,-66.0" fill="none" stroke="#444" stroke-width="1.2" marker-end="url(#tip)"/>
+<polyline points="734.4,-66.0 781.6,-66.0 781.6,-90.0 827.2,-90.0" fill="none" stroke="#444" stroke-width="1.2" marker-end="url(#tip)"/>
+<polyline points="734.4,-66.0 781.6,-66.0 781.6,-30.0 805.6,-30.0" fill="none" stroke="#444" stroke-width="1.2" marker-end="url(#tip)"/>
+<polyline points="920.0,-30.0 1089.6,-30.0 1089.6,-12.0 1294.4,-12.0 1294.4,-30.0 1516.0,-30.0 1516.0,-42.0 1533.6,-42.0" fill="none" stroke="#444" stroke-width="1.2" marker-end="url(#tip)"/>
+<polyline points="898.4,-90.0 984.0,-90.0" fill="none" stroke="#444" stroke-width="1.2" marker-end="url(#tip)"/>
+<polyline points="1062.4,-90.0 1108.8,-90.0 1108.8,-102.0 1148.0,-102.0" fill="none" stroke="#444" stroke-width="1.2" marker-end="url(#tip)"/>
+<polyline points="1062.4,-90.0 1108.8,-90.0 1108.8,-42.0 1126.4,-42.0" fill="none" stroke="#444" stroke-width="1.2" marker-end="url(#tip)"/>
+<polyline points="1126.4,-42.0 1099.2,-42.0 1099.2,-60.0 781.6,-60.0 781.6,-66.0 734.4,-66.0" fill="none" stroke="#444" stroke-width="1.2" marker-end="url(#tip)"/>
+<polyline points="1240.8,-102.0 1282.4,-102.0 1282.4,-72.0 1326.4,-72.0" fill="none" stroke="#444" stroke-width="1.2" marker-end="url(#tip)"/>
+<polyline points="1469.6,-72.0 1506.4,-72.0 1506.4,-42.0 1533.6,-42.0" fill="none" stroke="#444" stroke-width="1.2" marker-end="url(#tip)"/>
+<polyline points="192.0,-6.0 224.0,-6.0 224.0,0.0 628.8,0.0 628.8,-6.0 648.8,-6.0" fill="none" stroke="#444" stroke-width="1.2" marker-end="url(#tip)"/>
+<polyline points="1619.2,-42.0 1683.2,-42.0" fill="none" stroke="#444" stroke-width="1.2" marker-end="url(#tip)"/>
+<polyline points="741.6,-6.0 765.6,-6.0 765.6,0.0 952.0,0.0 952.0,-6.0 1080.0,-6.0 1080.0,0.0 1306.4,0.0 1306.4,-6.0 1487.2,-6.0 1487.2,0.0 1659.2,0.0 1659.2,-42.0 1683.2,-42.0" fill="none" stroke="#444" stroke-width="1.2" marker-end="url(#tip)"/>
+<polyline points="1240.8,-102.0 1282.4,-102.0 1282.4,-18.0 1496.8,-18.0 1496.8,-12.0 1643.2,-12.0 1643.2,-42.0 1683.2,-42.0" fill="none" stroke="#444" stroke-width="1.2" marker-end="url(#tip)"/>
+<rect x="0.0" y="-24.0" width="56.8" height="36.0" rx="4" fill="#fff" stroke="#222"/>
+<text x="28.4" y="-6.0" text-anchor="middle" dominant-baseline="central" fill="#111">Cart</text>
+<rect x="120.8" y="-24.0" width="71.2" height="36.0" rx="4" fill="#fff" stroke="#222"/>
+<text x="156.4" y="-6.0" text-anchor="middle" dominant-baseline="central" fill="#111">Placed</text>
+<rect x="256.0" y="-48.0" width="136.0" height="36.0" rx="4" fill="#fff" stroke="#222"/>
+<text x="324.0" y="-30.0" text-anchor="middle" dominant-baseline="central" fill="#111">Payment pending</text>
+<rect x="492.0" y="-108.0" width="56.8" height="36.0" rx="4" fill="#fff" stroke="#222"/>
+<text x="520.4" y="-90.0" text-anchor="middle" dominant-baseline="central" fill="#111">Paid</text>
+<rect x="456.0" y="-48.0" width="128.8" height="36.0" rx="4" fill="#fff" stroke="#222"/>
+<text x="520.4" y="-30.0" text-anchor="middle" dominant-baseline="central" fill="#111">Payment failed</text>
+<rect x="648.8" y="-24.0" width="92.8" height="36.0" rx="4" fill="#fff" stroke="#222"/>
+<text x="695.2" y="-6.0" text-anchor="middle" dominant-baseline="central" fill="#111">Cancelled</text>
+<rect x="656.0" y="-84.0" width="78.4" height="36.0" rx="4" fill="#fff" stroke="#222"/>
+<text x="695.2" y="-66.0" text-anchor="middle" dominant-baseline="central" fill="#111">Picking</text>
+<rect x="827.2" y="-108.0" width="71.2" height="36.0" rx="4" fill="#fff" stroke="#222"/>
+<text x="862.8" y="-90.0" text-anchor="middle" dominant-baseline="central" fill="#111">Packed</text>
+<rect x="805.6" y="-48.0" width="114.4" height="36.0" rx="4" fill="#fff" stroke="#222"/>
+<text x="862.8" y="-30.0" text-anchor="middle" dominant-baseline="central" fill="#111">Out of stock</text>
+<rect x="1533.6" y="-60.0" width="85.6" height="36.0" rx="4" fill="#fff" stroke="#222"/>
+<text x="1576.4" y="-42.0" text-anchor="middle" dominant-baseline="central" fill="#111">Refunded</text>
+<rect x="984.0" y="-108.0" width="78.4" height="36.0" rx="4" fill="#fff" stroke="#222"/>
+<text x="1023.2" y="-90.0" text-anchor="middle" dominant-baseline="central" fill="#111">Shipped</text>
+<rect x="1148.0" y="-120.0" width="92.8" height="36.0" rx="4" fill="#fff" stroke="#222"/>
+<text x="1194.4" y="-102.0" text-anchor="middle" dominant-baseline="central" fill="#111">Delivered</text>
+<rect x="1126.4" y="-60.0" width="136.0" height="36.0" rx="4" fill="#fff" stroke="#222"/>
+<text x="1194.4" y="-42.0" text-anchor="middle" dominant-baseline="central" fill="#111">Lost in transit</text>
+<rect x="1326.4" y="-90.0" width="143.2" height="36.0" rx="4" fill="#fff" stroke="#222"/>
+<text x="1398.0" y="-72.0" text-anchor="middle" dominant-baseline="central" fill="#111">Return requested</text>
+<rect x="1683.2" y="-60.0" width="71.2" height="36.0" rx="4" fill="#fff" stroke="#222"/>
+<text x="1718.8" y="-42.0" text-anchor="middle" dominant-baseline="central" fill="#111">Closed</text>
+</svg>

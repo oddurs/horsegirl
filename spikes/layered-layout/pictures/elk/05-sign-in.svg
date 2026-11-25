@@ -1,0 +1,54 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-4.0 -4.0 1067.2 341.0" width="1067" height="341" font-family="Helvetica, Arial, sans-serif" font-size="13">
+<defs><marker id="tip" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="#444"/></marker></defs>
+<rect x="-4.0" y="-4.0" width="1067.2" height="341.0" fill="#fff"/>
+<polyline points="97.6,303.0 176.0,303.0" fill="none" stroke="#444" stroke-width="1.2" marker-end="url(#tip)"/>
+<polyline points="283.2,309.0 954.4,309.0" fill="none" stroke="#444" stroke-width="1.2" marker-end="url(#tip)"/>
+<polyline points="283.2,297.0 300.4,297.0 300.4,268.0 354.4,268.0" fill="none" stroke="#444" stroke-width="1.2" marker-end="url(#tip)"/>
+<polyline points="468.8,253.0 478.8,253.0 478.8,167.0 532.8,167.0" fill="none" stroke="#444" stroke-width="1.2" marker-end="url(#tip)"/>
+<polyline points="661.6,167.0 725.6,167.0" fill="none" stroke="#444" stroke-width="1.2" marker-end="url(#tip)"/>
+<polyline points="661.6,176.0 691.6,176.0 691.6,221.0 725.6,221.0" fill="none" stroke="#444" stroke-width="1.2" marker-end="url(#tip)"/>
+<polyline points="661.6,158.0 691.6,158.0 691.6,107.0 740.0,107.0" fill="none" stroke="#444" stroke-width="1.2" marker-end="url(#tip)"/>
+<polyline points="725.6,155.0 701.6,155.0 701.6,109.0 300.4,109.0 300.4,129.0 290.4,129.0" fill="none" stroke="#444" stroke-width="1.2" marker-end="url(#tip)"/>
+<polyline points="290.4,138.0 354.4,138.0" fill="none" stroke="#444" stroke-width="1.2" marker-end="url(#tip)"/>
+<polyline points="290.4,147.0 300.4,147.0 300.4,256.0 354.4,256.0" fill="none" stroke="#444" stroke-width="1.2" marker-end="url(#tip)"/>
+<polyline points="890.4,221.0 954.4,221.0" fill="none" stroke="#444" stroke-width="1.2" marker-end="url(#tip)"/>
+<polyline points="954.4,203.0 920.4,203.0 920.4,12.0 671.6,12.0 671.6,32.0 661.6,32.0" fill="none" stroke="#444" stroke-width="1.2" marker-end="url(#tip)"/>
+<polyline points="661.6,41.0 750.8,41.0" fill="none" stroke="#444" stroke-width="1.2" marker-end="url(#tip)"/>
+<polyline points="661.6,50.0 671.6,50.0 671.6,95.0 740.0,95.0" fill="none" stroke="#444" stroke-width="1.2" marker-end="url(#tip)"/>
+<polyline points="865.2,41.0 910.4,41.0 910.4,212.0 954.4,212.0" fill="none" stroke="#444" stroke-width="1.2" marker-end="url(#tip)"/>
+<polyline points="861.6,101.0 900.4,101.0 900.4,297.0 954.4,297.0" fill="none" stroke="#444" stroke-width="1.2" marker-end="url(#tip)"/>
+<polyline points="468.8,138.0 681.6,138.0 681.6,272.0 725.6,272.0" fill="none" stroke="#444" stroke-width="1.2" marker-end="url(#tip)"/>
+<polyline points="468.8,262.0 532.8,262.0" fill="none" stroke="#444" stroke-width="1.2" marker-end="url(#tip)"/>
+<polyline points="661.6,262.0 671.6,262.0 671.6,281.0 725.6,281.0" fill="none" stroke="#444" stroke-width="1.2" marker-end="url(#tip)"/>
+<polyline points="725.6,290.0 478.8,290.0 478.8,271.0 468.8,271.0" fill="none" stroke="#444" stroke-width="1.2" marker-end="url(#tip)"/>
+<rect x="12.0" y="285.0" width="85.6" height="36.0" rx="4" fill="#fff" stroke="#222"/>
+<text x="54.8" y="303.0" text-anchor="middle" dominant-baseline="central" fill="#111">Open app</text>
+<rect x="176.0" y="285.0" width="107.2" height="36.0" rx="4" fill="#fff" stroke="#222"/>
+<text x="229.6" y="303.0" text-anchor="middle" dominant-baseline="central" fill="#111">Has session</text>
+<rect x="954.4" y="285.0" width="56.8" height="36.0" rx="4" fill="#fff" stroke="#222"/>
+<text x="982.8" y="303.0" text-anchor="middle" dominant-baseline="central" fill="#111">Home</text>
+<rect x="354.4" y="244.0" width="114.4" height="36.0" rx="4" fill="#fff" stroke="#222"/>
+<text x="411.6" y="262.0" text-anchor="middle" dominant-baseline="central" fill="#111">Sign in form</text>
+<rect x="532.8" y="149.0" width="128.8" height="36.0" rx="4" fill="#fff" stroke="#222"/>
+<text x="597.2" y="167.0" text-anchor="middle" dominant-baseline="central" fill="#111">Check password</text>
+<rect x="725.6" y="143.0" width="128.8" height="36.0" rx="4" fill="#fff" stroke="#222"/>
+<text x="790.0" y="161.0" text-anchor="middle" dominant-baseline="central" fill="#111">Wrong password</text>
+<rect x="725.6" y="203.0" width="164.8" height="36.0" rx="4" fill="#fff" stroke="#222"/>
+<text x="808.0" y="221.0" text-anchor="middle" dominant-baseline="central" fill="#111">Needs second factor</text>
+<rect x="740.0" y="83.0" width="121.6" height="36.0" rx="4" fill="#fff" stroke="#222"/>
+<text x="800.8" y="101.0" text-anchor="middle" dominant-baseline="central" fill="#111">Issue session</text>
+<rect x="161.6" y="120.0" width="128.8" height="36.0" rx="4" fill="#fff" stroke="#222"/>
+<text x="226.0" y="138.0" text-anchor="middle" dominant-baseline="central" fill="#111">Too many tries</text>
+<rect x="354.4" y="120.0" width="114.4" height="36.0" rx="4" fill="#fff" stroke="#222"/>
+<text x="411.6" y="138.0" text-anchor="middle" dominant-baseline="central" fill="#111">Lock account</text>
+<rect x="954.4" y="194.0" width="92.8" height="36.0" rx="4" fill="#fff" stroke="#222"/>
+<text x="1000.8" y="212.0" text-anchor="middle" dominant-baseline="central" fill="#111">Send code</text>
+<rect x="561.6" y="23.0" width="100.0" height="36.0" rx="4" fill="#fff" stroke="#222"/>
+<text x="611.6" y="41.0" text-anchor="middle" dominant-baseline="central" fill="#111">Enter code</text>
+<rect x="750.8" y="23.0" width="114.4" height="36.0" rx="4" fill="#fff" stroke="#222"/>
+<text x="808.0" y="41.0" text-anchor="middle" dominant-baseline="central" fill="#111">Code expired</text>
+<rect x="725.6" y="263.0" width="107.2" height="36.0" rx="4" fill="#fff" stroke="#222"/>
+<text x="779.2" y="281.0" text-anchor="middle" dominant-baseline="central" fill="#111">Email owner</text>
+<rect x="532.8" y="244.0" width="128.8" height="36.0" rx="4" fill="#fff" stroke="#222"/>
+<text x="597.2" y="262.0" text-anchor="middle" dominant-baseline="central" fill="#111">Reset password</text>
+</svg>

@@ -1,0 +1,17 @@
+cli -> config, commands, logging
+commands -> draw, check, fix, serve
+draw -> parser, model, layout, render
+check -> parser, model, diagnostics
+fix -> check, edits
+serve -> draw, check, protocol
+parser -> lexer, diagnostics, spans
+model -> spans, intern
+layout -> model, geometry, text metrics
+render -> geometry, theme, text metrics
+diagnostics -> spans
+edits -> spans
+protocol -> json
+config -> json
+theme -> json
+lexer -> spans
+logging -> config

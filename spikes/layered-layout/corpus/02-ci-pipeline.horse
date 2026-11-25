@@ -1,0 +1,23 @@
+Push -> Checkout
+Checkout -> Restore cache
+Restore cache -> Compile, Lint, Format check
+Compile -> Unit tests, Integration tests, Build image
+Unit tests, Integration tests, Lint, Format check -> Gate
+Build image -> Scan image
+Scan image, Gate -> Push image
+Push image -> Deploy staging
+Deploy staging -> Smoke tests
+Smoke tests -> Approve
+Approve -> Deploy production
+Deploy production -> Notify team
+Smoke tests -> Roll back
+Roll back -> Notify team
+Build {
+  Checkout, Restore cache, Compile, Build image, Scan image
+}
+Verify {
+  Lint, Format check, Unit tests, Integration tests, Gate
+}
+Release {
+  Push image, Deploy staging, Smoke tests, Approve, Deploy production, Roll back
+}

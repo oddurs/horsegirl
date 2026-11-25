@@ -1,0 +1,26 @@
+Browser -> DNS
+Browser -> Load balancer
+Load balancer -> Ingress controller
+Ingress controller -> Web service, API service
+Web service -> Web pod 1, Web pod 2
+API service -> API pod 1, API pod 2, API pod 3
+Web pod 1, Web pod 2 -> API service
+API pod 1, API pod 2, API pod 3 -> Database proxy
+API pod 1, API pod 2, API pod 3 -> Cache
+Database proxy -> Primary database
+Primary database -> Read replica
+Metrics agent -> Metrics store
+API pod 1, Web pod 1 -> Metrics agent
+Cluster {
+  Ingress controller
+  Web namespace {
+    Web service, Web pod 1, Web pod 2
+  }
+  API namespace {
+    API service, API pod 1, API pod 2, API pod 3, Cache
+  }
+  Metrics agent
+}
+Data {
+  Database proxy, Primary database, Read replica
+}
