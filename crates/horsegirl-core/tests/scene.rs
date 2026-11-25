@@ -313,3 +313,27 @@ fn outer_groups_come_before_inner_groups() {
         .collect();
     assert_eq!(groups, ["Outer", "Inner"]);
 }
+
+#[test]
+fn a_link_stated_with_two_labels_shows_both() {
+    let model = model("A -> B: one\nA -> B: two\n");
+    assert_eq!(model.links.len(), 1, "the two statements are one link");
+    let unit = |x: f64| Rect {
+        x,
+        y: 0.0,
+        width: 10.0,
+        height: 10.0,
+    };
+    let placement = Placement {
+        things: vec![Some(unit(0.0)), Some(unit(40.0))],
+        links: vec![vec![Point { x: 10.0, y: 5.0 }, Point { x: 40.0, y: 5.0 }]],
+        labels: vec![Some(Point { x: 25.0, y: 5.0 })],
+    };
+    let scene = build(&model, &placement, STYLE);
+    let label = scene
+        .shapes
+        .iter()
+        .find(|s| s.role == Role::Label && s.of == ["A", "B"])
+        .unwrap();
+    assert_eq!(label.text, "one, two");
+}
