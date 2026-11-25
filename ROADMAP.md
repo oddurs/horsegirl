@@ -28,7 +28,6 @@ An agent writes a horsegirl file, checks it, applies the fixes, and draws a flow
 - [ ] [`0126`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0126-the-site-sets-its-type-in-the-concept-page-fonts.md) The site sets its type in the concept page fonts <sup>feature · p2 · site</sup>
 - [ ] [`BUG-127`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/BUG-127-every-docs-page-has-a-level-one-heading.md) Every docs page has a level-one heading <sup>bug · p2 · site</sup>
 - [ ] [`BUG-129`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/BUG-129-the-site-highlighter-colours-a-link-s-target-as-a-fact-key.md) The site highlighter colours a link's target as a fact key <sup>bug · p2 · site</sup>
-- [ ] [`ADR-130`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/ADR-130-a-comment-line-is-stated-on-the-language-card-or-leaves-the-language.md) A comment line is stated on the language card or leaves the language <sup>decision · p2 · language</sup>
 - [ ] [`0131`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0131-a-chain-of-arrows-on-one-line-gets-a-fix-that-splits-it.md) A chain of arrows on one line gets a fix that splits it <sup>feature · p2 · check</sup>
 - [ ] [`BUG-132`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/BUG-132-a-bad-line-with-a-brace-keeps-the-lines-after-it-and-deep-braces-stay-paired.md) A bad line with a brace keeps the lines after it, and deep braces stay paired <sup>bug · p2 · language</sup>
 - [ ] [`BUG-133`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/BUG-133-an-empty-link-label-is-an-error.md) An empty link label is an error <sup>bug · p2 · language</sup>
@@ -53,6 +52,7 @@ An agent writes a horsegirl file, checks it, applies the fixes, and draws a flow
 - [ ] [`0052`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0052-a-daily-report-of-what-the-backlog-needs-from-a-person.md) A daily report of what the backlog needs from a person <sup>feature · p2 · workflow</sup>
 - [ ] [`0054`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0054-cut-a-release-with-one-command.md) Cut a release with one command <sup>chore · p1 · workflow</sup>
 - [ ] [`0053`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0053-merge-passing-patch-and-minor-dependency-updates-automatically.md) Merge passing patch and minor dependency updates automatically <sup>chore · p2 · workflow</sup>
+- [ ] [`ADR-130`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/ADR-130-a-comment-line-is-stated-on-the-language-card-or-leaves-the-language.md) A comment line is stated on the language card or leaves the language <sup>decision · p2 · language</sup>
 
 ## later — Later
 

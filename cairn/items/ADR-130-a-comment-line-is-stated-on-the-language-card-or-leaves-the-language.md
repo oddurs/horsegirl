@@ -3,8 +3,10 @@ id: 130
 uid: a2c4b80e-00f3-4fd7-b5ca-801c04d2a966
 title: A comment line is stated on the language card or leaves the language
 type: decision
-status: backlog
+status: doing
 milestone: v0.1
+assignee: Oddur Sigurdsson
+claimed: 2026-11-25
 created: 2026-11-25
 updated: 2026-11-25
 priority: p2
@@ -31,7 +33,19 @@ A `#` anywhere else on a line is a character of a name: `Deploy EC2 #1 -> Host` 
 
 ## Decision
 
-Not decided.
+Decided by the owner: keep the form and state it on the card. A line that starts with `#`, after any indent, is a comment. The card states the form in one line: `A line that starts with # is a comment.`
+
+Evidence:
+
+- The parser of item 23, the reader on the concept page and the formatter of item 29 already read and keep comments in this form. No code changes.
+- The card grows from 139 to 148 words. The test `the_card_fits_in_a_prompt` holds it under 200.
+- The formatter already quotes a name that starts with `#` (ADR-119), so `"#1 priority" -> Plan` is the written form of such a name.
+
+Consequences:
+
+- The parser and its tests do not change. The test `the_comment_form_is_on_the_language_card_and_reads_as_written` in `crates/horsegirl-core/tests/check.rs` holds the card line and the parser behaviour together.
+- A bare name at the start of a line that starts with `#` is still read as a comment without a diagnostic. An agent that reads the card now knows the rule. A diagnostic for a comment that looks like a link or a block (the fourth option) is not part of this decision.
+- `//` is not a comment. It stays a character of a name.
 
 ## Revisit when
 
