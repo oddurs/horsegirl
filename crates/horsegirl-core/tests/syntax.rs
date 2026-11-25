@@ -713,6 +713,8 @@ fn a_chain_of_arrows_gets_a_safe_fix_that_splits_it() {
             "Web app -x \"API: v2\"\n\"API: v2\" -> DB\n",
         ),
         ("G {\n  A -> B -> C\n}\n", "G {\n  A -> B\n  B -> C\n}\n"),
+        ("A -> show flow -> C\n", "A -> show flow\nshow flow -> C\n"),
+        ("A -> story S -> C\n", "A -> story S\nstory S -> C\n"),
     ] {
         assert_eq!(fixed(source), repaired, "{source}");
         assert_eq!(parse(repaired).diagnostics, [], "{repaired}");
@@ -763,7 +765,15 @@ fn chain_links(source: &str) -> Vec<Vec<String>> {
 // end of another. A list that reads differently there gets no fix.
 #[test]
 fn a_chain_whose_middle_name_reads_differently_gets_no_fix() {
-    for source in ["A -> #ops -> C\n", "A -> B ? -> C\n", "A -> B; -> C\n"] {
+    for source in [
+        "A -> #ops -> C\n",
+        "A -> B ? -> C\n",
+        "A -> B; -> C\n",
+        "A -> show flow of S -> C\n",
+        "A -> show rings from T -> C\n",
+        "A -> show seams by owner -> C\n",
+        "G {\n  A -> show flow of S -> C\n}\n",
+    ] {
         let diagnostics = parse(source).diagnostics;
         assert_eq!(diagnostics[0].code, "E0010", "{source}");
         assert_eq!(diagnostics[0].fix, None, "{source}");

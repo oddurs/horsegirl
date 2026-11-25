@@ -49,3 +49,7 @@ Follow-up filed: 0163, a label that holds a second link ('A -> B: pay -> C: ship
 ## 2026-11-25
 
 Review round 1: middle name lists that start with # or end with ; or ? now get no fix. scripts/task check exited 0; new test a_chain_whose_middle_name_reads_differently_gets_no_fix failed before the parser change and passes after.
+
+## 2026-11-25
+
+Review round 2: split_chain gives no fix when a middle name list starts a show line (show, a lens, then of, from or by). Without the guard, a_chain_whose_middle_name_reads_differently_gets_no_fix failed on 'A -> show flow of S -> C'. With it, the chain tests pass (5 passed), 'horsegirl fix' on that line applies 0 safe fixes and exits 1, and scripts/task check exits 0.

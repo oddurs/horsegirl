@@ -769,18 +769,21 @@ impl<'s> Parser<'s> {
         if !indent.chars().all(|c| c == ' ' || c == '\t') {
             return None;
         }
-        // The bytes of each name list. An arrow starts the next one.
-        let mut names: Vec<Option<Range<usize>>> = vec![None];
+        // The first token and the bytes of each name list. An arrow starts
+        // the next one.
+        let mut lists: Vec<Option<(usize, Range<usize>)>> = vec![None];
         let mut index = start;
         loop {
             match self.kind_at(index) {
-                Some(TokenKind::Arrow | TokenKind::Cross) => names.push(None),
+                Some(TokenKind::Arrow | TokenKind::Cross) => lists.push(None),
                 Some(TokenKind::Word) if self.is_guess(index) => break,
                 Some(TokenKind::Word | TokenKind::Quoted | TokenKind::Comma) => {
                     let span = self.span_at(index);
-                    if let Some(list) = names.last_mut() {
-                        let from = list.as_ref().map_or(span.start, |list| list.start);
-                        *list = Some(from..span.end);
+                    if let Some(list) = lists.last_mut() {
+                        let (first, from) = list
+                            .as_ref()
+                            .map_or((index, span.start), |(first, list)| (*first, list.start));
+                        *list = Some((first, from..span.end));
                     }
                 }
                 Some(TokenKind::Space) => {}
@@ -788,20 +791,23 @@ impl<'s> Parser<'s> {
             }
             index += 1;
         }
-        let names: Vec<Range<usize>> = names.into_iter().collect::<Option<_>>()?;
+        let lists: Vec<(usize, Range<usize>)> = lists.into_iter().collect::<Option<_>>()?;
         // A name list in the middle ends one link and starts the next. At the
-        // start of a line `#` makes a comment, and at the end of a line a `?`
-        // is a guess mark and a `;` is a mark. The split would change what
-        // such a list means.
-        let mut middle = names.iter().skip(1).take(names.len().saturating_sub(2));
-        if middle.any(|list| {
+        // start of a line `#` makes a comment, and `show`, a lens and `of`,
+        // `from` or `by` make a `show` line. At the end of a line a `?` is a
+        // guess mark and a `;` is a mark. The split would change what such a
+        // list means.
+        let mut middle = lists.iter().skip(1).take(lists.len().saturating_sub(2));
+        if middle.any(|(first, list)| {
             let text = &self.source[list.clone()];
             text.starts_with('#')
+                || (self.is_word(*first, "show") && self.show_argument(*first).is_some())
                 || text.ends_with(';')
                 || text.rsplit([' ', '\t', ',']).next() == Some("?")
         }) {
             return None;
         }
+        let names: Vec<Range<usize>> = lists.into_iter().map(|(_, list)| list).collect();
         // What follows the last name: a label, a guess mark and a citation.
         let mut end = index;
         while !matches!(
@@ -947,7 +953,7 @@ impl<'s> Parser<'s> {
     /// `show`, a lens and `of`, `from` or `by` always start a `show` line, so
     /// a reserved character after them is a mistake in the argument.
     fn is_show_line(&self) -> bool {
-        if self.show_argument().is_some() {
+        if self.show_argument(self.pos).is_some() {
             return true;
         }
         let mut index = self.pos + 1;
@@ -967,13 +973,13 @@ impl<'s> Parser<'s> {
     }
 
     /// The first token after `show`, a lens and `of`, `from` or `by`, when the
-    /// line starts that way.
-    fn show_argument(&self) -> Option<usize> {
-        let lens = self.pos + 2;
+    /// tokens from `show`, at index `at`, start that way.
+    fn show_argument(&self, at: usize) -> Option<usize> {
+        let lens = at + 2;
         let spaced = |index: usize| self.kind_at(index) == Some(TokenKind::Space);
         let is_lens =
             self.kind_at(lens) == Some(TokenKind::Word) && LENSES.contains(&self.tokens[lens].text);
-        if !spaced(self.pos + 1) || !is_lens || !spaced(lens + 1) {
+        if !spaced(at + 1) || !is_lens || !spaced(lens + 1) {
             return None;
         }
         let word = self.skip(lens + 1);
@@ -987,7 +993,7 @@ impl<'s> Parser<'s> {
 
     fn show(&mut self, into: &mut Children<'s>) -> Result<NodeKind, Diagnostic> {
         let start = self.pos;
-        let argument = self.show_argument();
+        let argument = self.show_argument(self.pos);
         if self.show_parts(into) {
             return Ok(NodeKind::Show);
         }
