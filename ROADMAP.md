@@ -38,7 +38,7 @@ An agent writes a horsegirl file, checks it, applies the fixes, and draws a flow
 - [ ] [`BUG-137`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/BUG-137-an-unclosed-quote-in-a-citation-is-an-error.md) An unclosed quote in a citation is an error <sup>bug · p1 · language</sup>
 - [ ] [`BUG-139`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/BUG-139-a-thing-placed-in-two-groups-or-a-group-placed-inside-itself-is-an-error.md) A thing placed in two groups, or a group placed inside itself, is an error <sup>bug · p2 · check</sup>
 - [ ] [`BUG-140`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/BUG-140-a-quote-fix-for-a-link-target-keeps-the-label-outside-the-quotes.md) A quote fix for a link target keeps the label outside the quotes <sup>bug · p2 · language</sup>
-- [ ] [`0027`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0027-the-first-checks-typos-orphans-broken-rules-guesses.md) The first checks: typos, orphans, broken rules, guesses <sup>feature · p0 · check</sup>
+- [ ] [`0144`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0144-a-path-that-the-parser-reads-as-a-group-gets-a-warning-with-the-quote-fix.md) A path that the parser reads as a group gets a warning with the quote fix <sup>feature · p2 · check</sup>
 - [ ] [`0028`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0028-read-mermaid-habits-and-say-what-was-changed.md) Read Mermaid habits and say what was changed <sup>feature · p1 · check</sup>
 - [ ] [`0029`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0029-a-formatter-with-one-canonical-form.md) A formatter with one canonical form <sup>feature · p1 · language</sup>
 - [ ] [`0032`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0032-layered-layout-rank-order-and-place.md) Layered layout: rank, order and place <sup>feature · p0 · layout</sup>
@@ -60,7 +60,7 @@ An agent writes a horsegirl file, checks it, applies the fixes, and draws a flow
 
 ## later — Later
 
-`··········` 0% · 0 of 14 done
+`··········` 0% · 0 of 15 done
 
 Nothing on a date. Good ideas wait here until a release needs them.
 
@@ -78,6 +78,7 @@ Nothing on a date. Good ideas wait here until a release needs them.
 - [ ] [`0113`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0113-incremental-compilation-for-live-preview.md) Incremental compilation for live preview <sup>feature · p3 · layout</sup>
 - [ ] [`0114`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0114-a-hand-drawn-line-for-guesses.md) A hand-drawn line for guesses <sup>feature · p3 · render</sup>
 - [ ] [`0128`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0128-a-label-that-changes-script-is-never-measured-narrower-than-the-browser-draws-it.md) A label that changes script is never measured narrower than the browser draws it <sup>feature · p2 · render</sup>
+- [ ] [`0143`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0143-a-rule-against-a-group-also-forbids-links-to-its-parts.md) A rule against a group also forbids links to its parts <sup>feature · p2 · check</sup>
 
 ## v0.2 — Trot
 

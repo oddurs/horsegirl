@@ -93,7 +93,8 @@ fn the_reference_file_keeps_order_groups_and_facts() {
         model.shows,
         [Show {
             lens: "flow".into(),
-            arg: None
+            arg: None,
+            span: 551..555,
         }]
     );
 }
@@ -286,10 +287,12 @@ fn a_show_line_keeps_its_argument() {
             Show {
                 lens: "sequence".into(),
                 arg: Some(("of".into(), "checkout".into())),
+                span: 5..13,
             },
             Show {
                 lens: "rings".into(),
                 arg: Some(("from".into(), "API: v2".into())),
+                span: 31..36,
             },
         ]
     );
