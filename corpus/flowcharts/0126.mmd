@@ -1,0 +1,8 @@
+flowchart LR
+    A[录入<br/>识图 / 文本 / 对话] --> B[AI 识别<br/>OCR + DeepSeek]
+    B --> C[归档<br/>学科 / 知识点 / 错因 / 难度]
+    C --> D[复习<br/>SM-2 排期 + AI 变体题 + 批改]
+    D --> E[数据分析<br/>学习趋势 + 知识图谱]
+    E -->|复习结果回写| D
+    E -->|掌握度更新| C
+    C --> F[导出<br/>PDF / Markdown]

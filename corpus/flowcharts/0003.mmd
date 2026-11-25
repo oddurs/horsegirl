@@ -1,0 +1,24 @@
+flowchart TD
+    subgraph Ingestion ["Ingestion Tier"]
+        SensorStream["📡 IoT Sensors & GPS"] -->|Streaming Pub/Sub| Redpanda["Redpanda Broker<br/>(Kafka Protocol)"]
+        ExternalData["🏛️ FDA NDC & CMS Datasets"] -->|Batch Clean & Stage| StagedFiles["Staged JSON Datasets"]
+    end
+
+    subgraph Storage ["Polyglot Storage Layer"]
+        Redpanda -->|Batch Writes| Cassandra["Apache Cassandra<br/>(Wide-Column Time-Series)"]
+        Redpanda -->|State Updates| Redis["Redis<br/>(In-Memory Cache)"]
+        StagedFiles -->|Document Ingest| Mongo["MongoDB<br/>(BSON Document Store)"]
+        StagedFiles -->|Topology Ingest| Neo4j["Neo4j<br/>(Property Graph)"]
+    end
+
+    subgraph ServiceLayer ["API & Analytics Tier"]
+        Cassandra -->|Rollup Queries| Backend["FastAPI Backend Engine"]
+        Redis -->|Sub-ms Lookups| Backend
+        Mongo -->|Catalog Searches| Backend
+        Neo4j -->|Cypher Path Traversals| Backend
+        Backend --> ML["ML & Graph Analytics Engine<br/>(Anomaly, SPOF, Root Cause)"]
+    end
+
+    subgraph Presentation ["User Presentation Tier"]
+        Backend -->|REST / JSON| Dashboard["Operational Command Dashboard<br/>(React + Vite + Tailwind)"]
+    end

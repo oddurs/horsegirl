@@ -1,0 +1,48 @@
+flowchart TB
+  SKILL[SKILL.md 入口]
+
+  subgraph L1[I 国家制度]
+    DE[dual-equilibrium]
+    TR[tiaokuai-and-rank]
+  end
+
+  subgraph L2[II 权力运行]
+    PP[power-and-positions]
+    VF[village-fit]
+  end
+
+  subgraph L3[III 基层治理]
+    LG[local-governance]
+    DD[development-dilemmas]
+  end
+
+  subgraph APP[个人与应用]
+    LD[life-decisions]
+    RH[rezoning-household]
+    BE[business-environment]
+    BU[bottom-up-project]
+    IR[innovation-risk-boundary]
+    MP[mega-project-contest]
+  end
+
+  subgraph META[调用工艺]
+    PB[playbooks]
+    AP[anti-patterns-voice]
+  end
+
+  SKILL --> L1
+  SKILL --> L2
+  SKILL --> L3
+  L1 --> LD
+  L2 --> LD
+  L3 --> LD
+  LD --> RH
+  LD --> VF
+  LD --> BE
+  LD --> BU
+  BU --> IR
+  BU --> MP
+  BE --> DD
+  SKILL --> PB
+  SKILL --> AP
+  PB --> APP

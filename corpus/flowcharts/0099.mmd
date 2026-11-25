@@ -1,0 +1,82 @@
+graph TB
+    subgraph "User Interfaces"
+        CLI["CLI Entry<br/>agentic-ai/src/index.ts"]
+        HTTP["HTTP/SSE Server<br/>agentic-ai/src/http/server.ts"]
+        FE["Next.js Frontend<br/>frontend/pages/chat.tsx"]
+    end
+
+    subgraph "Orchestration Layer"
+        SUP["Supervisor<br/>Intent Classification + DAG Planning"]
+        REG["Agent Registry<br/>9 Agents + Circuit Breakers"]
+        LOOP["Agent Loop<br/>Tool-Use Iteration"]
+        ROUTE["Routing Strategy<br/>Single-Turn vs Agentic"]
+        ERR["Error Recovery<br/>13 Types, 11 Strategies"]
+        HO["Handoff Protocol<br/>Depth Guard + Circular Detection"]
+    end
+
+    subgraph "Runtime Engines"
+        DEFAULT["Default Orchestrator<br/>Round-Based Multi-Agent"]
+        LG["LangGraph Runtime<br/>ReAct Agent + Checkpointer"]
+        CREW["CrewAI Runtime<br/>Python Bridge"]
+    end
+
+    subgraph "Tool Layer"
+        MCP["MCP Server<br/>60+ Tools, stdio"]
+        A2A["A2A Protocol<br/>JSON-RPC Task Management"]
+        WEB["Web Tools<br/>Search + Fetch"]
+    end
+
+    subgraph "Data Layer"
+        PINE["Pinecone<br/>Vector Search"]
+        NEO["Neo4j<br/>Knowledge Graph"]
+        MONGO["MongoDB<br/>Property Records"]
+        CTX["Context Engineering<br/>In-Memory Graph + KB"]
+    end
+
+    subgraph "Backend AI"
+        GEMINI["Gemini Service<br/>Multi-Expert + K-Means"]
+    end
+
+    subgraph "Observability"
+        TRACE["Distributed Tracer"]
+        METRICS["Metrics Registry"]
+        COST["Cost Tracker"]
+        HEALTH["Health Aggregator"]
+    end
+
+    CLI --> DEFAULT
+    CLI --> LG
+    CLI --> CREW
+    HTTP --> DEFAULT
+    HTTP --> LG
+    HTTP --> CREW
+    HTTP --> A2A
+    FE --> GEMINI
+
+    DEFAULT --> SUP
+    SUP --> REG
+    SUP --> ROUTE
+    REG --> LOOP
+    LOOP --> MCP
+    LOOP --> ERR
+    ERR --> HO
+
+    LG --> MCP
+    LG --> PINE
+    LG --> NEO
+
+    MCP --> PINE
+    MCP --> NEO
+    MCP --> MONGO
+    MCP --> WEB
+
+    GEMINI --> PINE
+    GEMINI --> NEO
+    GEMINI --> MONGO
+
+    CTX --> NEO
+
+    LOOP --> TRACE
+    LOOP --> METRICS
+    LOOP --> COST
+    HEALTH --> REG

@@ -1,0 +1,12 @@
+graph TD
+    Patient[患者输入] --> IntakeAgent["Intake Agent<br/>接诊Agent"]
+    IntakeAgent -->|结构化病历| DiagnosisAgent["Diagnosis Agent<br/>诊断Agent"]
+    DiagnosisAgent -->|鉴别诊断列表| TreatmentAgent["Treatment Agent<br/>治疗Agent"]
+    TreatmentAgent -->|治疗方案| CodingAgent["Coding Agent<br/>编码Agent"]
+    CodingAgent -->|ICD-10/DRGs| AuditAgent["Audit Agent<br/>审计Agent"]
+    AuditAgent -->|合规报告| Output[最终输出]
+
+    KnowledgeGraph[医学知识图谱<br/>GraphRAG + Neo4j] --> DiagnosisAgent
+    DrugDB[药物数据库] --> TreatmentAgent
+    ICD10DB[ICD-10编码库] --> CodingAgent
+    HIPAAPolicy[HIPAA合规规则] --> AuditAgent

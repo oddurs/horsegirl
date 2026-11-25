@@ -1,0 +1,27 @@
+flowchart TB
+    subgraph Input
+        CF[Configuration File]
+        SD[Source Directories]
+    end
+    
+    subgraph Core
+        CL[Config Loader]
+        SC[Directory Scanner]
+        FM[Filename Matcher]
+        FC[File Classifier]
+        FO[File Organizer]
+    end
+    
+    subgraph Output
+        TD[Target Directories]
+        FR[For Review Directory]
+    end
+    
+    CF --> CL
+    CL --> SC
+    SD --> SC
+    SC --> FM
+    FM --> FC
+    FC --> FO
+    FO --> TD
+    FO --> FR

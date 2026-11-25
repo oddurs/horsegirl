@@ -1,0 +1,14 @@
+flowchart TD
+    Author((Автор / Студент / Писатель))
+    WorldWikiApp[WorldWiki Document Engine v2.0]
+    SurrealDB[(SurrealDB: Семантический AST)]
+    DownloadsDir[(Папка Загрузки / Downloads)]
+
+    Author -- "1. Ввод текста, формул, выбор ориентации (Portrait/Landscape)" --> WorldWikiApp
+    WorldWikiApp -- "2. Отображение А4 с зазорами, линейка, автонумерация" --> Author
+
+    WorldWikiApp -- "3. Debounced сохранение Semantic AST JSON (schemaVersion: 1)" --> SurrealDB
+    SurrealDB -- "4. Загрузка структуры документа" --> WorldWikiApp
+
+    Author -- "5. Запрос экспорта (DOCX с сохранением ориентации, PDF, EPUB, FB2)" --> WorldWikiApp
+    WorldWikiApp -- "6. Нативная генерация файла на диск" --> DownloadsDir

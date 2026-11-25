@@ -1,0 +1,12 @@
+flowchart LR
+    subgraph HM["hash map: key -> node pointer"]
+        K1["'a'"] --> N1
+        K2["'b'"] --> N2
+        K3["'c'"] --> N3
+    end
+    subgraph DLL["doubly linked list, ordered by recency"]
+        H["head (most recent)"] <--> N1["node a"]
+        N1 <--> N2["node b"]
+        N2 <--> N3["node c"]
+        N3 <--> T["tail (least recent, next to evict)"]
+    end

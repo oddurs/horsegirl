@@ -1,0 +1,8 @@
+flowchart LR
+    User -->|Command| CommandAPI
+    CommandAPI --> CommandModel
+    CommandModel -->|Emits Events| EventBus
+    EventBus --> ProjectionHandler
+    ProjectionHandler --> ReadModel
+    User -->|Query| QueryAPI
+    QueryAPI --> ReadModel

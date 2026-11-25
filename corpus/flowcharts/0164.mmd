@@ -1,0 +1,33 @@
+graph TB
+    subgraph Publishers
+        P1[Publisher 1]
+        P2[Publisher 2]
+        P3[Publisher 3]
+    end
+
+    subgraph Google Cloud Pub/Sub
+        T1[Topic: orders]
+        T2[Topic: notifications]
+
+        S1[Subscription: order-processor]
+        S2[Subscription: order-analytics]
+        S3[Subscription: email-sender]
+    end
+
+    subgraph Subscribers
+        C1[Order Service]
+        C2[Analytics Service]
+        C3[Email Service]
+    end
+
+    P1 --> T1
+    P2 --> T1
+    P3 --> T2
+
+    T1 --> S1
+    T1 --> S2
+    T2 --> S3
+
+    S1 --> C1
+    S2 --> C2
+    S3 --> C3

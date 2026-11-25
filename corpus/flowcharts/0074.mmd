@@ -1,0 +1,60 @@
+graph TB
+    subgraph Agent Runtime
+        OC[OpenClaw Agent]
+        PLG["@epsilla/clawtrace plugin<br/>8 hook types"]
+    end
+
+    subgraph Ingest Layer
+        ING[Ingest Service<br/>FastAPI + Cloud Storage]
+    end
+
+    subgraph Data Lake
+        RAW[Raw JSON Events<br/>Azure Blob / GCS / S3]
+        DBX[Databricks Lakeflow<br/>SQL Pipeline]
+        ICE[Iceberg Silver Tables<br/>events_all, pg_traces,<br/>pg_spans, pg_agents]
+    end
+
+    subgraph Graph Layer
+        PG[PuppyGraph<br/>Cypher over Delta Lake]
+    end
+
+    subgraph Backend Services
+        API[Backend API<br/>FastAPI + asyncpg]
+        PAY[Payment Service<br/>Credits + Stripe]
+        MCP[Tracy MCP Server<br/>Cypher queries]
+    end
+
+    subgraph AI Layer
+        TRACY[Tracy Agent<br/>Anthropic Managed Harness<br/>Claude Sonnet 4.6]
+    end
+
+    subgraph Frontend
+        UI[ClawTrace UI<br/>Next.js 15 + React 19]
+        DOCS[Documentation<br/>Server-rendered Markdown]
+    end
+
+    subgraph External
+        NEON[(Neon PostgreSQL<br/>Users, API Keys,<br/>Credits, Sessions)]
+        STRIPE[Stripe<br/>Payments]
+    end
+
+    OC --> PLG
+    PLG -->|"POST /v1/traces/events"| ING
+    ING --> RAW
+    RAW --> DBX
+    DBX --> ICE
+    ICE --> PG
+
+    PG -->|Cypher| API
+    PG -->|Cypher| MCP
+
+    API --> NEON
+    PAY --> NEON
+    PAY --> STRIPE
+
+    MCP -->|tool results| TRACY
+    TRACY -->|SSE stream| API
+
+    UI -->|REST API| API
+    UI -->|SSE| API
+    API -->|deficit check| PAY

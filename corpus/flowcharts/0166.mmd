@@ -1,0 +1,9 @@
+graph LR;
+    DPU[DPU or IPU]
+    Proxy[DHCP Proxy or Relay*]
+    DPU-->Proxy;
+    Proxy-->DHCPServer*;
+    Proxy-->BootstrapServer;
+    Proxy-->FileServer*;
+    Proxy-->DNSServer*;
+    Proxy-->SyslogServer*;

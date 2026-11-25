@@ -1,0 +1,14 @@
+flowchart LR
+    IN["Input feature map"] --> A["1x1 conv"]
+    IN --> B["3x3 conv"]
+    IN --> C["5x5 conv"]
+    IN --> D["3x3 max pool"]
+    A --> CAT["Concatenate<br/>along channel axis"]
+    B --> CAT
+    C --> CAT
+    D --> CAT
+    CAT --> OUT["Next block"]
+
+    style IN fill:#dbeafe,stroke:#2563eb
+    style CAT fill:#fef3c7,stroke:#d97706
+    style OUT fill:#dcfce7,stroke:#16a34a

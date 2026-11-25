@@ -1,0 +1,49 @@
+graph TB
+    subgraph "Layer 7"
+        A[Human Designer]
+    end
+    
+    subgraph "Layer 6"
+        B[MAM DSL Source]
+    end
+    
+    subgraph "Layer 5"
+        C[MAM Compiler]
+    end
+    
+    subgraph "Layer 4"
+        D[MAM AST]
+    end
+    
+    subgraph "Layer 3"
+        E[Semantic Analyzer]
+        F[Validator]
+    end
+    
+    subgraph "Layer 2"
+        G[Python Runtime]
+        H[JavaScript Runtime]
+        I[Go Runtime]
+        J[Rust Runtime]
+        K[AI SDK Runtime]
+    end
+    
+    subgraph "Layer 1"
+        L[Operating System]
+    end
+    
+    A --> B
+    B --> C
+    C --> D
+    D --> E
+    E --> F
+    F --> G
+    F --> H
+    F --> I
+    F --> J
+    F --> K
+    G --> L
+    H --> L
+    I --> L
+    J --> L
+    K --> L

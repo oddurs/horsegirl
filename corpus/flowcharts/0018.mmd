@@ -1,0 +1,9 @@
+flowchart TD
+    Section[Section] --> Division[Division]
+    Division --> Group[Group]
+    Group --> Class[Class]
+    
+    Section --> |contains| SectionDesc[Description]
+    Division --> |contains| DivisionDesc[Description]
+    Group --> |contains| GroupDesc[Description]
+    Class --> |contains| ClassDesc[Description]

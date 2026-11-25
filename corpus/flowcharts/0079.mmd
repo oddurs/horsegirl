@@ -1,0 +1,26 @@
+flowchart LR
+  diagram_39_n1["Client sensor snapshot + episode/request ID"]
+  diagram_39_n2["Request serialization + network transport"]
+  diagram_39_n3["Policy server queue + inference"]
+  diagram_39_n4["Response transport + timestamps"]
+  diagram_39_n5["Episode / generation / age / deadline gate"]
+  diagram_39_n6["Chunk connection + command queue"]
+  diagram_39_n7["Accepted command controller path"]
+  diagram_39_n8["Rejected / timeout local fallback"]
+  diagram_39_n9["Physical robot / environment"]
+  diagram_39_n10["Latency + age telemetry"]
+  diagram_39_n11["Next timestamped client snapshot"]
+  diagram_39_n1 -->|"timestamped request"| diagram_39_n2
+  diagram_39_n2 -->|"uplink + server queue"| diagram_39_n3
+  diagram_39_n3 -->|"policy result"| diagram_39_n4
+  diagram_39_n4 -->|"response + IDs + times"| diagram_39_n5
+  diagram_39_n5 -->|"accepted fresh result"| diagram_39_n6
+  diagram_39_n5 -->|"reject stale / late / wrong episode"| diagram_39_n8
+  diagram_39_n6 -->|"scheduled commands"| diagram_39_n7
+  diagram_39_n8 -->|"hold / retract / stop"| diagram_39_n7
+  diagram_39_n7 -->|"servo execution"| diagram_39_n9
+  diagram_39_n2 -->|"request transport time"| diagram_39_n10
+  diagram_39_n3 -->|"queue + inference time"| diagram_39_n10
+  diagram_39_n4 -->|"response transport time"| diagram_39_n10
+  diagram_39_n9 -->|"physical feedback"| diagram_39_n11
+  diagram_39_n11 -->|"next request cycle"| diagram_39_n1

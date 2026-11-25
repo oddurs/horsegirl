@@ -1,0 +1,17 @@
+graph TD
+    A[src/router.tsx - getRouter] --> B[Start Document Shell - __root.tsx]
+    B --> C[Provider - Chakra Theme]
+    C --> D[QueryClientProvider]
+    D --> E[Layout Component]
+    E --> F[Header]
+    E --> G[Page Content via Outlet]
+    E --> H[Footer]
+    G --> I[Route-Specific Page Component]
+    I --> J[Page Sub-Components]
+    J --> K[UI Components]
+    K --> L[Chakra UI Primitives]
+    
+    style A fill:#e1f5ff
+    style B fill:#fff4e1
+    style E fill:#fff4e1
+    style I fill:#e8f5e9

@@ -1,0 +1,9 @@
+flowchart TD
+    Demo["示范轨迹：五相机同步采集（SO-101）<br/>每步观测 O_t = {o_t^1 … o_t^5}，语言指令 l，动作 a_t"] --> Rec["逐时间步用 InstantSplat++ 重建 3D Gaussian Splatting<br/>G_t = f_GS(O_t)（无需预标定相机外参）"]
+    Rec --> Samp["在工作空间周围采样虚拟相机位姿 c_k<br/>方位角 θ∈[−π/2, π/2]，半径 r∈[0.6, 1.2] m，仰角 φ∈[0, π/2]<br/>每时间步最多 15 个第三人称新视角"]
+    Samp --> Rend["渲染新视角观测 ô_t^k = R(G_t, c_k)"]
+    Rend --> Pair["沿用原语言指令 l 与动作标签 a_t，无需重标注<br/>得到 D_nv"]
+    Pair --> Virt["组合为虚拟 episode：保留腕部相机与动作，<br/>两路第三人称观测替换为合成视角<br/>（每任务 7000 episode）"]
+    Virt --> Mix["D_train = D ∪ D_nv<br/>mini-batch 混合原始与合成观测"]
+    Mix --> Train["SmolVLA 模仿学习训练<br/>（一路腕部相机 + 两路第三人称相机，架构不改）"]
+    Train --> Infer["推理：仅需当前观测 + 语言指令，不需要重建模块"]

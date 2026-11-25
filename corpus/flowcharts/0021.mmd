@@ -1,0 +1,13 @@
+flowchart TB
+  P["pages/ (routes)"] --> C["components/ ui, forms, layout, domain, data"]
+  P --> CP["composables/ useApiData, useAction, useApi"]
+  C --> CP
+  CP --> CA["utils/apiCache (client only)"]
+  CP --> ST["stores/ auth, onboarding, ui"]
+  CP --> API["/api/v1"]
+  ST --> API
+  ST --> FB["Firebase Auth (optional)"]
+  M["middleware/access.global"] --> ST
+  K["constants/*.json"] --> P
+  K --> C
+  N["utils/notify (toasts)"] --> CP

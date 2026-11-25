@@ -1,0 +1,43 @@
+flowchart TB
+    REQ([Request]) --> P0{"P0 Triage<br/>risk × blast radius"}
+    P0 -- trivial --> DIRECT["Direct edit + existing rails"]
+    P0 -- bounded bug --> P3
+    P0 -- substantial --> P1
+
+    subgraph SPECIFY["SPECIFY — human + best-available judgment"]
+        P1["P1 Interrogate<br/>parallax: N readings → measured divergences<br/>premortem stress test"]
+        G1{{"GATE: spec-lint clean +<br/>ambiguity below threshold +<br/>HUMAN approves spec"}}
+        P2["P2 Decompose<br/>ticket DAG + edge contracts<br/>foundation built and merged first"]
+        G2{{"GATE: coldstart per ticket +<br/>merge-forecast certifies width"}}
+        P1 --> G1 --> P2 --> G2
+        G1 -. divergence high .-> P1
+        G2 -. gaps .-> P2
+    end
+
+    G2 --> P3
+
+    subgraph BUILD["RAIL + BUILD — mid/cheap models inside structure"]
+        P3["P3 Rail<br/>tests + contracts authored in a separate context, then frozen"]
+        G3{{"GATE: suite RED for the right reasons +<br/>hollow-test audits the rails"}}
+        PF["preflight: environment determinism"]
+        P4["P4 Build<br/>parallel worktrees · single writer per partition<br/>model-router: tier by float + rail density<br/>flail-detector: two-strike regeneration"]
+        G4{{"GATE: rails green + build + lint +<br/>rails-guard: freeze intact, no suppressions"}}
+        P3 --> G3 --> PF --> P4 --> G4
+        G4 -. flail or fail: regenerate .-> P4
+    end
+
+    G4 --> P5
+
+    subgraph PROSECUTE["PROSECUTE — pooled fresh contexts"]
+        P5["P5 Prosecute<br/>refute-chartered lenses in parallel<br/>stack recall measured by review-calibration"]
+        VF{"verify each finding:<br/>reproduce or kill"}
+        G5{{"GATE: 2 consecutive dry passes +<br/>gate-manifest chain valid"}}
+        P5 --> VF
+        VF -- verified findings --> FIXBACK["fix tickets"] --> P4
+        VF -- dry --> G5
+    end
+
+    G5 --> P6["P6 Integrate<br/>sequential merge, foundation-first<br/>behavior-diff for the human<br/>HUMAN behavioral acceptance"]
+    P6 --> P7["P7 Distill<br/>simplify under green rails<br/>skill-mining + lesson-foundry<br/>skill-rot freshness sweep"]
+    P7 -. "lessons → lints and skills<br/>priors → model-router<br/>questions → P1 templates" .-> P1
+    DIRECT --> P5

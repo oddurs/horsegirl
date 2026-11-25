@@ -1,0 +1,39 @@
+---
+title: 1 kHz Tone to TCP Sink SDR
+---
+flowchart LR
+
+    subgraph Sources["⚡ Signal Sources"]
+        direction TB
+        src1["<b>src1</b><br/>Signal Source
+Output Type: float
+Waveform: Sine
+Frequency: 1 kHz
+Amplitude: 1.0"]:::sourceStyle
+    end
+
+    subgraph Sinks["↗ Signal Sinks"]
+        direction TB
+        tx1["<b>tx1</b><br/>TCP Sink
+Address: 127.0.0.1
+Port: 8010
+Client Mode: True
+Output Type: float"]:::sinkStyle
+    end
+
+    %% Connections
+    src1 -->|"<small>float stream<br/>signal</small>"| tx1
+
+        %% Styling
+        classDef sourceStyle fill:#e1f5fe,stroke:#01579b,stroke-width:2px,color:#000
+        classDef processStyle fill:#f3e5f5,stroke:#4a148c,stroke-width:2px,color:#000
+        classDef sinkStyle fill:#e8f5e8,stroke:#1b5e20,stroke-width:2px,color:#000
+        
+        %% Subgraph styling with different colors
+        style Sources fill:#bbdefb,stroke:#1565c0,stroke-width:3px
+        style Processing fill:#e1bee7,stroke:#6a1b9a,stroke-width:3px
+        style Sinks fill:#c8e6c9,stroke:#2e7d32,stroke-width:3px
+        
+        %% Connection label styling
+        linkStyle default stroke:#666,stroke-width:2px,fill:none
+    

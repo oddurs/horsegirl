@@ -1,0 +1,11 @@
+graph LR
+    A[你的笔记] -->|加密| B[加密数据]
+    B --> C[云端存储]
+    C --> D[加密数据]
+    D -->|解密| E[其他设备]
+    
+    A -.使用密码.-> B
+    D -.使用密码.-> E
+    
+    style B fill:#f96,stroke:#333,stroke-width:2px
+    style D fill:#f96,stroke:#333,stroke-width:2px

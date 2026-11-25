@@ -1,0 +1,13 @@
+flowchart TB
+    subgraph Server["MAP Server"]
+        EventBus["EventBus"]
+        Agents["Agents"]
+        Scopes["Scopes"]
+        Sessions["Sessions"]
+        Subs["Subscriptions"]
+        Messages["Messages"]
+    end
+
+    Agent1["Agent"] --> Server
+    Client["Client"] --> Server
+    Agent2["Agent"] --> Server

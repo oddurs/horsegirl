@@ -1,0 +1,37 @@
+flowchart TB
+    subgraph Channels["交互与控制通道"]
+      CLI["本地 CLI"]
+      LUCI["LuCI / Local HTTP"]
+      MQTT["MQTT"]
+      WECOM["企业微信机器人"]
+      WECHAT["微信生态适配器"]
+    end
+
+    subgraph Device["设备端 Rust 进程"]
+      GW["Channel Gateway"]
+      SESSION["Session / Task Manager"]
+      LOOP["Agent Runtime"]
+      POLICY["Policy + Approval Engine"]
+      TOOLS["Typed Tool Registry"]
+      RUNBOOK["Local Runbook Engine"]
+      STORE["Embedded Store"]
+      OBS["Metrics / Audit / Logs"]
+      PLATFORM["OpenWrt / Generic Linux Adapter"]
+    end
+
+    subgraph Providers["外部服务"]
+      LLM["LLM Provider APIs"]
+      BROKER["MQTT Broker"]
+      WXAPI["企业微信 / 微信官方 API"]
+    end
+
+    Channels --> GW --> SESSION --> LOOP
+    LOOP <--> LLM
+    LOOP --> POLICY --> TOOLS --> PLATFORM
+    LOOP --> RUNBOOK --> TOOLS
+    SESSION <--> STORE
+    POLICY --> OBS
+    TOOLS --> OBS
+    MQTT <--> BROKER
+    WECOM <--> WXAPI
+    WECHAT <--> WXAPI

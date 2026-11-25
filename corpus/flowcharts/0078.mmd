@@ -1,0 +1,7 @@
+flowchart LR
+  A["sso-admin + identitystore adapter"] --> B["Client"]
+  B --> C["Scanner.Scan"]
+  C --> D["aws_resource"]
+  C --> E["aws_relationship"]
+  C --> F["aws_warning"]
+  D & E & F --> G["facts.Envelope"]

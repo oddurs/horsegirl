@@ -1,0 +1,7 @@
+flowchart LR
+    A["Outlook 15 Profile\n.olk15Message\n.olk15MsgSource\n.olk15MsgAttachment\nOutlook.sqlite"] --> B["extract_outlook.py\n3-phase extraction"]
+    B --> C["Maildir/cur/\n107K+ .eml files"]
+    B --> D["attachments/\ndetached files"]
+    B --> E["summary.csv\nmetadata index"]
+    C --> F["emailindex/ingest.py"]
+    F --> G["emails.db\nSQLite + FTS5 + vectors"]

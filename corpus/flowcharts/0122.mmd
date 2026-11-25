@@ -1,0 +1,58 @@
+flowchart LR
+  subgraph Interface["Entry points and interfaces"]
+    Public["peit/__init__.py<br/>public Python API"]
+    CLI["peit/cli.py<br/>main CLI"]
+    Server["peit/server.py<br/>HTTP sync API"]
+    Dashboard["peit/dashboard.py<br/>reports and visualizations"]
+  end
+
+  subgraph Data["Receipt data and accounting"]
+    Schema["peit/schema.py<br/>columns, enums, signs, IDs"]
+    Core["peit/core.py<br/>CSV validation and indices"]
+    Ledger["peit/ledger.py<br/>JSONL ledger + SQLite projection"]
+  end
+
+  subgraph Capture["Receipt OCR support"]
+    Models["peit/ocr/models.py<br/>blocks and parsed receipts"]
+    Parser["peit/ocr/parser.py<br/>heuristic text parser"]
+    Canvas["peit/ocr/canvas.py<br/>synthetic receipts and images"]
+    Benchmark["peit/ocr/benchmark.py<br/>parser benchmark"]
+  end
+
+  subgraph Simulation["Synthetic data generation"]
+    Profile["peit/profiler/profile.py<br/>consumer profiles"]
+    Market["peit/profiler/market.py<br/>price dynamics"]
+    Generator["peit/profiler/generator.py<br/>receipt rows and manifest"]
+    ProfilerCLI["peit/profiler/cli.py<br/>profiler commands"]
+  end
+
+  Public --> Schema
+  Public --> Ledger
+  Public --> Dashboard
+  Public --> Server
+  CLI --> Core
+  CLI --> Ledger
+  CLI --> Dashboard
+  CLI --> Server
+  CLI --> Schema
+  Core --> Schema
+  Ledger --> Core
+  Ledger --> Schema
+  Dashboard --> Core
+  Dashboard --> Ledger
+  Server --> Core
+  Server --> Ledger
+  Server --> Schema
+  Server --> Auth["peit/auth.py<br/>pairing, tokens, replay checks"]
+  Parser --> Models
+  Canvas --> Models
+  Benchmark --> Parser
+  Benchmark --> Models
+  ProfilerCLI --> Profile
+  ProfilerCLI --> Market
+  ProfilerCLI --> Generator
+  Generator --> Profile
+  Generator --> Market
+  Generator --> Schema
+  ProfilerCLI --> Ledger
+  ProfilerCLI --> Canvas

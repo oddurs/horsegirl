@@ -1,0 +1,10 @@
+flowchart TB
+  UI[Browser: public/ app] -->|session cookie| S[server.mjs]
+  S --> G[generation.mjs + providers.mjs]
+  S --> P[publishing.mjs]
+  S --> M[media.mjs]
+  S --> C[configuration.mjs: local settings]
+  S --> DB[(.data: SQLite, media, access.key)]
+  G -->|brief| AI[OpenAI / Claude / QwenCloud / Gemini / compatible API]
+  P -->|API| SO[LinkedIn / Facebook / Instagram]
+  M -->|ffprobe| FF[FFmpeg, if installed]

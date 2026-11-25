@@ -1,0 +1,16 @@
+flowchart LR
+    USER(("🌍 visitor<br/><sub>https://blog.example.com</sub>"))
+    EDGE["☁️ Cloudflare edge<br/><sub>TLS · wildcard DNS · Access</sub>"]
+    subgraph laptop["💻 your laptop — docker compose -p roost"]
+        direction LR
+        CFD["cloudflared"]
+        CADDY["Caddy<br/><sub>routes by Host header</sub>"]
+        A1["blog<br/><sub>rails :3000</sub>"]
+        A2["shop<br/><sub>next :3000</sub>"]
+        A3["api<br/><sub>django :8000</sub>"]
+        DB[("shared MySQL / Postgres<br/><sub>a database per app · no published ports</sub>")]
+        CFD --> CADDY
+        CADDY --> A1 & A2 & A3
+        A1 & A3 --> DB
+    end
+    USER --> EDGE <--> CFD

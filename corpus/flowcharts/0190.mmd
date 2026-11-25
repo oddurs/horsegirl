@@ -1,0 +1,18 @@
+flowchart TD
+    IN["Any incoming ask"] --> TRIV{"Trivial?<br/>one file, under 10 lines,<br/>no new behavior"}
+    TRIV -->|yes| DOIT["Do it, one check,<br/>two-sentence report"]
+    TRIV -->|"no, or unsure"| FIT{"FIT GATE (new in v1.4):<br/>where does the answer live?"}
+    FIT -->|"in reachable sources"| SHAPE{"What shape is the ask?"}
+    FIT -->|"unknown technique"| RES["Research it first,<br/>then run the loop"]
+    FIT -->|"only my own inference"| INFER["Say so. No faked rigor.<br/>Ask, or flag low-confidence"]
+    FIT -->|"specialized + recurring"| MK["Make a skill (fable-domain)"]
+    RES --> SHAPE
+    SHAPE -->|"question"| ASSESS["Diagnose only.<br/>Change nothing"]
+    SHAPE -->|"plan-first"| PLANF["Plan artifact.<br/>Stop for approval"]
+    SHAPE -->|task| LOOP["Evidence → decide → act"]
+    LOOP --> GATES["Act with forced artifacts:<br/>INTENT (spec vs test)<br/>AUTH (outward actions)"]
+    GATES --> VER{"Verify by observation"}
+    VER --> V3["TWIN CHECK (new in v1.4):<br/>fixed a bug? search the whole<br/>project for copies. TWINS: line"]
+    V3 --> JUDGE["Judge pass: every claim<br/>observed, or relabeled a caveat"]
+    ASSESS --> JUDGE
+    JUDGE --> OUT["Report, outcome first,<br/>honest caveats"]

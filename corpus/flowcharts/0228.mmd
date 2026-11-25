@@ -1,0 +1,5 @@
+flowchart TD
+    Start([🚀 Start]) --> Process[⚙️ Process Data]
+    Process --> Cache{⚡ Cache Hit?}
+    Cache -->|No| DB[💾 Query Database]
+    Cache -->|Yes| Return[💨 Return Cached]

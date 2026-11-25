@@ -1,0 +1,17 @@
+flowchart TD
+  Source["Receipt CSV"] --> Read["core.read_csv"]
+  Read --> Validate["core.validate_rows"]
+  Validate --> Import["ledger.import_csv"]
+  Import --> Entry["LedgerEntry"]
+  Entry --> Append["LedgerDatabase.append_entries"]
+  Append --> JSONL["Authoritative JSONL ledger"]
+  Append --> Cache["SQLite query cache"]
+
+  Source --> DirectIndex["core.calculate_indices"]
+  JSONL --> Query["LedgerDatabase queries"]
+  Cache --> Query
+  Query --> CLI["CLI output"]
+  Query --> Dash["dashboard.create_dashboard"]
+  Query --> Decomp["dashboard.compute_inflation_and_welfare"]
+  Dash --> HTML["Interactive HTML"]
+  Decomp --> HTML

@@ -1,0 +1,5 @@
+flowchart LR
+  BE["Backend needs a page"] --> Q{"in the<br/>buffer cache?"}
+  Q -->|"hit — nanoseconds"| RAM["served from shared memory<br/>no disk I/O"]
+  Q -->|"miss — milliseconds"| IO["read from disk,<br/>then keep it in cache"]
+  IO --> RAM

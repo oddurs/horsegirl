@@ -1,0 +1,9 @@
+flowchart LR
+    A[Git Repository] -->|Push| B[GitHub]
+    B -->|Webhook| C[EventBridge]
+    C -->|Trigger| D[Lambda Sync]
+    D -->|Update| E[ArgoCD]
+    E -->|Deploy| F[EKS Cluster]
+    F -->|Read Manifests| G[S3 Bucket]
+    E -->|Monitor| A
+    E -->|Self-Heal| F

@@ -1,0 +1,35 @@
+flowchart TB
+    subgraph Client
+        UI[Web Client]
+    end
+
+    subgraph K8s Cluster
+        ING[Ingress / TLS]
+        subgraph Monolith Pods - HPA 3-10 replicas
+            APP[SalesPipe Spring Boot App]
+        end
+        subgraph ML Service Pods
+            ML[Lead Scoring Service - FastAPI]
+        end
+        REDIS[(Redis)]
+        PG[(PostgreSQL - managed / StatefulSet)]
+        KAFKA[[Kafka Cluster]]
+    end
+
+    subgraph Async Consumers in-process
+        C1[Activity Timeline Consumer]
+        C2[Notification Consumer]
+        C3[Lead Score Recompute Consumer]
+        C4[Email Event Consumer]
+    end
+
+    UI --> ING --> APP
+    APP --> PG
+    APP --> REDIS
+    APP -- produce domain events --> KAFKA
+    KAFKA --> C1 & C2 & C3 & C4
+    C1 & C2 & C4 --> PG
+    C3 -- feature vector --> ML
+    ML -- score --> C3
+    C3 --> PG
+    APP -- sync scoring call optional --> ML

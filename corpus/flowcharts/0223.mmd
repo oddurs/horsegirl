@@ -1,0 +1,16 @@
+graph LR
+    subgraph "Active"
+        A[Connected Mode<br/>Data transfer]
+    end
+    
+    subgraph "Light Sleep (eDRX)"
+        B[Extended DRX<br/>Paging every X seconds/minutes<br/>DRX cycle up to 2621s (NB-IoT)]
+    end
+    
+    subgraph "Deep Sleep (PSM)"
+        C[Power Saving Mode<br/>Device unreachable<br/>Timer T3412 up to 413 days<br/>Lowest power (~3μA)]
+    end
+    
+    A -->|Release| B
+    B -->|eDRX expiry| C
+    C -->|Wake (TAU timer or MO data)| A

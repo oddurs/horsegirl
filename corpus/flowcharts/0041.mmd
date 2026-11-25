@@ -1,0 +1,18 @@
+graph TD
+    Input[Input Document] --> Parser{Parser Selection}
+    Parser -->|PDF| PDFParser[PDF Parser]
+    Parser -->|HTML| HTMLParser[HTML Parser]
+    Parser -->|YouTube| YouTubeParser[YouTube Parser]
+    Parser -->|DOCX| DOCXParser[DOCX Parser]
+    Parser -->|PPT| PPTParser[PPT Parser]
+    Parser -->|TXT| TXTParser[TXT Parser]
+    
+    PDFParser --> TextExtraction[Text Extraction]
+    HTMLParser --> TextExtraction
+    YouTubeParser --> TextExtraction
+    DOCXParser --> TextExtraction
+    PPTParser --> TextExtraction
+    TXTParser --> TextExtraction
+    
+    TextExtraction --> CleanText[Clean Text]
+    CleanText --> SaveText[Save Text File]

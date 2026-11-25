@@ -1,0 +1,90 @@
+graph TD
+    subgraph "Trigger"
+        TC["Track Completion<br/>(module-completion.md)"]
+        Manual["Manual trigger<br/>'run graduation' / 'graduate'"]
+    end
+
+    subgraph "Pre-checks"
+        SkipCheck{"skip_graduation<br/>== true?"}
+        Offer["🎓 Offer graduation workflow"]
+        Accept{"Bootcamper<br/>accepts?"}
+        Remember["Ask: remember this choice?"]
+        LoadSteering["Load steering/graduation.md"]
+        ReadPrefs["Read bootcamp_preferences.yaml<br/>+ bootcamp_progress.json"]
+    end
+
+    subgraph "Step 1: Production Structure"
+        CheckDir{"production/<br/>exists?"}
+        AskOverwrite["Ask: overwrite / merge / abort"]
+        CopyFiles["Copy production-relevant files<br/>src/{transform,load,query,utils} → production/src/<br/>data/transformed/ → production/data/<br/>database/ → production/database/ (.gitkeep)<br/>dependency file → production/"]
+        ExcludeScaffolding["Exclude bootcamp scaffolding<br/>progress, preferences, journal,<br/>samples, raw, quickstart_demo,<br/>logs, backups, monitoring, feedback"]
+        SummaryCopied["Present copied/excluded summary"]
+    end
+
+    subgraph "Step 2: Production Configs"
+        GenEnv["Generate .env.production<br/>(placeholders only)"]
+        GenEnvExample["Generate .env.example<br/>(safe example values)"]
+        GenDocker["Generate docker-compose.yml<br/>(SQLite or PostgreSQL)"]
+        AskCI["Ask: which CI/CD platform?"]
+        GenCI["Generate CI/CD pipeline file<br/>(GitHub Actions / Azure / GitLab)"]
+        GenGitignore["Generate .gitignore<br/>(language-appropriate)"]
+    end
+
+    subgraph "Step 3: Production README"
+        GenReadme["Generate production/README.md<br/>overview, prereqs, install,<br/>config, usage, structure, contributing"]
+        ReviewReadme["Present README for review"]
+    end
+
+    subgraph "Step 4: Migration Checklist"
+        GenChecklist["Generate MIGRATION_CHECKLIST.md<br/>Database, Security, Licensing,<br/>Performance, Data, Deployment"]
+        CheckModules{"Modules 10-12<br/>completed?"}
+        RefExisting["Reference existing security/<br/>monitoring/deployment artifacts"]
+        FlagMissing["Flag uncovered areas<br/>with additional items"]
+    end
+
+    subgraph "Step 5: Git Init (Optional)"
+        AskGit["Ask: initialize git repo?"]
+        CheckGitAvail{"git available?"}
+        GitInit["git init + initial commit"]
+        SkipGit["Skip git initialization"]
+    end
+
+    subgraph "Graduation Report"
+        GenReport["Generate GRADUATION_REPORT.md<br/>summary, files generated,<br/>files excluded, next steps"]
+    end
+
+    TC --> SkipCheck
+    Manual --> LoadSteering
+    SkipCheck -->|yes| Done["Skip — no offer"]
+    SkipCheck -->|no| Offer
+    Offer --> Accept
+    Accept -->|yes| LoadSteering
+    Accept -->|no| Remember
+    Remember --> Done
+    LoadSteering --> ReadPrefs
+    ReadPrefs --> CheckDir
+    CheckDir -->|yes| AskOverwrite
+    CheckDir -->|no| CopyFiles
+    AskOverwrite --> CopyFiles
+    CopyFiles --> ExcludeScaffolding
+    ExcludeScaffolding --> SummaryCopied
+    SummaryCopied --> GenEnv
+    GenEnv --> GenEnvExample
+    GenEnvExample --> GenDocker
+    GenDocker --> AskCI
+    AskCI --> GenCI
+    GenCI --> GenGitignore
+    GenGitignore --> GenReadme
+    GenReadme --> ReviewReadme
+    ReviewReadme --> GenChecklist
+    GenChecklist --> CheckModules
+    CheckModules -->|yes| RefExisting
+    CheckModules -->|no| FlagMissing
+    RefExisting --> AskGit
+    FlagMissing --> AskGit
+    AskGit --> CheckGitAvail
+    CheckGitAvail -->|yes| GitInit
+    CheckGitAvail -->|no| SkipGit
+    GitInit --> GenReport
+    SkipGit --> GenReport
+    GenReport --> Done2["🎓 Graduation complete"]

@@ -1,0 +1,32 @@
+graph LR
+    IA[implicit-assumption] -->|depends-on| AT[axiomatic-thinking]
+    IA -->|depends-on| BI[boundary-innovation]
+    IA -->|depends-on| CT[critical-thinking]
+    IA -->|depends-on| LTC[logic-triple-check]
+    IA -->|depends-on| FCB[founder-cognitive-boundary]
+    IA -.->|contrasts-with| LTC
+
+    AT -->|depends-on| RD[reductionism-deconstruction]
+    AT -->|depends-on| MMM[multi-mental-models]
+    AT -.->|contrasts-with| RD
+
+    BI -->|depends-on| OR[organizational-refresh]
+    BI -.->|contrasts-with| RD
+    BI ===>|composes-with| MMM
+
+    CT -->|depends-on| CD[contrarian-decision]
+    CT -.->|contrasts-with| LTC
+    CT ===>|composes-with| FCB
+    CT ===>|composes-with| OR
+
+    LTC ===>|composes-with| AT
+    LTC ===>|composes-with| CD
+
+    CD -.->|contrasts-with| IA
+
+    FCB -.->|contrasts-with| OR
+
+    RD -.->|contrasts-with| BI
+    RD ===>|composes-with| IA
+
+    MMM -.->|contrasts-with| RD

@@ -1,0 +1,141 @@
+---
+title: rblx-dev — CLI Architecture
+---
+graph TB
+    subgraph CLI["CLI Entry Point (src/main.rs)"]
+        Parser["clap Parser<br/>--verbose, --version"]
+        Router{"Command Router"}
+    end
+
+    Parser --> Router
+
+    subgraph Commands["Commands (src/commands/)"]
+        Init["init.rs<br/>Scaffold project"]
+        Check["check.rs<br/>Lint + format"]
+        Build["build.rs<br/>Rojo build"]
+        Deploy["deploy.rs<br/>Publish to Roblox"]
+        Watch["watch.rs<br/>Live-sync server"]
+    end
+
+    Router --> Init
+    Router --> Check
+    Router --> Build
+    Router --> Deploy
+    Router --> Watch
+
+    subgraph Templates["Template System (src/templates/)"]
+        TMod["mod.rs<br/>get_template_files()"]
+        TBase["base.rs<br/>Shared files"]
+        TObby["obby.rs"]
+        TSim["simulator.rs"]
+        TRpg["rpg.rs"]
+        TTyc["tycoon.rs"]
+    end
+
+    subgraph TemplateFiles["Embedded Files (templates/)"]
+        direction LR
+        BFiles["base/<br/>project.json, wally.toml,<br/>rokit.toml, selene.toml,<br/>stylua.toml, .gitignore,<br/>init scripts, CI workflow"]
+        OFiles["obby/<br/>ObbyManager, StageData,<br/>ObbyUI, Checkpoints"]
+        SFiles["simulator/<br/>DataManager, Config,<br/>HUD, RebirthSystem"]
+        RFiles["rpg/<br/>CombatSystem, ItemDatabase,<br/>DialogueUI"]
+        TFiles["tycoon/<br/>TycoonManager, Prices,<br/>ShopUI, Dropper"]
+    end
+
+    TBase -->|"include_str!()"| BFiles
+    TObby -->|"include_str!()"| OFiles
+    TSim -->|"include_str!()"| SFiles
+    TRpg -->|"include_str!()"| RFiles
+    TTyc -->|"include_str!()"| TFiles
+
+    Init -->|"get_template_files()"| TMod
+    TMod --> TBase
+    TMod --> TObby
+    TMod --> TSim
+    TMod --> TRpg
+    TMod --> TTyc
+
+    subgraph Toolchain["Toolchain (src/toolchain/)"]
+        Detect["detect.rs<br/>which() checks"]
+        Runner["runner.rs<br/>run_tool_verbose()"]
+    end
+
+    Init -->|"detect + run"| Toolchain
+    Check -->|"detect + run"| Toolchain
+    Build -->|"detect + run"| Toolchain
+    Watch -->|"detect"| Toolchain
+
+    subgraph ExtTools["External Tools (PATH)"]
+        Rojo["rojo<br/>build, serve, sourcemap"]
+        Wally["wally<br/>install, list"]
+        Selene["selene<br/>lint src/"]
+        StyLua["stylua<br/>format src/"]
+        Rokit["rokit<br/>install tools"]
+        Git["git<br/>init"]
+    end
+
+    Runner --> Rojo
+    Runner --> Wally
+    Runner --> Selene
+    Runner --> StyLua
+    Runner --> Rokit
+    Runner --> Git
+    Detect -->|"which::which()"| ExtTools
+
+    subgraph Cloud["Open Cloud (src/cloud/)"]
+        Auth["auth.rs<br/>get_api_key()"]
+        Publish["publish.rs<br/>publish_place()<br/>retry + backoff"]
+    end
+
+    Deploy -->|"build first"| Build
+    Deploy --> Auth
+    Deploy --> Publish
+
+    subgraph AuthSources["API Key Sources"]
+        EnvVar["ROBLOX_API_KEY<br/>env variable"]
+        DotEnv[".env file<br/>dotenvy"]
+    end
+
+    Auth --> EnvVar
+    Auth --> DotEnv
+
+    Publish -->|"POST .rbxl bytes<br/>x-api-key header<br/>retry on 429/5xx"| RobloxAPI["Roblox Open Cloud API<br/>universes/v1/.../versions"]
+
+    subgraph Util["Utilities (src/util/)"]
+        Style["style.rs<br/>success, warning,<br/>error, step, verbose"]
+        FS["fs.rs<br/>write_template,<br/>ensure_dir"]
+    end
+
+    Commands --> Style
+    Init --> FS
+
+    subgraph Config["Project Config Files"]
+        ProjJSON["default.project.json<br/>Rojo project structure"]
+        WallyTOML["wally.toml<br/>Package dependencies"]
+        RblxTOML["rblx-dev.toml<br/>Deploy environments"]
+    end
+
+    Init -->|"writes"| Config
+    Check -->|"reads"| ProjJSON
+    Build -->|"reads"| ProjJSON
+    Deploy -->|"reads"| RblxTOML
+
+    subgraph Output["Build Output"]
+        RBXL[".rbxl file"]
+    end
+
+    Build -->|"rojo build -o"| RBXL
+    Deploy -->|"uploads"| RBXL
+
+    classDef command fill:#4a9eff,stroke:#2070cc,color:white
+    classDef template fill:#50c878,stroke:#2e8b57,color:white
+    classDef external fill:#ff9f43,stroke:#e67e22,color:white
+    classDef cloud fill:#e74c3c,stroke:#c0392b,color:white
+    classDef util fill:#9b59b6,stroke:#8e44ad,color:white
+    classDef config fill:#95a5a6,stroke:#7f8c8d,color:white
+
+    class Init,Check,Build,Deploy,Watch command
+    class TMod,TBase,TObby,TSim,TRpg,TTyc template
+    class Rojo,Wally,Selene,StyLua,Rokit,Git external
+    class Auth,Publish,RobloxAPI cloud
+    class Style,FS util
+    class ProjJSON,WallyTOML,RblxTOML config

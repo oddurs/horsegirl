@@ -1,0 +1,14 @@
+graph TD
+    Client[使用者瀏覽器] -->|HTTP| Server[應用伺服器]
+    Server -->|JVM| SpringBoot[Spring Boot 應用]
+    SpringBoot -->|MQ Client| MQServer[IBM MQ 伺服器]
+    
+    subgraph "應用伺服器"
+        SpringBoot
+    end
+    
+    subgraph "MQ 伺服器"
+        MQServer -->|管理| QueueManager[佇列管理器]
+        QueueManager -->|包含| Queues[佇列]
+        QueueManager -->|包含| Channels[通道]
+    end

@@ -1,0 +1,6 @@
+flowchart LR
+  metrics["Metrics<br/>Where memory lives,<br/>how hard nodes are pressed"] --> rules["Recording rules<br/>Derive tier utilization<br/>and pressure signals"]
+  rules --> classify["Classify nodes<br/>over / appropriately / under utilized"]
+  classify --> descheduler["Descheduler<br/>Evict VMs from<br/>pressured nodes"]
+  descheduler --> migrate["Live migration<br/>to healthier nodes"]
+  migrate --> metrics

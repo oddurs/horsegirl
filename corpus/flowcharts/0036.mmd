@@ -1,0 +1,23 @@
+flowchart LR
+    subgraph OpenJuOS
+        OJ[.jupk<br/>JuOS Package Kit]
+        OJF[InstallAppLog.f<br/>纯文本键值对]
+    end
+    
+    subgraph ProperOS
+        P1[.jupk<br/>旧格式]
+        P2[.jspk<br/>新格式]
+        P1F[InstallAppLog.f]
+        P2F[MainIndex.json]
+    end
+    
+    subgraph ProperOS2
+        PS1[.jspk<br/>兼容格式]
+        PS2[.pjspk<br/>命令行包]
+        PSF[MainIndex.json<br/>统一]
+    end
+    
+    OJ --> P1
+    OJF --> P1F
+    P2 --> PS1
+    P2F --> PSF

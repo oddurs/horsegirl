@@ -1,0 +1,23 @@
+flowchart TB
+    subgraph AWS["AWS Staging"]
+        subgraph Compute["ECS Cluster"]
+            WEB[Web App Tasks]
+            API[API Tasks]
+            WORKER[Worker Tasks]
+        end
+
+        subgraph Data["Data Layer"]
+            RDS[(RDS PostgreSQL)]
+            ELASTICACHE[(ElastiCache Redis)]
+            S3[S3 Bucket]
+        end
+
+        subgraph Messaging["Messaging"]
+            SQS[SQS Queues]
+            SNS[SNS Topics]
+        end
+    end
+
+    ALB[Application Load Balancer] --> Compute
+    Compute --> Data
+    Compute --> Messaging

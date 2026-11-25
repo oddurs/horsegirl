@@ -1,0 +1,8 @@
+graph TB
+    A[HTML Template / render Function] --> B[vDOM Build]
+    D[Proxy Reactive Data] -->|Change, 300ms Debounce| B
+    E[i18n Locale Data] --> B
+    B --> C[Diff to Patches]
+    C -->|requestAnimationFrame| F[Real DOM]
+    G[Lifecycle Hooks] -.-> B
+    F --> H[Lazyload / SVG Listeners]

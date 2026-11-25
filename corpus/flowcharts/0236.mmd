@@ -1,0 +1,38 @@
+flowchart TD
+    PKT[Incoming Packet] --> PF_EVAL{pf Rule<br/>Evaluation}
+
+    PF_EVAL -->|Anchor: aifw-ha| HA_RULES[CARP/pfsync<br/>Allow Rules]
+    PF_EVAL -->|Anchor: aifw-geoip| GEO_RULES[Geo-IP<br/>Country Block/Allow]
+    PF_EVAL -->|Anchor: aifw-ratelimit| RL_RULES[Rate Limit<br/>Overload Tables]
+    PF_EVAL -->|Anchor: aifw-vpn| VPN_RULES[VPN<br/>WireGuard/IPsec Allow]
+    PF_EVAL -->|Anchor: aifw-tls| TLS_RULES[TLS<br/>MITM RDR]
+    PF_EVAL -->|Anchor: aifw| FW_RULES[Firewall Rules<br/>Pass/Block/Drop]
+    PF_EVAL -->|NAT Anchor| NAT_RULES[NAT Rules<br/>SNAT/DNAT/Masq]
+
+    FW_RULES -->|Pass| STATE[pf State Table]
+    FW_RULES -->|Block| DROP[Drop/Return]
+
+    STATE --> CT_POLL[Connection Tracker<br/>Polls State Table]
+    CT_POLL --> FEATURES[Feature Extraction<br/>13-dim vector per IP]
+    FEATURES --> DETECTORS{AI Detectors}
+
+    DETECTORS -->|Port Scan| THREAT[Threat Detected]
+    DETECTORS -->|DDoS| THREAT
+    DETECTORS -->|Brute Force| THREAT
+    DETECTORS -->|C2 Beacon| THREAT
+    DETECTORS -->|DNS Tunnel| THREAT
+
+    THREAT --> SCORE{Score >= Threshold?}
+    SCORE -->|>= 0.95| PERM_BLOCK[Permanent Block<br/>Add to pf table]
+    SCORE -->|>= 0.7| TEMP_BLOCK[Temporary Block<br/>Auto-expiry]
+    SCORE -->|>= 0.5| RATE_LIMIT[Rate Limit<br/>Overload table]
+    SCORE -->|>= 0.3| ALERT[Alert Only<br/>Log + Notify]
+
+    PERM_BLOCK --> PF_TABLE[pf Table Update]
+    TEMP_BLOCK --> PF_TABLE
+    RATE_LIMIT --> PF_TABLE
+
+    THREAT --> PLUGINS[Plugin Hooks<br/>PreRule/PostRule/Connection]
+    PLUGINS -->|IP Reputation| PF_TABLE
+    PLUGINS -->|Webhook| NOTIFY[External Notification]
+    PLUGINS -->|Logger| LOG_BUF[Log Buffer]

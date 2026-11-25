@@ -1,0 +1,25 @@
+graph LR
+    Agent["AI Agent"] -->|JSON-RPC 2.0| Client["MCP Client"]
+
+    subgraph "Transport Layer"
+        Client -->|HTTP / SSE| SSE["SSE Transport<br/>(Express :5100)"]
+        Client -->|stdin / stdout| STDIO["stdio Transport"]
+    end
+
+    subgraph "MCP Server"
+        SSE --> Auth["Token Resolver<br/>(JWT verify)"]
+        STDIO --> Auth
+        Auth --> Server["McpServer"]
+        Server --> Tools["35 Tools"]
+        Server --> Resources["4 Resources"]
+    end
+
+    subgraph "Data Layer"
+        Tools --> Models["Mongoose Models"]
+        Resources --> Models
+        Models --> DB[("MongoDB")]
+    end
+
+    style Agent fill:#6366f1,color:#fff
+    style Client fill:#8b5cf6,color:#fff
+    style DB fill:#47a248,color:#fff

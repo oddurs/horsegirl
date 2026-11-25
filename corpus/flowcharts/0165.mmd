@@ -1,0 +1,36 @@
+graph LR
+    subgraph Censys
+        Analyst[Analyst-defined CenQL query]
+        Collection[Collection]
+        Analyst --> Collection
+    end
+
+    subgraph Censys API
+        ListAPI[List Collections API]
+        SearchAPI[Collection Search API]
+    end
+
+    subgraph OpenCTI Output
+        IPOut[IPv4/IPv6 Observable + Indicator]
+        DomainOut[Domain-Name Observable + Indicator]
+        CertOut[X509-Certificate Observable + Indicator]
+        Malware[Malware]
+        Actor[Threat-Actor-Group]
+        Vuln[Vulnerability]
+        ExtRef[External Reference to Collection]
+    end
+
+    Collection --> ListAPI
+    ListAPI --> SearchAPI
+    SearchAPI --> IPOut
+    SearchAPI --> DomainOut
+    SearchAPI --> CertOut
+    IPOut --> Malware
+    IPOut --> Actor
+    IPOut --> Vuln
+    DomainOut --> Malware
+    DomainOut --> Actor
+    DomainOut --> Vuln
+    IPOut --> ExtRef
+    DomainOut --> ExtRef
+    CertOut --> ExtRef

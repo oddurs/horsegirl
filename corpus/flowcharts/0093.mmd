@@ -1,0 +1,11 @@
+flowchart TD
+    A[Raw Dataset\nJSONL / HuggingFace] --> B[prepare_dataset.py\nformat to ChatML]
+    B --> C[Train split 90%\nTest split 10%]
+    
+    C --> D[Load base model\n4-bit QLoRA\nautomatically fits T4 GPU]
+    D --> E[Apply LoRA config\nr=16 alpha=32\ntarget: q_proj v_proj]
+    E --> F[SFTTrainer\n3 epochs\nlr=2e-4]
+    F --> G[LoRA adapter\n~50–100 MB]
+    F --> H[Training loss curve\nloss.png]
+    G --> I[eval.py\nbase vs fine-tuned\non test split]
+    I --> J[eval_results.json\nmetrics comparison]

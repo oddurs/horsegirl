@@ -1,0 +1,7 @@
+flowchart LR
+  A[Write the post] --> B[Preview and character count]
+  B --> C{View}
+  C -->|Simple| D[Copy and open the social]
+  D --> E[You press Publish]
+  C -->|Advanced| F[Draft, schedule or publish now]
+  F --> G[Queue sends via API at the set time]

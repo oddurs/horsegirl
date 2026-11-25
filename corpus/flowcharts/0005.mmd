@@ -1,0 +1,10 @@
+flowchart TD
+    Start([Client requests POST /scan]) --> Valid{Valid Path?}
+    Valid -->|No| Err400[Return 400]
+    Valid -->|Yes| AST[AST Parser Extracts Chunks]
+    AST --> Embed{Embeddings Needed?}
+    Embed -->|No| Store[Save to SQLite Metadata]
+    Embed -->|Yes| Vector[Generate Vectors via Ollama/Hash]
+    Vector --> Chroma[Store in Vector DB]
+    Chroma --> Store
+    Store --> End([Return ScanResult])

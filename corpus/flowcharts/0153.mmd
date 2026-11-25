@@ -1,0 +1,33 @@
+flowchart TD
+    Client["Адрес клиента<br/>ул. Люблинская, 145"]
+
+    style Client fill:#dceeff,color:#1a1a1a
+
+    GeoCheck["Геоматика:<br/>Определение зон доставки"]
+
+    style GeoCheck fill:#4C8C8F,color:#fff
+
+    Z1["Зона Люблино-1<br/>2,3 км<br/>Молоко: 0 ед."]
+    Z2["Зона Марьино-3<br/>2,8 км<br/>Молоко: 150 ед."]
+    Z3["Зона Печатники-2<br/>3,1 км<br/>Молоко: 45 ед."]
+
+    style Z1 fill:#A93226,color:#fff
+    style Z2 fill:#C9A84C,color:#000
+    style Z3 fill:#4C8C8F,color:#fff
+
+    Client --> GeoCheck
+    GeoCheck --> Z1
+    GeoCheck --> Z2
+    GeoCheck --> Z3
+
+    StockCheck{"Проверка остатков<br/>по заказу"}
+    Z1 -->|"Товара нет<br/>→ исключён"| StockCheck
+    Z2 -->|"Товар есть"| StockCheck
+    Z3 -->|"Товар есть"| StockCheck
+
+    DistCheck{"Выбор по расстоянию<br/>и наличию"}
+    StockCheck --> DistCheck
+
+    Result["Назначен: Марьино-3<br/>(ближайший с остатком)"]
+    style Result fill:#dceeff,color:#1a1a1a
+    DistCheck --> Result

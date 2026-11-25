@@ -1,0 +1,16 @@
+graph TB
+subgraph "UnoCSS配置"
+A[uno.config.ts] --> B[unocss.ts]
+A --> C[vars.ts]
+A --> D[uno-preset]
+end
+subgraph "主题系统"
+E[theme/index.ts] --> F[theme/shared.ts]
+E --> G[settings.ts]
+F --> C
+end
+subgraph "应用入口"
+H[assets.ts] --> A
+end
+A --> I[应用组件]
+B --> J[Vite构建流程]

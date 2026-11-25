@@ -1,0 +1,10 @@
+flowchart LR
+    X["Input x"] --> F["F(x)<br/>conv + BN + ReLU<br/>conv + BN"]
+    X -.->|identity skip| PLUS(["+"])
+    F --> PLUS
+    PLUS --> RELU["ReLU"]
+    RELU --> OUT["y"]
+
+    style X fill:#dbeafe,stroke:#2563eb
+    style PLUS fill:#fef3c7,stroke:#d97706
+    style OUT fill:#dcfce7,stroke:#16a34a

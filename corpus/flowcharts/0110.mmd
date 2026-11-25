@@ -1,0 +1,5 @@
+graph TD
+    A[Extractor] --> B[Legal Auditor]
+    B --> C[Verifier]
+    C -- Hallucination Found --> A
+    C -- Verified --> D[Final Output]

@@ -1,0 +1,7 @@
+graph TB
+    Client[Browser/App] --> CDN
+    CDN --> FE[Frontend - Next.js]
+    FE --> API[API Layer]
+    API --> DB[(Database)]
+    API --> Cache[(Redis)]
+    API --> Storage[File Storage]

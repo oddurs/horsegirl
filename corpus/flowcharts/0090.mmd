@@ -1,0 +1,11 @@
+flowchart LR
+  ClientUI[Browser/Client] -->|calls app wrappers| AppAPI[App Convex funcs]
+  AppAPI -->|ctx.runMutation/query/action| ComponentAPI[Component functions]
+
+  ComponentAPI --> ComponentDB[(Component tables)]
+  ComponentAPI --> ConvexStorage[(Convex storage)]
+  ComponentAPI --> R2[(Cloudflare R2)]
+
+  AppAPI --> HttpRoutes[Optional HTTP routes]
+  ClientUI --> HttpRoutes
+  HttpRoutes --> ComponentAPI

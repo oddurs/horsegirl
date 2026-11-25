@@ -1,0 +1,18 @@
+flowchart LR
+  subgraph loop [Unified Control Loop — one runtime]
+    direction TB
+    WS[(World State\nlayered envelopes)]
+    INT[Interpret]
+    PLAN[Plan]
+    REAL[Realize]
+    EVAL[Evaluate]
+    INT --> PLAN --> REAL --> EVAL
+    EVAL -.->|bounded correction signal| INT
+    INT <--> WS
+    PLAN <--> WS
+    REAL <--> WS
+    EVAL <--> WS
+  end
+  TC[[Table Compiler\ncold path]] -.->|epoch tables| PLAN
+  IN([Input]) --> INT
+  REAL --> OUT([Surface Output])

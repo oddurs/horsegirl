@@ -1,0 +1,13 @@
+---
+title: '#356 curve: rounded'
+description:
+  The A to C edge turns two corners. Fixed when step, stepBefore and stepAfter
+  draw sharp right angles (no rounding) and differ from each other in where the
+  step sits; rounded keeps its small 5 px arcs, for comparison.
+config:
+  flowchart:
+    curve: rounded
+---
+flowchart LR
+  A --> B --> C
+  A --> C

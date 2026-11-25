@@ -1,0 +1,69 @@
+graph TB
+    subgraph "User Interfaces"
+        UI[Web UI<br/>NextJS]
+        TUI[Terminal UI<br/>ratatui]
+        CLI[CLI Tool<br/>clap]
+    end
+
+    subgraph "API Layer"
+        API[REST API<br/>Axum + JWT]
+    end
+
+    subgraph "Core Engines"
+        RE[Rule Engine]
+        NE[NAT Engine]
+        SE[Shaping Engine]
+        VE[VPN Engine]
+        GE[Geo-IP Engine]
+        TE[TLS Engine]
+        CE[Cluster Engine]
+    end
+
+    subgraph "Intelligence"
+        AI[AI/ML Engine<br/>5 Detectors]
+        PM[Plugin Manager<br/>Native Rust, in-tree]
+        AR[Auto-Responder]
+    end
+
+    subgraph "Data Layer"
+        CT[Connection Tracker]
+        MC[Metrics Collector]
+        AL[Audit Log]
+        DB[(SQLite)]
+        PG[(PostgreSQL<br/>optional)]
+    end
+
+    subgraph "Kernel / OS"
+        PF[pf Firewall<br/>/dev/pf ioctl]
+        WG[WireGuard]
+        IPSEC[IPsec]
+        CARP[CARP/pfsync]
+    end
+
+    UI --> API
+    TUI --> RE & NE & CT
+    CLI --> RE & NE & SE & VE & GE
+
+    API --> RE & NE & SE & CT & AL & MC
+
+    RE --> PF
+    NE --> PF
+    SE --> PF
+    VE --> PF & WG & IPSEC
+    GE --> PF
+    TE --> PF
+    CE --> PF & CARP
+
+    AI --> CT
+    AI --> AR
+    AR --> PF
+    PM --> PF
+
+    CT --> PF
+    MC --> PF
+    MC --> DB
+    MC --> PG
+
+    RE & NE & SE & VE & GE & TE & CE --> DB
+    RE & NE --> AL
+    AL --> DB

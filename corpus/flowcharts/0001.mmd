@@ -1,0 +1,11 @@
+flowchart TB
+    id1("1<br/>Components from project's Components folder")
+	~~~
+    id2("2<br/>Components listed in dependencies.json")
+	~~~
+    id2 -- environment4d.json gives path --> id4("Load component based on path declared in environment4d.json")
+    ~~~
+    id3("3<br/>User 4D components")
+    id2 -- environment4d.json doesn't give path --> id5("Load component next to package folder")
+    ~~~
+    id3("3<br/>User 4D components")

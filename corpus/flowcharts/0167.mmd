@@ -1,0 +1,27 @@
+flowchart TD
+    DATA["분산 데이터 (파티션들)"]
+
+    subgraph ABS["추상화 계층 — 무엇으로 표현하는가"]
+        RDD["RDD<br/>저수준 · 스키마 없음"]
+        DF["DataFrame<br/>스키마 있음 = Dataset&#91;Row&#93;"]
+        DS["Dataset&#91;T&#93;<br/>스키마 + 타입 안전 (JVM)"]
+    end
+
+    CAT["Catalyst 옵티마이저<br/>(스키마가 있어야 개입)"]
+
+    subgraph LAZY["실행 계층 — 언제 실행되는가"]
+        TR["트랜스포메이션<br/>map · filter · groupBy · join<br/>(계획만 쌓임 — lazy)"]
+        NW["narrow (셔플 없음)<br/>vs wide (셔플 유발)"]
+        ACT["액션<br/>count · collect · save"]
+    end
+
+    DATA --> RDD
+    DATA --> DF
+    DATA --> DS
+    RDD -. 개입 불가 .-> CAT
+    DF --> CAT
+    DS --> CAT
+    CAT --> TR
+    RDD --> TR
+    TR --> NW
+    NW -->|"액션이 트리거"| ACT

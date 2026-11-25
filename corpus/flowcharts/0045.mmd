@@ -1,0 +1,36 @@
+graph TD
+    CLI[CLI Interface] --> Core
+    Core --> Parsers
+    Core --> Generators
+    Core --> LLMClient
+    Core --> FormatConverter
+    
+    Parsers --> PDFParser
+    Parsers --> HTMLParser
+    Parsers --> YouTubeParser
+    Parsers --> DOCXParser
+    Parsers --> PPTParser
+    Parsers --> TXTParser
+    
+    Generators --> QAGenerator
+    Generators --> COTGenerator
+    
+    Config[Configuration] --> CLI
+    Config --> Core
+    Config --> LLMClient
+    Config --> Generators
+    
+    Utils[Utilities] --> TextProcessing
+    Utils --> LLMProcessing
+    Utils --> ConfigUtils
+    Utils --> FormatConverter
+    Utils --> DatasetUtils[HF Dataset Utils]
+    
+    LLMClient --> BatchProcessing[Batch Processing]
+    
+    LLMProcessing --> ParseQAPairs[Parse QA Pairs]
+    LLMProcessing --> ParseRatings[Enhanced Rating Parser]
+    LLMProcessing --> ConversionUtils[Conversation Format Utils]
+    
+    EnvVars[Environment Variables] -.-> Core
+    EnvVars -.-> LLMProcessing

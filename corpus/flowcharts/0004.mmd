@@ -1,0 +1,12 @@
+graph LR
+    M["🏢 Manufacturer<br/>(id, name, city, gmp_status)"]
+    D["🚚 Distributor<br/>(id, name, region, cold_certified)"]
+    P["🏥 Pharmacy<br/>(id, name, state, beds)"]
+    DR["💊 Drug<br/>(id, ndc, name, is_biologic, temp_spec)"]
+    ING["🧪 Ingredient<br/>(id, unii, active_moiety)"]
+
+    M -->|PRODUCES| DR
+    DR -->|CONTAINS| ING
+    M -->|SUPPLIES {lead_time_days}| D
+    D -->|DISTRIBUTES_TO {frequency}| P
+    DR -.->|SUBSTITUTABLE_WITH {therapeutic_equiv}| DR

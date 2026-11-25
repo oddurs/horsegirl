@@ -1,0 +1,10 @@
+flowchart LR
+  B0[Load base model (RoBERTa)]
+  B1[Load task-specific finetuned models]
+  B2[Filter parameters (regex)]
+  B3[MergingMethod(...)]
+  B4[Assign merged params to base clone]
+  B5[Evaluate on GLUE via HF Trainer]
+
+  B0 --> B2
+  B1 --> B2 --> B3 --> B4 --> B5

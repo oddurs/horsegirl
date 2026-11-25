@@ -1,0 +1,5 @@
+flowchart LR
+  A[OrderHandler] --> B[OrderValidator]
+  B --> C[OrderRepo]
+  C -.-> D[PricingClient]
+  linkStyle 2 stroke:#dc2626,stroke-width:2px

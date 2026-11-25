@@ -1,0 +1,20 @@
+flowchart TB
+  subgraph udm [Unified Discourse Manager — Phase 2]
+    TD[1. trigger_detector]
+    PG[2. policy_gate]
+    IS[3. identity_selector]
+    PR[4. plan_resolver]
+    RS[5. realization_selector]
+    IMR[6. imr_interface]
+    TD --> PG --> IS --> PR --> RS
+  end
+  SNAP[(semantic_snapshot\nread-only)] --> TD
+  SNAP --> IS
+  SNAP --> PR
+  TRIG[(trigger_tables)] --> TD
+  SRP[(SRP_tables\nrouting_epoch_id)] --> PR
+  SRP --> RS
+  POL[(GB / policy)] --> PG
+  RS --> PLAN[(exec_plan +\nPlanningDecision)]
+  OUB_OUT[OuB artifact] --> IMR
+  IMR --> CT[CorrectionTrigger queue]

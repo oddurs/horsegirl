@@ -1,0 +1,36 @@
+flowchart TD
+    JuOS[JuOS 原始系统] -->|开源发布| OpenJuOS
+    
+    OpenJuOS[OpenJuOS<br/>JuOS开源版本] -->|被继承| ProperOS
+    
+    ProperOS[ProperOS<br/>基于OpenJuOS开发] -->|完全重构| ProperOS2
+    
+    subgraph OpenJuOS_Detail [OpenJuOS]
+        OJ1[包格式: .jupk]
+        OJ2[清单: InstallAppLog.f]
+        OJ3[无引导系统]
+        OJ4[桌面: .f → .app]
+        OJ5[❌ 桌面重名Bug]
+    end
+    
+    subgraph ProperOS_Detail [ProperOS]
+        P1[包格式: .jupk + .jspk]
+        P2[清单: .f + MainIndex.json]
+        P3[引导: BootRepair]
+        P4[桌面: .f + .plink]
+        P5[3个安装函数]
+        P6[⚠️ 依赖OpenJuOS遗产]
+    end
+    
+    subgraph ProperOS2_Detail [ProperOS 2]
+        PS1[包格式: .jspk + .pjspk]
+        PS2[清单: MainIndex.json统一]
+        PS3[引导: ProLoader + StBoot]
+        PS4[桌面: .plink统一]
+        PS5[包管理器: ppkg]
+        PS6[✅ 完全独立]
+    end
+    
+    OpenJuOS --> OpenJuOS_Detail
+    ProperOS --> ProperOS_Detail
+    ProperOS2 --> ProperOS2_Detail

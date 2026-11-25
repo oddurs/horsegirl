@@ -1,0 +1,24 @@
+flowchart TB
+    subgraph VPC["VPC 10.20.0.0/16 — Security account"]
+        subgraph AZA["AZ us-east-1a"]
+            SNA["Private subnet<br/>10.20.10.0/24"]
+            H1["HSM #1<br/>ENI 10.20.10.15"]
+            SNA --- H1
+        end
+        subgraph AZB["AZ us-east-1b"]
+            SNB["Private subnet<br/>10.20.11.0/24"]
+            H2["HSM #2<br/>ENI 10.20.11.22"]
+            SNB --- H2
+        end
+        subgraph AZC["AZ us-east-1c"]
+            SNC["Private subnet<br/>10.20.12.0/24"]
+            H3["HSM #3 (optional)<br/>ENI 10.20.12.31"]
+            SNC --- H3
+        end
+        CLIENT["Client EC2 / EKS<br/>10.20.20.0/24<br/>Client SDK 5"]
+    end
+    CLIENT -->|"TCP 2223-2225<br/>mutual TLS"| H1
+    CLIENT --> H2
+    CLIENT --> H3
+    H1 <-->|"cluster sync"| H2
+    H2 <--> H3

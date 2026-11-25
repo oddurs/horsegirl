@@ -1,0 +1,23 @@
+flowchart TB
+  BE["Backend<br/>needs page: relfilenode, fork, block"]
+  subgraph BM["Buffer manager — bufmgr.c"]
+    direction TB
+    HT["buf_table hash<br/>page tag maps to buffer id"]
+    STR["clock-sweep strategy<br/>freelist.c: free list + victim choice"]
+  end
+  subgraph CACHE["Buffer cache in shared memory — NBuffers slots of 32KB"]
+    direction LR
+    B0["buffer 0<br/>descriptor + page"]
+    B1["buffer 1<br/>descriptor + page"]
+    BN["buffer N-1<br/>descriptor + page"]
+  end
+  DESC["each descriptor: tag · buf_id ·<br/>state = flags + refcount + usagecount · content_lock"]
+  DISK[("data files on disk<br/>smgr, md.c")]
+  BE --> HT
+  HT -->|hit: pin, bump usagecount| B1
+  HT -->|miss| STR
+  STR -->|pick victim| B0
+  STR -->|load| DISK
+  DISK -->|page in| B0
+  B1 -. described by .-> DESC
+  CKPT["checkpointer / bgwriter"] -->|flush dirty| DISK
