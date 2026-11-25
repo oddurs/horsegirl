@@ -113,6 +113,10 @@ the project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Changed
 
+- A label keeps its white space. The style rule for `.label` sets
+  `white-space: pre`, so the drawn text has the width that the measure counts
+  and `textLength` no longer stretches a label with leading, trailing or
+  repeated spaces.
 - A `{` in the label or the value of a bad line is a mark of that line, so
   the lines after it are read as their own facts. Before, `A -> B: uses
   {braces` held the rest of the file in its error. Such a `{` still opens a

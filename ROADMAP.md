@@ -27,7 +27,6 @@ An agent writes a horsegirl file, checks it, applies the fixes, and draws a flow
 - [ ] [`BUG-140`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/BUG-140-a-quote-fix-for-a-link-target-keeps-the-label-outside-the-quotes.md) A quote fix for a link target keeps the label outside the quotes <sup>bug · p2 · language</sup>
 - [ ] [`0141`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0141-a-group-box-is-wide-enough-for-its-name.md) A group box is wide enough for its name <sup>feature · p2 · layout</sup>
 - [ ] [`BUG-152`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/BUG-152-a-link-label-stays-legible-where-it-sits-on-its-own-line.md) A link label stays legible where it sits on its own line <sup>bug · p2 · render</sup>
-- [ ] [`BUG-158`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/BUG-158-a-label-keeps-the-white-space-that-its-measured-width-counts.md) A label keeps the white space that its measured width counts <sup>bug · p1 · render</sup>
 - [ ] [`BUG-161`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/BUG-161-a-written-against-the-name-marks-a-guess-or-says-why-not.md) A ? written against the name marks a guess, or says why not <sup>bug · p2 · language</sup>
 - [ ] [`0163`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0163-a-label-that-holds-a-second-link-gets-a-warning-that-splits-it.md) A label that holds a second link gets a warning that splits it <sup>feature · p2 · check</sup>
 - [ ] [`BUG-164`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/BUG-164-the-test-of-the-limit-of-the-pass-search-does-not-read-the-clock.md) The test of the limit of the pass search does not read the clock <sup>bug · p1 · layout</sup>
@@ -35,6 +34,7 @@ An agent writes a horsegirl file, checks it, applies the fixes, and draws a flow
 - [ ] [`0054`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0054-cut-a-release-with-one-command.md) Cut a release with one command <sup>chore · p1 · workflow</sup>
 - [ ] [`0042`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0042-release-binaries-with-checksums-and-an-install-script.md) Release binaries with checksums and an install script <sup>chore · p0 · release</sup>
 - [ ] [`0053`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0053-merge-passing-patch-and-minor-dependency-updates-automatically.md) Merge passing patch and minor dependency updates automatically <sup>chore · p2 · workflow</sup>
+- [ ] [`BUG-158`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/BUG-158-a-label-keeps-the-white-space-that-its-measured-width-counts.md) A label keeps the white space that its measured width counts <sup>bug · p1 · render</sup>
 
 ## later — Later
 

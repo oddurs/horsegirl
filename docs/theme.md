@@ -35,6 +35,10 @@ so a wider or narrower face is squeezed or spread to fit its box. A label with
 a character outside the metrics table carries neither attribute and keeps its
 natural width.
 
+A label keeps its white space. The rule `.horsegirl .label` sets
+`white-space: pre`, so a leading, trailing or repeated space is drawn, and the
+measured width and the drawn width agree.
+
 ## The palette and the `owner` fact
 
 The palette follows the fact that the lens binds to `colour`. The flow lens

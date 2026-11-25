@@ -22,6 +22,10 @@ const MARGIN: f64 = 1.0;
 /// The style of every picture. Each rule is scoped to the `horsegirl` class,
 /// so a page that holds the SVG inline keeps its own `.label` and `.link`.
 ///
+/// A label draws every space that `text::measure` counts: SVG would otherwise
+/// collapse leading, trailing and repeated spaces, and `textLength` would
+/// stretch the text to a width that it does not have.
+///
 /// The first three values of the colour fact take the palette slots 1 to 3,
 /// and a fourth value takes slot 1 again. `color-scheme` lets `light-dark()` follow the reader's
 /// mode; a page sets `--hg-scheme` to `light` or `dark` to force one.
@@ -34,7 +38,7 @@ fn style() -> String {
          .horsegirl .thing{{fill:{};stroke:{}}}\n\
          .horsegirl .link{{fill:none;stroke:{}}}\n\
          .horsegirl .head{{fill:{}}}\n\
-         .horsegirl .label{{fill:{}}}\n",
+         .horsegirl .label{{fill:{};white-space:pre}}\n",
         theme::FONT,
         v("paper"),
         v("c0"),
