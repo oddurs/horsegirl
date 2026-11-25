@@ -38,7 +38,7 @@ An agent writes a horsegirl file, checks it, applies the fixes, and draws a flow
 - [ ] [`0146`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0146-no-link-passes-through-a-group-that-holds-neither-of-its-ends.md) No link passes through a group that holds neither of its ends <sup>feature · p0 · layout</sup>
 - [ ] [`BUG-152`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/BUG-152-a-link-label-stays-legible-where-it-sits-on-its-own-line.md) A link label stays legible where it sits on its own line <sup>bug · p2 · render</sup>
 - [ ] [`BUG-158`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/BUG-158-a-label-keeps-the-white-space-that-its-measured-width-counts.md) A label keeps the white space that its measured width counts <sup>bug · p1 · render</sup>
-- [ ] [`0037`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0037-the-command-line-check-fix-fmt-draw-spec.md) The command line: check, fix, fmt, draw, spec <sup>feature · p0 · cli</sup>
+- [ ] [`0159`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0159-draw-names-a-lens-it-cannot-draw-with-a-diagnostic-code.md) draw names a lens it cannot draw with a diagnostic code <sup>feature · p2 · cli</sup>
 - [ ] [`0038`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0038-an-mcp-server-with-spec-check-fix-and-draw.md) An MCP server with spec, check, fix and draw <sup>feature · p0 · mcp</sup>
 - [ ] [`0040`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0040-draw-the-corpus-in-ci-and-count-overlaps.md) Draw the corpus in CI and count overlaps <sup>chore · p0 · bench</sup>
 - [ ] [`0041`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0041-the-first-benchmark-can-a-model-write-it-from-the-card.md) The first benchmark: can a model write it from the card? <sup>feature · p1 · bench</sup>
@@ -51,7 +51,7 @@ An agent writes a horsegirl file, checks it, applies the fixes, and draws a flow
 
 ## later — Later
 
-`··········` 0% · 0 of 24 done
+`··········` 0% · 0 of 25 done
 
 Nothing on a date. Good ideas wait here until a release needs them.
 
@@ -79,6 +79,7 @@ Nothing on a date. Good ideas wait here until a release needs them.
 - [ ] [`0151`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0151-a-comment-line-that-reads-as-a-link-or-a-block-gets-a-warning.md) A comment line that reads as a link or a block gets a warning <sup>feature · p2 · check</sup>
 - [ ] [`0153`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0153-e0412-leaves-a-plural-beside-its-singular-alone.md) E0412 leaves a plural beside its singular alone <sup>chore · p2 · check</sup>
 - [ ] [`BUG-156`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/BUG-156-a-show-line-with-a-misspelt-lens-and-a-bad-argument-becomes-a-thing.md) A show line with a misspelt lens and a bad argument becomes a thing <sup>bug · p2 · language</sup>
+- [ ] [`0157`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0157-a-file-with-more-than-one-show-line-draws-each-of-them.md) A file with more than one show line draws each of them <sup>feature · p2 · cli</sup>
 
 ## v0.2 — Trot
 
