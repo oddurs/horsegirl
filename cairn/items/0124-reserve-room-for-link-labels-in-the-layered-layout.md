@@ -28,3 +28,7 @@ Give a labelled link one extra point in the layered solver: an item with the siz
 - [ ] A labelled link between two things in neighbouring ranks leaves a gap at least as wide as the label.
 - [ ] The layout returns one position for each label, and no label box overlaps a thing box on the ten spike diagrams with a label added to every link.
 - [ ] A link without a label keeps the gap it has today.
+
+## 2026-11-25
+
+From item 0033: the route phase already places each label. A label is centred on the upright line of the middle step of its link, or in the middle of the corridor when that step is level, and the corridor between the two ranks is as wide as the widest label plus 6 px at each side. So no label overlaps the box of a thing. What remains for this item: two labels can cover each other (29 pairs on the eleven test files with a label on every link; the detector kind is Labels), an upright line of another link can pass through a label, and the label of a level step sits where the upright lines of its corridor are. The test each_link_label_sits_on_its_path_and_overlaps_no_box allows the kind Labels: remove that when this item is done.
