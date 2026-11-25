@@ -3,12 +3,12 @@ id: 136
 uid: 256d4cc6-5bb3-42cb-9db7-edb8181151ba
 title: A show line with a mistake in its argument is read as a show line
 type: bug
-status: doing
+status: done
 milestone: v0.1
 assignee: Oddur Sigurdsson
-claimed: 2026-11-25
 created: 2026-11-25
 updated: 2026-11-25
+closed_at: 2026-11-25
 priority: p1
 risk: low
 surface: diagnostics
