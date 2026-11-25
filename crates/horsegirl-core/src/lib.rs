@@ -3,12 +3,14 @@
 //! The crate is at the start of its roadmap. Today it carries the one-page
 //! language card that an agent reads before it writes a file, the parser that
 //! reads a file into a lossless tree, the diagnostics it gives with their
-//! codes, the model that the tree lowers into, and the text measurement that
-//! sizes each node to its label.
+//! codes, the model that the tree lowers into, the text measurement that
+//! sizes each node to its label, and the scene of positioned shapes that
+//! every backend draws.
 
 pub mod codes;
 pub mod diagnostic;
 pub mod model;
+pub mod scene;
 pub mod syntax;
 pub mod text;
 
