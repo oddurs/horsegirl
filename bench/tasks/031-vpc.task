@@ -1,0 +1,9 @@
+A private network
+
+The `Load balancer` is outside. `App server` and `Database` are inside the
+`Private network`. The `Load balancer` sends traffic to the `App server`, and
+the `App server` queries the `Database`.
+---
+Private network { App server, Database }
+Load balancer -> App server: traffic
+App server -> Database: query

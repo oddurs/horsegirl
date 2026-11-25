@@ -1,0 +1,13 @@
+A game backend
+
+The group `Game` holds `Matchmaker` and `Game server`. `Player` asks the
+`Matchmaker`, and the `Matchmaker` assigns a `Game server`. The `Game server`
+writes results to `Stats`, as `server/results.go` line 30 shows. The `Player`
+must never call `Stats` directly. Show it as a flow.
+---
+Game { Matchmaker, Game server }
+Player -> Matchmaker: ask
+Matchmaker -> Game server: assign
+Game server -> Stats: results @ server/results.go:30
+Player -x Stats
+show flow

@@ -1,0 +1,16 @@
+A story and a flow
+
+The `App` calls the `API`, and the `API` calls the `Cache` and the `Database`.
+Then write the story `read`: the `App` asks the `API`, the `API` misses in the
+`Cache`, and the `API` reads the `Database`. Show both a flow and the sequence
+of `read`.
+---
+App -> API
+API -> Cache, Database
+story read {
+  App -> API: ask
+  API -> Cache: miss
+  API -> Database: read
+}
+show flow
+show sequence of read

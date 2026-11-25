@@ -1,0 +1,8 @@
+Some names need quotes
+
+`Web app` calls `API: v2`. `API: v2` calls `Users, Groups`, which is one
+service. `Users, Groups` writes to the `Database`.
+---
+Web app -> "API: v2"
+"API: v2" -> "Users, Groups"
+"Users, Groups" -> Database: write

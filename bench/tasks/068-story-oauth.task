@@ -1,0 +1,15 @@
+OAuth
+
+Write the story `oauth`: the `User` clicks sign in on the `App`, the `App`
+redirects the `User` to the `Identity provider`, the `Identity provider` sends
+a code to the `App`, and the `App` trades the code at the `Identity provider`
+for a token. Show it as a sequence.
+---
+story oauth {
+  User -> App: sign in
+  App -> User: redirect
+  User -> Identity provider: log in
+  Identity provider -> App: code
+  App -> Identity provider: trade code
+}
+show sequence of oauth

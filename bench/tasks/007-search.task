@@ -1,0 +1,9 @@
+A search box
+
+The `Search box` sends each query to the `Search API`. The `Search API` asks the
+`Index` for matches, with the label `query`, and asks the `Ranker` to order
+them, with the label `rank`.
+---
+Search box -> Search API
+Search API -> Index: query
+Search API -> Ranker: rank

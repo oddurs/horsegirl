@@ -1,0 +1,14 @@
+An incident
+
+The teams are `SRE` and `Product`. `Pager` and `Status page` are owned by
+`SRE`. `Support desk` is owned by `Product`. Use the key `owner`. Write the
+story `incident`: the `Pager` alerts the `Status page`, and the `Status page`
+informs the `Support desk`. Show it as lanes.
+---
+Pager, Status page { owner: SRE }
+Support desk { owner: Product }
+story incident {
+  Pager -> Status page: alert
+  Status page -> Support desk: inform
+}
+show lanes of incident

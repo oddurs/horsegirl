@@ -1,0 +1,9 @@
+Signing in
+
+A `Browser` posts the password to `Auth`. `Auth` reads the user from the
+`User store`, with the label `lookup`, and sends a token back to the `Browser`
+with the label `token`.
+---
+Browser -> Auth
+Auth -> User store: lookup
+Auth -> Browser: token

@@ -1,0 +1,8 @@
+What may fail
+
+The `Checkout` calls `Payments` and `Reviews`. `Payments` has `critical: yes`
+and `Reviews` has `critical: no`, as facts.
+---
+Checkout -> Payments, Reviews
+Payments { critical: yes }
+Reviews { critical: no }

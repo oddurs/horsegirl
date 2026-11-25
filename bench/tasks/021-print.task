@@ -1,0 +1,9 @@
+Printing a document
+
+The `Editor` sends a job to the `Print spooler`. The `Print spooler` sends it to
+the `Printer`, and the `Printer` reports its status back to the
+`Print spooler`.
+---
+Editor -> Print spooler: job
+Print spooler -> Printer: job
+Printer -> Print spooler: status

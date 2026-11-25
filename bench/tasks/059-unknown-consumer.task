@@ -1,0 +1,10 @@
+Who reads the topic?
+
+`Orders` publishes to the `Order topic`. `Analytics` reads the `Order topic`.
+We guess that `Fraud` reads the `Order topic` too, and that `Emails` does as
+well. Mark both as guesses.
+---
+Orders -> Order topic: publish
+Analytics -> Order topic: read
+Fraud -> Order topic: read ?
+Emails -> Order topic: read ?

@@ -1,0 +1,7 @@
+A list in a fact
+
+The `Installer` calls `Registry`. The `Installer` has the fact `note` with the
+value `install, list`.
+---
+Installer -> Registry
+Installer { note: "install, list" }

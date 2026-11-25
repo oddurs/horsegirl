@@ -1,0 +1,13 @@
+A deploy
+
+Write the story `deploy`: the `Engineer` merges in `GitHub`, `GitHub` starts
+`CI`, `CI` pushes to the `Registry`, and `Argo` pulls from the `Registry`.
+Show it as a sequence.
+---
+story deploy {
+  Engineer -> GitHub: merge
+  GitHub -> CI: start
+  CI -> Registry: push
+  Argo -> Registry: pull
+}
+show sequence of deploy

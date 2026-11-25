@@ -1,0 +1,13 @@
+A nightly data load
+
+The `Scheduler` starts the `Extract job`. The `Extract job` reads the
+`Sales database` and writes files to the `Data lake`. The `Load job` reads the
+`Data lake` and writes to the `Warehouse`. The `Dashboard` reads the
+`Warehouse`.
+---
+Scheduler -> Extract job: start
+Extract job -> Sales database: read
+Extract job -> Data lake: write
+Load job -> Data lake: read
+Load job -> Warehouse: write
+Dashboard -> Warehouse: read

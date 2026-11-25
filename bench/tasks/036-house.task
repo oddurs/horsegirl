@@ -1,0 +1,11 @@
+A smart home
+
+The `Living room` holds the `Lamp` and the `Speaker`. The `Hallway` holds the
+`Motion sensor`. The `Motion sensor` reports to the `Home hub`, and the
+`Home hub` turns on the `Lamp`.
+---
+Living room { Lamp, Speaker }
+Hallway { Motion sensor }
+Motion sensor -> Home hub: motion
+Home hub -> Lamp: turn on
+Home hub -> Speaker: announce

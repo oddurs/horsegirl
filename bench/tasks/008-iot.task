@@ -1,0 +1,8 @@
+Sensors on a farm
+
+`Soil sensor` and `Rain gauge` report to the `Field hub`. The `Field hub`
+uploads to the `Farm cloud`, and the `Farm cloud` alerts the `Farmer's phone`.
+---
+Soil sensor, Rain gauge -> Field hub
+Field hub -> Farm cloud: upload
+Farm cloud -> Farmer's phone: alert

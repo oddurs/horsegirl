@@ -1,0 +1,11 @@
+Uploading a video
+
+The `Uploader` sends a file to `Storage`. `Storage` tells the `Transcoder`,
+which writes three renditions back to `Storage`. The `Player` streams from the
+`CDN`, and the `CDN` pulls from `Storage`.
+---
+Uploader -> Storage: upload
+Storage -> Transcoder: new file
+Transcoder -> Storage: renditions
+Player -> CDN: stream
+CDN -> Storage: pull

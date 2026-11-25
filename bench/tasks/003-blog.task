@@ -1,0 +1,9 @@
+A static blog
+
+An `Author` writes posts into a `Git repo`. A `Build job` reads the `Git repo`
+and publishes the pages to a `CDN`. A `Reader` reads the pages from the `CDN`.
+---
+Author -> Git repo
+Build job -> Git repo
+Build job -> CDN
+Reader -> CDN

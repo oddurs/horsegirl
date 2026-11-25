@@ -1,0 +1,9 @@
+Sending an email
+
+`Signup` puts a message on the `Mail queue` with the label `welcome`. The
+`Mail worker` takes it from the `Mail queue` and sends it to the
+`Email provider`.
+---
+Signup -> Mail queue: welcome
+Mail worker -> Mail queue: take
+Mail worker -> Email provider: send

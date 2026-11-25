@@ -1,0 +1,8 @@
+Personal data rules
+
+`Profile` stores personal data in the `PII vault`. `Analytics` reads `Events`.
+`Analytics` must never read the `PII vault`, with the reason `privacy`.
+---
+Profile -> PII vault: store
+Analytics -> Events: read
+Analytics -x PII vault: privacy

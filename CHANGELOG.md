@@ -17,6 +17,13 @@ the project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   aarch64, with `SHA256SUMS` and a build attestation. `install.sh` installs
   the binary to `~/.local/bin` and refuses an archive whose checksum does not
   match.
+- The first benchmark, in `bench/` and the `horsegirl-bench` crate: 100 tasks,
+  each a description of a system and a checker. `horsegirl-bench run` asks a
+  model through any command, and `horsegirl-bench score` scores recorded
+  replies with no network. The report gives validity on the first try, after
+  one `fix`, and against the checker, and the diagnostics hit most often.
+  `horsegirl_core::check::fix_all` applies every safe fix as `horsegirl fix`
+  does.
 - `horsegirl check [--json] [FILE]` prints every diagnostic of a file, as text
   or as one JSON object per line. `horsegirl fix [--json] [FILE]` applies every
   safe fix in place, changes no other byte, and prints what is left.

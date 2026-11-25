@@ -1,0 +1,14 @@
+Two stories
+
+Write two stories. In `signup`, the `Browser` posts to `Accounts`, and
+`Accounts` sends a mail through `Mailer`. In `reset`, the `Browser` asks
+`Accounts` for a reset, and `Accounts` sends a link through `Mailer`.
+---
+story signup {
+  Browser -> Accounts: post
+  Accounts -> Mailer: welcome mail
+}
+story reset {
+  Browser -> Accounts: reset
+  Accounts -> Mailer: reset link
+}

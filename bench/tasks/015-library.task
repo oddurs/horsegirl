@@ -1,0 +1,8 @@
+A library loan
+
+A `Member` borrows a book at the `Front desk`. The `Front desk` updates the
+`Catalogue` and prints a slip on the `Printer`.
+---
+Member -> Front desk: borrow
+Front desk -> Catalogue: update
+Front desk -> Printer: print slip

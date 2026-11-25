@@ -1,0 +1,10 @@
+Who owns what
+
+The `Web app` calls `Orders`, and `Orders` calls `Payments`. The team
+`Commerce` owns `Orders` and `Payments`. The team `Apps` owns the `Web app`.
+State the owners as facts with the key `owner`.
+---
+Web app -> Orders
+Orders -> Payments
+Orders, Payments { owner: Commerce }
+Web app { owner: Apps }

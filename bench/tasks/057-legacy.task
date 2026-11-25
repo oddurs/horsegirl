@@ -1,0 +1,9 @@
+Legacy calls
+
+The `New API` calls `New billing`. The `Old API` probably still calls
+`Old billing`; mark it as a guess. The `New API` must not call `Old billing`, with
+the reason `retired`.
+---
+New API -> New billing
+Old API -> Old billing ?
+New API -x Old billing: retired

@@ -1,0 +1,8 @@
+A group with an owner
+
+The group `Data platform` holds `Kafka` and `Spark`. The team `Data` owns the
+`Data platform`, with the key `owner`. `Kafka` sends events to `Spark`.
+---
+Data platform { Kafka, Spark }
+Data platform { owner: Data }
+Kafka -> Spark: events

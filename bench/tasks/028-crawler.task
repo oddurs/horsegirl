@@ -1,0 +1,11 @@
+A web crawler
+
+The `Frontier` gives URLs to the `Fetcher`. The `Fetcher` downloads pages from
+the `Web` and passes them to the `Parser`. The `Parser` adds new URLs to the
+`Frontier` and stores text in the `Index`.
+---
+Frontier -> Fetcher: urls
+Fetcher -> Web: download
+Fetcher -> Parser: pages
+Parser -> Frontier: new urls
+Parser -> Index: text

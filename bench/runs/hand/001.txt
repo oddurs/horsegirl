@@ -1,0 +1,11 @@
+Here is the file:
+
+```horsegirl
+Web app -> API gateway
+API gateway -> Orders
+Orders -> Payments: charge
+
+show flow
+```
+
+Run `horsegirl check` on it before you draw it.

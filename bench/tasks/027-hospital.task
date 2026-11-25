@@ -1,0 +1,10 @@
+A hospital admission
+
+The `Front desk` registers the patient in the `Patient record`. A `Nurse` reads
+the `Patient record` and orders tests from the `Lab`. The `Lab` writes results
+to the `Patient record`.
+---
+Front desk -> Patient record: register
+Nurse -> Patient record: read
+Nurse -> Lab: order tests
+Lab -> Patient record: results

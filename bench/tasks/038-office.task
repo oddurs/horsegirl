@@ -1,0 +1,9 @@
+Office network
+
+The `Office` holds the `Router`, the `Printer` and the `File server`. The
+`Router` connects to the `Internet`. `Laptops` connect to the `Router`, the
+`Printer` and the `File server`.
+---
+Office { Router, Printer, File server }
+Router -> Internet
+Laptops -> Router, Printer, File server

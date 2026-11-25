@@ -1,0 +1,10 @@
+Where things run
+
+The `Web app` calls the `API`, and the `API` reads the `Database`. Each runs in
+a region: the `Web app` in `global`, the `API` and the `Database` in
+`eu-west-1`. Use the key `region`.
+---
+Web app -> API
+API -> Database: read
+Web app { region: global }
+API, Database { region: eu-west-1 }

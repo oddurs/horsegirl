@@ -1,0 +1,8 @@
+Languages of services
+
+The `Edge` calls `Search` and `Profile`. `Search` is written in `Rust` and
+`Profile` in `Go`: write each as a fact with the key `language`.
+---
+Edge -> Search, Profile
+Search { language: Rust }
+Profile { language: Go }

@@ -1,0 +1,7 @@
+Evidence and a guess
+
+The `Worker` reads the `Queue`, as `worker/main.go` line 12 shows. The `Worker`
+may also write to `Metrics`; nobody has found the code, so mark it as a guess.
+---
+Worker -> Queue: read @ worker/main.go:12
+Worker -> Metrics ?

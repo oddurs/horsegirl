@@ -1,0 +1,12 @@
+Two regions
+
+`EU region` holds `EU API` and `EU database`. `US region` holds `US API` and
+`US database`. Each API writes to the database in its own region. The two
+databases replicate to each other, with the label `replicate`.
+---
+EU region { EU API, EU database }
+US region { US API, US database }
+EU API -> EU database
+US API -> US database
+EU database -> US database: replicate
+US database -> EU database: replicate

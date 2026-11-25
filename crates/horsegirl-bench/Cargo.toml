@@ -1,0 +1,15 @@
+[package]
+name = "horsegirl-bench"
+description = "The horsegirl benchmark: can a model write the language from its card?"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+repository.workspace = true
+publish.workspace = true
+
+[dependencies]
+horsegirl-core = { path = "../horsegirl-core" }
+
+[lints]
+workspace = true

@@ -1,0 +1,12 @@
+The login story
+
+Write a story called `login` in this order: the `Browser` sends the password to
+`Auth`, `Auth` checks it in `Users`, and `Auth` returns a token to the
+`Browser`. Show it as a sequence.
+---
+story login {
+  Browser -> Auth: password
+  Auth -> Users: check
+  Auth -> Browser: token
+}
+show sequence of login

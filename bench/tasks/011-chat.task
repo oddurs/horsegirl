@@ -1,0 +1,11 @@
+A chat app
+
+A `Client` holds a connection to the `Chat server`. The `Chat server` stores
+each message in `Messages` and fans it out through `Presence` to every other
+`Client`. Draw it as a flow.
+---
+Client -> Chat server: connect
+Chat server -> Messages: store
+Chat server -> Presence: fan out
+Presence -> Client: deliver
+show flow

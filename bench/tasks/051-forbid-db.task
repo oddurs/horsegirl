@@ -1,0 +1,8 @@
+No direct database access
+
+The `Web app` calls the `API`, and the `API` calls the `Database`. The
+`Web app` must never call the `Database` directly: state it as a rule.
+---
+Web app -> API
+API -> Database
+Web app -x Database

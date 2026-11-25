@@ -1,0 +1,11 @@
+A build pipeline
+
+A `Developer` pushes to `GitHub`. `GitHub` starts `CI`. `CI` runs the `Tests`,
+then pushes an image to the `Registry`. The `Deployer` pulls from the
+`Registry`.
+---
+Developer -> GitHub: push
+GitHub -> CI: start
+CI -> Tests: run
+CI -> Registry: push image
+Deployer -> Registry: pull

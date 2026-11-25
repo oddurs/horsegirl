@@ -1,0 +1,8 @@
+Backups
+
+The `Backup agent` copies the `Database` to `Object storage` every night. A
+`Restore tool` reads from `Object storage`.
+---
+Backup agent -> Database: copy
+Backup agent -> Object storage: write
+Restore tool -> Object storage: read
