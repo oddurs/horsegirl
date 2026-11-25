@@ -1,15 +1,13 @@
 // Loads every exported page in headless Chrome, in light and dark mode, at a
 // desktop and a phone width. On each it runs axe and fails on a serious or a
 // critical finding. Then it presses Tab through the page and fails on any
-// element that takes focus without a visible outline.
+// element that takes focus without a visible outline, and it fails when the
+// page is wider than the window.
 //
 // It drives Chrome over the DevTools protocol with Node's own WebSocket, so the
 // only dependency is axe itself.
-import { spawn } from "node:child_process";
-import { accessSync, constants, mkdtempSync, rmSync } from "node:fs";
 import { createRequire } from "node:module";
-import { tmpdir } from "node:os";
-import { delimiter, join } from "node:path";
+import { launch, requireChrome } from "./chrome.mjs";
 import { crawl, serve } from "./serve.mjs";
 
 const axeSource = createRequire(import.meta.url)("axe-core").source;
@@ -23,73 +21,7 @@ const failing = new Set(["serious", "critical"]);
 // every docs page at once, so they fail too.
 const failingRules = new Set(["landmark-main-is-top-level", "landmark-no-duplicate-main"]);
 
-// accessSync throws when the file is missing or not executable; both mean "not here".
-function executable(path) {
-  try {
-    accessSync(path, constants.X_OK);
-    return true;
-  } catch {
-    return false;
-  }
-}
-
-function findChrome() {
-  if (process.env.CHROME) return process.env.CHROME;
-  const names = ["google-chrome-stable", "google-chrome", "chromium", "chromium-browser"];
-  for (const dir of (process.env.PATH ?? "").split(delimiter)) {
-    const found = names.map((name) => join(dir, name)).find(executable);
-    if (found) return found;
-  }
-  return null;
-}
-
-const chrome = findChrome();
-if (!chrome) {
-  // scripts/task makes the same choice for every optional tool: CI must have it.
-  if (process.env.CI) {
-    console.error("check-a11y: Chrome is required in CI; set CHROME to its path");
-    process.exit(1);
-  }
-  console.error("check-a11y: Chrome not found; skipped (CI runs this check)");
-  process.exit(0);
-}
-
-function launch() {
-  const profile = mkdtempSync(join(tmpdir(), "check-a11y-"));
-  // --no-sandbox: the runner's AppArmor policy blocks Chrome's sandbox, and the
-  // browser loads only pages this build wrote.
-  const proc = spawn(chrome, [
-    "--headless=new",
-    "--no-sandbox",
-    "--disable-gpu",
-    "--no-first-run",
-    "--remote-debugging-port=0",
-    `--user-data-dir=${profile}`,
-    "about:blank",
-  ]);
-  const ready = new Promise((done, fail) => {
-    let log = "";
-    proc.stderr.on("data", (chunk) => {
-      log += chunk;
-      const found = log.match(/DevTools listening on (ws:\/\/\S+)/);
-      if (found) done(new URL(found[1]).port);
-    });
-    proc.on("exit", (code) => fail(new Error(`Chrome exited with ${code}:\n${log}`)));
-  });
-  const exited = new Promise((done) => proc.once("exit", done));
-  // Chrome writes to its profile until it exits, so the profile goes after.
-  // Its helper processes can still write for a moment after the main process
-  // exits, and a file that appears during the delete gives ENOTEMPTY, so the
-  // delete retries.
-  const stop = async () => {
-    if (proc.exitCode === null && proc.signalCode === null) {
-      proc.kill();
-      await exited;
-    }
-    rmSync(profile, { recursive: true, force: true, maxRetries: 10, retryDelay: 100 });
-  };
-  return { ready, stop };
-}
+const chrome = requireChrome("check-a11y");
 
 function connect(url) {
   const socket = new WebSocket(url);
@@ -189,6 +121,15 @@ const checkProse = `(() => {
   return failures;
 })()`;
 
+// A page that is wider than the window scrolls sideways on a phone. A wide
+// block must scroll inside its own box instead.
+const checkWidth = `(() => {
+  const { scrollWidth, clientWidth } = document.documentElement;
+  return scrollWidth > clientWidth
+    ? ["the page is " + scrollWidth + "px wide in a " + clientWidth + "px window"]
+    : [];
+})()`;
+
 async function tab(cdp) {
   const key = { key: "Tab", code: "Tab", windowsVirtualKeyCode: 9 };
   await cdp.send("Input.dispatchKeyEvent", { type: "keyDown", ...key });
@@ -214,7 +155,7 @@ async function focusFailures(cdp) {
 }
 
 const server = await serve();
-const browser = launch();
+const browser = launch(chrome, "check-a11y");
 let failed = 0;
 let runs = 0;
 try {
@@ -241,6 +182,7 @@ try {
         const violations = await evaluate(cdp, runAxe);
         const focus = await focusFailures(cdp);
         const prose = await evaluate(cdp, checkProse);
+        const width = await evaluate(cdp, checkWidth);
         runs++;
         for (const v of violations) {
           const line = `${where}: ${v.impact} ${v.id}: ${v.help}\n    ${v.nodes.join("\n    ")}`;
@@ -251,7 +193,7 @@ try {
             console.log(`check-a11y: note: ${line}`);
           }
         }
-        for (const failure of [...focus.failures, ...prose]) {
+        for (const failure of [...focus.failures, ...prose, ...width]) {
           failed++;
           console.error(`check-a11y: ${where}: ${failure}`);
         }
