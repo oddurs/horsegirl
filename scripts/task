@@ -57,6 +57,7 @@ test_all() {
   else
     cargo test --workspace --locked
   fi
+  site test
   sh tests/agent.sh
   sh tests/dependabot.sh
   sh tests/automerge.sh

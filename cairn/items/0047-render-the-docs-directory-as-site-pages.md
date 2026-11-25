@@ -3,8 +3,10 @@ id: 47
 uid: 28fe6a91-fe3e-44c4-933f-2fcc5d9566d2
 title: Render the docs directory as site pages
 type: feature
-status: planned
+status: doing
 milestone: v0.1
+assignee: Oddur Sigurdsson
+claimed: 2026-11-25
 depends_on:
 - 44
 created: 2026-11-25
