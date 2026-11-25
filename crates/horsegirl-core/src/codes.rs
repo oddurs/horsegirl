@@ -65,6 +65,10 @@ pub const CATALOGUE: &[Code] = &[
         summary: "A `show` line picks a lens that needs facts the file does not state, such as `show flow` in a file with no link. The message names the missing facts.",
     },
     Code {
+        code: "E0302",
+        summary: "A `show` line names a lens of the language card that this version does not draw, so `draw` gives no picture. The message names the lenses this version draws.",
+    },
+    Code {
         code: "E0412",
         summary: "A name is written once and is one edit from a name written more often, so it is likely a typo that makes a new thing. The safe fix writes the other name. When more than one such name is one edit away, the message names each and there is no fix. Two names are not a typo when they differ only in a final word that is a number or one letter (`Service A` and `Service B`), or when both are shorter than three characters.",
     },

@@ -144,7 +144,7 @@ show flow
 
 `show` and a lens name pick the lens. This version draws `flow` only. The card
 names `sequence`, `lanes`, `matrix`, `rings` and `seams` for later versions.
-`draw` refuses a lens that it cannot draw and names the lenses that it can.
+`draw` refuses a lens that it cannot draw with `E0302`, and names the lenses that it can.
 `show flow` needs at least one link, or `check` gives `E0301`.
 
 The first `show` line picks the lens. A file with no `show` line draws as
@@ -262,6 +262,7 @@ from it.
 | `E0010` | Write each link on its own line. The fix does it. |
 | `E0300` | Write a lens that exists. The fix replaces a name that is one edit away. |
 | `E0301` | Add a link, or remove the `show` line. |
+| `E0302` | Change the first `show` line to a lens that this version draws. The message names them. |
 | `E0412` | Write the name that you meant. The fix does it when only one name is near. |
 | `E0500` | Remove the link, or remove the rule if it no longer holds. |
 | `N0101` | Write the canonical form. The fix does it. |
