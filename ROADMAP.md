@@ -12,7 +12,7 @@ named for gaits: Walk, Trot, Canter, Gallop.
 
 ## v0.1 — Walk
 
-`··········` 0% · 0 of 41 done · due 2027-01-31
+`··········` 0% · 0 of 40 done · due 2027-01-31
 
 An agent writes a horsegirl file, checks it, applies the fixes, and draws a flow diagram as SVG, from the command line or over MCP.
 
@@ -55,12 +55,11 @@ An agent writes a horsegirl file, checks it, applies the fixes, and draws a flow
 - [ ] [`0052`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0052-a-daily-report-of-what-the-backlog-needs-from-a-person.md) A daily report of what the backlog needs from a person <sup>feature · p2 · workflow</sup>
 - [ ] [`0054`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0054-cut-a-release-with-one-command.md) Cut a release with one command <sup>chore · p1 · workflow</sup>
 - [ ] [`0026`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0026-rules-with-x-and-guesses-with.md) Rules with -x and guesses with ? <sup>feature · p1 · model</sup>
-- [ ] [`0029`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0029-a-formatter-with-one-canonical-form.md) A formatter with one canonical form <sup>feature · p1 · language</sup>
 - [ ] [`0053`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0053-merge-passing-patch-and-minor-dependency-updates-automatically.md) Merge passing patch and minor dependency updates automatically <sup>chore · p2 · workflow</sup>
 
 ## later — Later
 
-`··········` 0% · 0 of 15 done
+`··········` 0% · 0 of 16 done
 
 Nothing on a date. Good ideas wait here until a release needs them.
 
@@ -78,6 +77,7 @@ Nothing on a date. Good ideas wait here until a release needs them.
 - [ ] [`0113`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0113-incremental-compilation-for-live-preview.md) Incremental compilation for live preview <sup>feature · p3 · layout</sup>
 - [ ] [`0114`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0114-a-hand-drawn-line-for-guesses.md) A hand-drawn line for guesses <sup>feature · p3 · render</sup>
 - [ ] [`0128`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0128-a-label-that-changes-script-is-never-measured-narrower-than-the-browser-draws-it.md) A label that changes script is never measured narrower than the browser draws it <sup>feature · p2 · render</sup>
+- [ ] [`0138`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0138-fmt-writes-a-file-in-place.md) fmt writes a file in place <sup>feature · p2 · cli</sup>
 - [ ] [`0143`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0143-a-rule-against-a-group-also-forbids-links-to-its-parts.md) A rule against a group also forbids links to its parts <sup>feature · p2 · check</sup>
 
 ## v0.2 — Trot
