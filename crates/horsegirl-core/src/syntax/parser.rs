@@ -34,6 +34,7 @@ pub(super) fn parse(source: &str) -> Parse<'_> {
         pos: 0,
         last: None,
         habits: Vec::new(),
+        story: None,
         diagnostics: Vec::new(),
     };
     let mut children = Vec::new();
@@ -185,6 +186,8 @@ struct Parser<'s> {
     /// The edits that turn the Mermaid habits of the current fact into the
     /// canonical form. See `note_habits`.
     habits: Vec<Edit>,
+    /// The W0010 note of the story line that is being read.
+    story: Option<Diagnostic>,
     diagnostics: Vec<Diagnostic>,
 }
 
@@ -286,8 +289,13 @@ impl<'s> Parser<'s> {
         let start = self.pos;
         let outer = std::mem::take(&mut self.habits);
         let mut habits = None;
-        let kind = match self.fact(depth, &mut children) {
+        let fact = self.fact(depth, &mut children);
+        // Taken before the recovery below reads lines of its own.
+        let story = self.story.take();
+        let kind = match fact {
             Ok(kind) => {
+                // A story line that fails after its block states no story.
+                self.diagnostics.extend(story);
                 habits = Some(kind);
                 kind
             }
@@ -296,8 +304,15 @@ impl<'s> Parser<'s> {
                 loop {
                     match self.kind() {
                         None | Some(TokenKind::Newline | TokenKind::Close) => break,
-                        Some(TokenKind::Open) if depth < MAX_DEPTH => {
-                            self.block(depth, &mut children);
+                        // A `{` that neither closes on its line nor ends it is
+                        // a stray mark of the bad line. A block for it would
+                        // swallow the good lines after it.
+                        Some(TokenKind::Open) if self.opens_block() => {
+                            if depth < MAX_DEPTH {
+                                self.block(depth, &mut children);
+                            } else {
+                                self.skip_block(&mut children);
+                            }
                         }
                         Some(_) => self.bump(&mut children),
                     }
@@ -1101,7 +1116,8 @@ impl<'s> Parser<'s> {
         let end = self.here();
         self.spaces(into);
         self.open(depth, into)?;
-        self.diagnostics.push(diagnostic(
+        // `statement` reports the note when the whole line reads.
+        self.story = Some(diagnostic(
             "W0010",
             start..end,
             format!(
@@ -1125,6 +1141,40 @@ impl<'s> Parser<'s> {
         }
         self.block(depth, into);
         Ok(())
+    }
+
+    /// Whether the `{` at the current token closes on its line or ends it.
+    fn opens_block(&self) -> bool {
+        self.closes[self.pos].is_some()
+            || matches!(
+                self.kind_at(self.skip(self.pos + 1)),
+                None | Some(TokenKind::Newline)
+            )
+    }
+
+    /// Reads a block that nests too deep as plain tokens, up to the `}` that
+    /// closes it. Each `}` inside closes a `{` inside, so the `}` after the
+    /// block still closes the group around it. The loop does not call itself,
+    /// so any depth fits on the stack.
+    fn skip_block(&mut self, into: &mut Children<'s>) {
+        let open = self.span_at(self.pos);
+        let mut depth = 0;
+        while let Some(kind) = self.kind() {
+            self.bump(into);
+            match kind {
+                TokenKind::Open => depth += 1,
+                TokenKind::Close => depth -= 1,
+                _ => {}
+            }
+            if depth == 0 {
+                return;
+            }
+        }
+        self.diagnostics.push(diagnostic(
+            "E0002",
+            open,
+            "This `{` never closes. Add a `}` on the line after the last part.",
+        ));
     }
 
     /// Reads `{`, the lines inside, and `}`.

@@ -1,0 +1,173 @@
+# a comment
+"Sensors: wind", Web app -> Hub: "GET /users/{id}" ?  @ src/a.ts:17
+A -x B: never, ever -> not: once
+G { A, B { owner: X, note: "install, list" } ? }
+story checkout {
+  A -> B: pay
+}
+show sequence of checkout
+show rings from "API gateway"
+show rings from GET /users/{id}
+show rings from Sensors: wind
+show sequence of a@b
+show sequence of S, T
+show rings from, T
+show rings from{id}
+show rings from: x
+show, A -> B
+show { owner: X }
+owner: X
+A -> -> B
+A -> "B
+Renderer PixiJS / @pixi/react -> B: mail bob@example.com
+A {x} -> B
+Team @pixi {
+  owner: Web
+}
+Services { Orders, Payments } -> Postgres: save
+A -> B: x {
+}
+A -> B: uses {braces
+C -> D
+show flow
+G {
+G {
+G {
+G {
+G {
+G {
+G {
+G {
+G {
+G {
+G {
+G {
+G {
+G {
+G {
+G {
+G {
+G {
+G {
+G {
+G {
+G {
+G {
+G {
+G {
+G {
+G {
+G {
+G {
+G {
+G {
+G {
+G {
+G {
+G {
+G {
+G {
+G {
+G {
+G {
+G {
+G {
+G {
+G {
+G {
+G {
+G {
+G {
+G {
+G {
+G {
+G {
+G {
+G {
+G {
+G {
+G {
+G {
+G {
+G {
+G {
+G {
+G {
+G {
+G {
+G {
+G {
+G {
+G {
+G {
+}
+}
+}
+}
+}
+}
+}
+}
+}
+}
+}
+}
+}
+}
+}
+}
+}
+}
+}
+}
+}
+}
+}
+}
+}
+}
+}
+}
+}
+}
+}
+}
+}
+}
+}
+}
+}
+}
+}
+}
+}
+}
+}
+}
+}
+}
+}
+}
+}
+}
+}
+}
+}
+}
+}
+}
+}
+}
+}
+}
+}
+}
+}
+}
+}
+}
+}
+}
+}
+}
+after

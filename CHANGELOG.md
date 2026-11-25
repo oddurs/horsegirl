@@ -113,6 +113,15 @@ the project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Changed
 
+- A bad line keeps a `{` as a block only when the `{` closes on its line or
+  ends it. A `{` that does neither is a mark of the bad line, so the lines
+  after it are read as their own facts. Before, `A -> B: uses {braces` held
+  the rest of the file in its error.
+- A group that nests past 64 levels gives one `E0007`, and the parser reads
+  the group to its own `}`. Each `}` after it closes the group it belongs to,
+  so 70 nested groups give no `E0003`.
+- The note `W0010` comes only for a story line that reads to its end. In
+  `story s {} x` the line is an error, and it gives no note.
 - An unclosed double quote in a citation path (`A -> B @ "src/a.rs:3`) gives
   `E0005` and no `Cite` node. A path that holds an unpaired double quote is no
   citation.
