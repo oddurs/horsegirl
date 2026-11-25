@@ -12,7 +12,7 @@ named for gaits: Walk, Trot, Canter, Gallop.
 
 ## v0.1 — Walk
 
-`··········` 0% · 0 of 36 done · due 2027-01-31
+`··········` 0% · 0 of 35 done · due 2027-01-31
 
 An agent writes a horsegirl file, checks it, applies the fixes, and draws a flow diagram as SVG, from the command line or over MCP.
 
@@ -32,7 +32,6 @@ An agent writes a horsegirl file, checks it, applies the fixes, and draws a flow
 - [ ] [`0027`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0027-the-first-checks-typos-orphans-broken-rules-guesses.md) The first checks: typos, orphans, broken rules, guesses <sup>feature · p0 · check</sup>
 - [ ] [`0028`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0028-read-mermaid-habits-and-say-what-was-changed.md) Read Mermaid habits and say what was changed <sup>feature · p1 · check</sup>
 - [ ] [`0029`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0029-a-formatter-with-one-canonical-form.md) A formatter with one canonical form <sup>feature · p1 · language</sup>
-- [ ] [`0030`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0030-measure-text-with-bundled-metrics.md) Measure text with bundled metrics <sup>feature · p0 · render</sup>
 - [ ] [`0031`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0031-the-scene-positioned-shapes-that-every-backend-draws.md) The scene: positioned shapes that every backend draws <sup>feature · p0 · render</sup>
 - [ ] [`0032`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0032-layered-layout-rank-order-and-place.md) Layered layout: rank, order and place <sup>feature · p0 · layout</sup>
 - [ ] [`0033`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0033-route-edges-at-right-angles-around-boxes-and-groups.md) Route edges at right angles around boxes and groups <sup>feature · p0 · layout</sup>
@@ -55,7 +54,7 @@ An agent writes a horsegirl file, checks it, applies the fixes, and draws a flow
 
 ## later — Later
 
-`··········` 0% · 0 of 13 done
+`··········` 0% · 0 of 14 done
 
 Nothing on a date. Good ideas wait here until a release needs them.
 
@@ -72,6 +71,7 @@ Nothing on a date. Good ideas wait here until a release needs them.
 - [ ] [`0112`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0112-more-importers.md) More importers <sup>feature · p2 · interop</sup>
 - [ ] [`0113`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0113-incremental-compilation-for-live-preview.md) Incremental compilation for live preview <sup>feature · p3 · layout</sup>
 - [ ] [`0114`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0114-a-hand-drawn-line-for-guesses.md) A hand-drawn line for guesses <sup>feature · p3 · render</sup>
+- [ ] [`0128`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0128-a-label-that-changes-script-is-never-measured-narrower-than-the-browser-draws-it.md) A label that changes script is never measured narrower than the browser draws it <sup>feature · p2 · render</sup>
 
 ## v0.2 — Trot
 
