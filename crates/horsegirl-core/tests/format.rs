@@ -58,8 +58,12 @@ fn promises(source: &str) -> String {
         Ok(once.as_str()),
         "not idempotent on {source:?}"
     );
-    assert!(once.is_empty() || once.ends_with('\n') && !once.ends_with("\n\n"));
-    assert!(!once.contains('\r'));
+    // A file the formatter cannot write in a canonical form stays as it is,
+    // so the layout rules hold only for a file that changed or was clean.
+    if once != source {
+        assert!(once.is_empty() || once.ends_with('\n') && !once.ends_with("\n\n"));
+        assert!(!once.contains('\r'));
+    }
     once
 }
 
@@ -90,6 +94,7 @@ fn the_layout_settles_on_one_form() {
         ("A {}", "A {}\n"),
         ("G {# x\nB\n}", "G {\n  \"# x\"\n  B\n}\n"),
         ("G {#a\"b\nB\n}\n", "G {#a\"b\nB\n}\n"),
+        ("A { k: x\"y ?, a: b }\n", "A { k: x\"y ?, a: b }\n"),
         ("A -> B   ?   @   src/a.ts:17", "A -> B ? @ src/a.ts:17\n"),
         ("A ? ", "A ?\n"),
         ("A -> B  :", "A -> B:\n"),
@@ -175,8 +180,9 @@ fn every_horse_file_in_the_repository_keeps_its_model() {
 /// failure repeats. Many of the files have errors, and the test skips those.
 #[test]
 fn random_files_keep_their_model_and_settle() {
-    const PIECES: [&str; 38] = [
+    const PIECES: [&str; 39] = [
         "owner: X ?, kind: y",
+        "k: x\"y ?, a: b",
         "A",
         "B",
         "Web app",

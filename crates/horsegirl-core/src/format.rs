@@ -47,7 +47,8 @@ pub fn format(source: &str) -> Result<String, Vec<Diagnostic>> {
     Ok(out)
 }
 
-/// Whether a bare name starts with `#` and holds a `"`.
+/// Whether a bare name holds a `"` and needs quotes: it starts with `#`, or it
+/// is a fact value that ends in ` ?`. Quotes cannot hold a `"`.
 fn hides_a_comment(node: &Node<'_>) -> bool {
     let named = matches!(
         node.kind,
@@ -55,7 +56,9 @@ fn hides_a_comment(node: &Node<'_>) -> bool {
     );
     if named {
         let text = squeeze(node);
-        return text.starts_with('#') && text.contains('"');
+        let needs_quotes =
+            text.starts_with('#') || (node.kind == NodeKind::Value && text.ends_with(" ?"));
+        return needs_quotes && text.contains('"');
     }
     node.children.iter().any(|child| match child {
         Element::Node(inner) => hides_a_comment(inner),
