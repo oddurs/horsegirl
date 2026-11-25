@@ -1,0 +1,24 @@
+# Generates crates/horsegirl-core/src/text/metrics.rs from a pinned font.
+# The core never builds this package: it reads only the generated table, so the
+# shaping crate stays out of the core and out of WebAssembly.
+[package]
+name = "text-metrics"
+version = "0.0.0"
+edition = "2024"
+rust-version = "1.100"
+license = "MIT OR Apache-2.0"
+publish = false
+
+# An empty workspace keeps this package and its shaping crate out of the
+# horsegirl workspace and its lockfile.
+[workspace]
+
+[dependencies]
+harfrust = "=0.15.0"
+
+[lints.rust]
+unsafe_code = "forbid"
+
+[lints.clippy]
+all = { level = "deny", priority = -1 }
+pedantic = { level = "warn", priority = -1 }

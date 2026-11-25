@@ -45,6 +45,7 @@ scripts/task fmt:check  verify formatting
 scripts/task lint       clippy with warnings denied, shellcheck, the backlog check,
                         the site lint and type check
 scripts/task test       the full test suite
+scripts/task test:core  the core tests, natively and in WebAssembly
 scripts/task build      compile, and export the site into site/out
 scripts/task check      all of the above
 ```

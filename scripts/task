@@ -28,20 +28,27 @@ site() {
   NEXT_TELEMETRY_DISABLED=1 pnpm --dir site run "$1"
 }
 
+# The generator of the text metrics table is its own package, so the shaping
+# crate it needs stays out of the workspace. The checks still cover it.
+generator=tools/text-metrics/Cargo.toml
+
 fmt() {
   cargo fmt --all
+  cargo fmt --manifest-path "$generator"
   site fmt
 }
 
 fmt_check() {
   cargo fmt --all -- --check
+  cargo fmt --manifest-path "$generator" -- --check
   site fmt:check
 }
 
 lint() {
   cargo clippy --workspace --all-targets --locked -- -D warnings
+  cargo clippy --manifest-path "$generator" --all-targets --locked -- -D warnings
   if optional shellcheck; then
-    shellcheck scripts/task scripts/agent scripts/setup scripts/check-pr-title scripts/dependabot-update-type scripts/dependabot-automerge .githooks/* tests/agent.sh tests/dependabot.sh tests/automerge.sh tests/pins.sh
+    shellcheck scripts/task scripts/agent scripts/setup scripts/check-pr-title scripts/dependabot-update-type scripts/dependabot-automerge .githooks/* tests/agent.sh tests/dependabot.sh tests/automerge.sh tests/pins.sh tools/text-metrics/generate.sh
   fi
   # The backlog is part of the tree: an invalid item or a stale roadmap is a lint error.
   if [ -f cairn.toml ] && optional cairn; then
@@ -51,12 +58,26 @@ lint() {
   site typecheck
 }
 
+# The core gives the same bytes natively and in WebAssembly, so its tests run
+# in both. Node runs the WebAssembly tests: the site needs it already.
+test_wasm() {
+  optional node || return 0
+  CARGO_TARGET_WASM32_WASIP1_RUNNER="node --disable-warning=ExperimentalWarning $PWD/scripts/wasi-run.mjs" \
+    cargo test -p horsegirl-core --target wasm32-wasip1 --locked
+}
+
+test_core() {
+  cargo test -p horsegirl-core --locked
+  test_wasm
+}
+
 test_all() {
   if command -v cargo-nextest >/dev/null 2>&1; then
     cargo nextest run --workspace --locked
   else
     cargo test --workspace --locked
   fi
+  test_wasm
   site test
   sh tests/agent.sh
   sh tests/dependabot.sh
@@ -75,6 +96,7 @@ case "${1:-}" in
   fmt:check) fmt_check ;;
   lint) lint ;;
   test) test_all ;;
+  test:core) test_core ;;
   build) build ;;
   check)
     fmt_check
@@ -83,7 +105,7 @@ case "${1:-}" in
     build
     ;;
   *)
-    echo "usage: scripts/task {fmt|fmt:check|lint|test|build|check}" >&2
+    echo "usage: scripts/task {fmt|fmt:check|lint|test|test:core|build|check}" >&2
     exit 2
     ;;
 esac
