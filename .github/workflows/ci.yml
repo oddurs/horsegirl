@@ -30,7 +30,9 @@ jobs:
           key: cargo-${{ runner.os }}-${{ hashFiles('rust-toolchain.toml', 'Cargo.lock') }}
           restore-keys: cargo-${{ runner.os }}-
       - name: Install the pinned toolchain
-        run: rustup show active-toolchain || rustup toolchain install
+        run: |
+          rustup show active-toolchain || rustup toolchain install
+          rustup target add wasm32-wasip1
       - name: Install the backlog tool
         if: hashFiles('cairn.toml') != ''
         env:
@@ -74,6 +76,30 @@ jobs:
         with:
           path: site/out
 
+  # The core must give the same bytes on every machine. The check job holds
+  # Linux and WebAssembly; this job holds macOS, natively and in WebAssembly.
+  core-macos:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            target
+          key: cargo-${{ runner.os }}-${{ hashFiles('rust-toolchain.toml', 'Cargo.lock') }}
+          restore-keys: cargo-${{ runner.os }}-
+      - name: Install the pinned toolchain
+        run: |
+          rustup show active-toolchain || rustup toolchain install
+          rustup target add wasm32-wasip1
+      - name: Install Node
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: site/.node-version
+      - run: scripts/task test:core
+
   # Not in `required`: a pull request skips it. The check job already builds
   # the site, so `required` covers the build.
   deploy:
@@ -108,7 +134,7 @@ jobs:
 
   required:
     if: always()
-    needs: [check, pr-title]
+    needs: [check, core-macos, pr-title]
     runs-on: ubuntu-latest
     steps:
       - name: Every job passed

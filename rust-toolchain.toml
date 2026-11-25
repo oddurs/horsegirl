@@ -1,3 +1,5 @@
 [toolchain]
 channel = "1.100.0"
 components = ["rustfmt", "clippy"]
+# The core tests also run in WebAssembly (scripts/task test:core).
+targets = ["wasm32-wasip1"]

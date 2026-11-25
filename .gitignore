@@ -1,4 +1,5 @@
 /target
+/tools/text-metrics/target
 .worktrees/
 node_modules/
 .next/
