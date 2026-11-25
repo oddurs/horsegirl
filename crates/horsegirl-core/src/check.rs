@@ -8,7 +8,7 @@
 use crate::diagnostic::{Confidence, Diagnostic, Edit, Fix, LineIndex};
 use crate::lens::Need;
 use crate::model::{Model, Thing, ThingId, lower};
-use crate::syntax::parse;
+use crate::syntax::{Element, Node, NodeKind, parse};
 
 /// Every lens that a `show` line can pick, as the language card lists them.
 pub const LENSES: &[&str] = &["flow", "sequence", "lanes", "matrix", "rings", "seams"];
@@ -20,6 +20,7 @@ pub fn check(source: &str) -> Vec<Diagnostic> {
     let parse = parse(source);
     let mut diagnostics = parse.diagnostics;
     diagnostics.extend(of_model(source, &lower(&parse.tree)));
+    diagnostics.extend(paths(&parse.tree));
     sort(&mut diagnostics);
     diagnostics
 }
@@ -185,6 +186,105 @@ fn broken_rules(source: &str, model: &Model) -> Vec<Diagnostic> {
         }
     }
     found
+}
+
+/// W0108: a name that ends in `/` followed by braces that hold one bare name,
+/// as in `GET /users/{id}`. The parser reads a group `GET /users/` with the
+/// part `id`, and cannot tell it from a path. The fix writes the whole text in
+/// double quotes. It is only suggested, because the writer may mean a group.
+/// This reads the tree, because the model keeps no span for the braces.
+fn paths(tree: &Node<'_>) -> Vec<Diagnostic> {
+    let mut found = Vec::new();
+    path_lines(tree, &mut found);
+    found
+}
+
+fn path_lines(node: &Node<'_>, found: &mut Vec<Diagnostic>) {
+    for inner in node.children.iter().filter_map(|element| match element {
+        Element::Node(inner) => Some(inner),
+        Element::Token(_) => None,
+    }) {
+        if inner.kind == NodeKind::Things
+            && let Some(diagnostic) = path(inner)
+        {
+            found.push(diagnostic);
+        }
+        path_lines(inner, found);
+    }
+}
+
+fn path(things: &Node<'_>) -> Option<Diagnostic> {
+    let names = child_of(things, NodeKind::Names)?;
+    let block = child_of(things, NodeKind::Block)?;
+    let [Element::Node(name)] = names.children.as_slice() else {
+        return None;
+    };
+    let name_text = name.to_string();
+    if !name_text.ends_with('/') || name_text.starts_with('"') {
+        return None;
+    }
+    // The braces hold one line, and that line is one bare name: no link, no
+    // fact, no block and no second name.
+    let lines: Vec<&Node<'_>> = block
+        .children
+        .iter()
+        .filter_map(|element| match element {
+            Element::Node(node) => Some(node),
+            Element::Token(_) => None,
+        })
+        .collect();
+    let [line] = lines.as_slice() else {
+        return None;
+    };
+    let part = match (line.kind, child_of(line, NodeKind::Names)) {
+        (NodeKind::Things, Some(names)) if child_of(line, NodeKind::Block).is_none() => {
+            match names.children.as_slice() {
+                [Element::Node(part)] if part.kind == NodeKind::Name => part,
+                _ => return None,
+            }
+        }
+        _ => return None,
+    };
+    if part.to_string().starts_with('"') {
+        return None;
+    }
+    let part = part.to_string();
+    let text = things.to_string();
+    if text.contains('\n') || text.contains('"') {
+        return None;
+    }
+    let start = first_start(things)?;
+    let span = start..start + text.len();
+    Some(Diagnostic {
+        code: "W0108",
+        span: span.clone(),
+        message: format!(
+            "`{text}` reads as the group `{name_text}` with the part `{part}`, and not as one name. If you mean one name, write it in double quotes: `\"{text}\"`. If you mean a group, write a name that does not end in `/`."
+        ),
+        fix: Some(Fix {
+            confidence: Confidence::Suggested,
+            description: format!("Write `{text}` in double quotes."),
+            edits: vec![Edit {
+                span,
+                text: format!("\"{text}\""),
+            }],
+        }),
+    })
+}
+
+fn child_of<'a, 's>(node: &'a Node<'s>, kind: NodeKind) -> Option<&'a Node<'s>> {
+    node.children.iter().find_map(|element| match element {
+        Element::Node(inner) if inner.kind == kind => Some(inner),
+        _ => None,
+    })
+}
+
+/// The byte offset of the first token under a node.
+fn first_start(node: &Node<'_>) -> Option<usize> {
+    node.children.iter().find_map(|element| match element {
+        Element::Token(token) => Some(token.start),
+        Element::Node(inner) => first_start(inner),
+    })
 }
 
 /// N0200: a link or a rule that every statement marks with a final `?`.

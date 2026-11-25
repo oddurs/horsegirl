@@ -15,6 +15,9 @@ the project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   exits 0 when the file has no error, 1 when it has one, and 2 for a usage
   mistake. `horsegirl_core::diagnostic::apply_safe` makes the safe fixes.
 - `horsegirl fmt` prints the errors of a file in the text form of a diagnostic.
+- `W0108`: a name that ends in `/` followed by braces that hold one bare name,
+  as in `GET /users/{id}`. The parser reads a group; the warning suggests
+  writing the whole text in double quotes.
 - `horsegirl fmt [--check] [FILE]` and `horsegirl_core::format::format` print a
   file in one canonical form: one statement on each line, one space around an
   arrow, the facts of a statement in the order of their keys, and quotes only
