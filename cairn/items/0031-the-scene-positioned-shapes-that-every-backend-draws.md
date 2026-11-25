@@ -3,8 +3,10 @@ id: 31
 uid: 94fbc561-d5e3-40b7-9d64-3c3720b105e2
 title: 'The scene: positioned shapes that every backend draws'
 type: feature
-status: planned
+status: doing
 milestone: v0.1
+assignee: Oddur Sigurdsson
+claimed: 2026-11-25
 depends_on:
 - 25
 created: 2026-11-25
