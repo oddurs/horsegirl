@@ -639,6 +639,14 @@ impl<'s> Parser<'s> {
         if self.next() == Some(TokenKind::Open) {
             return Err(self.quotes_or_unexpected(first, Text::Label, self.skip(self.pos)));
         }
+        if end == first {
+            let mut found = self.missing("label");
+            // An unclosed quote has its own error, and it has its own advice.
+            if found.code == "E0006" {
+                found.message.push_str(" Or remove the colon.");
+            }
+            return Err(found);
+        }
         Ok(())
     }
 

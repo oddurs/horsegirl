@@ -502,6 +502,8 @@ fn each_mistake_has_its_own_code() {
         ("A, -> B", "E0006"),
         ("A ->", "E0006"),
         ("A { owner: }", "E0006"),
+        ("A -> B:", "E0006"),
+        ("A -> B: ?", "E0006"),
         ("A { B, owner: X }", "E0009"),
     ] {
         assert_eq!(only(source).code, code, "{source}");
@@ -964,4 +966,19 @@ fn an_unclosed_quote_in_a_citation_is_an_error() {
         assert_eq!(parse.tree.to_string(), source);
         assert!(!format!("{:?}", parse.tree).contains("Cite"), "{source:?}");
     }
+}
+
+#[test]
+fn an_empty_link_label_says_to_write_it_or_drop_the_colon() {
+    for source in ["A -> B:", "A -> B: ?"] {
+        let found = only(source);
+        assert_eq!(found.code, "E0006", "{source}");
+        assert!(found.message.contains("label"), "{}", found.message);
+        assert!(
+            found.message.contains("remove the colon"),
+            "{}",
+            found.message
+        );
+    }
+    assert_eq!(parse("A -> B: save").diagnostics, []);
 }
