@@ -332,6 +332,8 @@ fn a_long_line_of_quoted_names_parses_in_linear_time() {
         "{A -> B: x {y} ",
         "{a: b {y} } ",
         "A @b {x} ",
+        "A @ a\"b:1 ",
+        "A @ a:1 @ \"b ",
     ] {
         linear(&piece.repeat(60_000 / piece.len()));
     }
@@ -692,4 +694,42 @@ fn a_line_with_a_mistake_gets_the_mistake_and_no_note() {
     let diagnostics = parse("\"A\" --> B -> C;\n").diagnostics;
     assert_eq!(diagnostics.len(), 1, "{diagnostics:?}");
     assert_eq!(diagnostics[0].code, "E0001");
+}
+
+#[test]
+fn a_citation_path_with_paired_quotes_stays_a_citation() {
+    for source in ["A -> B @ src/\"a\".rs:3", "A -> B @ \"src a.rs\":3"] {
+        let (tree, codes) = read(source);
+        assert_eq!(codes, [""; 0], "{source:?}");
+        assert!(tree.contains("Cite"), "{source:?}: {tree}");
+    }
+}
+
+#[test]
+fn a_bad_citation_with_paired_quotes_is_not_an_unclosed_quote() {
+    for source in [
+        "A -> B @ src/\"a\".rs",
+        "A -> B @ \"src a.rs\"",
+        "A -> B @ \"x\" y",
+    ] {
+        let codes: Vec<&str> = parse(source).diagnostics.iter().map(|d| d.code).collect();
+        assert!(!codes.contains(&"E0005"), "{source:?}: {codes:?}");
+    }
+}
+
+#[test]
+fn an_unclosed_quote_in_a_citation_is_an_error() {
+    for source in [
+        "A -> B @ \"src/a.rs:3",
+        "A { owner: X @ \"src/a.rs:3\n}\n",
+        "A -> B @ src/\"a.rs:3",
+        "A -> B @ src/\"a\"/\"b.rs:3",
+        "A -> B @ a\"b\"c\"d.rs:3",
+    ] {
+        let parse = parse(source);
+        let codes: Vec<&str> = parse.diagnostics.iter().map(|d| d.code).collect();
+        assert_eq!(codes, ["E0005"], "{source:?}");
+        assert_eq!(parse.tree.to_string(), source);
+        assert!(!format!("{:?}", parse.tree).contains("Cite"), "{source:?}");
+    }
 }

@@ -92,6 +92,9 @@ the project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Changed
 
+- An unclosed double quote in a citation path (`A -> B @ "src/a.rs:3`) gives
+  `E0005` and no `Cite` node. A path that holds an unpaired double quote is no
+  citation.
 - The language card states the comment form: a line that starts with `#` is a
   comment (ADR-130). The parser reads comments as before.
 - A missing name at the end of a line (`E0006`) has an empty span at the end of
