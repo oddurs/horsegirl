@@ -3,14 +3,16 @@ id: 49
 uid: df570902-2521-4676-a56c-ba293da8bd68
 title: An honest gallery, drawn by CI
 type: feature
-status: planned
+status: done
 milestone: v0.1
+assignee: Oddur Sigurdsson
 depends_on:
 - 37
 - 47
 - 48
 created: 2026-11-25
 updated: 2026-11-25
+closed_at: 2026-11-25
 priority: p2
 risk: low
 surface: none
@@ -31,5 +33,13 @@ Draw every example picture on the site in CI from a `.horse` file in the reposit
 
 ## Acceptance criteria
 
-- [ ] No picture on the site is committed as a file; each is built.
-- [ ] The gallery shows the flow lens on at least six files from the corpus.
+- [x] No picture on the site is committed as a file; each is built.
+- [x] The gallery shows the flow lens on at least six files from the corpus.
+
+## 2026-11-25
+
+Criterion 1: site/lib/gallery.ts runs the horsegirl binary at build time and inlines each SVG; the hand-drawn CheckoutSketch component is deleted and the home page draws checkout.horse the same way. A site test finds no .svg or .png under site/. scripts/task check exits 0.
+
+## 2026-11-25
+
+Criterion 2: after scripts/task check, site/out/gallery/index.html holds 11 svg elements with class horsegirl (examples/checkout.horse and the ten files of spikes/layered-layout/corpus, all flow). check-export now fails below six. I looked at a screenshot of /gallery/. a11y: 0 findings on /gallery/.
