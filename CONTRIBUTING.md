@@ -68,6 +68,12 @@ This repository has one maintainer, so a pull request needs zero approvals and
 one green check. State in the description what a reviewer should look at
 sceptically.
 
+## Licence
+
+The project is licensed under MIT or Apache-2.0, at the user's option. A
+contribution that you submit is licensed the same way, with no additional
+terms.
+
 ## Attribution
 
 Commits, pull requests, comments and documents name no assistant and no model.

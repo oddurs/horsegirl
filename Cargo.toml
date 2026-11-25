@@ -6,7 +6,7 @@ members = ["crates/horsegirl-core", "crates/horsegirl"]
 version = "0.0.0"
 edition = "2024"
 rust-version = "1.100"
-license = "MIT"
+license = "MIT OR Apache-2.0"
 repository = "https://github.com/oddurs/horsegirl"
 publish = false
 

@@ -21,7 +21,6 @@ An agent writes a horsegirl file, checks it, applies the fixes, and draws a flow
 - [ ] [`0117`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0117-the-mcp-tool-schemas-are-a-reviewed-contract-in-both-protocol-eras.md) The MCP tool schemas are a reviewed contract in both protocol eras <sup>feature · p2 · mcp</sup>
 - [ ] [`ADR-119`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/ADR-119-names-that-hold-a-reserved-character-are-written-in-quotes.md) Names that hold a reserved character are written in quotes <sup>decision · p2 · language</sup>
 - [ ] [`0120`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0120-the-typo-check-leaves-sibling-names-alone.md) The typo check leaves sibling names alone <sup>feature · p2 · check</sup>
-- [ ] [`ADR-16`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/ADR-16-confirm-the-licence-before-the-first-release.md) Confirm the licence before the first release <sup>decision · p1 · release</sup>
 - [ ] [`SPIKE-18`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/SPIKE-18-which-layered-layout-design-do-we-build-on.md) Which layered layout design do we build on? <sup>spike · p0 · layout</sup>
 - [ ] [`SPIKE-19`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/SPIKE-19-how-do-we-measure-text-without-a-browser.md) How do we measure text without a browser? <sup>spike · p0 · render</sup>
 - [ ] [`0023`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0023-parse-names-links-braces-and-show-lines.md) Parse names, links, braces and show lines <sup>feature · p0 · language</sup>
@@ -51,6 +50,7 @@ An agent writes a horsegirl file, checks it, applies the fixes, and draws a flow
 - [ ] [`0049`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0049-an-honest-gallery-drawn-by-ci.md) An honest gallery, drawn by CI <sup>feature · p2 · site</sup>
 - [ ] [`0052`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0052-a-daily-report-of-what-the-backlog-needs-from-a-person.md) A daily report of what the backlog needs from a person <sup>feature · p2 · workflow</sup>
 - [ ] [`0054`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0054-cut-a-release-with-one-command.md) Cut a release with one command <sup>chore · p1 · workflow</sup>
+- [ ] [`ADR-16`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/ADR-16-confirm-the-licence-before-the-first-release.md) Confirm the licence before the first release <sup>decision · p1 · release</sup>
 - [ ] [`0053`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0053-merge-passing-patch-and-minor-dependency-updates-automatically.md) Merge passing patch and minor dependency updates automatically <sup>chore · p2 · workflow</sup>
 
 ## later — Later
