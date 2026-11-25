@@ -1,0 +1,22 @@
+#!/bin/sh
+# Check a pull request title and body. A squash merge turns the title into the
+# commit on main, so it must pass the same rules as a commit message.
+# Reads PR_TITLE and PR_BODY from the environment.
+set -eu
+root=$(cd "$(dirname "$0")/.." && pwd)
+title=${PR_TITLE:-}
+re=$(cat "$root/scripts/commit-pattern")
+if ! printf '%s\n' "$title" | grep -Eq "$re"; then
+  echo "check-pr-title: '$title' is not a Conventional Commit." >&2
+  echo "check-pr-title: write '<type>(<scope>): <subject>' with no trailing period, for example:" >&2
+  echo "check-pr-title:   feat(parser): read fan-out links" >&2
+  exit 1
+fi
+if [ "${#title}" -gt 72 ]; then
+  echo "check-pr-title: the title has ${#title} characters; the limit is 72." >&2
+  exit 1
+fi
+if printf '%s\n%s\n' "$title" "${PR_BODY:-}" | grep -Eiqf "$root/scripts/attribution-patterns"; then
+  echo "check-pr-title: the title or body names an assistant or a model. Remove that text." >&2
+  exit 1
+fi

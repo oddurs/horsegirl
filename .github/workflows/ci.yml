@@ -4,6 +4,7 @@ on:
   push:
     branches: [main]
   pull_request:
+    types: [opened, edited, reopened, synchronize]
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -45,9 +46,21 @@ jobs:
           cairn --version
       - run: scripts/task check
 
+  # The job always runs, so `required` never sees it as skipped on a push.
+  pr-title:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check the title and the body
+        if: github.event_name == 'pull_request'
+        env:
+          PR_TITLE: ${{ github.event.pull_request.title }}
+          PR_BODY: ${{ github.event.pull_request.body }}
+        run: scripts/check-pr-title
+
   required:
     if: always()
-    needs: [check]
+    needs: [check, pr-title]
     runs-on: ubuntu-latest
     steps:
       - name: Every job passed
