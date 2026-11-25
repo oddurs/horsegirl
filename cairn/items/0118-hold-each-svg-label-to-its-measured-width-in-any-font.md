@@ -20,11 +20,11 @@ track:
 
 ## Problem
 
-The core measures labels in one reference face, Instrument Sans (SPIKE-19). A viewer without that face draws the label in a fallback face. In Chromium, Liberation Sans (the metrics of Arial) is up to 12.5 percent narrower and DejaVu Sans is up to 35.7 percent wider on the 100 reference labels. A wider face overflows its box. A theme that changes the font (0066) must not change a position, so the measured width must hold in every face.
+The core measures labels in Arial metrics, from a table made from Liberation Sans 2.1.5 (SPIKE-19). The SVG font stack is `Arial, "Liberation Sans", Helvetica, sans-serif` (0034). A viewer without any face in that stack draws the label in a fallback face. In Chromium, on the 100 Latin reference labels, DejaVu Sans is up to 28.6 percent wider than Liberation Sans, and every label is wider. Instrument Sans, the face of the concept page, is up to 14.3 percent away. A wider face overflows its box. A theme that changes the font (0066) must not change a position, so the measured width must hold in every face.
 
 ## Proposal
 
-Put `textLength` on each SVG `text` element, set to the measured width, with `lengthAdjust="spacingAndGlyphs"`. The font stack names Instrument Sans first. With the reference face, the adjustment is under 1 percent and is not visible. With a fallback face, the label is squeezed or spread to fit its box. SPIKE-19 checked this in Chromium only.
+Put `textLength` on each SVG `text` element, set to the measured width, with `lengthAdjust="spacingAndGlyphs"`. The font stack names Arial first. With Liberation Sans, the measured width is within 1.2 percent of the browser on the 108 reference labels, so the adjustment is not visible. Arial itself was not measured. With a fallback face, the label is squeezed or spread to fit its box. SPIKE-19 checked this in Chromium only.
 
 ## Acceptance criteria
 

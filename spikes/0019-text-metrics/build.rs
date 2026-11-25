@@ -10,20 +10,28 @@ use std::path::PathBuf;
 
 use harfrust::{Buffer, Direction, Font, ShapeOptions, ShaperFont, shape};
 
-/// Pairs are generated only inside these blocks, to bound the table.
+/// Pairs are generated only inside these blocks, to bound the table: Basic
+/// Latin, Latin-1 and Latin Extended-A, Greek, Cyrillic, and the dashes and
+/// quotes of General Punctuation.
 fn kerned(c: u32) -> bool {
-    (0x20..=0x7e).contains(&c) || (0xa0..=0x17f).contains(&c) || (0x2010..=0x201f).contains(&c)
+    (0x20..=0x7e).contains(&c)
+        || (0xa0..=0x17f).contains(&c)
+        || (0x370..=0x4ff).contains(&c)
+        || (0x2010..=0x201f).contains(&c)
 }
 
-/// Gives each index the class of the first index with an equal key, so class
-/// 0 holds a character with no adjustments only when the first one has none.
-fn classes(n: usize, key: impl Fn(usize) -> Vec<i32>) -> (Vec<u8>, Vec<usize>) {
-    let mut firsts: Vec<usize> = Vec::new();
+/// Gives each index the class of every index with an equal key. Class 0 is
+/// the key of all zeros, with no representative: a character outside the
+/// kerned blocks also gets class 0, so class 0 must mean "no adjustment".
+fn classes(n: usize, key: impl Fn(usize) -> Vec<i32>) -> (Vec<u8>, Vec<Option<usize>>) {
+    let mut keys: Vec<Vec<i32>> = vec![vec![0; n]];
+    let mut firsts: Vec<Option<usize>> = vec![None];
     let mut class = Vec::with_capacity(n);
     for i in 0..n {
         let k = key(i);
-        let c = firsts.iter().position(|&f| key(f) == k).unwrap_or_else(|| {
-            firsts.push(i);
+        let c = keys.iter().position(|f| *f == k).unwrap_or_else(|| {
+            keys.push(k);
+            firsts.push(Some(i));
             firsts.len() - 1
         });
         class.push(u8::try_from(c).expect("fewer than 256 classes"));
@@ -93,9 +101,11 @@ fn main() {
     let (left, lefts) = classes(n, row);
     let (right, rights) = classes(n, col);
     let mut matrix = vec![0i16; lefts.len() * rights.len()];
-    for (a, &i) in lefts.iter().enumerate() {
-        for (b, &j) in rights.iter().enumerate() {
-            matrix[a * rights.len() + b] = i16::try_from(adjust[i * n + j]).expect("fits i16");
+    for (a, i) in lefts.iter().enumerate() {
+        for (b, j) in rights.iter().enumerate() {
+            if let (Some(i), Some(j)) = (i, j) {
+                matrix[a * rights.len() + b] = i16::try_from(adjust[i * n + j]).expect("fits i16");
+            }
         }
     }
     let class_of = |c: char, classes: &[u8]| {

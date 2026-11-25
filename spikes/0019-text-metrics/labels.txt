@@ -98,3 +98,11 @@ The payments service charges the card once
 Integration test harness
 Mmmm wide letters
 iiii lll narrow
+Orders → Payments
+A→A
+ΔA latency
+ΑΥΤΟ
+Αθήνα region
+ГАТУ
+Москва DC
+Тест → ΔΓ

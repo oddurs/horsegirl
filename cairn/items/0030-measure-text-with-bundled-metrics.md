@@ -35,3 +35,7 @@ Implement the text measurement that the spike chose, behind one function: text a
 ## 2026-11-25
 
 SPIKE-19 answer: a table of advances plus kerning-class pair matrices, in integer font units, generated offline from Liberation Sans 2.1.5 (Arial metrics) and checked in as Rust source; the core reads no font. Characters outside the table measure as one em. The 100 reference labels are spikes/0019-text-metrics/labels.txt and the browser widths are the arial-metrics column of spikes/0019-text-metrics/browser.tsv. The spike prototype was within 0.051 percent on every label.
+
+## 2026-11-25
+
+SPIKE-19 review: pairs now cover Basic Latin, Latin-1, Latin Extended-A, Greek, Cyrillic and the dashes and quotes; class 0 of each matrix is reserved for no adjustment, because every character outside those blocks takes class 0 (spikes/0019-text-metrics/src/lib.rs test). The Liberation Sans table is 101 by 112 classes, 43.2 kB wasm32 (9.2 kB gzip). On 108 labels (100 Latin, 8 with arrows, Greek and Cyrillic) the table is within 1.149 percent of the arial-metrics column. Limits: the evidence covers Latin, Greek and Cyrillic left to right only. Hebrew gets advances only and was not measured. The browser does not kern across a change of script and the table does, which makes 'Тест → ΔΓ' 1.149 percent narrow; consider dropping a pair whose characters are in different scripts.

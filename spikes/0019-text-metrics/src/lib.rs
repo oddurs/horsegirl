@@ -43,6 +43,24 @@ pub mod table {
     }
 }
 
+#[cfg(test)]
+mod tests {
+    use super::table::{pair, width, width_plain};
+
+    // An arrow is in every reference face and outside the kerned blocks. A
+    // character outside them must not take the adjustments of another class.
+    #[test]
+    fn a_character_outside_the_kerned_blocks_has_no_pair_adjustment() {
+        for c in ['→', '\u{4e00}'] {
+            for k in [' ', 'A', 'T', 'V', 'Y', '1', '“'] {
+                assert_eq!(pair(c, k), 0, "pair {c:?} {k:?}");
+                assert_eq!(pair(k, c), 0, "pair {k:?} {c:?}");
+            }
+        }
+        assert_eq!(width("A→A"), width_plain("A→A"));
+    }
+}
+
 /// The font file itself, shaped by a port of `HarfBuzz`.
 #[cfg(feature = "shape")]
 pub mod shaped {
