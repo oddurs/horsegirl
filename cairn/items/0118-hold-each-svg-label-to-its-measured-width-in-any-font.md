@@ -61,3 +61,7 @@ Exception to criterion 1, from review of #43: the table measures a character it 
 ## 2026-11-25
 
 Criterion 1 again, after review fix: tests/svg.rs a_label_outside_the_metrics_table_keeps_its_natural_width draws "مرحبا بالعالم" -> B and asserts the Arabic text has no textLength or lengthAdjust and B has textLength. With svg.rs reverted it FAILED (12 passed, 1 failed); with the fix cargo test -p horsegirl-core --test svg printed 13 passed. The checkout.svg snapshot is unchanged and each_label_is_held_to_its_measured_width still passes. scripts/task check exited 0.
+
+## 2026-11-25
+
+Fix round 2: merged origin/main (#42, #44) into the branch as c4c8f94, resolved CHANGELOG.md, ran cairn render. scripts/task check exited 0 on the merged tree; cairn check printed 'ok: 152 item(s), 0 warning(s)'.
