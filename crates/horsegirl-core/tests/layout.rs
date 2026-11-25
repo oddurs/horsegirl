@@ -1,8 +1,8 @@
 //! The layered layout on the reference file and on the ten flow diagrams of
 //! SPIKE-18, which are in `spikes/layered-layout/corpus`.
 //!
-//! `layout.positions` holds every position that the layout gives for those
-//! eleven files. CI runs this test on Linux, on macOS and in WebAssembly, so
+//! `layout.positions` holds every position, path and label that the layout
+//! gives for those eleven files. CI runs this test on Linux, on macOS and in WebAssembly, so
 //! the file also proves that each target gives the same numbers. To accept a
 //! change, run:
 //!
@@ -14,11 +14,16 @@
 
 use std::fmt::Write as _;
 
-use horsegirl_core::layout::{Graph, Group, Layout, NODE_GAP, Node, RANK_GAP, layout};
-use horsegirl_core::model::lower;
-use horsegirl_core::scene::Rect;
+use horsegirl_core::layout::{
+    GROUP_TITLE, Graph, Group, LABEL_CLEAR, Layout, NODE_GAP, Node, RANK_GAP, layout,
+};
+use horsegirl_core::model::{Link, Model, Thing, lower};
+use horsegirl_core::overlap::{Kind, overlaps};
+use horsegirl_core::scene::{Placement, Point, Rect, Scene, build};
 use horsegirl_core::syntax::parse;
 use horsegirl_core::text::{Style, measure};
+
+const STYLE: Style = Style { size: 14.0 };
 
 const POSITIONS: &str = include_str!("layout.positions");
 
@@ -55,15 +60,25 @@ struct Flow {
     nodes: Vec<String>,
     groups: Vec<String>,
     graph: Graph,
+    model: Model,
+    /// The thing of each node, of each group and the model link of each link
+    /// of the graph.
+    node_ids: Vec<usize>,
+    group_ids: Vec<usize>,
+    link_ids: Vec<usize>,
 }
 
 /// Reads a file into the graph of its flow.
+fn flow(source: &str) -> Flow {
+    flow_of(lower(&parse(source).tree))
+}
+
+/// The graph of the flow of a model.
 ///
 /// A thing that holds something is a group, and every other thing is a node
 /// as wide as its name. A link that starts or ends at a group is left out:
 /// item 0123 draws it.
-fn flow(source: &str) -> Flow {
-    let model = lower(&parse(source).tree);
+fn flow_of(model: Model) -> Flow {
     let group_ids = model.groups();
     let group_of = |thing: usize| group_ids.iter().position(|&g| g == thing);
     let node_ids: Vec<usize> = (0..model.things.len())
@@ -71,11 +86,21 @@ fn flow(source: &str) -> Flow {
         .collect();
     let node_of = |thing: usize| node_ids.iter().position(|&n| n == thing);
     let parent = |thing: usize| model.things[thing].parent.and_then(group_of);
+    let links: Vec<(usize, (usize, usize))> = model
+        .links
+        .iter()
+        .enumerate()
+        .filter_map(|(id, link)| Some(id).zip(node_of(link.from).zip(node_of(link.to))))
+        .collect();
+    let label = |&(id, _): &(usize, _)| {
+        let labels = &model.links[id].labels;
+        (!labels.is_empty()).then(|| measure(&labels.join(", "), STYLE))
+    };
     let graph = Graph {
         nodes: node_ids
             .iter()
             .map(|&thing| Node {
-                width: measure(&model.things[thing].name, Style { size: 14.0 }).width + 28.0,
+                width: measure(&model.things[thing].name, STYLE).width + 28.0,
                 height: 36.0,
                 group: parent(thing),
             })
@@ -86,18 +111,96 @@ fn flow(source: &str) -> Flow {
                 parent: parent(thing),
             })
             .collect(),
-        links: model
-            .links
-            .iter()
-            .filter_map(|link| node_of(link.from).zip(node_of(link.to)))
-            .collect(),
+        labels: links.iter().map(label).collect(),
+        links: links.iter().map(|&(_, ends)| ends).collect(),
     };
     let name = |&thing: &usize| model.things[thing].name.clone();
     Flow {
         nodes: node_ids.iter().map(name).collect(),
         groups: group_ids.iter().map(name).collect(),
         graph,
+        link_ids: links.iter().map(|&(id, _)| id).collect(),
+        node_ids,
+        group_ids,
+        model,
     }
+}
+
+/// The scene of a picture: what a backend draws and the overlap detector
+/// reads.
+fn scene(flow: &Flow, picture: &Layout) -> Scene {
+    let mut placement = Placement {
+        things: vec![None; flow.model.things.len()],
+        links: vec![Vec::new(); flow.model.links.len()],
+        labels: vec![None; flow.model.links.len()],
+    };
+    for (&thing, node) in flow.node_ids.iter().zip(&picture.nodes) {
+        placement.things[thing] = Some(*node);
+    }
+    for (&thing, group) in flow.group_ids.iter().zip(&picture.groups) {
+        placement.things[thing] = *group;
+    }
+    for (link, &id) in flow.link_ids.iter().enumerate() {
+        placement.links[id].clone_from(&picture.paths[link]);
+        placement.labels[id] = picture.labels[link];
+    }
+    build(&flow.model, &placement, STYLE)
+}
+
+/// Every collision that the overlap detector finds in a picture, in words,
+/// but for the kinds in `allowed`.
+fn collisions(flow: &Flow, picture: &Layout, allowed: &[Kind]) -> Vec<String> {
+    let scene = scene(flow, picture);
+    let found = overlaps(&scene);
+    let counted = found
+        .iter()
+        .filter(|overlap| !allowed.contains(&overlap.kind));
+    counted.map(|overlap| overlap.describe(&scene)).collect()
+}
+
+/// How many links pass through a group that holds neither of their ends.
+fn through_groups(flow: &Flow, picture: &Layout) -> usize {
+    let found = overlaps(&scene(flow, picture));
+    let kinds = found.iter().map(|overlap| overlap.kind);
+    kinds.filter(|&kind| kind == Kind::LinkThroughGroup).count()
+}
+
+/// How many labels share room with a group that holds neither end of their
+/// link. Such a label lies across no border, so it is wholly inside the
+/// group, and the overlap detector does not report it.
+fn labels_in_other_groups(graph: &Graph, picture: &Layout) -> usize {
+    let inside = |link: usize, centre: &Point| {
+        let size = graph.labels[link].unwrap();
+        let label = Rect {
+            x: centre.x - size.width / 2.0,
+            y: centre.y - size.height / 2.0,
+            width: size.width,
+            height: size.height,
+        };
+        let (from, to) = graph.links[link];
+        let mut own = around(graph, graph.nodes[from].group);
+        own.extend(around(graph, graph.nodes[to].group));
+        let groups = picture.groups.iter().enumerate();
+        let mut other = groups.filter_map(|(g, group)| group.filter(|_| !own.contains(&g)));
+        other.any(|group| room(&group, &label) < 0.0)
+    };
+    let labels = picture.labels.iter().enumerate();
+    let labels = labels.filter_map(|(link, centre)| Some(link).zip(centre.as_ref()));
+    labels
+        .filter(|&(link, centre)| inside(link, centre))
+        .count()
+}
+
+/// The file with a label on every link.
+fn labelled(source: &str) -> Flow {
+    let mut model = lower(&parse(source).tree);
+    for link in &mut model.links {
+        if link.labels.is_empty() {
+            link.labels
+                .push(format!("to {}", model.things[link.to].name));
+        }
+    }
+    flow_of(model)
 }
 
 /// The room between two boxes on the axis where they are further apart. It
@@ -173,7 +276,8 @@ fn faults(graph: &Graph, picture: &Layout) -> Vec<String> {
     }
     let boxes = picture.nodes.iter().chain(picture.groups.iter().flatten());
     let corners = boxes.map(|r| (r.x, r.y));
-    let points = picture.bends.iter().flatten().map(|p| (p.x, p.y));
+    let points = picture.bends.iter().chain(&picture.paths).flatten();
+    let points = points.map(|p| (p.x, p.y));
     let (x, y) = corners
         .chain(points)
         .fold((f64::INFINITY, f64::INFINITY), |a, b| {
@@ -191,7 +295,35 @@ fn faults(graph: &Graph, picture: &Layout) -> Vec<String> {
             faults.push(format!("link {from} -> {to} has {} bends", bends.len()));
         }
     }
+    for (link, &(from, to)) in graph.links.iter().enumerate() {
+        let path = &picture.paths[link];
+        let (Some(start), Some(end)) = (path.first(), path.last()) else {
+            faults.push(format!("link {from} -> {to} has no path"));
+            continue;
+        };
+        if path
+            .windows(2)
+            .any(|pair| (pair[0].x - pair[1].x) * (pair[0].y - pair[1].y) != 0.0)
+        {
+            faults.push(format!("link {from} -> {to} has a slanted part: {path:?}"));
+        }
+        if !on_border(start, &picture.nodes[from]) || !on_border(end, &picture.nodes[to]) {
+            faults.push(format!(
+                "link {from} -> {to} does not join its boxes: {path:?}"
+            ));
+        }
+        let labelled = graph.labels.get(link).copied().flatten().is_some();
+        if labelled != picture.labels[link].is_some() {
+            faults.push(format!("link {from} -> {to} has a label: {}", !labelled));
+        }
+    }
     faults
+}
+
+/// A point is on the left or the right side of a box.
+fn on_border(point: &Point, r: &Rect) -> bool {
+    let on_side = (point.x - r.x).abs() < 1e-6 || (point.x - r.x - r.width).abs() < 1e-6;
+    on_side && r.y < point.y && point.y < r.y + r.height
 }
 
 fn rank_of(flow: &Flow, picture: &Layout, name: &str) -> usize {
@@ -246,6 +378,146 @@ fn no_two_boxes_are_closer_than_the_node_gap_on_any_corpus_diagram() {
     assert_eq!(things, 198);
 }
 
+// The overlap detector reads each of the eleven pictures as a backend does.
+// This test holds the box of each thing only. A path does cross the box of a
+// group, 18 times on two diagrams: the order phase puts a link on one side
+// of a group in one rank and on the other side in the next, and the path
+// then passes through the group. The backlog item "No link passes through a
+// group that holds neither of its ends" has that work, and the counts here
+// fall with it.
+#[test]
+fn no_path_crosses_the_box_of_a_thing_on_any_corpus_diagram() {
+    let mut links = 0;
+    let mut through = Vec::new();
+    for (name, source) in DIAGRAMS {
+        let flow = flow(source);
+        links += flow.graph.links.len();
+        let picture = layout(&flow.graph, None);
+        let collisions = collisions(&flow, &picture, &[Kind::LinkThroughGroup]);
+        assert!(collisions.is_empty(), "{name}: {collisions:#?}");
+        through.push(through_groups(&flow, &picture));
+    }
+    assert_eq!(links, 255);
+    assert_eq!(through, [0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 17]);
+}
+
+// The ten diagrams of the spike have no label, so each link gets one here.
+// Two labels can still cover each other: item 0124 gives each label its own
+// room. A box is the box of a thing or of a group: no label lies on the box
+// of a thing or across the border of a group. A label can still be inside a
+// group that holds neither end of its link, when the link passes through
+// that group: 4 labels on one diagram. The count falls with the work on those
+// links.
+#[test]
+fn each_link_label_sits_on_its_path_and_overlaps_no_box() {
+    let mut labels = 0;
+    let mut inside = Vec::new();
+    for (name, source) in DIAGRAMS {
+        let flow = labelled(source);
+        let picture = layout(&flow.graph, None);
+        labels += picture.labels.iter().flatten().count();
+        let faults = faults(&flow.graph, &picture);
+        assert!(faults.is_empty(), "{name}: {faults:#?}");
+        let collisions = collisions(&flow, &picture, &[Kind::LinkThroughGroup, Kind::Labels]);
+        assert!(collisions.is_empty(), "{name}: {collisions:#?}");
+        inside.push(labels_in_other_groups(&flow.graph, &picture));
+    }
+    assert_eq!(labels, 255);
+    assert_eq!(inside, [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4]);
+}
+
+// The smallest input from the review of this phase. The upright line of
+// `a -> c` leaves the group through its top, and the middle of the line is
+// 3 px from that border. The name of the group is drawn under that border,
+// so the label must be clear of the band that holds the name too: a long
+// name reaches under the label.
+#[test]
+fn a_label_on_a_line_that_leaves_a_group_is_off_the_border_of_the_group() {
+    for name in ["G", "Services and stores"] {
+        let flow = flow(&format!(
+            "{name} {{\n  a, b\n}}\na -> c: charge\nb -> d\nc -> b\n"
+        ));
+        let picture = layout(&flow.graph, None);
+        let collisions = collisions(&flow, &picture, &[]);
+        assert!(collisions.is_empty(), "{name}: {collisions:#?}");
+        let (label, group) = (picture.labels[0].unwrap(), picture.groups[0].unwrap());
+        let half = flow.graph.labels[0].unwrap().height / 2.0;
+        let above = group.y - (label.y + half);
+        let under = label.y - half - (group.y + GROUP_TITLE);
+        assert!(
+            (above - LABEL_CLEAR).abs() < 1e-6 || (under - LABEL_CLEAR).abs() < 1e-6,
+            "{name}: {above} above the border, {under} under the name"
+        );
+        let path = &picture.paths[0];
+        assert_eq!((path[1].x, path[2].x), (label.x, label.x));
+        let (top, bottom) = (path[1].y.min(path[2].y), path[1].y.max(path[2].y));
+        assert!(top < label.y && label.y < bottom, "{name}: {path:?}");
+    }
+}
+
+// Each of the two links from `a` ends at the height where a link from `b`
+// starts, and each of the two from `b` ends where a link from `a` starts. No
+// order of the two upright lines keeps the level lines apart, so one link
+// arrives beside the middle of its box.
+#[test]
+fn two_pairs_of_links_that_cross_do_not_lie_on_each_other() {
+    let flow = flow("a -> c, d\nb -> c, d\n");
+    let picture = layout(&flow.graph, None);
+    let middle = |name: &str| {
+        let r = picture.nodes[flow.nodes.iter().position(|n| n == name).unwrap()];
+        r.y + r.height / 2.0
+    };
+    assert_eq!((middle("a"), middle("b")), (middle("c"), middle("d")));
+    let collisions = collisions(&flow, &picture, &[]);
+    assert!(collisions.is_empty(), "{collisions:#?}");
+}
+
+#[test]
+fn a_link_from_a_node_to_itself_is_a_loop_at_the_side_of_its_box() {
+    let flow = flow("a -> a: again and again\na -> b\nG {\n  a\n}\n");
+    let picture = layout(&flow.graph, None);
+    let (a, path) = (picture.nodes[0], &picture.paths[0]);
+    assert_eq!(path.len(), 4);
+    assert!(path.iter().all(|point| point.x >= a.x + a.width));
+    let faults = faults(&flow.graph, &picture);
+    assert!(faults.is_empty(), "{faults:#?}");
+    let collisions = collisions(&flow, &picture, &[]);
+    assert!(collisions.is_empty(), "{collisions:#?}");
+}
+
+// `x -> c` passes the ranks of `a` and `b`. It enters `G` at the left side
+// and stays inside, so it crosses the border of `G` once and the border of
+// `Inner` never.
+#[test]
+fn a_long_link_into_a_group_enters_the_group_at_its_side() {
+    let flow = flow("x -> a, c\na -> b\nb -> c\nG {\n  c\n  Inner {\n    a, b\n  }\n}\n");
+    let picture = layout(&flow.graph, None);
+    let group = picture.groups[flow.groups.iter().position(|g| g == "G").unwrap()].unwrap();
+    let link = flow.graph.links.iter().position(|&ends| ends == (0, 2));
+    let bends = &picture.bends[link.unwrap()];
+    assert_eq!(bends.len(), 2);
+    for bend in bends {
+        assert!(
+            group.y < bend.y && bend.y < group.y + group.height,
+            "{bend:?}"
+        );
+    }
+    let collisions = collisions(&flow, &picture, &[]);
+    assert!(collisions.is_empty(), "{collisions:#?}");
+}
+
+#[test]
+fn a_label_wider_than_the_rank_gap_widens_the_gap() {
+    let text = "a label that is much wider than the gap";
+    let flow = flow(&format!("a -> b: {text}\nb -> c\n"));
+    let picture = layout(&flow.graph, None);
+    let [a, b, c] = [picture.nodes[0], picture.nodes[1], picture.nodes[2]];
+    assert!(b.x - (a.x + a.width) > measure(text, STYLE).width);
+    assert_eq!(c.x - (b.x + b.width), RANK_GAP);
+    let collisions = collisions(&flow, &picture, &[]);
+    assert!(collisions.is_empty(), "{collisions:#?}");
+}
+
 // The smallest input from the review of SPIKE-18. The prototype put the
 // marker of `G` between `e` and `a` in one rank, and the two boxes touched.
 #[test]
@@ -281,18 +553,77 @@ fn no_generated_graph_has_a_fault() {
                 group: (!groups.is_empty() && next(3) > 0).then(|| next(groups.len())),
             })
             .collect();
-        let links = (0..next(2 * count))
+        let links: Vec<(usize, usize)> = (0..next(2 * count))
             .map(|_| (next(count), next(count)))
+            .collect();
+        let texts: Vec<Option<String>> = (0..links.len())
+            .map(|_| (next(3) == 0).then(|| "word ".repeat(1 + next(4))))
             .collect();
         let graph = Graph {
             nodes,
             groups,
             links,
+            labels: texts
+                .iter()
+                .map(|text| text.as_ref().map(|text| measure(text, STYLE)))
+                .collect(),
         };
         let picture = layout(&graph, None);
         let faults = faults(&graph, &picture);
         assert!(faults.is_empty(), "graph {round}: {faults:#?}\n{graph:#?}");
         assert_eq!(picture, layout(&graph, None), "graph {round}");
+        // A generated graph has groups that no order keeps every link out
+        // of, and its labels are many for its size.
+        let flow = named(graph, texts);
+        let collisions = collisions(&flow, &picture, &[Kind::LinkThroughGroup, Kind::Labels]);
+        assert!(collisions.is_empty(), "graph {round}: {collisions:#?}");
+    }
+}
+
+/// A graph that no file states, with a name for each node and each group, so
+/// that the scene can hold it.
+fn named(graph: Graph, texts: Vec<Option<String>>) -> Flow {
+    let count = graph.nodes.len();
+    let thing = |name: &String, group: Option<usize>| Thing {
+        name: name.clone(),
+        mentions: Vec::new(),
+        parent: group.map(|g| count + g),
+        facts: Vec::new(),
+    };
+    let nodes: Vec<String> = (0..count).map(|i| format!("n{i}")).collect();
+    let groups: Vec<String> = (0..graph.groups.len()).map(|g| format!("g{g}")).collect();
+    let boxes = nodes
+        .iter()
+        .zip(&graph.nodes)
+        .map(|(n, node)| thing(n, node.group));
+    let around = groups
+        .iter()
+        .zip(&graph.groups)
+        .map(|(g, group)| thing(g, group.parent));
+    let links = graph
+        .links
+        .iter()
+        .zip(texts)
+        .map(|(&(from, to), text)| Link {
+            from,
+            to,
+            labels: text.into_iter().collect(),
+            span: 0..0,
+            guess: false,
+        });
+    let model = Model {
+        things: boxes.chain(around).collect(),
+        links: links.collect(),
+        ..Model::default()
+    };
+    Flow {
+        node_ids: (0..count).collect(),
+        group_ids: (count..count + groups.len()).collect(),
+        link_ids: (0..graph.links.len()).collect(),
+        nodes,
+        groups,
+        graph,
+        model,
     }
 }
 
@@ -308,11 +639,20 @@ fn positions(name: &str, flow: &Flow, picture: &Layout) -> String {
         let r = r.as_ref().map_or_else(|| "none".to_owned(), rect);
         writeln!(text, "group  {group}  {r}").unwrap();
     }
-    for (&(from, to), bends) in flow.graph.links.iter().zip(&picture.bends) {
-        if !bends.is_empty() {
-            let points: Vec<String> = bends.iter().map(|p| format!("{},{}", p.x, p.y)).collect();
-            let (from, to) = (&flow.nodes[from], &flow.nodes[to]);
-            writeln!(text, "bends  {from} -> {to}  {}", points.join(" ")).unwrap();
+    let points = |points: &[Point]| {
+        let points: Vec<String> = points.iter().map(|p| format!("{},{}", p.x, p.y)).collect();
+        points.join(" ")
+    };
+    for (link, &(from, to)) in flow.graph.links.iter().enumerate() {
+        let (from, to) = (&flow.nodes[from], &flow.nodes[to]);
+        if !picture.bends[link].is_empty() {
+            let bends = points(&picture.bends[link]);
+            writeln!(text, "bends  {from} -> {to}  {bends}").unwrap();
+        }
+        let path = points(&picture.paths[link]);
+        writeln!(text, "path  {from} -> {to}  {path}").unwrap();
+        if let Some(label) = picture.labels[link] {
+            writeln!(text, "label  {from} -> {to}  {},{}", label.x, label.y).unwrap();
         }
     }
     text
@@ -379,6 +719,7 @@ fn a_group_that_holds_no_node_has_no_box() {
         nodes: vec![node],
         groups: vec![Group { parent: Some(1) }, Group { parent: None }],
         links: vec![(0, 0)],
+        labels: Vec::new(),
     };
     let picture = layout(&graph, None);
     assert_eq!(picture.groups[0], None);

@@ -49,6 +49,13 @@ the project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   quotes around a name that does not need them, and a space before the colon
   of a label. Each note carries a safe fix. A quoted name stays quoted when a
   bare name would join the next character, as in `"a-"->B`.
+- `horsegirl_core::overlap::overlaps` reads a scene and gives each collision
+  in it: two boxes that overlap, a link that crosses the box of a thing, a
+  link that passes through a group that holds neither of its ends, a link that
+  crosses the border of its own group more than once, two links with no end
+  in common that lie on each other, a label on the box of another thing, a
+  label across the border of a group, a link label that is not on its link,
+  and two labels that overlap.
 
 ### Changed
 
@@ -63,6 +70,18 @@ the project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - `horsegirl_core::layout::layout` places the boxes and the groups of a flow
   in ranks from left to right. A link goes to a higher rank, and the link that
   closes a loop is the one that turns. Two boxes of one rank are at least
-  24 px apart, and a group box holds its own boxes and no other. The layout
-  routes no link. It takes an earlier picture as a seed and does not read it
-  yet.
+  24 px apart, and a group box holds its own boxes and no other. It takes an
+  earlier picture as a seed and does not read it yet.
+- The layout routes each link as a path at right angles. A path leaves the
+  right side of a box, turns only between two ranks, and enters the left side
+  of the next box, so it crosses no box of a thing. A link out of a group
+  crosses the border of the group once. A path can still pass through a group
+  that holds neither end of its link. A link from a thing to itself is a
+  loop at the right side of its box. `Graph::labels` gives the size of the
+  label of each link, and the layout gives the centre of each label on its
+  path, with a gap between two ranks that is wide enough for the label. A
+  label that would lie across the border of a group, or on the band that
+  holds the name of the group, moves along its upright line to 3 px from that
+  border or that band. When the line has more than one such height, the
+  label takes one outside every group that holds neither end of its link.
+  The paths are in `Layout::paths` and the labels in `Layout::labels`.

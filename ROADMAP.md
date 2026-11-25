@@ -12,7 +12,7 @@ named for gaits: Walk, Trot, Canter, Gallop.
 
 ## v0.1 — Walk
 
-`··········` 0% · 0 of 38 done · due 2027-01-31
+`··········` 0% · 0 of 39 done · due 2027-01-31
 
 An agent writes a horsegirl file, checks it, applies the fixes, and draws a flow diagram as SVG, from the command line or over MCP.
 
@@ -41,7 +41,7 @@ An agent writes a horsegirl file, checks it, applies the fixes, and draws a flow
 - [ ] [`0141`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0141-a-group-box-is-wide-enough-for-its-name.md) A group box is wide enough for its name <sup>feature · p2 · layout</sup>
 - [ ] [`0144`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0144-a-path-that-the-parser-reads-as-a-group-gets-a-warning-with-the-quote-fix.md) A path that the parser reads as a group gets a warning with the quote fix <sup>feature · p2 · check</sup>
 - [ ] [`0145`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0145-each-golden-case-that-draws-holds-its-svg.md) Each golden case that draws holds its SVG <sup>chore · p2 · render</sup>
-- [ ] [`0033`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0033-route-edges-at-right-angles-around-boxes-and-groups.md) Route edges at right angles around boxes and groups <sup>feature · p0 · layout</sup>
+- [ ] [`0146`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0146-no-link-passes-through-a-group-that-holds-neither-of-its-ends.md) No link passes through a group that holds neither of its ends <sup>feature · p2 · layout</sup>
 - [ ] [`LENS-36`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/LENS-36-flow.md) flow <sup>lens · p0 · lens</sup>
 - [ ] [`0037`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0037-the-command-line-check-fix-fmt-draw-spec.md) The command line: check, fix, fmt, draw, spec <sup>feature · p0 · cli</sup>
 - [ ] [`0038`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0038-an-mcp-server-with-spec-check-fix-and-draw.md) An MCP server with spec, check, fix and draw <sup>feature · p0 · mcp</sup>
@@ -53,11 +53,12 @@ An agent writes a horsegirl file, checks it, applies the fixes, and draws a flow
 - [ ] [`0052`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0052-a-daily-report-of-what-the-backlog-needs-from-a-person.md) A daily report of what the backlog needs from a person <sup>feature · p2 · workflow</sup>
 - [ ] [`0054`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0054-cut-a-release-with-one-command.md) Cut a release with one command <sup>chore · p1 · workflow</sup>
 - [ ] [`0026`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0026-rules-with-x-and-guesses-with.md) Rules with -x and guesses with ? <sup>feature · p1 · model</sup>
+- [ ] [`0033`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0033-route-edges-at-right-angles-around-boxes-and-groups.md) Route edges at right angles around boxes and groups <sup>feature · p0 · layout</sup>
 - [ ] [`0053`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0053-merge-passing-patch-and-minor-dependency-updates-automatically.md) Merge passing patch and minor dependency updates automatically <sup>chore · p2 · workflow</sup>
 
 ## later — Later
 
-`··········` 0% · 0 of 17 done
+`··········` 0% · 0 of 21 done
 
 Nothing on a date. Good ideas wait here until a release needs them.
 
@@ -78,6 +79,10 @@ Nothing on a date. Good ideas wait here until a release needs them.
 - [ ] [`0138`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0138-fmt-writes-a-file-in-place.md) fmt writes a file in place <sup>feature · p2 · cli</sup>
 - [ ] [`0142`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0142-say-what-to-do-with-mermaid-arrows-that-horsegirl-has-no-form-for.md) Say what to do with Mermaid arrows that horsegirl has no form for <sup>feature · p2 · language</sup>
 - [ ] [`0143`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0143-a-rule-against-a-group-also-forbids-links-to-its-parts.md) A rule against a group also forbids links to its parts <sup>feature · p2 · check</sup>
+- [ ] [`BUG-147`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/BUG-147-two-links-between-the-same-two-things-in-opposite-directions-are-drawn-apart.md) Two links between the same two things in opposite directions are drawn apart <sup>bug · p2 · layout</sup>
+- [ ] [`BUG-148`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/BUG-148-an-arrival-that-cannot-move-keeps-its-level-line-apart-from-every-other-line.md) An arrival that cannot move keeps its level line apart from every other line <sup>bug · p2 · layout</sup>
+- [ ] [`0149`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0149-the-overlap-detector-reports-a-thing-in-the-box-of-a-group-that-does-not-hold-it.md) The overlap detector reports a thing in the box of a group that does not hold it <sup>feature · p2 · check</sup>
+- [ ] [`0150`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0150-the-route-phase-orders-the-upright-lines-of-a-corridor-in-less-than-cubic-time.md) The route phase orders the upright lines of a corridor in less than cubic time <sup>chore · p2 · layout</sup>
 
 ## v0.2 — Trot
 

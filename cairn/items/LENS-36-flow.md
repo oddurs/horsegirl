@@ -58,3 +58,7 @@ From the review of item 23: `show sequence of S, T` parses as two things with no
 ## 2026-11-25
 
 From item 0032: the layered layout is horsegirl_core::layout::layout. It reads a Graph of boxes with sizes, groups and links, and knows nothing of the model. fn flow in crates/horsegirl-core/tests/layout.rs turns a Model into that Graph for the tests: a thing that holds something is a group, every other thing is a node as wide as its name at 14 px plus 28 px. The lens owns that step and the sizes.
+
+## 2026-11-25
+
+From item 0033: horsegirl_core::layout::layout now routes. Give Graph.labels the measured size of each link label, and read Layout.paths and Layout.labels into the Placement. fn scene and fn flow_of in crates/horsegirl-core/tests/layout.rs do both for the tests. Run horsegirl_core::overlap::overlaps on the scene to hold 'no overlap'.

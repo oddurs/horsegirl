@@ -32,3 +32,7 @@ Convert the corpus from the grammar spike to horsegirl by script, draw each file
 
 - [ ] CI prints how many of the corpus files draw with zero overlaps.
 - [ ] The job fails when the count drops below the committed baseline.
+
+## 2026-11-25
+
+From item 0033: the detector is horsegirl_core::overlap::overlaps(&Scene). It returns one Overlap for each collision, with a Kind. The kind LinkThroughGroup is not zero today on 2 of the 11 test diagrams (item 0146), and the kind Labels is not zero when many links have labels (item 0124), so decide which kinds the baseline counts.
