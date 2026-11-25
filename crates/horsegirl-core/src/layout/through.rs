@@ -22,8 +22,8 @@
 //! link passes through it or through a group under the same parent. So a
 //! large net with few passes costs little. A large net with hundreds of
 //! passes that no order removes gives two moves for each pass in each round.
-//! The search has a limit on its work, so such a net costs a fixed amount
-//! and can keep a pass that a longer search removes.
+//! The search has a limit on its work, so such a net can keep a pass that a
+//! longer search removes.
 
 use super::order::{arrange, crossed, positions};
 use super::{Group, Item, Net, real, shared};
@@ -67,11 +67,10 @@ struct Check {
 }
 
 /// The most work that one search does. The unit is one item or one step of
-/// a rank that the search counts again. The largest search of the corpus
-/// diagrams does 23 thousand, and a dense net of 100 nodes in 10 groups with
-/// 390 links needs 86 million to end. A search that reaches the limit adds
-/// less than 0.1 s to a release build. The limit is a count and not a time,
-/// so the same input gives the same order on every machine.
+/// a rank that the search counts again, and one group or one item that a
+/// move copies before it runs. A dense net of 100 nodes in 10 groups with
+/// 390 links needs many times the limit to end. The limit is a count and
+/// not a time, so the same input gives the same order on every machine.
 const LIMIT: usize = 1_000_000;
 
 struct Search<'a> {
@@ -168,6 +167,7 @@ pub(super) fn keep_out(net: &mut Net, groups: &[Group], keys: &[f64]) {
     if search.cost.0 == 0 {
         return;
     }
+    let mut tried = 0;
     loop {
         let before = search.cost;
         for change in search.moves() {
@@ -179,6 +179,15 @@ pub(super) fn keep_out(net: &mut Net, groups: &[Group], keys: &[f64]) {
             let (low, high) = search.ranks(change);
             let layers = search.net.layers[low..=high].to_vec();
             let places = search.places.clone();
+            // A move that changes no rank still costs these copies, so each
+            // move counts before it runs. A net with hundreds of groups in
+            // a line gives one `Shift` for each pair, and most change nothing.
+            search.work += places.len() + layers.iter().map(Vec::len).sum::<usize>();
+            tried += 1;
+            debug_assert!(
+                tried * places.len() <= LIMIT + places.len(),
+                "the limit does not count a move that the search tried"
+            );
             search.apply(change);
             // Most moves change few of the ranks that they can change.
             let changed = |rank: &usize| search.net.layers[*rank] != layers[*rank - low];

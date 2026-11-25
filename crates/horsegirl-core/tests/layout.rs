@@ -729,7 +729,36 @@ fn a_dense_graph_stops_the_pass_search_at_its_limit() {
     assert!(time.as_secs() < 120, "the layout took {time:?}");
 }
 
-// 300 graphs from a fixed sequence of numbers, with loops, nested groups and
+// From the fourth review of the pass search. A line of 400 nodes, each two
+// in their own group, then 40 nodes in 8 groups with 60 links. One round
+// tries another place for each of 208 groups, and most of those moves change
+// no rank. The limit did not count such a move, so the search did 5 times
+// the work of every other phase. A debug build now stops the test when the
+// search tries a move that the limit does not count.
+#[test]
+fn a_move_that_changes_no_rank_counts_toward_the_limit() {
+    let mut next = sequence(1);
+    let line = 400;
+    let nodes: Vec<Node> = (0..line + 40)
+        .map(|i| Node {
+            width: 50.0,
+            height: 36.0,
+            group: Some(if i < line { i / 2 } else { line / 2 + i % 8 }),
+        })
+        .collect();
+    let mut links: Vec<(usize, usize)> = (0..line).map(|i| (i, i + 1)).collect();
+    links.extend((0..60).map(|_| (line + next(40), line + next(40))));
+    let graph = Graph {
+        nodes,
+        groups: vec![Group { parent: None }; line / 2 + 8],
+        labels: Vec::new(),
+        links,
+    };
+    let picture = layout(&graph, None);
+    let faults = faults(&graph, &picture);
+    assert!(faults.is_empty(), "{faults:#?}");
+}
+
 // links from a node to itself. The diagrams above cannot reach every order
 // of groups, and a wrong order would stop the place phase.
 #[test]
