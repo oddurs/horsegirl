@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
 import { Shell } from "../components/Shell";
+import "./fonts.css";
 import "./tokens.css";
 import "./highlight.css";
 

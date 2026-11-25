@@ -1,0 +1,25 @@
+/* The three families of docs/concept/index.html, served from this site so that no
+   page asks another origin for a font and two builds of one commit give the same
+   bytes. Variable files from Fontsource, latin subset; the licences are in
+   public/licenses. The weight and optical-size ranges are the files' own. */
+@font-face {
+  font-family: "Bricolage Grotesque";
+  font-style: normal;
+  font-display: swap;
+  font-weight: 200 800;
+  src: url("./fonts/bricolage-grotesque-latin-opsz-normal.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Instrument Sans";
+  font-style: normal;
+  font-display: swap;
+  font-weight: 400 700;
+  src: url("./fonts/instrument-sans-latin-wght-normal.woff2") format("woff2");
+}
+@font-face {
+  font-family: "JetBrains Mono";
+  font-style: normal;
+  font-display: swap;
+  font-weight: 100 800;
+  src: url("./fonts/jetbrains-mono-latin-wght-normal.woff2") format("woff2");
+}
