@@ -1,0 +1,11 @@
+A restaurant kitchen
+
+A `Waiter` sends tickets to the `Kitchen display`, with the label `ticket`. The
+`Grill cook` and the `Salad cook` read the `Kitchen display`, with the label
+`read`. Both hand plates to the `Pass`, with the label `plate`. The `Waiter`
+collects from the `Pass`, with the label `collect`.
+---
+Waiter -> Kitchen display: ticket
+Grill cook, Salad cook -> Kitchen display: read
+Grill cook, Salad cook -> Pass: plate
+Waiter -> Pass: collect

@@ -1,0 +1,10 @@
+Quotes and owners
+
+`Edge: CDN` sends to the `Web app`, with the label `serve`. The `Web app` calls
+`API, v1`. The team `Platform` owns `Edge: CDN`, and the team `Apps` owns the
+`Web app` and `API, v1`. Use the key `owner`.
+---
+"Edge: CDN" -> Web app: serve
+Web app -> "API, v1"
+"Edge: CDN" { owner: Platform }
+Web app, "API, v1" { owner: Apps }

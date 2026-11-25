@@ -1,0 +1,11 @@
+A group inside a group
+
+The `Platform` holds a group called `Data`, and `Data` holds `Postgres` and
+`Redis`. The `Platform` also holds the `API`. The `API` uses `Postgres` and
+`Redis`.
+---
+Platform {
+  API
+  Data { Postgres, Redis }
+}
+API -> Postgres, Redis

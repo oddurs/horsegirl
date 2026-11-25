@@ -1,0 +1,7 @@
+Two links with evidence
+
+The `API` calls `Auth`, as `src/api.rs` line 40 shows. The `API` calls the
+`Cache`, as `src/cache.rs` line 9 shows.
+---
+API -> Auth @ src/api.rs:40
+API -> Cache @ src/cache.rs:9

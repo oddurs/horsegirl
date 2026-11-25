@@ -1,0 +1,11 @@
+Placing an order at a cafe
+
+Write the story `coffee`: the `Customer` goes to the `Till` with the label
+`order`, the `Till` sends to the `Barista` with the label `ticket`, and the
+`Barista` gives to the `Customer` with the label `cup`.
+---
+story coffee {
+  Customer -> Till: order
+  Till -> Barista: ticket
+  Barista -> Customer: cup
+}

@@ -1,0 +1,7 @@
+A port in a fact
+
+The `Gateway` calls the `API`. The `API` has the fact `note` with the value
+`django :8000`.
+---
+Gateway -> API
+API { note: "django :8000" }

@@ -1,0 +1,10 @@
+Feature flags
+
+The `Web app`, the `Mobile app` and the `Backend` each read from the
+`Flag service`, with the label `read flags`. A `Product manager` uses the
+`Flag console`, with the label `change`. The `Flag console` writes to the
+`Flag service`, with the label `write`.
+---
+Web app, Mobile app, Backend -> Flag service: read flags
+Product manager -> Flag console: change
+Flag console -> Flag service: write

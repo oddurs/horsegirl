@@ -1,0 +1,15 @@
+Two stories
+
+Write two stories. In `signup`, the `Browser` sends to `Accounts` with the
+label `post`, and `Accounts` sends to `Mailer` with the label `welcome mail`.
+In `reset`, the `Browser` sends to `Accounts` with the label `reset`, and
+`Accounts` sends to `Mailer` with the label `reset link`.
+---
+story signup {
+  Browser -> Accounts: post
+  Accounts -> Mailer: welcome mail
+}
+story reset {
+  Browser -> Accounts: reset
+  Accounts -> Mailer: reset link
+}

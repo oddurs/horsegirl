@@ -1,0 +1,9 @@
+Receiving a webhook
+
+The `Partner` posts to the `Webhook endpoint`, with the label `event`. The
+`Webhook endpoint` checks the signature with `Secrets`, with the label
+`verify`. It then puts the event on the `Event bus`, with the label `publish`.
+---
+Partner -> Webhook endpoint: event
+Webhook endpoint -> Secrets: verify
+Webhook endpoint -> Event bus: publish

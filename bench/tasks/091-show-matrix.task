@@ -1,0 +1,8 @@
+A matrix
+
+`Cart` calls `Pricing` and `Stock`. `Pricing` calls `Stock`. Show it as a
+matrix.
+---
+Cart -> Pricing, Stock
+Pricing -> Stock
+show matrix

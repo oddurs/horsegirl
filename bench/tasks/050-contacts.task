@@ -1,0 +1,8 @@
+Who to call
+
+`Billing` calls the `Ledger`. `Billing` has the fact `oncall` with the value
+`billing-team`, and the `Ledger` has `oncall` with the value `finance-team`.
+---
+Billing -> Ledger
+Billing { oncall: billing-team }
+Ledger { oncall: finance-team }

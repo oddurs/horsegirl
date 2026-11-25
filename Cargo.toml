@@ -1,6 +1,6 @@
 [workspace]
 resolver = "3"
-members = ["crates/horsegirl-core", "crates/horsegirl"]
+members = ["crates/horsegirl-core", "crates/horsegirl", "crates/horsegirl-bench"]
 
 [workspace.package]
 version = "0.0.0"

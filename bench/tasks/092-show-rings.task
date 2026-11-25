@@ -1,0 +1,8 @@
+Rings around a thing
+
+`Auth` is called by `Web`, `Mobile` and `Admin`. `Auth` calls `Users`. Show
+rings from `Auth`.
+---
+Web, Mobile, Admin -> Auth
+Auth -> Users
+show rings from Auth

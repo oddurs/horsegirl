@@ -1,0 +1,8 @@
+```
+story checkout {
+  Web app -> API: POST /checkout
+  API -> Orders: create
+  Orders -> Payments: charge
+}
+show sequence checkout
+```

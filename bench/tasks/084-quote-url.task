@@ -1,0 +1,7 @@
+A URL in a fact
+
+The `Docs site` points to the `API`, with the label `link`. The `API` has the
+fact `url` with the value `https://api.example.com`.
+---
+Docs site -> API: link
+API { url: "https://api.example.com" }

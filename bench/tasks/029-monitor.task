@@ -1,0 +1,11 @@
+Monitoring
+
+`Prometheus` scrapes `API`, `Worker` and `Database`, with the label `scrape`.
+`Grafana` reads `Prometheus`, with the label `read`. `Prometheus` sends to
+`Alertmanager` with the label `alerts`, and `Alertmanager` calls the
+`On-call engineer` with the label `page`.
+---
+Prometheus -> API, Worker, Database: scrape
+Grafana -> Prometheus: read
+Prometheus -> Alertmanager: alerts
+Alertmanager -> On-call engineer: page

@@ -1,0 +1,20 @@
+A bank transfer
+
+The `Mobile app` calls the `Transfer API`, with the label `transfer`. The
+`Transfer API` calls the `Fraud check` with the label `check`, and writes to
+the `Ledger` with the label `write`. The `Ledger` calls the `Payment rail`,
+with the label `send money`. The `Mobile app` must never call the `Ledger`,
+with the reason `audit`. The team `Payments` owns the `Transfer API` and the
+`Ledger`. The team `Risk` owns the `Fraud check`. Use the key `owner`. Write
+the story `transfer` for the four steps in order and show it as a sequence.
+---
+Transfer API, Ledger { owner: Payments }
+Fraud check { owner: Risk }
+story transfer {
+  Mobile app -> Transfer API: transfer
+  Transfer API -> Fraud check: check
+  Transfer API -> Ledger: write
+  Ledger -> Payment rail: send money
+}
+Mobile app -x Ledger: audit
+show sequence of transfer

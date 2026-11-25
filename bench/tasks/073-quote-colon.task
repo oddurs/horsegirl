@@ -1,0 +1,6 @@
+A name with a colon
+
+The sensor is called `Sensors: wind`. It sends to the `Hub`, with the label
+`readings`.
+---
+"Sensors: wind" -> Hub: readings

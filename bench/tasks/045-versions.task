@@ -1,0 +1,8 @@
+Versions
+
+The `Mobile app` calls the `API`. The `API` has the fact `version` with the
+value `3`. The `Mobile app` has the fact `min api` with the value `2`.
+---
+Mobile app -> API
+API { version: 3 }
+Mobile app { min api: 2 }

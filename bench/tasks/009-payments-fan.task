@@ -1,0 +1,6 @@
+One service, three providers
+
+`Payments` sends charges to `Stripe`, `Adyen` and `PayPal`. Write it as one line
+with the label `charge`.
+---
+Payments -> Stripe, Adyen, PayPal: charge

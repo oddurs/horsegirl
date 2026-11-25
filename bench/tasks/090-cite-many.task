@@ -1,0 +1,8 @@
+A traced call path
+
+`main` calls `serve` at `src/main.rs` line 5. `serve` calls `route` at
+`src/server.rs` line 22. `route` calls `handler` at `src/routes.rs` line 8.
+---
+main -> serve @ src/main.rs:5
+serve -> route @ src/server.rs:22
+route -> handler @ src/routes.rs:8
