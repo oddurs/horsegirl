@@ -40,6 +40,12 @@ the project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   inline sets them to restyle it. Each shape has the class of its role
   (`thing`, `group`, `link`, `label`) and one class for each fact, such as
   `owner-commerce`.
+- `horsegirl_core::overlap::overlaps` reads a scene and gives each collision
+  in it: two boxes that overlap, a link that crosses the box of a thing, a
+  link that passes through a group that holds neither of its ends, a link that
+  crosses the border of its own group more than once, two links with no end
+  in common that lie on each other, a label on the box of another thing, a
+  link label that is not on its link, and two labels that overlap.
 
 ### Changed
 
@@ -54,6 +60,13 @@ the project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - `horsegirl_core::layout::layout` places the boxes and the groups of a flow
   in ranks from left to right. A link goes to a higher rank, and the link that
   closes a loop is the one that turns. Two boxes of one rank are at least
-  24 px apart, and a group box holds its own boxes and no other. The layout
-  routes no link. It takes an earlier picture as a seed and does not read it
-  yet.
+  24 px apart, and a group box holds its own boxes and no other. It takes an
+  earlier picture as a seed and does not read it yet.
+- The layout routes each link as a path at right angles. A path leaves the
+  right side of a box, turns only between two ranks, and enters the left side
+  of the next box, so it crosses no box of a thing. A link out of a group
+  crosses the border of the group once. A link from a thing to itself is a
+  loop at the right side of its box. `Graph::labels` gives the size of the
+  label of each link, and the layout gives the centre of each label on its
+  path, with a gap between two ranks that is wide enough for the label. The
+  paths are in `Layout::paths` and the labels in `Layout::labels`.
