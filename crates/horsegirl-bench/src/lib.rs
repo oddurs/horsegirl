@@ -18,6 +18,8 @@ use std::path::Path;
 
 use horsegirl_core::check::{check, fix_all};
 use horsegirl_core::diagnostic::Severity;
+use horsegirl_core::model::lower;
+use horsegirl_core::syntax::parse;
 
 pub use adapter::{Command, Model, Recorded, Recording};
 
@@ -185,6 +187,7 @@ pub struct Answer {
     /// The code of each diagnostic of the first try, in the order `check`
     /// gives them.
     pub first: Vec<&'static str>,
+    /// `check` gives no error, and the file states a link or a rule.
     pub valid_first: bool,
     /// The code of each diagnostic left after one `fix`.
     pub left: Vec<&'static str>,
@@ -203,10 +206,19 @@ impl Answer {
     }
 }
 
-fn has_error(codes: &[&str]) -> bool {
-    codes
-        .iter()
-        .any(|code| Severity::of(code) == Some(Severity::Error))
+/// Whether `file` is a valid answer: `check` gives it no error, and it
+/// states at least one link or `-x` rule.
+///
+/// An empty reply, an empty fenced block and a refusal in prose all give no
+/// error, because prose reads as one lone thing. None of them describes a
+/// system, so none of them counts as valid.
+fn valid(file: &str, codes: &[&str]) -> bool {
+    let model = lower(&parse(file).tree);
+    let states = !model.links.is_empty() || !model.rules.is_empty();
+    states
+        && !codes
+            .iter()
+            .any(|code| Severity::of(code) == Some(Severity::Error))
 }
 
 /// Scores one reply to `task`.
@@ -220,9 +232,9 @@ pub fn score(task: &Task, reply: Option<&str>) -> Score {
         let expectations = checker::expectations(&task.checker);
         let missing = checker::missing(&expectations, &fixed);
         Answer {
-            valid_first: !has_error(&first),
+            valid_first: valid(&file, &first),
             first,
-            valid_fixed: !has_error(&left),
+            valid_fixed: valid(&fixed, &left),
             left,
             expected: expectations.len(),
             missing,

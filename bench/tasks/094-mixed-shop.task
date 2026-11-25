@@ -5,7 +5,7 @@ The group `Services` holds `Orders`, `Payments` and `Notify`. The team
 the key `owner`. The `Web app` and the `Mobile app` call the `API gateway`. The
 `API gateway` calls `Orders`. `Orders` calls `Payments`, and `Payments` calls
 `Notify`. Neither app may call `Postgres`, with the reason `never directly`.
-`Orders` saves to `Postgres`. Show it as a flow.
+`Orders` writes to `Postgres`, with the label `save`. Show it as a flow.
 ---
 Services {
   Orders, Payments { owner: Commerce }

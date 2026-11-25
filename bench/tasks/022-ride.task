@@ -1,8 +1,10 @@
 Booking a ride
 
-The `Rider app` asks `Dispatch` for a car. `Dispatch` reads positions from
-`Locations` and offers the ride to the `Driver app`. The `Driver app` accepts,
-and `Dispatch` tells the `Rider app`.
+The `Rider app` asks `Dispatch` for a car, with the label `request`. `Dispatch`
+reads positions from `Locations`, with the label `nearest cars`, and offers the
+ride to the `Driver app`, with the label `offer`. The `Driver app` answers
+`Dispatch`, with the label `accept`. Then `Dispatch` tells the `Rider app`,
+with the label `matched`.
 ---
 Rider app -> Dispatch: request
 Dispatch -> Locations: nearest cars

@@ -1,7 +1,7 @@
 A time in a fact
 
-The `Report job` writes to the `Archive`. The `Report job` has the fact `runs`
-with the value `daily at 02:00`.
+The `Report job` writes to the `Archive`, with the label `write`. The
+`Report job` has the fact `runs` with the value `daily at 02:00`.
 ---
 Report job -> Archive: write
 Report job { runs: "daily at 02:00" }

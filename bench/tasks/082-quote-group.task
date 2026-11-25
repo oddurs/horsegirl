@@ -1,7 +1,7 @@
 A group whose name has a colon
 
 The group `Region: EU` holds `API` and `Database`. The `API` reads the
-`Database`.
+`Database`, with the label `read`.
 ---
 "Region: EU" { API, Database }
 API -> Database: read

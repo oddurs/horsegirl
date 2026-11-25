@@ -1,7 +1,7 @@
 Two lenses
 
-`Ingest` writes to `Lake`, and `Query` reads `Lake`. Show it as a flow and as a
-matrix.
+`Ingest` writes to `Lake`, with the label `write`. `Query` reads `Lake`, with
+the label `read`. Show it as a flow and as a matrix.
 ---
 Ingest -> Lake: write
 Query -> Lake: read

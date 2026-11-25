@@ -1,8 +1,9 @@
 A story with a guess
 
-Write the story `sync`: the `Phone` pushes to the `Sync API`, the `Sync API`
-saves to the `Store`, and, we think, the `Sync API` notifies the `Tablet`. Mark
-that last step as a guess.
+Write the story `sync`: the `Phone` sends to the `Sync API` with the label
+`push`, the `Sync API` writes to the `Store` with the label `save`, and, we
+think, the `Sync API` tells the `Tablet` with the label `notify`. Mark that
+last step as a guess.
 ---
 story sync {
   Phone -> Sync API: push

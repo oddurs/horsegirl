@@ -1,5 +1,6 @@
 A name with a comma
 
-A step is called `Read, then write`. The `Importer` runs `Read, then write`.
+A step is called `Read, then write`. The `Importer` calls `Read, then write`,
+with the label `run`.
 ---
 Importer -> "Read, then write": run

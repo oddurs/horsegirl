@@ -1,7 +1,8 @@
 Backups
 
-The `Backup agent` copies the `Database` to `Object storage` every night. A
-`Restore tool` reads from `Object storage`.
+The `Backup agent` copies the `Database` every night, with the label `copy`,
+and writes the copy to `Object storage`, with the label `write`. A
+`Restore tool` reads from `Object storage`, with the label `read`.
 ---
 Backup agent -> Database: copy
 Backup agent -> Object storage: write

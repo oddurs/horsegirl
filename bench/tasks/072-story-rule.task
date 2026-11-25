@@ -1,8 +1,8 @@
 A story and a rule
 
-Write the story `upload`: the `Client` sends a file to the `Upload API`, and the
-`Upload API` stores it in the `Bucket`. Also state that the `Client` must never
-write to the `Bucket` directly.
+Write the story `upload`: the `Client` sends to the `Upload API` with the label
+`file`, and the `Upload API` writes to the `Bucket` with the label `store`.
+Also state that the `Client` must never write to the `Bucket` directly.
 ---
 story upload {
   Client -> Upload API: file

@@ -1,7 +1,8 @@
 A multiplayer game
 
-Two clients, `Player 1` and `Player 2`, send inputs to the `Game server`. The
-`Game server` sends state back to both, with the label `state`.
+Two clients, `Player 1` and `Player 2`, send to the `Game server` with the
+label `inputs`. The `Game server` sends state back to both, with the label
+`state`.
 ---
 Player 1, Player 2 -> Game server: inputs
 Game server -> Player 1, Player 2: state

@@ -1,9 +1,9 @@
 A story and a flow
 
 The `App` calls the `API`, and the `API` calls the `Cache` and the `Database`.
-Then write the story `read`: the `App` asks the `API`, the `API` misses in the
-`Cache`, and the `API` reads the `Database`. Show both a flow and the sequence
-of `read`.
+Then write the story `read`: the `App` calls the `API` with the label `ask`,
+the `API` calls the `Cache` with the label `miss`, and the `API` calls the
+`Database` with the label `read`. Show both a flow and the sequence of `read`.
 ---
 App -> API
 API -> Cache, Database

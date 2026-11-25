@@ -1,7 +1,8 @@
 Frontend and backend
 
 The `Frontend` group holds `Web app` and `Admin app`. The `Backend` group holds
-`API` and `Jobs`. Both apps call the `API`. The `API` starts `Jobs`.
+`API` and `Jobs`. Both apps call the `API`. The `API` starts `Jobs`, with the
+label `start`.
 ---
 Frontend { Web app, Admin app }
 Backend { API, Jobs }

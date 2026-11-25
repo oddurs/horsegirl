@@ -129,59 +129,52 @@ fn same(a: &str, b: &str) -> bool {
     a.to_lowercase() == b.to_lowercase()
 }
 
-/// The thing in `model` with this name, in any case.
-fn find(model: &Model, name: &str) -> Option<usize> {
-    model
-        .things
-        .iter()
-        .position(|thing| same(&thing.name, name))
+/// Whether the thing `id` of `model` has this name, in any case.
+fn is(model: &Model, id: usize, name: &str) -> bool {
+    same(&model.things[id].name, name)
 }
 
 /// Whether `answer` states `expectation`.
+///
+/// Each test compares names and never the id of one matching thing: an
+/// answer may hold two things whose names differ only in case, and either of
+/// them may be the one that states the fact.
 fn meets(answer: &Model, expectation: &Expectation) -> bool {
+    let things = || answer.things.iter().enumerate();
     match expectation {
-        Expectation::Thing(name) => find(answer, name).is_some(),
-        Expectation::Part { part, group } => find(answer, part)
-            .and_then(|id| answer.things[id].parent)
-            .is_some_and(|parent| same(&answer.things[parent].name, group)),
-        Expectation::Fact { thing, key, value } => find(answer, thing).is_some_and(|id| {
-            answer.things[id]
-                .facts
-                .iter()
-                .any(|fact| same(&fact.key, key) && same(&fact.value, value))
+        Expectation::Thing(name) => things().any(|(id, _)| is(answer, id, name)),
+        Expectation::Part { part, group } => things().any(|(id, thing)| {
+            is(answer, id, part) && thing.parent.is_some_and(|parent| is(answer, parent, group))
+        }),
+        Expectation::Fact { thing, key, value } => things().any(|(id, known)| {
+            is(answer, id, thing)
+                && known
+                    .facts
+                    .iter()
+                    .any(|fact| same(&fact.key, key) && same(&fact.value, value))
         }),
         Expectation::Link {
             from,
             to,
             labels,
             guess,
-        } => {
-            let (Some(from), Some(to)) = (find(answer, from), find(answer, to)) else {
-                return false;
-            };
-            answer.links.iter().any(|link| {
-                link.from == from
-                    && link.to == to
-                    && link.guess == *guess
-                    && labels
-                        .iter()
-                        .all(|label| link.labels.iter().any(|known| same(known, label)))
-            })
-        }
-        Expectation::Rule { from, to, reason } => {
-            let (Some(from), Some(to)) = (find(answer, from), find(answer, to)) else {
-                return false;
-            };
-            answer.rules.iter().any(|rule| {
-                rule.from == from
-                    && rule.to == to
-                    && reason.as_ref().is_none_or(|reason| {
-                        rule.reason
-                            .as_ref()
-                            .is_some_and(|known| same(known, reason))
-                    })
-            })
-        }
+        } => answer.links.iter().any(|link| {
+            is(answer, link.from, from)
+                && is(answer, link.to, to)
+                && link.guess == *guess
+                && labels
+                    .iter()
+                    .all(|label| link.labels.iter().any(|known| same(known, label)))
+        }),
+        Expectation::Rule { from, to, reason } => answer.rules.iter().any(|rule| {
+            is(answer, rule.from, from)
+                && is(answer, rule.to, to)
+                && reason.as_ref().is_none_or(|reason| {
+                    rule.reason
+                        .as_ref()
+                        .is_some_and(|known| same(known, reason))
+                })
+        }),
         Expectation::Show { lens, arg } => answer.shows.iter().any(|show| {
             let shown = show
                 .arg

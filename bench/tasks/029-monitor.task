@@ -1,8 +1,9 @@
 Monitoring
 
-`Prometheus` scrapes `API`, `Worker` and `Database`. `Grafana` reads
-`Prometheus`, and `Alertmanager` receives alerts from `Prometheus` and pages
-the `On-call engineer`.
+`Prometheus` scrapes `API`, `Worker` and `Database`, with the label `scrape`.
+`Grafana` reads `Prometheus`, with the label `read`. `Prometheus` sends to
+`Alertmanager` with the label `alerts`, and `Alertmanager` calls the
+`On-call engineer` with the label `page`.
 ---
 Prometheus -> API, Worker, Database: scrape
 Grafana -> Prometheus: read

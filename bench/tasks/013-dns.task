@@ -1,8 +1,9 @@
 Resolving a name
 
-The `Laptop` asks the `Resolver`. The `Resolver` asks the `Root server`, then
-the `TLD server`, then the `Authoritative server`. Each of the three answers
-the `Resolver` with the label `referral`.
+The `Laptop` asks the `Resolver`, with the label `ask`. The `Resolver` asks the
+`Root server`, then the `TLD server`, then the `Authoritative server`, each
+with the label `ask`. Each of the three answers the `Resolver` with the label
+`referral`.
 ---
 Laptop -> Resolver: ask
 Resolver -> Root server, TLD server, Authoritative server: ask

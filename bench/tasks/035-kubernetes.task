@@ -1,8 +1,9 @@
 A cluster
 
 The `Cluster` holds the `Ingress`, the `Web pod` and the `Worker pod`. The
-`Ingress` routes to the `Web pod`. The `Web pod` sends jobs to the `Queue`,
-which is outside the `Cluster`, and the `Worker pod` reads the `Queue`.
+`Ingress` sends to the `Web pod`, with the label `route`. The `Web pod` sends
+to the `Queue`, with the label `jobs`. The `Queue` is outside the `Cluster`.
+The `Worker pod` reads the `Queue`, with the label `read`.
 ---
 Cluster { Ingress, Web pod, Worker pod }
 Ingress -> Web pod: route

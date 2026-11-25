@@ -1,5 +1,6 @@
 Braces in a name
 
-A template is called `Hello {name}`. The `Mailer` renders `Hello {name}`.
+A template is called `Hello {name}`. The `Mailer` uses `Hello {name}`, with the
+label `render`.
 ---
 Mailer -> "Hello {name}": render

@@ -1,5 +1,6 @@
 An arrow in a name
 
-A migration is called `apply trial -> new current`. The `Migrator` runs it.
+A migration is called `apply trial -> new current`. The `Migrator` calls it,
+with the label `run`.
 ---
 Migrator -> "apply trial -> new current": run

@@ -1,7 +1,8 @@
 A weather station
 
 A `Thermometer`, a `Barometer` and an `Anemometer` all feed the `Logger`. The
-`Logger` writes to an `SD card` and sends a summary to the `Website`.
+`Logger` writes to an `SD card` with the label `write`, and sends to the
+`Website` with the label `summary`.
 ---
 Thermometer, Barometer, Anemometer -> Logger
 Logger -> SD card: write

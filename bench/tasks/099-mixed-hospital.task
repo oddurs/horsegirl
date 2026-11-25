@@ -1,9 +1,10 @@
 Hospital teams
 
 The group `Ward` holds `Nurse station` and `Bedside monitor`. The
-`Bedside monitor` sends alarms to the `Nurse station`. The `Nurse station`
-writes to `Records`. The team `Nursing` owns the `Ward`, and the team `IT` owns
-`Records`, with the key `owner`. Show the seams by owner.
+`Bedside monitor` sends to the `Nurse station`, with the label `alarm`. The
+`Nurse station` writes to `Records`, with the label `write`. The team `Nursing`
+owns the `Ward`, and the team `IT` owns `Records`, with the key `owner`. Show
+the seams by owner.
 ---
 Ward { Nurse station, Bedside monitor }
 Ward { owner: Nursing }

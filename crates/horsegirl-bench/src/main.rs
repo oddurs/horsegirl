@@ -63,6 +63,14 @@ fn main() -> ExitCode {
     match args.action {
         Action::Prompt { id } => print_prompt(&tasks, &id),
         Action::Score { replies } => {
+            // A mistyped path would otherwise score as a run with no replies.
+            if !replies.is_dir() {
+                eprintln!(
+                    "horsegirl-bench: {} is not a directory. Give the directory that holds the replies, one <id>.txt for each task.",
+                    replies.display()
+                );
+                return ExitCode::FAILURE;
+            }
             let name = args.name.unwrap_or_else(|| name_of(&replies));
             let scores = run(&tasks, &mut Recorded { dir: replies });
             print_report(&name, scores)

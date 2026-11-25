@@ -2,8 +2,9 @@ A refund in lanes
 
 `Support` and `Finance` are teams. The `Agent` is owned by `Support`. The
 `Refund tool` and the `Bank` are owned by `Finance`. Use the key `owner`. Write
-the story `refund`: the `Agent` opens a refund in the `Refund tool`, and the
-`Refund tool` sends money through the `Bank`. Show it as lanes.
+the story `refund`: the `Agent` uses the `Refund tool` with the label
+`open refund`, and the `Refund tool` calls the `Bank` with the label
+`send money`. Show it as lanes.
 ---
 Agent { owner: Support }
 Refund tool, Bank { owner: Finance }

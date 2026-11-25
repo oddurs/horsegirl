@@ -13,7 +13,7 @@ use std::fs;
 use std::io;
 use std::path::{Path, PathBuf};
 
-use horsegirl_bench::checker::{expectations, missing};
+use horsegirl_bench::checker::{Expectation, expectations, missing};
 use horsegirl_bench::{
     Command, Model, Recorded, Recording, Task, extract, load_tasks, prompt, report, run, score,
 };
@@ -78,20 +78,62 @@ fn every_checker_is_a_valid_file_with_no_lone_thing() {
     }
 }
 
-#[test]
-fn every_checker_names_its_things_in_its_description() {
-    // A model can only meet a name that the description gives it.
-    for task in tasks() {
-        for expectation in expectations(&task.checker) {
-            if let horsegirl_bench::checker::Expectation::Thing(name) = expectation {
-                assert!(
-                    task.description.contains(&format!("`{name}`")),
-                    "task {} expects `{name}` and its description does not name it",
-                    task.id
-                );
+/// Each word of a checker that a description must give in backticks, so that
+/// a model can write it exactly. A fact may give its key and its value in one
+/// pair, as `key: value`.
+fn unnamed(task: &Task) -> Vec<String> {
+    let named = |word: &str| task.description.contains(&format!("`{word}`"));
+    let mut lacking = Vec::new();
+    let mut need = |word: &str| {
+        if !named(word) && !lacking.iter().any(|known| known == word) {
+            lacking.push(word.to_owned());
+        }
+    };
+    for expectation in expectations(&task.checker) {
+        match expectation {
+            Expectation::Thing(name) => need(&name),
+            Expectation::Fact { key, value, .. } => {
+                if !named(&format!("{key}: {value}")) {
+                    need(&key);
+                    need(&value);
+                }
             }
+            Expectation::Link { labels, .. } => labels.iter().for_each(|label| need(label)),
+            Expectation::Rule {
+                reason: Some(reason),
+                ..
+            } => need(&reason),
+            Expectation::Part { .. } | Expectation::Rule { .. } | Expectation::Show { .. } => {}
         }
     }
+    lacking
+}
+
+#[test]
+fn every_checker_names_its_words_in_its_description() {
+    // A model can only meet a name, a label, a fact or a reason that the
+    // description gives it exactly.
+    let lacking: Vec<String> = tasks()
+        .iter()
+        .filter_map(|task| {
+            let words = unnamed(task);
+            (!words.is_empty()).then(|| format!("{}: {}", task.id, words.join(", ")))
+        })
+        .collect();
+    assert!(
+        lacking.is_empty(),
+        "these descriptions do not give each word in backticks:\n{}",
+        lacking.join("\n")
+    );
+}
+
+#[test]
+fn a_description_must_give_each_label_and_fact() {
+    let mut task = task("A -> B: save\nB { owner: Core }\nB -x A: no cycles\n");
+    task.description = "`A` asks `B`.".to_owned();
+    assert_eq!(unnamed(&task), ["owner", "Core", "save", "no cycles"]);
+    task.description = "`A` asks `B` to `save`. `B` has `owner: Core`. `no cycles`.".to_owned();
+    assert_eq!(unnamed(&task), Vec::<String>::new());
 }
 
 #[test]
@@ -255,6 +297,38 @@ fn a_score_applies_one_fix_before_the_checker() {
 }
 
 #[test]
+fn a_reply_that_states_no_link_is_not_valid() {
+    let task = task("A -> B\n");
+    for reply in ["", "```horsegirl\n```\n", "I cannot help with that.\n"] {
+        let answer = score(&task, Some(reply)).answer.expect("a reply");
+        assert!(!answer.valid_first, "{reply:?}");
+        assert!(!answer.valid_fixed, "{reply:?}");
+        assert!(!answer.correct(), "{reply:?}");
+    }
+    let answer = score(&task, Some("A -x B\n")).answer.expect("a reply");
+    assert!(answer.valid_first, "a rule alone states a fact");
+}
+
+#[test]
+fn a_command_with_an_empty_reply_scores_as_invalid() {
+    let mut model = Command {
+        command: "true".to_owned(),
+    };
+    let scores = run(&tasks()[..1], &mut model).expect("the command runs");
+    let answer = scores[0].answer.as_ref().expect("a reply");
+    assert!(!answer.valid_first && !answer.valid_fixed);
+}
+
+#[test]
+fn a_checker_finds_a_fact_on_any_thing_of_the_name() {
+    // `api` and `API` are two things. The answer states the fact on the
+    // second, and the checker must not stop at the first.
+    let expected = expectations("G { API }\nAPI { owner: Core }\nAPI -> Store\nAPI -x Cache\n");
+    let answer = "api -> Cache\nG { API }\nAPI { owner: Core }\nAPI -> Store\nAPI -x Cache\n";
+    assert_eq!(missing(&expected, answer), Vec::<String>::new());
+}
+
+#[test]
 fn no_reply_scores_nothing() {
     assert_eq!(score(&task("A -> B\n"), None).answer, None);
 }
@@ -299,4 +373,16 @@ fn the_command_line_scores_a_directory() {
     assert!(output.status.success());
     let expected = fs::read_to_string(root().join("bench/runs/hand/report.md")).expect("a report");
     assert_eq!(String::from_utf8_lossy(&output.stdout), expected);
+}
+
+#[test]
+fn the_command_line_refuses_replies_that_are_not_a_directory() {
+    let output = std::process::Command::new(env!("CARGO_BIN_EXE_horsegirl-bench"))
+        .current_dir(root())
+        .args(["score", "bench/runs/no-such-run"])
+        .output()
+        .expect("the binary runs");
+    assert_eq!(output.status.code(), Some(1));
+    assert_eq!(String::from_utf8_lossy(&output.stdout), "");
+    assert!(String::from_utf8_lossy(&output.stderr).contains("is not a directory"));
 }

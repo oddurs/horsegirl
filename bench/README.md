@@ -12,7 +12,9 @@ things for each task:
    `horsegirl fix` applies them, and `check` gives no error.
 3. The fixed file states every fact that the checker of the task expects.
 
-A task with no reply scores as a failure.
+A valid file also states at least one link or `-x` rule. An empty reply and a
+refusal in prose give no error, but they describe no system, so they are not
+valid. A task with no reply scores as a failure.
 
 ## Tasks
 
@@ -28,7 +30,9 @@ API gateway -> Orders
 ```
 
 The first line is the title. The description follows, up to a line that is
-`---` alone. The description writes each name and each label in backticks.
+`---` alone. The description writes each name, label, fact key, fact value
+and reason in backticks, exactly as the checker writes it. A fact may give its
+key and its value in one pair of backticks, as `` `critical: yes` ``.
 The checker follows the `---` line. It is a horsegirl file. Each thing, part,
 fact, link, `-x` rule and `show` line in it is one expected fact. A link must
 match its label and its guess mark, and a rule its reason, where the checker
@@ -39,7 +43,8 @@ The checker does not see the order of a story or a citation, because the model
 does not hold them yet. A story task is checked by its links.
 
 The tests hold every task to three rules: the checker is a valid file, it has
-no lone thing, and the description names each of its things in backticks.
+no lone thing, and the description gives each of its names, labels, facts and
+reasons in backticks.
 
 ## Running a model
 
@@ -56,7 +61,8 @@ cargo run -p horsegirl-bench -- run --command 'my-model-script' bench/runs/my-mo
 
 ## Scoring a recorded run
 
-`horsegirl-bench score` reads the recorded replies and needs no network:
+`horsegirl-bench score` reads the recorded replies and needs no network. It
+refuses a path that is not a directory:
 
 ```sh
 cargo run -p horsegirl-bench -- score bench/runs/hand

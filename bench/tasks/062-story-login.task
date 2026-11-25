@@ -1,8 +1,8 @@
 The login story
 
-Write a story called `login` in this order: the `Browser` sends the password to
-`Auth`, `Auth` checks it in `Users`, and `Auth` returns a token to the
-`Browser`. Show it as a sequence.
+Write a story called `login` in this order: the `Browser` sends to `Auth` with
+the label `password`, `Auth` asks `Users` with the label `check`, and `Auth`
+answers the `Browser` with the label `token`. Show it as a sequence.
 ---
 story login {
   Browser -> Auth: password

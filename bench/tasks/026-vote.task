@@ -1,7 +1,8 @@
 An online poll
 
-A `Voter` submits a vote to the `Poll API`. The `Poll API` adds it to the
-`Tally`. The `Results page` reads the `Tally`.
+A `Voter` sends to the `Poll API`, with the label `vote`. The `Poll API` adds
+it to the `Tally`, with the label `add`. The `Results page` reads the `Tally`,
+with the label `read`.
 ---
 Voter -> Poll API: vote
 Poll API -> Tally: add

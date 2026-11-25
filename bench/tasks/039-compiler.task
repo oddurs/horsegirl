@@ -1,9 +1,10 @@
 A compiler
 
 The `Compiler` holds the `Lexer`, the `Parser`, the `Checker` and the
-`Code generator`. `Source` goes to the `Lexer`, the `Lexer` gives tokens to the
-`Parser`, the `Parser` gives a tree to the `Checker`, and the `Checker` gives
-the tree to the `Code generator`, which writes the `Binary`.
+`Code generator`. `Source` goes to the `Lexer`. The `Lexer` gives the `Parser`
+the label `tokens`. The `Parser` gives the `Checker` the label `tree`. The
+`Checker` gives the `Code generator` the label `tree`. The `Code generator`
+writes the `Binary`, with the label `write`.
 ---
 Compiler { Lexer, Parser, Checker, Code generator }
 Source -> Lexer

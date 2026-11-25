@@ -1,8 +1,9 @@
 A deploy
 
-Write the story `deploy`: the `Engineer` merges in `GitHub`, `GitHub` starts
-`CI`, `CI` pushes to the `Registry`, and `Argo` pulls from the `Registry`.
-Show it as a sequence.
+Write the story `deploy`: the `Engineer` acts on `GitHub` with the label
+`merge`, `GitHub` calls `CI` with the label `start`, `CI` sends to the
+`Registry` with the label `push`, and `Argo` reads from the `Registry` with the
+label `pull`. Show it as a sequence.
 ---
 story deploy {
   Engineer -> GitHub: merge

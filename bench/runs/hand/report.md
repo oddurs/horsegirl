@@ -4,8 +4,8 @@
 
 | Score | Tasks |
 | --- | ---: |
-| Valid on the first try | 8 of 100 |
-| Valid after one `fix` | 12 of 100 |
+| Valid on the first try | 7 of 100 |
+| Valid after one `fix` | 11 of 100 |
 | Valid after one `fix`, with every expected fact | 9 of 100 |
 
 ## The diagnostics that replies hit most often
@@ -128,4 +128,4 @@ Counted on the first try. "Left" counts the replies that still have the code aft
 | 097 | Quotes and owners | no reply | no reply | | | |
 | 098 | A game backend | no reply | no reply | | | |
 | 099 | Hospital teams | no reply | no reply | | | |
-| 100 | A model in production | valid | valid | 0/13 | W0107 | `thing Feature store` |
+| 100 | A model in production | invalid | invalid | 0/13 | W0107 | `thing Feature store` |
