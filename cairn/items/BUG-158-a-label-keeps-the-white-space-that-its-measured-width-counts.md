@@ -3,8 +3,10 @@ id: 158
 uid: aece6a49-edf2-45e2-be01-d2d400f6f4e9
 title: A label keeps the white space that its measured width counts
 type: bug
-status: backlog
+status: doing
 milestone: v0.1
+assignee: Oddur Sigurdsson
+claimed: 2026-11-25
 created: 2026-11-25
 updated: 2026-11-25
 priority: p1

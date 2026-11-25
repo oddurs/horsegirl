@@ -65,7 +65,9 @@ fn the_text_of_the_reference_flow_has_4_5_to_1_in_both_modes() {
 #[test]
 fn the_style_paints_the_text_with_ink_and_each_owner_with_its_slot() {
     let svg = draw(&scene(CHECKOUT), "checkout");
-    assert!(svg.contains(".horsegirl .label{fill:var(--hg-ink,light-dark(#1F2328,#E6E8EB))}"));
+    assert!(svg.contains(
+        ".horsegirl .label{fill:var(--hg-ink,light-dark(#1F2328,#E6E8EB));white-space:pre}"
+    ));
     for slot in 1..=3 {
         assert!(svg.contains(&format!(".thing.slot-{slot}{{fill:var(--hg-c{slot},")));
     }

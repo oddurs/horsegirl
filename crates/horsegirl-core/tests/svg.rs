@@ -107,7 +107,7 @@ fn every_colour_and_the_font_is_a_css_variable_with_a_fallback() {
     let style = &svg[svg.find("<style>").unwrap()..svg.find("</style>").unwrap()];
     for declaration in style.split(['{', ';', '}']).filter(|d| d.contains(':')) {
         let (property, value) = declaration.split_once(':').unwrap();
-        if value == "none" {
+        if value == "none" || value == "pre" {
             continue;
         }
         assert!(
@@ -177,6 +177,31 @@ fn a_label_outside_the_metrics_table_keeps_its_natural_width() {
     assert!(!arabic.contains("lengthAdjust"), "{arabic}");
     let latin = svg.lines().find(|l| l.ends_with(">B</text>")).expect(&svg);
     assert!(latin.contains(" textLength=\""), "{latin}");
+}
+
+// SVG collapses leading, trailing and repeated spaces unless the label says
+// to keep them, and `textLength` would then stretch the text (BUG-158).
+#[test]
+fn a_label_keeps_the_white_space_that_its_width_counts() {
+    let svg = draw(
+        &scene("\"  Wide name  \" -> E\n\"Wide  name\" -> F\n"),
+        "spaces",
+    );
+    assert!(svg.contains(".horsegirl .label{fill:"), "{svg}");
+    let rule = svg
+        .lines()
+        .find(|l| l.contains(".horsegirl .label{"))
+        .expect(&svg);
+    assert!(rule.contains(";white-space:pre}"), "{rule}");
+    for text in ["  Wide name  ", "Wide  name"] {
+        let line = svg
+            .lines()
+            .find(|l| l.ends_with(&format!(">{text}</text>")))
+            .expect(&svg);
+        let (_, rest) = line.split_once(" textLength=\"").expect(line);
+        let length: f64 = rest.split_once('"').unwrap().0.parse().unwrap();
+        assert!((length - measure(text, STYLE).width).abs() < 0.01, "{line}");
+    }
 }
 
 // Zero is not a width a renderer can stretch text to.
