@@ -65,3 +65,7 @@ Decisions from the review notes of item 23. Overlap: the outer fix wins. After s
 ## 2026-11-25
 
 Filed BUG-140: the safe E0004 fix for 'A -> B@x: pay' gives 'A -> "B@x: pay"', so the label becomes part of the name.
+
+## 2026-11-25
+
+Fix round 1: merged main (#28). tests/golden.rs now prints the Fix as confidence, description and edits; HORSEGIRL_BLESS=1 changed only unquoted-reserved-characters.diagnostics.json. New test a_character_of_two_bytes_inside_the_span_gets_one_mark passes; with marked.len() in Diagnostic::render it FAILED (12 passed, 1 failed). scripts/task check exit 0: nextest 50 tests run, 50 passed.
