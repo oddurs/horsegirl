@@ -44,7 +44,8 @@ necessary for a pre-release, and `HORSEGIRL_INSTALL_DIR` to choose another
 directory. Each release also carries a build attestation:
 `gh attestation verify <archive> --repo oddurs/horsegirl` checks it.
 
-To build from a checkout instead, use the Rust toolchain named in
+There is no release yet, so the script has nothing to download. Until the
+first release, build from a checkout with the Rust toolchain named in
 `rust-toolchain.toml`:
 
 ```sh
