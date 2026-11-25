@@ -8,6 +8,8 @@ pub struct Score {
     pub height: f64,
     /// Pairs of boxes that overlap.
     pub overlaps: usize,
+    /// Pairs of boxes that do not overlap and that have less than one pixel between them.
+    pub touching: usize,
     /// Things outside their group or inside a group that is not theirs, and pairs of groups
     /// that overlap without one being inside the other.
     pub group_faults: usize,
@@ -28,6 +30,17 @@ fn overlap(a: &Rect, b: &Rect) -> bool {
         && b.x + slack < a.x + a.w
         && a.y + slack < b.y + b.h
         && b.y + slack < a.y + a.h
+}
+
+/// True when less than one pixel is between the two boxes. `overlap` has a slack of half a
+/// pixel, so it does not see two boxes that share an edge.
+fn touch(a: &Rect, b: &Rect) -> bool {
+    let apart = |low: f64, high: f64, other_low: f64, other_high: f64| {
+        f64::max(other_low - high, low - other_high).max(0.0)
+    };
+    let dx = apart(a.x, a.x + a.w, b.x, b.x + b.w);
+    let dy = apart(a.y, a.y + a.h, b.y, b.y + b.h);
+    dx.hypot(dy) < 1.0
 }
 
 fn inside(inner: &Rect, outer: &Rect) -> bool {
@@ -80,8 +93,15 @@ pub fn score(graph: &Graph, picture: &Picture) -> Score {
     let b = bounds(picture);
     let nodes = &picture.nodes;
     let mut overlaps = 0;
+    let mut touching = 0;
     for (i, a) in nodes.iter().enumerate() {
-        overlaps += nodes[i + 1..].iter().filter(|b| overlap(a, b)).count();
+        for b in &nodes[i + 1..] {
+            if overlap(a, b) {
+                overlaps += 1;
+            } else if touch(a, b) {
+                touching += 1;
+            }
+        }
     }
 
     let mut group_faults = 0;
@@ -144,6 +164,7 @@ pub fn score(graph: &Graph, picture: &Picture) -> Score {
         width: b.w,
         height: b.h,
         overlaps,
+        touching,
         group_faults,
         through_box,
         unrouted,

@@ -38,11 +38,11 @@ fn corpus() -> Result<Vec<(String, Graph)>, String> {
 fn draw() -> Result<(), String> {
     let candidates = ["own", "dagre", "graphlay", "elk"];
     println!(
-        "| diagram | things | links | candidate | size | overlaps | group faults | \
+        "| diagram | things | links | candidate | size | overlaps | touching | group faults | \
          links through a box | crossings | bends | link length |"
     );
-    println!("| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |");
-    let mut totals = [[0usize; 5]; 4];
+    println!("| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |");
+    let mut totals = [[0usize; 6]; 4];
     for (name, graph) in corpus()? {
         for (index, candidate) in candidates.iter().enumerate() {
             let picture = match *candidate {
@@ -57,12 +57,13 @@ fn draw() -> Result<(), String> {
             fs::write(&path, svg::draw(&graph, &picture)).map_err(|e| format!("{path}: {e}"))?;
             let s = measure::score(&graph, &picture);
             println!(
-                "| {name} | {} | {} | {candidate} | {:.0} x {:.0} | {} | {} | {} | {} | {} | {:.0} |",
+                "| {name} | {} | {} | {candidate} | {:.0} x {:.0} | {} | {} | {} | {} | {} | {} | {:.0} |",
                 graph.nodes.len(),
                 graph.edges.len(),
                 s.width,
                 s.height,
                 s.overlaps,
+                s.touching,
                 s.group_faults,
                 s.through_box + s.unrouted,
                 s.crossings,
@@ -71,6 +72,7 @@ fn draw() -> Result<(), String> {
             );
             let row = [
                 s.overlaps,
+                s.touching,
                 s.group_faults,
                 s.through_box + s.unrouted,
                 s.crossings,
@@ -81,12 +83,15 @@ fn draw() -> Result<(), String> {
             }
         }
     }
-    println!("\n| candidate | overlaps | group faults | links through a box | crossings | bends |");
-    println!("| --- | --- | --- | --- | --- | --- |");
+    println!(
+        "\n| candidate | overlaps | touching | group faults | links through a box | crossings | \
+         bends |"
+    );
+    println!("| --- | --- | --- | --- | --- | --- | --- |");
     for (candidate, t) in candidates.iter().zip(totals) {
         println!(
-            "| {candidate} | {} | {} | {} | {} | {} |",
-            t[0], t[1], t[2], t[3], t[4]
+            "| {candidate} | {} | {} | {} | {} | {} | {} |",
+            t[0], t[1], t[2], t[3], t[4], t[5]
         );
     }
     Ok(())

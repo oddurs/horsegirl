@@ -42,64 +42,92 @@ The spike leaves out three things on purpose:
 
 ## Scores
 
-- **overlaps**: pairs of boxes that overlap.
+- **overlaps**: pairs of boxes that overlap by more than half a pixel.
+- **touching**: pairs of boxes that do not overlap and that have less than one pixel between
+  them.
 - **group faults**: things outside their group, things inside a group that is not theirs, and
   pairs of groups that overlap without one being inside the other.
 - **links through a box**: links whose path enters a box that is not one of their two ends.
 - **crossings**: points where two links cross.
 
-| diagram | things | links | candidate | size | overlaps | group faults | links through a box | crossings | bends | link length |
-| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| 01-checkout | 9 | 9 | own | 1047 x 164 | 0 | 0 | 0 | 1 | 8 | 1042 |
-| 01-checkout | 9 | 9 | dagre | 1083 x 178 | 0 | 0 | 0 | 0 | 7 | 874 |
-| 01-checkout | 9 | 9 | graphlay | 1138 x 140 | 0 | 0 | 0 | 0 | 8 | 1368 |
-| 01-checkout | 9 | 9 | elk | 984 x 110 | 0 | 0 | 0 | 0 | 8 | 973 |
-| 02-ci-pipeline | 18 | 22 | own | 2089 x 268 | 0 | 0 | 0 | 0 | 30 | 3733 |
-| 02-ci-pipeline | 18 | 22 | dagre | 2129 x 420 | 0 | 0 | 3 | 0 | 19 | 3936 |
-| 02-ci-pipeline | 18 | 22 | graphlay | 2587 x 290 | 0 | 0 | 0 | 6 | 32 | 5927 |
-| 02-ci-pipeline | 18 | 22 | elk | 2013 x 258 | 0 | 0 | 0 | 1 | 28 | 3966 |
-| 03-order-states | 15 | 20 | own | 1754 x 132 | 0 | 0 | 0 | 1 | 52 | 4574 |
-| 03-order-states | 15 | 20 | dagre | 1711 x 208 | 0 | 0 | 1 | 1 | 17 | 4227 |
-| 03-order-states | 15 | 20 | graphlay | 1733 x 204 | 0 | 0 | 0 | 0 | 20 | 4214 |
-| 03-order-states | 15 | 20 | elk | 1747 x 178 | 0 | 0 | 0 | 0 | 22 | 4392 |
-| 04-data-pipeline | 19 | 22 | own | 1740 x 744 | 0 | 0 | 0 | 0 | 38 | 6498 |
-| 04-data-pipeline | 19 | 22 | dagre | 1870 x 580 | 0 | 0 | 1 | 0 | 23 | 5162 |
-| 04-data-pipeline | 19 | 22 | graphlay | 2023 x 321 | 0 | 0 | 0 | 3 | 37 | 7350 |
-| 04-data-pipeline | 19 | 22 | elk | 1524 x 339 | 0 | 0 | 0 | 0 | 32 | 4713 |
-| 05-sign-in | 15 | 20 | own | 1534 x 174 | 0 | 0 | 0 | 0 | 52 | 6064 |
-| 05-sign-in | 15 | 20 | dagre | 1549 x 340 | 0 | 0 | 0 | 5 | 20 | 6316 |
-| 05-sign-in | 15 | 20 | graphlay | 1706 x 288 | 0 | 0 | 0 | 0 | 22 | 6489 |
-| 05-sign-in | 15 | 20 | elk | 1035 x 309 | 0 | 0 | 0 | 5 | 30 | 4183 |
-| 06-cluster-request | 17 | 23 | own | 1846 x 450 | 0 | 0 | 0 | 9 | 38 | 4375 |
-| 06-cluster-request | 17 | 23 | dagre | 1976 x 450 | 0 | 0 | 1 | 3 | 28 | 4132 |
-| 06-cluster-request | 17 | 23 | graphlay | 2374 x 310 | 0 | 0 | 0 | 7 | 44 | 6297 |
-| 06-cluster-request | 17 | 23 | elk | 1899 x 258 | 0 | 0 | 0 | 1 | 38 | 3558 |
-| 07-compiler | 16 | 18 | own | 1362 x 260 | 0 | 0 | 0 | 1 | 42 | 4583 |
-| 07-compiler | 16 | 18 | dagre | 1340 x 516 | 0 | 0 | 1 | 3 | 16 | 4181 |
-| 07-compiler | 16 | 18 | graphlay | 1551 x 381 | 0 | 0 | 0 | 3 | 29 | 6787 |
-| 07-compiler | 16 | 18 | elk | 1270 x 327 | 0 | 0 | 0 | 1 | 30 | 4439 |
-| 08-module-deps | 22 | 37 | own | 933 x 378 | 0 | 0 | 0 | 22 | 88 | 8337 |
-| 08-module-deps | 22 | 37 | dagre | 911 x 546 | 0 | 0 | 1 | 14 | 41 | 6585 |
-| 08-module-deps | 22 | 37 | graphlay | 981 x 468 | 0 | 0 | 0 | 3 | 52 | 7499 |
-| 08-module-deps | 22 | 37 | elk | 926 x 434 | 0 | 0 | 0 | 3 | 56 | 6524 |
-| 09-incident | 24 | 31 | own | 2693 x 282 | 0 | 0 | 0 | 2 | 58 | 6857 |
-| 09-incident | 24 | 31 | dagre | 2678 x 366 | 0 | 0 | 0 | 0 | 28 | 6774 |
-| 09-incident | 24 | 31 | graphlay | 2693 x 384 | 0 | 0 | 0 | 0 | 28 | 7321 |
-| 09-incident | 24 | 31 | elk | 2743 x 291 | 0 | 0 | 0 | 0 | 34 | 7656 |
-| 10-platform | 34 | 44 | own | 1988 x 1128 | 0 | 0 | 0 | 44 | 112 | 25939 |
-| 10-platform | 34 | 44 | dagre | 2200 x 1540 | 0 | 0 | 0 | 48 | 104 | 28689 |
-| 10-platform | 34 | 44 | graphlay | 3330 x 980 | 0 | 0 | 0 | 137 | 152 | 47974 |
-| 10-platform | 34 | 44 | elk | 2458 x 604 | 0 | 0 | 0 | 25 | 158 | 27611 |
+| diagram | things | links | candidate | size | overlaps | touching | group faults | links through a box | crossings | bends | link length |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| 01-checkout | 9 | 9 | own | 1047 x 164 | 0 | 0 | 0 | 0 | 1 | 8 | 1042 |
+| 01-checkout | 9 | 9 | dagre | 1083 x 178 | 0 | 0 | 0 | 0 | 0 | 7 | 874 |
+| 01-checkout | 9 | 9 | graphlay | 1138 x 140 | 0 | 0 | 0 | 0 | 0 | 8 | 1368 |
+| 01-checkout | 9 | 9 | elk | 984 x 110 | 0 | 0 | 0 | 0 | 0 | 8 | 973 |
+| 02-ci-pipeline | 18 | 22 | own | 2089 x 268 | 0 | 0 | 0 | 0 | 0 | 30 | 3733 |
+| 02-ci-pipeline | 18 | 22 | dagre | 2129 x 420 | 0 | 0 | 0 | 3 | 0 | 19 | 3936 |
+| 02-ci-pipeline | 18 | 22 | graphlay | 2587 x 290 | 0 | 0 | 0 | 0 | 6 | 32 | 5927 |
+| 02-ci-pipeline | 18 | 22 | elk | 2013 x 258 | 0 | 0 | 0 | 0 | 1 | 28 | 3966 |
+| 03-order-states | 15 | 20 | own | 1754 x 132 | 0 | 0 | 0 | 0 | 1 | 52 | 4574 |
+| 03-order-states | 15 | 20 | dagre | 1711 x 208 | 0 | 0 | 0 | 1 | 1 | 17 | 4227 |
+| 03-order-states | 15 | 20 | graphlay | 1733 x 204 | 0 | 0 | 0 | 0 | 0 | 20 | 4214 |
+| 03-order-states | 15 | 20 | elk | 1747 x 178 | 0 | 0 | 0 | 0 | 0 | 22 | 4392 |
+| 04-data-pipeline | 19 | 22 | own | 1740 x 744 | 0 | 0 | 0 | 0 | 0 | 38 | 6498 |
+| 04-data-pipeline | 19 | 22 | dagre | 1870 x 580 | 0 | 0 | 0 | 1 | 0 | 23 | 5162 |
+| 04-data-pipeline | 19 | 22 | graphlay | 2023 x 321 | 0 | 0 | 0 | 0 | 3 | 37 | 7350 |
+| 04-data-pipeline | 19 | 22 | elk | 1524 x 339 | 0 | 0 | 0 | 0 | 0 | 32 | 4713 |
+| 05-sign-in | 15 | 20 | own | 1534 x 174 | 0 | 0 | 0 | 0 | 0 | 52 | 6064 |
+| 05-sign-in | 15 | 20 | dagre | 1549 x 340 | 0 | 0 | 0 | 0 | 5 | 20 | 6316 |
+| 05-sign-in | 15 | 20 | graphlay | 1706 x 288 | 0 | 0 | 0 | 0 | 0 | 22 | 6489 |
+| 05-sign-in | 15 | 20 | elk | 1035 x 309 | 0 | 0 | 0 | 0 | 5 | 30 | 4183 |
+| 06-cluster-request | 17 | 23 | own | 1846 x 450 | 0 | 0 | 0 | 0 | 9 | 38 | 4375 |
+| 06-cluster-request | 17 | 23 | dagre | 1976 x 450 | 0 | 0 | 0 | 1 | 3 | 28 | 4132 |
+| 06-cluster-request | 17 | 23 | graphlay | 2374 x 310 | 0 | 0 | 0 | 0 | 7 | 44 | 6297 |
+| 06-cluster-request | 17 | 23 | elk | 1899 x 258 | 0 | 0 | 0 | 0 | 1 | 38 | 3558 |
+| 07-compiler | 16 | 18 | own | 1362 x 260 | 0 | 1 | 0 | 0 | 1 | 42 | 4583 |
+| 07-compiler | 16 | 18 | dagre | 1340 x 516 | 0 | 0 | 0 | 1 | 3 | 16 | 4181 |
+| 07-compiler | 16 | 18 | graphlay | 1551 x 381 | 0 | 0 | 0 | 0 | 3 | 29 | 6787 |
+| 07-compiler | 16 | 18 | elk | 1270 x 327 | 0 | 0 | 0 | 0 | 1 | 30 | 4439 |
+| 08-module-deps | 22 | 37 | own | 933 x 378 | 0 | 0 | 0 | 0 | 22 | 88 | 8337 |
+| 08-module-deps | 22 | 37 | dagre | 911 x 546 | 0 | 0 | 0 | 1 | 14 | 41 | 6585 |
+| 08-module-deps | 22 | 37 | graphlay | 981 x 468 | 0 | 0 | 0 | 0 | 3 | 52 | 7499 |
+| 08-module-deps | 22 | 37 | elk | 926 x 434 | 0 | 0 | 0 | 0 | 3 | 56 | 6524 |
+| 09-incident | 24 | 31 | own | 2693 x 282 | 0 | 0 | 0 | 0 | 2 | 58 | 6857 |
+| 09-incident | 24 | 31 | dagre | 2678 x 366 | 0 | 0 | 0 | 0 | 0 | 28 | 6774 |
+| 09-incident | 24 | 31 | graphlay | 2693 x 384 | 0 | 0 | 0 | 0 | 0 | 28 | 7321 |
+| 09-incident | 24 | 31 | elk | 2743 x 291 | 0 | 0 | 0 | 0 | 0 | 34 | 7656 |
+| 10-platform | 34 | 44 | own | 1988 x 1128 | 0 | 3 | 0 | 0 | 44 | 112 | 25939 |
+| 10-platform | 34 | 44 | dagre | 2200 x 1540 | 0 | 0 | 0 | 0 | 48 | 104 | 28689 |
+| 10-platform | 34 | 44 | graphlay | 3330 x 980 | 0 | 0 | 0 | 0 | 137 | 152 | 47974 |
+| 10-platform | 34 | 44 | elk | 2458 x 604 | 0 | 0 | 0 | 0 | 25 | 158 | 27611 |
 
-| candidate | overlaps | group faults | links through a box | crossings | bends |
-| --- | --- | --- | --- | --- | --- |
-| own | 0 | 0 | 0 | 80 | 518 |
-| dagre | 0 | 0 | 8 | 74 | 303 |
-| graphlay | 0 | 0 | 0 | 159 | 424 |
-| elk | 0 | 0 | 0 | 36 | 436 |
+| candidate | overlaps | touching | group faults | links through a box | crossings | bends |
+| --- | --- | --- | --- | --- | --- | --- |
+| own | 0 | 4 | 0 | 0 | 80 | 518 |
+| dagre | 0 | 0 | 0 | 8 | 74 | 303 |
+| graphlay | 0 | 0 | 0 | 0 | 159 | 424 |
+| elk | 0 | 0 | 0 | 0 | 36 | 436 |
 
 dagre returns control points for a curve. The picture draws straight lines between them, so
 the bend count of dagre is not comparable with the others.
+
+own draws four pairs of boxes with a gap of 0 px. Every candidate got a node gap of 24 px.
+
+| diagram | upper box | lower box | shared edge |
+| --- | --- | --- | --- |
+| 07-compiler | `Checks` | `Lens` | y -92 |
+| 10-platform | `Search index` | `Data lake` | y -754 |
+| 10-platform | `Analytics sink` | `Notifier` | y -978 |
+| 10-platform | `Cache` | `Accounts database` | y -814 |
+
+The cause is in `place` in `src/own.rs`. A group has a marker (`Kind::Border`) in every rank
+that the group spans. A pair of neighbours gets a gap of 0 px when one of the two is a marker.
+The order phase can put the marker between two things of the group: rank 4 of `07-compiler`
+is `Checks`, the marker of `Core`, `Lens`. Then nothing holds the two things 24 px apart.
+The smallest input that shows the fault:
+
+```text
+G {
+a, c, d, e
+}
+b -> e
+d -> e
+b -> a
+```
+
+own draws `e` at y -128 to -92 and `a` at y -92 to -56.
 
 ## The seed experiment
 
