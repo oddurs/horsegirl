@@ -1,0 +1,7 @@
+One link is a guess
+
+The `Scheduler` calls the `Report job`. We think, but are not sure, that the
+`Report job` writes to the `Archive`. Mark that link as a guess.
+---
+Scheduler -> Report job
+Report job -> Archive ?

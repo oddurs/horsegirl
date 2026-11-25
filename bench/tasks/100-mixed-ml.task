@@ -1,0 +1,16 @@
+A model in production
+
+The `Feature store` sends to the `Trainer`, with the label `feed`. The
+`Trainer` writes to the `Model registry`, with the label `write`. `Serving`
+reads from the `Model registry` with the label `load`, and from the
+`Feature store` with the label `read`. The `App` calls `Serving`. The `App`
+must not call the `Trainer`. We guess that `Serving` sends to `Monitoring`,
+with the label `log`.
+---
+Feature store -> Trainer: feed
+Trainer -> Model registry: write
+Serving -> Model registry: load
+Serving -> Feature store: read
+App -> Serving
+App -x Trainer
+Serving -> Monitoring: log ?

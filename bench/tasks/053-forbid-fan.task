@@ -1,0 +1,9 @@
+Two apps, one rule
+
+The `Web app` and the `Mobile app` both call the `Gateway`. Neither may call
+`Postgres`: write it as one rule line with the reason `never directly`. The
+`Gateway` calls `Postgres`.
+---
+Web app, Mobile app -> Gateway
+Gateway -> Postgres
+Web app, Mobile app -x Postgres: never directly

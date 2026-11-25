@@ -1,0 +1,9 @@
+A web shop's checkout
+
+A `Web app` sends each order to the `API gateway`. The gateway passes it to
+`Orders`, and `Orders` asks `Payments` to charge the card. Draw it as a flow.
+---
+Web app -> API gateway
+API gateway -> Orders
+Orders -> Payments
+show flow

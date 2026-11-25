@@ -1,0 +1,8 @@
+Service tiers
+
+The `Gateway` calls `Accounts` and `Reports`. `Accounts` has the fact `tier`
+with the value `gold`. `Reports` has `tier` with the value `bronze`.
+---
+Gateway -> Accounts, Reports
+Accounts { tier: gold }
+Reports { tier: bronze }

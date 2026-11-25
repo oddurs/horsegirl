@@ -1,0 +1,14 @@
+A story across groups
+
+The group `Shop` holds `Cart` and `Checkout`. The group `Bank` holds `Gateway`.
+Write the story `pay`: the `Cart` passes to `Checkout` with the label
+`hand over`, and `Checkout` calls the `Gateway` with the label `charge`. Show
+it as a sequence.
+---
+Shop { Cart, Checkout }
+Bank { Gateway }
+story pay {
+  Cart -> Checkout: hand over
+  Checkout -> Gateway: charge
+}
+show sequence of pay

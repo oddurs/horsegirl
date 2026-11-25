@@ -1,0 +1,3 @@
+Browser -> Auth: password
+Auth -> User store: lookup
+Auth -> Browser: token

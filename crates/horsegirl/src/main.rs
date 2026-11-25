@@ -2,8 +2,8 @@ use std::io::Read;
 use std::path::{Path, PathBuf};
 use std::process::ExitCode;
 
-use horsegirl_core::check::check;
-use horsegirl_core::diagnostic::{Diagnostic, Fixed, LineIndex, Severity, apply_safe};
+use horsegirl_core::check::{check, fix_all};
+use horsegirl_core::diagnostic::{Diagnostic, LineIndex, Severity};
 use horsegirl_core::model::lower;
 use horsegirl_core::syntax::parse;
 use horsegirl_core::text::Style;
@@ -298,29 +298,6 @@ fn check_command(options: &Options) -> ExitCode {
         println!("{separator}{}: {}", input.label, summary(&diagnostics));
     }
     exit(&diagnostics)
-}
-
-/// The most passes of `check` and `apply_safe` that `fix` makes. Each pass
-/// that applies a fix removes a diagnostic, so a real file stops long before.
-const FIX_PASSES: usize = 16;
-
-/// `source` with every safe fix made. One fix can reveal another: a fix that
-/// overlaps an earlier one is left out of a pass, so `fix` checks again until a
-/// pass applies none.
-fn fix_all(source: &str) -> Fixed {
-    let mut fixed = Fixed {
-        text: source.to_owned(),
-        applied: 0,
-    };
-    for _ in 0..FIX_PASSES {
-        let pass = apply_safe(&fixed.text, &check(&fixed.text));
-        if pass.applied == 0 {
-            break;
-        }
-        fixed.text = pass.text;
-        fixed.applied += pass.applied;
-    }
-    fixed
 }
 
 fn fix(options: &Options) -> ExitCode {

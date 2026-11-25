@@ -1,0 +1,7 @@
+An email in a fact
+
+`Alerts` calls the `On-call`, with the label `page`. The `On-call` has the fact
+`contact` with the value `ops@example.com`.
+---
+Alerts -> On-call: page
+On-call { contact: "ops@example.com" }

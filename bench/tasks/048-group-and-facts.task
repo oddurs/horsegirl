@@ -1,0 +1,11 @@
+Parts with facts
+
+The group `Storage` holds `Postgres` and `S3`. `Postgres` has the fact `owner`
+with the value `Platform`, and `S3` has `owner` with the value `Infra`. The
+`API` writes to both, with the label `write`.
+---
+Storage {
+  Postgres { owner: Platform }
+  S3 { owner: Infra }
+}
+API -> Postgres, S3: write

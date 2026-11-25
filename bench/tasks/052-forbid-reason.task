@@ -1,0 +1,7 @@
+A rule with a reason
+
+`Orders` calls `Payments`. `Payments` must never call `Orders`, with the reason
+`no cycles`.
+---
+Orders -> Payments
+Payments -x Orders: no cycles

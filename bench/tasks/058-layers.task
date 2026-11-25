@@ -1,0 +1,9 @@
+Layered architecture
+
+`UI` calls `Domain`, and `Domain` calls `Storage`. The `UI` must not call
+`Storage`, and `Storage` must not call `Domain` or `UI`. State the three rules.
+---
+UI -> Domain
+Domain -> Storage
+UI -x Storage
+Storage -x Domain, UI

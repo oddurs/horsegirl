@@ -1,0 +1,8 @@
+Services in a group
+
+`Orders` and `Payments` are inside a group called `Services`. The `Web app`
+calls `Orders`, and `Orders` calls `Payments`.
+---
+Services { Orders, Payments }
+Web app -> Orders
+Orders -> Payments

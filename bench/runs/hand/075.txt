@@ -1,0 +1,4 @@
+```
+Gateway -> API
+API { note: django :8000 }
+```

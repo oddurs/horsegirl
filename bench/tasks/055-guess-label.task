@@ -1,0 +1,7 @@
+A guessed link with a label
+
+`Search` calls the `Index`. We suspect that `Search` also calls `Spellcheck`
+with the label `suggest`, but nobody has confirmed it. Mark it as a guess.
+---
+Search -> Index
+Search -> Spellcheck: suggest ?

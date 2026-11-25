@@ -1,0 +1,10 @@
+A guess and a rule
+
+The `Frontend` calls the `BFF`, and the `BFF` calls `Accounts`. Someone thinks
+the `Frontend` also calls `Accounts` directly: write that as a guess. Also
+state the rule that `Accounts` must never call the `Frontend`.
+---
+Frontend -> BFF
+BFF -> Accounts
+Frontend -> Accounts ?
+Accounts -x Frontend

@@ -5,7 +5,7 @@
 //! with no link, a link that breaks a `-x` rule, a guess, an unknown lens and
 //! a lens whose facts the file does not state.
 
-use crate::diagnostic::{Confidence, Diagnostic, Edit, Fix, LineIndex};
+use crate::diagnostic::{Confidence, Diagnostic, Edit, Fix, Fixed, LineIndex, apply_safe};
 use crate::lens::Need;
 use crate::model::{Model, Thing, ThingId, lower};
 use crate::syntax::{Element, Node, NodeKind, parse};
@@ -38,6 +38,31 @@ pub fn of_model(source: &str, model: &Model) -> Vec<Diagnostic> {
     diagnostics.extend(needs(model));
     sort(&mut diagnostics);
     diagnostics
+}
+
+/// The most passes of `check` and `apply_safe` that `fix` makes. Each pass
+/// that applies a fix removes a diagnostic, so a real file stops long before.
+const FIX_PASSES: usize = 16;
+
+/// `source` with every safe fix made, as `horsegirl fix` makes them.
+///
+/// One fix can reveal another: a fix that overlaps an earlier one is left out
+/// of a pass, so this checks again until a pass applies none.
+#[must_use]
+pub fn fix_all(source: &str) -> Fixed {
+    let mut fixed = Fixed {
+        text: source.to_owned(),
+        applied: 0,
+    };
+    for _ in 0..FIX_PASSES {
+        let pass = apply_safe(&fixed.text, &check(&fixed.text));
+        if pass.applied == 0 {
+            break;
+        }
+        fixed.text = pass.text;
+        fixed.applied += pass.applied;
+    }
+    fixed
 }
 
 fn sort(diagnostics: &mut [Diagnostic]) {

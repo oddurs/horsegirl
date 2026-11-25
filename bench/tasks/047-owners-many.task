@@ -1,0 +1,11 @@
+Five services and three teams
+
+`Gateway` calls `Search`, `Cart` and `Profile`. `Cart` calls `Pricing`. Team
+`Edge` owns `Gateway`. Team `Shop` owns `Cart` and `Pricing`. Team `People` owns
+`Search` and `Profile`. Use the key `owner`.
+---
+Gateway -> Search, Cart, Profile
+Cart -> Pricing
+Gateway { owner: Edge }
+Cart, Pricing { owner: Shop }
+Search, Profile { owner: People }

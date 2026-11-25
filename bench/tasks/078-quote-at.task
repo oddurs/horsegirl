@@ -1,0 +1,5 @@
+An at sign in a name
+
+The renderer is called `Renderer @pixi/react`. The `Editor` calls it.
+---
+Editor -> "Renderer @pixi/react"

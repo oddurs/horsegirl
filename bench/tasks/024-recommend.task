@@ -1,0 +1,13 @@
+Recommendations
+
+The `Shop` sends to the `Event stream`, with the label `clicks`. The `Trainer`
+reads the `Event stream` with the label `read`, and writes to the `Model store`
+with the label `write model`. The `Recommender` loads from the `Model store`,
+with the label `load`, and the `Shop` asks the `Recommender`, with the label
+`ask`.
+---
+Shop -> Event stream: clicks
+Trainer -> Event stream: read
+Trainer -> Model store: write model
+Recommender -> Model store: load
+Shop -> Recommender: ask
