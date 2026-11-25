@@ -21,7 +21,7 @@ jobs:
   check:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - name: Install the pinned toolchain
         run: rustup show active-toolchain || rustup toolchain install
       # The tag points at a commit that CI already checked with the backlog
@@ -48,7 +48,7 @@ jobs:
     env:
       TARGET: ${{ matrix.target }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - name: Install the pinned toolchain and the target
         run: |
           rustup show active-toolchain || rustup toolchain install
@@ -77,7 +77,7 @@ jobs:
         run: |
           "horsegirl-$TARGET/horsegirl" --version
           "horsegirl-$TARGET/horsegirl" check examples/checkout.horse
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: horsegirl-${{ matrix.target }}
           path: horsegirl-${{ matrix.target }}.tar.gz
@@ -89,8 +89,8 @@ jobs:
     needs: [check, build]
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/download-artifact@v4
+      - uses: actions/checkout@v7
+      - uses: actions/download-artifact@v8
         with:
           pattern: horsegirl-*
           merge-multiple: true
@@ -103,7 +103,7 @@ jobs:
           sha256sum horsegirl-*.tar.gz >SHA256SUMS
           cp ../install.sh .
           cat SHA256SUMS
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: release
           path: dist/
@@ -118,11 +118,11 @@ jobs:
       id-token: write
       attestations: write
     steps:
-      - uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@v8
         with:
           name: release
           path: dist
-      - uses: actions/attest-build-provenance@v2
+      - uses: actions/attest-build-provenance@v4
         with:
           subject-path: dist/horsegirl-*.tar.gz
       # A tag with a hyphen, such as v0.1.0-rc.1, is a pre-release.

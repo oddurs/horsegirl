@@ -19,7 +19,7 @@ jobs:
       pull-requests: write
     steps:
       # The script comes from the base branch, not from the pull request.
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           ref: ${{ github.event.pull_request.base.sha }}
       - name: Merge a patch or minor update when the required check passes
