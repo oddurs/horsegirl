@@ -59,7 +59,11 @@ fn token(rest: &str, first: char, line_start: bool) -> (TokenKind, usize) {
                 is_space(c)
                     || RESERVED.contains(&c)
                     || arrow(tail).is_some()
-                    || (c == ';' && ends_line(&tail[1..]))
+                    || (c == ';'
+                        && ends_line(&tail[1..])
+                        // `;;` is not a mark: removing one `;` would leave
+                        // the other one at the line end.
+                        && !rest[..rest.len() - tail.len()].ends_with(';'))
             });
             let kind = if &rest[..len] == "-x" {
                 TokenKind::Cross

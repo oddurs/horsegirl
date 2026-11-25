@@ -483,12 +483,12 @@ impl<'s> Parser<'s> {
                 let token = self.tokens[self.pos];
                 let inside = &token.text[1..token.text.len() - 1];
                 // A bare name joins what follows it, so the quotes stay unless a
-                // space or the line end comes next: `"a-"->B` would become the
-                // arrow `-->`.
+                // space, the line end or a reserved character comes next:
+                // `"a-"->B` would become the arrow `-->`.
                 let parted = self.source[token.span().end..]
                     .chars()
                     .next()
-                    .is_none_or(|c| c == ' ' || c == '\n' || c == '\r');
+                    .is_none_or(|c| " \n\r;:,{}".contains(c));
                 if kind == NodeKind::Name && parted && bare_is_safe(inside) {
                     self.habits.push(Edit {
                         span: token.span(),

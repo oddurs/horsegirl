@@ -523,12 +523,42 @@ fn each_habit_alone_gets_its_own_rewrite() {
         ("A -> B : go\n", "A -> B: go\n"),
         ("show flow;\n", "show flow\n"),
         ("A -> B ? @ src/a.ts:1;\n", "A -> B ? @ src/a.ts:1\n"),
+        ("A --> \"B\";\n", "A -> B\n"),
+        ("\"A\" -> \"B\": x\n", "A -> B: x\n"),
+        ("\"a\";\n", "a\n"),
+        ("\"a b\" ->\"c d\";\n", "a b ->c d\n"),
     ] {
         let note = only(habit);
         assert_eq!(note.code, "N0101", "{habit:?}");
         assert_eq!(note.fix.unwrap().apply(habit), canonical, "{habit:?}");
         silent(canonical);
+        assert_eq!(meaning(habit), meaning(canonical), "{habit:?}");
     }
+}
+
+/// The model without its spans: a fix moves text, and it must not change meaning.
+fn meaning(source: &str) -> String {
+    let model = horsegirl_core::model::lower(&parse(source).tree);
+    let things: Vec<_> = model
+        .things
+        .iter()
+        .map(|t| format!("{:?} {:?} {:?}", t.name, t.parent, t.facts))
+        .collect();
+    let links: Vec<_> = model
+        .links
+        .iter()
+        .map(|l| format!("{} {} {:?}", l.from, l.to, l.labels))
+        .collect();
+    format!("{things:?} {links:?} {:?}", model.shows)
+}
+
+#[test]
+fn a_double_semicolon_is_not_a_mark() {
+    for source in ["A, b;;\n", "A -> B;;;\n", "A -> B: go;;\n"] {
+        silent(source);
+    }
+    let lowered = horsegirl_core::model::lower(&parse("A, b;;\n").tree);
+    assert_eq!(lowered.things[1].name, "b;;");
 }
 
 #[test]
