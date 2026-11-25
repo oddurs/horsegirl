@@ -20,7 +20,8 @@ the project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - `horsegirl_core::check::check` gives every diagnostic for a file: the
   parser's and five checks on the model. `E0412`: a name written once that is
   one edit from a name written more often, with a safe fix that writes the
-  other name. `W0107`: a thing that no link and no rule names. `E0500`: a link
+  other name; when two or more such names are one edit away, the message names
+  each and there is no fix. `W0107`: a thing that no link and no rule names. `E0500`: a link
   that breaks a `-x` rule. `N0200`: a guess. `E0300`: a `show` line with an
   unknown lens; the message lists the lenses, and a lens one edit from a known
   lens gets a safe fix.

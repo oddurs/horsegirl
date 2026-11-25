@@ -51,3 +51,7 @@ Criteria 1-3 watched pass: cargo test --test check printed 20 passed, 0 failed. 
 ## 2026-11-25
 
 Choices: E0412 fires only when the near name is written more than once, so the fix has a direction; a swap of two neighbours is one edit. W0107 counts a -x rule as a link and skips groups and things already reported as E0412. E0500 matches the same two things in the same direction only (group rules: 0143). Lenses are the six on the card. Follow-ups filed: 0143, 0144 (path parsed as a group, from the earlier note).
+
+## 2026-11-25
+
+Fix round 1: E0412 gives no fix when more than one name written more often is one edit away, and names each. New tests a_name_one_edit_from_two_known_names_has_no_fix and ..._when_one_is_written_more failed on the old check.rs (2 failed) and pass now. Criteria 1-3 still hold: cargo test --test check printed 22 passed, 0 failed; scripts/task check exit 0.

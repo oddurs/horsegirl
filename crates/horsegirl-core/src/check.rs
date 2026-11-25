@@ -5,7 +5,7 @@
 //! with no link, a link that breaks a `-x` rule, a guess and an unknown lens.
 
 use crate::diagnostic::{Confidence, Diagnostic, Edit, Fix, LineIndex};
-use crate::model::{Model, ThingId, lower};
+use crate::model::{Model, Thing, ThingId, lower};
 use crate::syntax::parse;
 
 /// Every lens that a `show` line can pick, as the language card lists them.
@@ -45,48 +45,61 @@ fn sort(diagnostics: &mut [Diagnostic]) {
 /// E0412: a name written once that is one edit from a name written more
 /// often. The name written more often is taken as the one the file means.
 /// Two names written once each give nothing, because neither is more likely.
+/// When more than one name written more often is one edit away, the check
+/// cannot choose, so the error names each of them and carries no fix: a tool
+/// applies a safe fix with no question.
 fn typos(source: &str, model: &Model) -> Vec<(ThingId, Diagnostic)> {
     let mut found = Vec::new();
     for (id, thing) in model.things.iter().enumerate() {
         let [mention] = thing.mentions.as_slice() else {
             continue;
         };
-        // The most mentioned near name; the first mentioned wins a tie.
-        let mut best: Option<ThingId> = None;
-        for (other, known) in model.things.iter().enumerate() {
-            if known.mentions.len() > 1
-                && best.is_none_or(|b| known.mentions.len() > model.things[b].mentions.len())
-                && distance(&thing.name, &known.name) == 1
-            {
-                best = Some(other);
+        let near: Vec<&Thing> = model
+            .things
+            .iter()
+            .filter(|known| known.mentions.len() > 1 && distance(&thing.name, &known.name) == 1)
+            .collect();
+        let diagnostic = match near.as_slice() {
+            [] => continue,
+            [known] => {
+                // The first mention is a way the file already writes the name,
+                // so it parses, with its quotes where the name needs them.
+                let written = &source[known.mentions[0].clone()];
+                Diagnostic {
+                    code: "E0412",
+                    span: mention.clone(),
+                    message: format!(
+                        "`{}` is written once and is one edit from `{}`. A thing exists from its first mention, so this makes a new thing. Write `{}` if you mean that thing; if not, choose a name that differs by more than one character.",
+                        thing.name, known.name, known.name
+                    ),
+                    fix: Some(Fix {
+                        confidence: Confidence::Safe,
+                        description: format!("Replace `{}` with `{}`.", thing.name, known.name),
+                        edits: vec![Edit {
+                            span: mention.clone(),
+                            text: written.to_owned(),
+                        }],
+                    }),
+                }
             }
-        }
-        let Some(known) = best else {
-            continue;
+            many => {
+                let names: Vec<String> = many
+                    .iter()
+                    .map(|known| format!("`{}`", known.name))
+                    .collect();
+                Diagnostic {
+                    code: "E0412",
+                    span: mention.clone(),
+                    message: format!(
+                        "`{}` is written once and is one edit from each of {}. A thing exists from its first mention, so this makes a new thing. Write the one of those names that you mean; if you mean none of them, choose a name that differs by more than one character.",
+                        thing.name,
+                        names.join(" and ")
+                    ),
+                    fix: None,
+                }
+            }
         };
-        let known = &model.things[known];
-        // The first mention is a way the file already writes the name, so it
-        // parses, with its quotes where the name needs them.
-        let written = &source[known.mentions[0].clone()];
-        found.push((
-            id,
-            Diagnostic {
-                code: "E0412",
-                span: mention.clone(),
-                message: format!(
-                    "`{}` is written once and is one edit from `{}`. A thing exists from its first mention, so this makes a new thing. Write `{}` if you mean that thing; if not, choose a name that differs by more than one character.",
-                    thing.name, known.name, known.name
-                ),
-                fix: Some(Fix {
-                    confidence: Confidence::Safe,
-                    description: format!("Replace `{}` with `{}`.", thing.name, known.name),
-                    edits: vec![Edit {
-                        span: mention.clone(),
-                        text: written.to_owned(),
-                    }],
-                }),
-            },
-        ));
+        found.push((id, diagnostic));
     }
     found
 }

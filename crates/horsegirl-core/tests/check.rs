@@ -85,6 +85,28 @@ fn two_names_each_written_once_are_not_a_typo() {
 }
 
 #[test]
+fn a_name_one_edit_from_two_known_names_has_no_fix() {
+    // `Cart` and `Card` are each written twice, so neither is more likely.
+    let source = "A -> Cart\nCart -> B\nC -> Card\nCard -> D\nE -> Carl\n";
+    let diagnostics = check(source);
+    assert_eq!(codes(&diagnostics), ["E0412"]);
+    let (typo, spanned) = only(source, &diagnostics, "E0412");
+    assert_eq!(spanned, "Carl");
+    assert!(typo.message.contains("`Cart`"), "{}", typo.message);
+    assert!(typo.message.contains("`Card`"), "{}", typo.message);
+    assert_eq!(typo.fix, None);
+}
+
+#[test]
+fn a_name_one_edit_from_two_known_names_has_no_fix_when_one_is_written_more() {
+    // How often a name is written is weak evidence, so it does not choose.
+    let source = "A -> Cart\nCart -> B\nCart -> F\nC -> Card\nCard -> D\nE -> Carl\n";
+    let diagnostics = check(source);
+    let (typo, _) = only(source, &diagnostics, "E0412");
+    assert_eq!(typo.fix, None);
+}
+
+#[test]
 fn a_name_two_edits_away_is_not_a_typo() {
     let source = "A -> Payments\nPayments -> B\nC -> Paymts\n";
     assert_eq!(codes(&check(source)), [""; 0]);

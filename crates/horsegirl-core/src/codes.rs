@@ -58,7 +58,7 @@ pub const CATALOGUE: &[Code] = &[
     },
     Code {
         code: "E0412",
-        summary: "A name is written once and is one edit from a name written more often, so it is likely a typo that makes a new thing. The fix writes the other name.",
+        summary: "A name is written once and is one edit from a name written more often, so it is likely a typo that makes a new thing. The safe fix writes the other name. When more than one such name is one edit away, the message names each and there is no fix.",
     },
     Code {
         code: "E0500",
