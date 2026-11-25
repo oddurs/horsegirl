@@ -16,7 +16,8 @@ export default function DocsLayout({ children }: { children: ReactNode }) {
           ))}
         </ul>
       </nav>
-      <main>{children}</main>
+      {/* The root Shell already holds the one <main>, so the content is a plain div. */}
+      <div>{children}</div>
     </div>
   );
 }

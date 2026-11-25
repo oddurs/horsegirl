@@ -68,3 +68,8 @@ test("horsegirl code is highlighted and escaped", () => {
   assert.match(html, /<span class="hg-keyword">show<\/span>/);
   assert.ok(html.includes("&lt;go&gt;"));
 });
+
+test("a code block takes keyboard focus, so a keyboard user can scroll it", () => {
+  const [page] = renderPages(loadPages(tree({ "a.md": "# A\n\n```horsegirl\nA -> B\n```\n" })));
+  assert.match(page?.html ?? "", /<pre tabindex="0"><code class="language-horsegirl">/);
+});

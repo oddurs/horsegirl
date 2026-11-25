@@ -19,6 +19,9 @@ const widths = [
   { width: 390, height: 844, mobile: true },
 ];
 const failing = new Set(["serious", "critical"]);
+// axe rates these moderate, but a nested layout that adds a second <main> breaks
+// every docs page at once, so they fail too.
+const failingRules = new Set(["landmark-main-is-top-level", "landmark-no-duplicate-main"]);
 
 // accessSync throws when the file is missing or not executable; both mean "not here".
 function executable(path) {
@@ -137,17 +140,28 @@ const runAxe = `axe.run(document, { resultTypes: ["violations"] }).then((r) =>
   r.violations.map((v) => ({ id: v.id, impact: v.impact, help: v.help,
     nodes: v.nodes.map((n) => n.target.join(" ")) })))`;
 
-// What has focus now, and whether it shows a ring a person can see.
+// What has focus now, whether it shows a ring a person can see, and whether the
+// walk reached it before. The walk ends on a repeat element, not a repeat name:
+// two links with the same text are two stops.
 const inspectFocus = `(() => {
   const el = document.activeElement;
   if (!el || el === document.body) return null;
+  window.__checkA11ySeen ??= new WeakSet();
+  const seen = window.__checkA11ySeen.has(el);
+  window.__checkA11ySeen.add(el);
   const s = getComputedStyle(el);
   const name = el.tagName.toLowerCase() + (el.id ? "#" + el.id : "") +
     " " + JSON.stringify((el.getAttribute("aria-label") || el.textContent || "").trim().slice(0, 40));
   const visible = s.outlineStyle !== "none" && parseFloat(s.outlineWidth) >= 2 &&
     s.outlineColor !== "transparent" && !s.outlineColor.endsWith(", 0)");
-  return { name, visible };
+  return { name, visible, seen };
 })()`;
+
+// How many elements Tab should reach: each one with a non-negative tabIndex that
+// is enabled and rendered. The walk must stop at every one of them.
+const countTabbable = `[...document.querySelectorAll("*")].filter((el) =>
+  el.tabIndex >= 0 && !el.disabled && !el.inert && el.getClientRects().length > 0 &&
+  el.checkVisibility({ visibilityProperty: true })).length`;
 
 async function tab(cdp) {
   const key = { key: "Tab", code: "Tab", windowsVirtualKeyCode: 9 };
@@ -157,17 +171,20 @@ async function tab(cdp) {
 
 async function focusFailures(cdp) {
   const failures = [];
-  const names = new Set();
+  const expected = await evaluate(cdp, countTabbable);
+  let stops = 0;
   // A page has far fewer stops than this; the bound stops a focus trap.
   for (let i = 0; i < 200; i++) {
     await tab(cdp);
     const focus = await evaluate(cdp, inspectFocus);
-    if (!focus || names.has(focus.name)) break;
-    names.add(focus.name);
+    if (!focus || focus.seen) break;
+    stops++;
     if (!focus.visible) failures.push(`no visible focus on ${focus.name}`);
   }
-  if (names.size === 0) failures.push("Tab reached no element");
-  return { failures, stops: names.size };
+  if (stops === 0) failures.push("Tab reached no element");
+  if (stops !== expected)
+    failures.push(`Tab made ${stops} stops, the page has ${expected} tabbable elements`);
+  return { failures, stops };
 }
 
 const server = await serve();
@@ -200,7 +217,7 @@ try {
         runs++;
         for (const v of violations) {
           const line = `${where}: ${v.impact} ${v.id}: ${v.help}\n    ${v.nodes.join("\n    ")}`;
-          if (failing.has(v.impact)) {
+          if (failing.has(v.impact) || failingRules.has(v.id)) {
             failed++;
             console.error(`check-a11y: ${line}`);
           } else {
