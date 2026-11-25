@@ -1,0 +1,249 @@
+{
+  "width": 1320,
+  "height": 124,
+  "font_size": 12,
+  "shapes": [
+    {
+      "role": "group",
+      "of": ["Services"],
+      "rect": [392, 0, 536, 72],
+      "facts": []
+    },
+    {
+      "role": "link",
+      "of": ["Web app", "API gateway"],
+      "rect": [120, 46, 80, 0],
+      "points": [[120, 46], [160, 46], [160, 46], [200, 46]],
+      "facts": []
+    },
+    {
+      "role": "link",
+      "of": ["Mobile app", "API gateway"],
+      "rect": [120, 46, 80, 60],
+      "points": [[120, 106], [160, 106], [160, 46], [200, 46]],
+      "facts": []
+    },
+    {
+      "role": "link",
+      "of": ["API gateway", "Payments"],
+      "rect": [320, 46, 280, 0],
+      "points": [[320, 46], [460, 46], [460, 46], [600, 46]],
+      "facts": []
+    },
+    {
+      "role": "link",
+      "of": ["API gateway", "Orders"],
+      "rect": [320, 46, 80, 0],
+      "points": [[320, 46], [360, 46], [360, 46], [400, 46]],
+      "facts": []
+    },
+    {
+      "role": "link",
+      "of": ["Orders", "Payments"],
+      "rect": [520, 46, 80, 0],
+      "points": [[520, 46], [560, 46], [560, 46], [600, 46]],
+      "facts": []
+    },
+    {
+      "role": "link",
+      "of": ["Orders", "Postgres"],
+      "rect": [520, 46, 80, 60],
+      "points": [[520, 46], [560, 46], [560, 106], [600, 106]],
+      "facts": []
+    },
+    {
+      "role": "link",
+      "of": ["Payments", "Notify"],
+      "rect": [720, 46, 80, 0],
+      "points": [[720, 46], [760, 46], [760, 46], [800, 46]],
+      "facts": []
+    },
+    {
+      "role": "link",
+      "of": ["Notify", "Events"],
+      "rect": [920, 46, 80, 0],
+      "points": [[920, 46], [960, 46], [960, 46], [1000, 46]],
+      "facts": []
+    },
+    {
+      "role": "link",
+      "of": ["Events", "Email provider"],
+      "rect": [1120, 46, 80, 0],
+      "points": [[1120, 46], [1160, 46], [1160, 46], [1200, 46]],
+      "facts": []
+    },
+    {
+      "role": "thing",
+      "of": ["Web app"],
+      "rect": [0, 28, 120, 36],
+      "facts": [["owner", "Apps"]]
+    },
+    {
+      "role": "thing",
+      "of": ["Mobile app"],
+      "rect": [0, 88, 120, 36],
+      "facts": [["owner", "Apps"]]
+    },
+    {
+      "role": "thing",
+      "of": ["API gateway"],
+      "rect": [200, 28, 120, 36],
+      "facts": [["owner", "Platform"]]
+    },
+    {
+      "role": "thing",
+      "of": ["Payments"],
+      "rect": [600, 28, 120, 36],
+      "facts": [["owner", "Commerce"]]
+    },
+    {
+      "role": "thing",
+      "of": ["Postgres"],
+      "rect": [600, 88, 120, 36],
+      "facts": [["owner", "Platform"]]
+    },
+    {
+      "role": "thing",
+      "of": ["Orders"],
+      "rect": [400, 28, 120, 36],
+      "facts": [["owner", "Commerce"]]
+    },
+    {
+      "role": "thing",
+      "of": ["Notify"],
+      "rect": [800, 28, 120, 36],
+      "facts": [["owner", "Growth"]]
+    },
+    {
+      "role": "thing",
+      "of": ["Events"],
+      "rect": [1000, 28, 120, 36],
+      "facts": [["owner", "Platform"]]
+    },
+    {
+      "role": "thing",
+      "of": ["Email provider"],
+      "rect": [1200, 28, 120, 36],
+      "facts": [["owner", "External"]]
+    },
+    {
+      "role": "label",
+      "of": ["Services"],
+      "rect": [400, 8, 46.01, 13.41],
+      "text": "Services",
+      "facts": []
+    },
+    {
+      "role": "label",
+      "of": ["Web app"],
+      "rect": [36.09, 39.3, 47.81, 13.41],
+      "text": "Web app",
+      "facts": [["owner", "Apps"]]
+    },
+    {
+      "role": "label",
+      "of": ["Mobile app"],
+      "rect": [30.65, 99.3, 58.71, 13.41],
+      "text": "Mobile app",
+      "facts": [["owner", "Apps"]]
+    },
+    {
+      "role": "label",
+      "of": ["API gateway"],
+      "rect": [226.31, 39.3, 67.37, 13.41],
+      "text": "API gateway",
+      "facts": [["owner", "Platform"]]
+    },
+    {
+      "role": "label",
+      "of": ["Payments"],
+      "rect": [633.32, 39.3, 53.36, 13.41],
+      "text": "Payments",
+      "facts": [["owner", "Commerce"]]
+    },
+    {
+      "role": "label",
+      "of": ["Postgres"],
+      "rect": [636.32, 99.3, 47.36, 13.41],
+      "text": "Postgres",
+      "facts": [["owner", "Platform"]]
+    },
+    {
+      "role": "label",
+      "of": ["Orders"],
+      "rect": [441.66, 39.3, 36.67, 13.41],
+      "text": "Orders",
+      "facts": [["owner", "Commerce"]]
+    },
+    {
+      "role": "label",
+      "of": ["Notify"],
+      "rect": [844.66, 39.3, 30.67, 13.41],
+      "text": "Notify",
+      "facts": [["owner", "Growth"]]
+    },
+    {
+      "role": "label",
+      "of": ["Events"],
+      "rect": [1041.66, 39.3, 36.69, 13.41],
+      "text": "Events",
+      "facts": [["owner", "Platform"]]
+    },
+    {
+      "role": "label",
+      "of": ["Email provider"],
+      "rect": [1221.65, 39.3, 76.69, 13.41],
+      "text": "Email provider",
+      "facts": [["owner", "External"]]
+    },
+    {
+      "role": "label",
+      "of": ["Web app", "API gateway"],
+      "rect": [116.42, 39.3, 87.15, 13.41],
+      "text": "POST /checkout",
+      "facts": []
+    },
+    {
+      "role": "label",
+      "of": ["API gateway", "Orders"],
+      "rect": [343.32, 39.3, 33.35, 13.41],
+      "text": "create",
+      "facts": []
+    },
+    {
+      "role": "label",
+      "of": ["Orders", "Payments"],
+      "rect": [541.65, 39.3, 36.69, 13.41],
+      "text": "charge",
+      "facts": []
+    },
+    {
+      "role": "label",
+      "of": ["Orders", "Postgres"],
+      "rect": [547.33, 69.3, 25.35, 13.41],
+      "text": "save",
+      "facts": []
+    },
+    {
+      "role": "label",
+      "of": ["Payments", "Notify"],
+      "rect": [748.66, 39.3, 22.69, 13.41],
+      "text": "paid",
+      "facts": []
+    },
+    {
+      "role": "label",
+      "of": ["Notify", "Events"],
+      "rect": [940.99, 39.3, 38.03, 13.41],
+      "text": "publish",
+      "facts": []
+    },
+    {
+      "role": "label",
+      "of": ["Events", "Email provider"],
+      "rect": [1146.99, 39.3, 26.02, 13.41],
+      "text": "send",
+      "facts": []
+    }
+  ]
+}
