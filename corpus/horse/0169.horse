@@ -1,0 +1,23 @@
+# Converted from corpus/flowcharts/0169.mmd by corpus/convert.py.
+BEGIN -> Write business data
+Write business data -> "outbox.publish(tx, type, data, { defer? })"
+"outbox.publish(tx, type, data, { defer? })" -> COMMIT
+COMMIT -> txob_events: atomically with business data
+txob_events -> Wakeup source
+txob_deliveries -> Wakeup source
+Wakeup source -> Wakeup emitter
+Wakeup emitter -> "Poll (interval, wakeup,"
+"Poll (interval, wakeup," -> Fan-out
+Fan-out -> "Claim deliveries, priority order"
+txob_events -> Fan-out
+Fan-out -> txob_deliveries
+txob_deliveries -> "Claim deliveries, priority order"
+"Claim deliveries, priority order" -> Run handler
+Run handler -> Record result (fenced by lease token)
+Heartbeat -> txob_deliveries: extend leases
+Record result (fenced by lease token) -> onDeliveryDead: dead
+Record result (fenced by lease token) -> txob_deliveries
+
+Your Application { BEGIN, Write business data, "outbox.publish(tx, type, data, { defer? })", COMMIT }
+"Store (Postgres, MongoDB, Redis, DynamoDB, ...)" { txob_events, txob_deliveries, Wakeup source }
+Event Processor (run N for scale) { Wakeup emitter, "Poll (interval, wakeup,", Fan-out, "Claim deliveries, priority order", Run handler, Heartbeat, Record result (fenced by lease token), onDeliveryDead }

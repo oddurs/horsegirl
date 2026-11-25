@@ -1,0 +1,20 @@
+# Converted from corpus/flowcharts/0175.mmd by corpus/convert.py.
+assemble -> enabled?
+enabled? -> disabled: no
+enabled? -> append one section: yes
+time -> append one section
+counter -> append one section
+manifest -> append one section
+note . template -> append one section
+append one section -> token replace only
+token replace only -> over
+over -> oldest frames: yes
+over -> fixed frame: no
+oldest frames -> fixed frame
+fixed frame -> request sees
+agent/pre-step -> counter
+tools/post-execute -> counter
+append one section -> ~/.dsh/
+disabled -> ~/.dsh/
+
+the block table { time, counter, manifest, note . template }

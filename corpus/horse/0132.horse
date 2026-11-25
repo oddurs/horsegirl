@@ -1,0 +1,11 @@
+# Converted from corpus/flowcharts/0132.mmd by corpus/convert.py.
+Xarray -> lossless
+lossless -> Neutral
+Scipp -> lossless
+lossless -> Neutral
+NDData -> lossless
+lossless -> Neutral
+Neutral -> lossless
+lossless -> JSON
+Neutral -> lossless
+lossless -> DataFrame

@@ -1,0 +1,24 @@
+# Converted from corpus/flowcharts/0213.mmd by corpus/convert.py.
+Human Designer -> MAM DSL Source
+MAM DSL Source -> MAM Compiler
+MAM Compiler -> MAM AST
+MAM AST -> Semantic Analyzer
+Semantic Analyzer -> Validator
+Validator -> Python Runtime
+Validator -> JavaScript Runtime
+Validator -> Go Runtime
+Validator -> Rust Runtime
+Validator -> AI SDK Runtime
+Python Runtime -> Operating System
+JavaScript Runtime -> Operating System
+Go Runtime -> Operating System
+Rust Runtime -> Operating System
+AI SDK Runtime -> Operating System
+
+Layer 7 { Human Designer }
+Layer 6 { MAM DSL Source }
+Layer 5 { MAM Compiler }
+Layer 4 { MAM AST }
+Layer 3 { Semantic Analyzer, Validator }
+Layer 2 { Python Runtime, JavaScript Runtime, Go Runtime, Rust Runtime, AI SDK Runtime }
+Layer 1 { Operating System }

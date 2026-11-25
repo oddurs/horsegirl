@@ -1,0 +1,5 @@
+# Converted from corpus/flowcharts/0173.mmd by corpus/convert.py.
+Backend needs a page -> in the
+in the -> served from shared memory: hit — nanoseconds
+in the -> "read from disk,": miss — milliseconds
+"read from disk," -> served from shared memory

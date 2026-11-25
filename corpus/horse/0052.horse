@@ -1,0 +1,5 @@
+# Converted from corpus/flowcharts/0052.mmd by corpus/convert.py.
+Head -> 1
+1 -> 2
+2 -> 3
+3 -> Tail

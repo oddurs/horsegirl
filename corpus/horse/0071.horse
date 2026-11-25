@@ -1,0 +1,13 @@
+# Converted from corpus/flowcharts/0071.mmd by corpus/convert.py.
+original file $$\\ F$$ -> split
+split -> $$k\\ $$ source shards
+$$k\\ $$ source shards -> "$$(k, n)$$-encoding"
+"$$(k, n)$$-encoding" -> $$n\\ $$ encoded shards
+$$n\\ $$ encoded shards -> disseminate
+disseminate -> life
+life -> gather
+gather -> at least $$\\ k\\ $$ shards
+at least $$\\ k\\ $$ shards -> $$k$$-decoding
+$$k$$-decoding -> $$k\\ $$ decoded shards
+$$k\\ $$ decoded shards -> concat
+concat -> reconstructed file $$\\ F^*$$

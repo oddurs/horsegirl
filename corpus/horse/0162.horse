@@ -1,0 +1,8 @@
+# Converted from corpus/flowcharts/0162.mmd by corpus/convert.py.
+👁️ observation -> 📡 signal: record_signal
+📡 signal -> 🔬 finding: read
+🔬 finding -> ✅ accepted: decide_finding
+✅ accepted -> 🛠️ task: assign_task
+🛠️ task -> 🧑 approve_plan: submit_plan
+🧑 approve_plan -> 🧾 result: log_result
+📡 signal -> 🔬 finding: evidence_signal_ids

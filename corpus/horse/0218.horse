@@ -1,0 +1,5 @@
+# Converted from corpus/flowcharts/0218.mmd by corpus/convert.py.
+src1 -> tx1: float stream signal
+
+⚡ Signal Sources { src1 }
+↗ Signal Sinks { tx1 }

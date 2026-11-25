@@ -1,0 +1,14 @@
+# Converted from corpus/flowcharts/0145.mmd by corpus/convert.py.
+web/index.html -> web/app.js: loads
+web/index.html -> web/app.css: loads
+web/index.html -> web/assets/agenticai-logo.png: references
+src/web_server.c -> src/simulation.c: uses simulation.h API
+src/simulation.c -> src/elevator.c: uses elevator.h API
+src/simulation.c -> src/guardrails.c: uses guardrails.h API
+src/guardrails.c -> src/elevator.c: uses Elevator type and helpers
+web/app.js -> src/web_server.c: HTTP state and command API
+build.ps1 / Makefile / CMakeLists.txt -> src/web_server.c: compiles and links
+build.ps1 / Makefile / CMakeLists.txt -> src/simulation.c: compiles and links
+
+Browser modules { web/index.html, web/app.js, web/app.css, web/assets/agenticai-logo.png }
+C backend modules { src/web_server.c, src/simulation.c, src/elevator.c, src/guardrails.c }

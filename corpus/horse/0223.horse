@@ -1,0 +1,8 @@
+# Converted from corpus/flowcharts/0223.mmd by corpus/convert.py.
+Connected Mode -> Extended DRX: Release
+Extended DRX -> Power Saving Mode: eDRX expiry
+Power Saving Mode -> Connected Mode: Wake (TAU timer or MO data)
+
+Active { Connected Mode }
+Light Sleep (eDRX) { Extended DRX }
+Deep Sleep (PSM) { Power Saving Mode }

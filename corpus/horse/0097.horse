@@ -1,0 +1,21 @@
+# Converted from corpus/flowcharts/0097.mmd by corpus/convert.py.
+Chat UI -> API Client
+API Client -> Chat Routes: HTTP / SSE
+Chat Routes -> Gemini Service
+Gemini Service -> Knowledge Base Service
+Gemini Service -> Graph Knowledge Service
+Knowledge Base Service -> Embedding Service
+Embedding Service -> Google Gemini API: embed
+Knowledge Base Service -> Pinecone: query / upsert
+Knowledge Base Service -> MongoDB: CRUD
+Knowledge Base Service -> Graph Knowledge Service: graph ingest
+Graph Knowledge Service -> Google Gemini API: entity extraction
+Graph Knowledge Service -> Neo4j AuraDB: read / write
+Gemini Service -> Google Gemini API: chat
+Chat Routes -> MongoDB: save messages
+Knowledge CLI -> Knowledge Base Service
+Knowledge CLI -> Graph Knowledge Service
+
+Frontend (React + Vite) { Chat UI, API Client }
+Backend (Express + TypeScript) { Chat Routes, Gemini Service, Knowledge Base Service, Graph Knowledge Service, Embedding Service, Knowledge CLI }
+External Services { Google Gemini API, Pinecone, Neo4j AuraDB, MongoDB }

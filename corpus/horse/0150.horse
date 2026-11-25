@@ -1,0 +1,17 @@
+# Converted from corpus/flowcharts/0150.mmd by corpus/convert.py.
+bare_key_gen -> simple_key_gen
+complex_key_gen -> simple_key_gen
+string_value_gen -> scalar_or_array_value_gen
+integer_value_gen -> scalar_or_array_value_gen
+boolean_value_gen -> scalar_or_array_value_gen
+string_array_value_gen -> scalar_or_array_value_gen
+integer_array_value_gen -> scalar_or_array_value_gen
+boolean_array_value_gen -> scalar_or_array_value_gen
+scalar_or_array_value_gen -> simple_value_gen
+table_value_gen -> simple_value_gen
+simple_key_gen -> simple_entry_gen
+simple_value_gen -> simple_entry_gen
+simple_entry_gen -> simple_document_gen
+
+Key Generators { bare_key_gen, simple_key_gen, complex_key_gen }
+Value Generators { string_value_gen, integer_value_gen, boolean_value_gen, string_array_value_gen, integer_array_value_gen, boolean_array_value_gen, table_value_gen }

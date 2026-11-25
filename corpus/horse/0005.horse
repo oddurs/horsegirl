@@ -1,0 +1,10 @@
+# Converted from corpus/flowcharts/0005.mmd by corpus/convert.py.
+Client requests POST /scan -> Valid Path?
+Valid Path? -> Return 400: No
+Valid Path? -> AST Parser Extracts Chunks: Yes
+AST Parser Extracts Chunks -> Embeddings Needed?
+Embeddings Needed? -> Save to SQLite Metadata: No
+Embeddings Needed? -> Generate Vectors via Ollama/Hash: Yes
+Generate Vectors via Ollama/Hash -> Store in Vector DB
+Store in Vector DB -> Save to SQLite Metadata
+Save to SQLite Metadata -> Return ScanResult

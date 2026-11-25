@@ -1,0 +1,31 @@
+# Converted from corpus/flowcharts/0137.mmd by corpus/convert.py.
+Client (User A) -> Server (User B): Send RSA Public Key
+Server (User B) -> Client (User A): Send RSA Public Key
+Server (User B) -> Server (User B): Generate Kyber keypair
+Server (User B) -> Client (User A): Send Kyber Public Key
+Client (User A) -> Server (User B): Send RSA-encrypted AES Key
+Client (User A) -> Server (User B): Send Kyber ciphertext / shared secret
+Server (User B) -> Server (User B): Decapsulate Kyber / Decrypt AES Key
+Server (User B) -> Server (User B): Derive final AES Key
+Client (User A) -> Server (User B): Encrypt message with AES-GCM
+Server (User B) -> Server (User B): Decrypt message with AES-GCM
+Server (User B) -> Client (User A): Optional Reply AES-GCM
+Start -> Generate Client RSA Keypair
+Generate Client RSA Keypair -> Send Client RSA Public Key
+Send Client RSA Public Key -> Receive Server RSA Public Key
+Receive Server RSA Public Key -> Receive Server Kyber Public Key
+Receive Server Kyber Public Key -> Generate Classical AES Key
+Generate Classical AES Key -> Encrypt AES Key with Server RSA
+Encrypt AES Key with Server RSA -> Send RSA-encrypted AES Key
+Send RSA-encrypted AES Key -> Encapsulate Kyber shared secret
+Encapsulate Kyber shared secret -> Send Kyber ciphertext / shared secret
+Send Kyber ciphertext / shared secret -> Derive final AES Key (SHA256)
+Derive final AES Key (SHA256) -> AES-GCM Encrypt Message
+AES-GCM Encrypt Message -> Send Encrypted Message
+Send Encrypted Message -> Server Receives Message
+Server Receives Message -> Decrypt AES Key (RSA)
+Decrypt AES Key (RSA) -> Decapsulate Kyber / Derive Shared Secret
+Decapsulate Kyber / Derive Shared Secret -> Derive final AES Key (SHA256)
+Derive final AES Key (SHA256) -> AES-GCM Decrypt Message
+AES-GCM Decrypt Message -> Optional Reply with AES-GCM
+Optional Reply with AES-GCM -> End

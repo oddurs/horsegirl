@@ -1,0 +1,20 @@
+# Converted from corpus/flowcharts/0115.mmd by corpus/convert.py.
+交互与控制通道 -> Channel Gateway
+Channel Gateway -> Session / Task Manager
+Session / Task Manager -> Agent Runtime
+Agent Runtime -> LLM Provider APIs
+Agent Runtime -> Policy + Approval Engine
+Policy + Approval Engine -> Typed Tool Registry
+Typed Tool Registry -> OpenWrt / Generic Linux Adapter
+Agent Runtime -> Local Runbook Engine
+Local Runbook Engine -> Typed Tool Registry
+Session / Task Manager -> Embedded Store
+Policy + Approval Engine -> Metrics / Audit / Logs
+Typed Tool Registry -> Metrics / Audit / Logs
+MQTT -> MQTT Broker
+企业微信机器人 -> 企业微信 / 微信官方 API
+微信生态适配器 -> 企业微信 / 微信官方 API
+
+交互与控制通道 { 本地 CLI, LuCI / Local HTTP, MQTT, 企业微信机器人, 微信生态适配器 }
+设备端 Rust 进程 { Channel Gateway, Session / Task Manager, Agent Runtime, Policy + Approval Engine, Typed Tool Registry, Local Runbook Engine, Embedded Store, Metrics / Audit / Logs, OpenWrt / Generic Linux Adapter }
+外部服务 { LLM Provider APIs, MQTT Broker, 企业微信 / 微信官方 API }

@@ -1,0 +1,10 @@
+# Converted from corpus/flowcharts/0220.mmd by corpus/convert.py.
+使用者瀏覽器 -> 應用伺服器: HTTP
+應用伺服器 -> Spring Boot 應用: JVM
+Spring Boot 應用 -> IBM MQ 伺服器: MQ Client
+IBM MQ 伺服器 -> 佇列管理器: 管理
+佇列管理器 -> 佇列: 包含
+佇列管理器 -> 通道: 包含
+
+應用伺服器 { Spring Boot 應用 }
+MQ 伺服器 { IBM MQ 伺服器, 佇列管理器, 佇列, 通道 }

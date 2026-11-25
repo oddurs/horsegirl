@@ -1,0 +1,20 @@
+# Converted from corpus/flowcharts/0111.mmd by corpus/convert.py.
+学生 / 演示用户 -> Streamlit 页面
+Streamlit 页面 -> FastAPI 服务: AgentClient HTTP
+FastAPI 服务 -> LangGraph 工程版 Agent
+Python 原理版 CLI -> NumPy RAG + 显式 ToolRegistry
+LangGraph 工程版 Agent -> DeepSeek Flash API
+NumPy RAG + 显式 ToolRegistry -> DeepSeek Flash API
+LangGraph 工程版 Agent -> Chroma 检索
+NumPy RAG + 显式 ToolRegistry -> NumPy cosine 检索
+Chroma 检索 -> 本机 Ollama BGE-M3
+NumPy cosine 检索 -> 本机 Ollama BGE-M3
+Chroma 检索 -> 14 份带范围元数据的校园快照
+NumPy cosine 检索 -> 14 份带范围元数据的校园快照
+LangGraph 工程版 Agent -> SQLite 合成状态 / 工单
+NumPy RAG + 显式 ToolRegistry -> SQLite 合成状态 / 工单
+LangGraph 工程版 Agent -> SQLite checkpoint
+NumPy RAG + 显式 ToolRegistry -> SQLite 有界会话记忆
+LangGraph 工程版 Agent -> 运行 Manifest / Trace
+NumPy RAG + 显式 ToolRegistry -> 运行 Manifest / Trace
+冻结集与四层指标 -> 运行 Manifest / Trace

@@ -1,0 +1,14 @@
+# Converted from corpus/flowcharts/0207.mmd by corpus/convert.py.
+Private subnet -> HSM #1
+Private subnet -> HSM #2
+Private subnet -> HSM #3 (optional)
+Client EC2 / EKS -> HSM #1: TCP 2223-2225 mutual TLS
+Client EC2 / EKS -> HSM #2
+Client EC2 / EKS -> HSM #3 (optional)
+HSM #1 -> HSM #2: cluster sync
+HSM #2 -> HSM #3 (optional)
+
+VPC 10.20.0.0/16 — Security account { AZ us-east-1a, AZ us-east-1b, AZ us-east-1c, Client EC2 / EKS }
+AZ us-east-1a { Private subnet, HSM #1 }
+AZ us-east-1b { Private subnet, HSM #2 }
+AZ us-east-1c { Private subnet, HSM #3 (optional) }

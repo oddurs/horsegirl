@@ -1,0 +1,15 @@
+# Converted from corpus/flowcharts/0048.mmd by corpus/convert.py.
+spring83/ -> server/
+spring83/ -> client/
+spring83/ -> deploy/
+spring83/ -> .github/workflows/ci.yml
+spring83/ -> LICENSE (MIT)
+spring83/ -> README.md
+server/ -> spring83_server.py
+server/ -> service/spring83.service
+server/ -> tests/
+server/ -> boards/ (git-ignored)
+client/ -> spring83_client.py
+deploy/ -> Caddyfile
+deploy/ -> lxc_setup.sh
+deploy/ -> cron/cleanup.sh

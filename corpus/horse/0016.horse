@@ -1,0 +1,11 @@
+# Converted from corpus/flowcharts/0016.mmd by corpus/convert.py.
+访问主页 -> 显示加载屏幕
+显示加载屏幕 -> 初始化AI核心
+初始化AI核心 -> 加载Whisper ASR模型
+加载Whisper ASR模型 -> 准备语音识别
+准备语音识别 -> 系统就绪
+系统就绪 -> 用户语音交互
+用户语音交互 -> 语音识别处理
+语音识别处理 -> 视觉反馈展示
+视觉反馈展示 -> 等待思考引擎激活
+等待思考引擎激活 -> 用户语音交互

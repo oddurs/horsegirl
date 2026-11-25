@@ -1,0 +1,25 @@
+# Converted from corpus/flowcharts/0096.mmd by corpus/convert.py.
+Relationship Manager -> Gestión de Portafolios
+Relationship Manager -> Gestión de Clientes
+Asesor Financiero -> Gestión de Portafolios
+Cliente HNW/UHNW -> CRM Private Banking
+Gestión de Portafolios -> Motor de Inversiones
+Motor de Inversiones -> Gestión de Riesgo
+Gestión de Clientes -> Gestión de Portafolios
+Motor de Inversiones -> Productos de Inversión
+Gestión de Riesgo -> Productos de Inversión
+Motor de Inversiones -> Bolsas de Valores
+Motor de Inversiones -> Brokers
+Gestión de Portafolios -> Custodios Globales
+Motor de Inversiones -> Proveedores de Datos
+Gestión de Clientes -> CRM Private Banking
+Gestión de Portafolios -> Compliance y KYC
+Gestión de Clientes -> Planificación Fiscal
+Gestión de Portafolios -> Reportes y Analytics
+Gestión de Clientes -> Planificación Patrimonial
+
+Clientes y Asesores { Relationship Manager, Cliente HNW/UHNW, Asesor Financiero }
+Core Bancario - Wealth Management { Productos de Inversión, Gestión de Portafolios, Motor de Inversiones, Gestión de Riesgo, Gestión de Clientes }
+Productos de Inversión { Fondos Mutuos, Acciones, Bonos, Inversiones Alternativas, Productos Estructurados }
+Mercados y Proveedores { Bolsas de Valores, Brokers, Custodios Globales, Proveedores de Datos }
+Sistemas de Soporte { CRM Private Banking, Compliance y KYC, Planificación Fiscal, Reportes y Analytics, Planificación Patrimonial }

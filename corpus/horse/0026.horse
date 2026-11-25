@@ -1,0 +1,23 @@
+# Converted from corpus/flowcharts/0026.mmd by corpus/convert.py.
+SKILL.md 入口 -> I 国家制度
+SKILL.md 入口 -> II 权力运行
+SKILL.md 入口 -> III 基层治理
+I 国家制度 -> life-decisions
+II 权力运行 -> life-decisions
+III 基层治理 -> life-decisions
+life-decisions -> rezoning-household
+life-decisions -> village-fit
+life-decisions -> business-environment
+life-decisions -> bottom-up-project
+bottom-up-project -> innovation-risk-boundary
+bottom-up-project -> mega-project-contest
+business-environment -> development-dilemmas
+SKILL.md 入口 -> playbooks
+SKILL.md 入口 -> anti-patterns-voice
+playbooks -> 个人与应用
+
+I 国家制度 { dual-equilibrium, tiaokuai-and-rank }
+II 权力运行 { power-and-positions, village-fit }
+III 基层治理 { local-governance, development-dilemmas }
+个人与应用 { life-decisions, rezoning-household, business-environment, bottom-up-project, innovation-risk-boundary, mega-project-contest }
+调用工艺 { playbooks, anti-patterns-voice }

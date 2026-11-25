@@ -1,0 +1,22 @@
+# Converted from corpus/flowcharts/0130.mmd by corpus/convert.py.
+📄 Raw Musical Score -> 🔍 Score Parser
+🔍 Score Parser -> 🎵 AnalyzedMusicPiece: Ingest
+🎵 AnalyzedMusicPiece -> 🧠 Music Knowledge Base (MKB): Analyze
+🧠 Music Knowledge Base (MKB) -> 💭 QA Generator: Extract Logic
+🎵 AnalyzedMusicPiece -> 🎨 Multi-Modal Renderer: Raw Score Data
+💭 QA Generator -> ❓ Question: Generate
+💭 QA Generator -> ✅ Answer + CoT: Generate
+🎨 Multi-Modal Renderer -> "📋 Modality 1: Text": Render
+🎨 Multi-Modal Renderer -> "🖼️ Modality 2: Image": Render
+🎨 Multi-Modal Renderer -> "🔊 Modality 3: Audio": Render
+❓ Question -> 📦 Training Dataset
+✅ Answer + CoT -> 📦 Training Dataset
+"📋 Modality 1: Text" -> 📦 Training Dataset
+"🖼️ Modality 2: Image" -> 📦 Training Dataset
+"🔊 Modality 3: Audio" -> 📦 Training Dataset
+📦 Training Dataset -> 💾 JSON Output
+
+🌟 The Verifiable Truth { 🧠 Music Knowledge Base (MKB) }
+⚙️ Synthesis Layer { 💭 QA Generator, 🎨 Multi-Modal Renderer }
+📝 Logical Output (Invariant) { ❓ Question, ✅ Answer + CoT }
+🌈 Multi-Modal Contexts (Variants) { "📋 Modality 1: Text", "🖼️ Modality 2: Image", "🔊 Modality 3: Audio" }

@@ -1,0 +1,20 @@
+# Converted from corpus/flowcharts/0019.mmd by corpus/convert.py.
+ISIC4Classifier -> BaseISIC4
+ISIC4Classifier -> ISICSearchMixin
+ISIC4Classifier -> ISICLoaderMixin
+BaseISIC4 -> ISICSection
+BaseISIC4 -> ISICDivision
+BaseISIC4 -> ISICGroup
+BaseISIC4 -> ISICClass
+ISICSearchMixin -> ISICSearchResult
+ISICSearchMixin -> ISICSearchResults
+ISICSearchMixin -> ISICHierarchy
+ISICSection -> Tree
+ISICDivision -> Tree
+ISICGroup -> Tree
+ISICClass -> Tree
+
+Main { ISIC4Classifier }
+Base Classes { BaseISIC4, ISICSearchMixin, ISICLoaderMixin }
+Models { ISICSection, ISICDivision, ISICGroup, ISICClass, ISICHierarchy, ISICSearchResult, ISICSearchResults }
+Utils { Tree }

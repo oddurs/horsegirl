@@ -1,0 +1,13 @@
+# Converted from corpus/flowcharts/0030.mmd by corpus/convert.py.
+House battery -> D5S brain + pump: always on · 20 A
+House battery -> Master Off / On
+Master Off / On -> EasyStart Timer
+Master Off / On -> Fan dial
+EasyStart Timer -> D5S brain + pump: yellow wake
+Shore or PROwatt SW -> 9009 · SHORE / INVERTER
+9009 · SHORE / INVERTER -> Paneltronics WATER HEATER
+Paneltronics WATER HEATER -> 750 W element
+Master Off stops 12 V heat call
+
+12 V · diesel heat + fans { House battery, D5S brain + pump, Master Off / On, EasyStart Timer, Fan dial }
+120 V · Isotemp chamber only { Shore or PROwatt SW, 9009 · SHORE / INVERTER, Paneltronics WATER HEATER, 750 W element }

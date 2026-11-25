@@ -1,0 +1,8 @@
+# Converted from corpus/flowcharts/0094.mmd by corpus/convert.py.
+Base model -> merge_adapter.py
+merge_adapter.py -> Merged model
+LoRA adapter -> merge_adapter.py
+Merged model -> convert_hf_to_gguf.py
+convert_hf_to_gguf.py -> model.gguf
+model.gguf -> quantize
+quantize -> model-q4_k_m.gguf

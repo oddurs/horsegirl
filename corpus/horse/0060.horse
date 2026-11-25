@@ -1,0 +1,8 @@
+# Converted from corpus/flowcharts/0060.mmd by corpus/convert.py.
+"BoardGames, games.py" -> "PracticeGame, practice.py": "Darts, gezogene Darts, Aktionen"
+"PracticeGame, practice.py" -> "GameMode, modes.py": seine Modus-Fabrik erzeugt den Modus
+"GameMode, modes.py" -> MatchMode: ein Match
+"GameMode, modes.py" -> "DrillMode, ein Trainingsspiel": kein Match
+MatchMode -> X01Mode
+MatchMode -> CricketMode
+MatchMode -> PartyMode

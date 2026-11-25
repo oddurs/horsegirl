@@ -1,0 +1,7 @@
+# Converted from corpus/flowcharts/0001.mmd by corpus/convert.py.
+1 -> 2
+2 -> 2
+2 -> Load component based on path declared in environment4d.json: environment4d.json gives path
+Load component based on path declared in environment4d.json -> 3
+2 -> Load component next to package folder: environment4d.json doesn't give path
+Load component next to package folder -> 3

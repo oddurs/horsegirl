@@ -1,0 +1,4 @@
+# Converted from corpus/flowcharts/0039.mmd by corpus/convert.py.
+📝 config.yml -> 🔍 detect
+🔍 detect -> 🏗️ generate
+🏗️ generate -> 🚀 runner

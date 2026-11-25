@@ -51,6 +51,10 @@ lint() {
   if optional shellcheck; then
     shellcheck scripts/task scripts/agent scripts/setup scripts/check-pr-title scripts/check-core-deps scripts/dependabot-update-type scripts/dependabot-automerge .githooks/* tests/agent.sh tests/dependabot.sh tests/automerge.sh tests/pins.sh tests/core-deps.sh tools/text-metrics/generate.sh
   fi
+  # The converted corpus is generated: a file that differs from the script is stale.
+  if optional python3; then
+    python3 -I -B corpus/convert.py --check
+  fi
   # The backlog is part of the tree: an invalid item or a stale roadmap is a lint error.
   if [ -f cairn.toml ] && optional cairn; then
     cairn check --render --strict
@@ -79,6 +83,8 @@ test_all() {
     cargo test --workspace --locked
   fi
   test_wasm
+  # The release gate: how many corpus files draw with no overlap, held to a baseline.
+  cargo run --locked --quiet -p horsegirl --example corpus
   site test
   sh tests/agent.sh
   sh tests/dependabot.sh

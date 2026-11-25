@@ -1,0 +1,40 @@
+# Converted from corpus/flowcharts/0157.mmd by corpus/convert.py.
+Merge lanes -> FastQC: "prep,qc"
+FastQC -> carmack: "prep,qc"
+carmack -> carmack: "prep,qc"
+carmack -> carmack: "prep,qc"
+carmack -> carmack: "prep,qc"
+carmack -> prep_out: prep
+carmack -> Read-count gate: prep
+Read-count gate -> gate_out: qc
+fastp -> FastQC: scrna
+FastQC -> Resync barcodes: scrna
+Resync barcodes -> STARsolo: scrna
+star_fasta -> STAR: scrna
+star_gtf -> STAR: scrna
+STAR -> STARsolo: scrna
+STARsolo -> solo_out: scrna
+STARsolo -> samtools: scrna
+samtools -> solo_bam: scrna
+fastp -> FastQC: sctip
+FastQC -> bowtie2: sctip
+bt2_fasta -> bowtie2-build: sctip
+bowtie2-build -> bowtie2: sctip
+bowtie2 -> QNAME →: sctip
+QNAME → -> umi_tools dedup: sctip
+umi_tools dedup -> carmack: sctip
+carmack -> samtools stats: sctip
+carmack -> dedup_out: sctip
+MultiQC -> report_out: qc
+input_in -> Merge lanes: "prep,qc"
+carmack -> MultiQC: qc
+Read-count gate -> fastp: scrna
+Read-count gate -> fastp: sctip
+STARsolo -> MultiQC: qc
+samtools stats -> MultiQC: qc
+
+Input { input_in }
+Pre-processing { Merge lanes, FastQC, carmack, carmack, carmack, carmack, prep_out, Read-count gate, gate_out }
+scRNA arm { fastp, FastQC, Resync barcodes, star_fasta, star_gtf, STAR, STARsolo, solo_out, samtools, solo_bam }
+scTIP arms { fastp, FastQC, bt2_fasta, bowtie2-build, bowtie2, QNAME →, umi_tools dedup, carmack, samtools stats, dedup_out }
+Reporting { MultiQC, report_out }

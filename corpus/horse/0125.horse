@@ -1,0 +1,10 @@
+# Converted from corpus/flowcharts/0125.mmd by corpus/convert.py.
+Client -> Gateway
+Gateway -> API
+API -> Worker
+Worker -> Database
+API -> Database
+
+Cloud { VPC, Gateway }
+VPC { Cluster, Database }
+Cluster { API, Worker }

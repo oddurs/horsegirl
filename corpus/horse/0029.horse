@@ -1,0 +1,13 @@
+# Converted from corpus/flowcharts/0029.mmd by corpus/convert.py.
+Document Upload -> Document Parser
+Document Parser -> Text Chunker
+Text Chunker -> Embedding
+Embedding -> Vector Store - docs
+User Query -> Query Condenser
+Query Condenser -> Preflight Analyzer
+Preflight Analyzer -> Plan Generator
+Plan Generator -> DurableAgent
+DurableAgent -> Vector Store - queries
+
+Ingestion Pipeline { Document Upload, Document Parser, Text Chunker, Embedding, Vector Store - docs }
+Query Pipeline { User Query, Query Condenser, Preflight Analyzer, Plan Generator, DurableAgent, Vector Store - queries }

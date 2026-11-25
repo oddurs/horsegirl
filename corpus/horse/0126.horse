@@ -1,0 +1,8 @@
+# Converted from corpus/flowcharts/0126.mmd by corpus/convert.py.
+录入 -> AI 识别
+AI 识别 -> 归档
+归档 -> 复习
+复习 -> 数据分析
+数据分析 -> 复习: 复习结果回写
+数据分析 -> 归档: 掌握度更新
+归档 -> 导出

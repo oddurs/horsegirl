@@ -1,0 +1,15 @@
+# Converted from corpus/flowcharts/0192.mmd by corpus/convert.py.
+"contains(lcase(str(?dLabel)),'alzheimer')" -> ?dLabel
+?d -> "up:Disease": a
+?compound -> ?d: "ncit:NCIT_C41184"
+?d -> ?dLabel: "rdfs:label"
+?compound -> ?cName: "schema:name"
+?compound -> ?cType: a
+?compound -> ?status: "schema:status"
+?compound -> ?approval: "ncit:NCIT_C25425"
+
+"GRAPH https://purl.org/okn/frink/kg/prokn" { (optional), (optional), (optional), (optional), ?compound, ?d, ?dLabel, "up:Disease", "contains(lcase(str(?dLabel)),'alzheimer')" }
+(optional) { ?cName }
+(optional) { ?cType }
+(optional) { ?status }
+(optional) { ?approval }

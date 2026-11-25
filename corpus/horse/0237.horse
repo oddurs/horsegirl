@@ -1,0 +1,8 @@
+# Converted from corpus/flowcharts/0237.mmd by corpus/convert.py.
+User -> CommandAPI: Command
+CommandAPI -> CommandModel
+CommandModel -> EventBus: Emits Events
+EventBus -> ProjectionHandler
+ProjectionHandler -> ReadModel
+User -> QueryAPI: Query
+QueryAPI -> ReadModel

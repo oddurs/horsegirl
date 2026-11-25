@@ -1,0 +1,16 @@
+# Converted from corpus/flowcharts/0041.mmd by corpus/convert.py.
+Input Document -> Parser Selection
+Parser Selection -> PDF Parser: PDF
+Parser Selection -> HTML Parser: HTML
+Parser Selection -> YouTube Parser: YouTube
+Parser Selection -> DOCX Parser: DOCX
+Parser Selection -> PPT Parser: PPT
+Parser Selection -> TXT Parser: TXT
+PDF Parser -> Text Extraction
+HTML Parser -> Text Extraction
+YouTube Parser -> Text Extraction
+DOCX Parser -> Text Extraction
+PPT Parser -> Text Extraction
+TXT Parser -> Text Extraction
+Text Extraction -> Clean Text
+Clean Text -> Save Text File

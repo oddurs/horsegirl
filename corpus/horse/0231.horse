@@ -1,0 +1,14 @@
+# Converted from corpus/flowcharts/0231.mmd by corpus/convert.py.
+uno.config.ts -> unocss.ts
+uno.config.ts -> vars.ts
+uno.config.ts -> uno-preset
+theme/index.ts -> theme/shared.ts
+theme/index.ts -> settings.ts
+theme/shared.ts -> vars.ts
+assets.ts -> uno.config.ts
+uno.config.ts -> 应用组件
+unocss.ts -> Vite构建流程
+
+UnoCSS配置 { uno.config.ts, unocss.ts, vars.ts, uno-preset }
+主题系统 { theme/index.ts, theme/shared.ts, settings.ts }
+应用入口 { assets.ts }

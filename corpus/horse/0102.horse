@@ -1,0 +1,14 @@
+# Converted from corpus/flowcharts/0102.mmd by corpus/convert.py.
+Client -> Virtual Gateway: mTLS
+Virtual Gateway -> Virtual Router
+Virtual Router -> Backend Node: Weighted Routing
+Virtual Router -> Canary Node: Weighted Routing
+Backend Node -> DB Proxy Node: Circuit Breaker
+Canary Node -> DB Proxy Node: Circuit Breaker
+Frontend Node -> Virtual Router
+DB Proxy Node -> Database: Connection Pool
+Backend Node -> X-Ray: Traces
+Canary Node -> X-Ray: Traces
+
+App Mesh { Backend Services, Virtual Gateway, Virtual Router, Virtual Service, Frontend Node, DB Proxy Node }
+Backend Services { Backend Node, Canary Node }

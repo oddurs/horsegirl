@@ -1,0 +1,16 @@
+# Converted from corpus/flowcharts/0103.mmd by corpus/convert.py.
+AI Agent -> MCP Client: JSON-RPC 2.0
+MCP Client -> SSE Transport: HTTP / SSE
+MCP Client -> stdio Transport: stdin / stdout
+SSE Transport -> Token Resolver
+stdio Transport -> Token Resolver
+Token Resolver -> McpServer
+McpServer -> 35 Tools
+McpServer -> 4 Resources
+35 Tools -> Mongoose Models
+4 Resources -> Mongoose Models
+Mongoose Models -> MongoDB
+
+Transport Layer { MCP Client, SSE Transport, stdio Transport }
+MCP Server { Token Resolver, McpServer, 35 Tools, 4 Resources }
+Data Layer { Mongoose Models, MongoDB }

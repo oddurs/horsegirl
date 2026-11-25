@@ -15,6 +15,8 @@ to test the parser, the converter and the layout.
   Apache-2.0 repository with a `NOTICE` file has the notice at the end of its
   licence text.
 - `measure.py`: the measurement that SPIKE-17 quotes.
+- `convert.py`: writes `horse/NNNN.horse` from `flowcharts/NNNN.mmd`.
+- `horse/NNNN.horse`: each flowchart in horsegirl, as `convert.py` writes it.
 
 ## How the files were chosen
 
@@ -34,7 +36,8 @@ LF, and blank lines at the start and the end are removed. Nothing else changes.
 ## Licences
 
 Each file stays under the licence of its source repository, named in
-`manifest.tsv`. The horsegirl licence does not cover this directory. The
+`manifest.tsv`. A file in `horse/` is under the licence of the flowchart of the
+same number. The horsegirl licence does not cover this directory. The
 licence check uses the licence that GitHub reports for the whole repository. A
 repository can put one directory under a different licence; if you find one,
 remove its rows and files.
@@ -47,3 +50,22 @@ python3 corpus/measure.py
 
 The script uses only the Python standard library. It prints the same report on
 every machine.
+
+## Convert and draw
+
+```sh
+python3 corpus/convert.py
+cargo run -p horsegirl --example corpus
+```
+
+`convert.py` keeps the things, the links, their labels and the subgraphs. It
+drops styles, shapes and the kind of each arrow. A name or a label that holds a
+reserved character is written in quotes. `scripts/task lint` fails when a file
+in `horse/` differs from what the script writes, so commit the files after you
+change the script.
+
+The example draws each file with the flow lens and counts the files whose
+picture has no overlap of any kind. `scripts/task test` runs it, so CI prints
+the count. The run fails when the count is below `BASELINE` in
+`crates/horsegirl/examples/corpus.rs`. A file with an error in `check` gives no
+picture, so it is not clean.

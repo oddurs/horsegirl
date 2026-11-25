@@ -1,0 +1,20 @@
+# Converted from corpus/flowcharts/0181.mmd by corpus/convert.py.
+Client -> ":8000 API": http
+":8000 API" -> "app:8000": routes to
+"app:8000" -> Vault: tokenize
+"app:8000" -> HSM Wrapper: encrypt/decrypt
+HSM Wrapper -> softhsm: signing
+Vault -> "audit-db:5432": stores
+"app:8000" -> Audit Logger: logging
+Audit Logger -> "audit-db:5432": writes
+"app:8000" -> "prometheus:9090": scrapes /metrics
+"grafana:3000" -> "prometheus:9090": queries
+":9090 Prometheus" -> "prometheus:9090": for UI
+":3000 Grafana" -> "grafana:3000": for UI
+
+Host Machine { Client }
+"Docker Network: hsm-network" { app-container, metrics-stack, infrastructure }
+app-container { "app:8000", Vault, HSM Wrapper, Audit Logger }
+metrics-stack { "prometheus:9090", "grafana:3000" }
+infrastructure { softhsm, "audit-db:5432" }
+Exposed Ports { ":8000 API", ":9090 Prometheus", ":3000 Grafana" }

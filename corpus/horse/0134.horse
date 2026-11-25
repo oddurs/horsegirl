@@ -1,0 +1,17 @@
+# Converted from corpus/flowcharts/0134.mmd by corpus/convert.py.
+Start -> generate_random_solution(rng)
+generate_random_solution(rng) -> Initial solution provided?
+Initial solution provided? -> "preprocess_solution(solution, score)": Yes (caller provided)
+Initial solution provided? -> "preprocess_solution(solution, score)": No (not provided)
+"preprocess_solution(solution, score)" -> "Optimizer: optimize(...)"
+"Optimizer: optimize(...)" -> handler.update(ctx) each iteration
+handler.update(ctx) each iteration -> generator.generate_trials(...) once; keep best
+generator.generate_trials(...) once; keep best -> "p = handler.evaluate(current, trial)"
+"p = handler.evaluate(current, trial)" -> "accept? (p > rand(0, 1))"
+"accept? (p > rand(0, 1))" -> "apply trial -> new current": Accept
+"accept? (p > rand(0, 1))" -> keep current: Reject
+"apply trial -> new current" -> "Optimizer: optimize(...)"
+keep current -> "Optimizer: optimize(...)"
+"Optimizer: optimize(...)" -> optimizer returns best solution
+optimizer returns best solution -> "postprocess_solution(solution, score)"
+"postprocess_solution(solution, score)" -> End

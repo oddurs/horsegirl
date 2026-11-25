@@ -1,0 +1,20 @@
+# Converted from corpus/flowcharts/0165.mmd by corpus/convert.py.
+Analyst-defined CenQL query -> Collection
+Collection -> List Collections API
+List Collections API -> Collection Search API
+Collection Search API -> IPv4/IPv6 Observable + Indicator
+Collection Search API -> Domain-Name Observable + Indicator
+Collection Search API -> X509-Certificate Observable + Indicator
+IPv4/IPv6 Observable + Indicator -> Malware
+IPv4/IPv6 Observable + Indicator -> Threat-Actor-Group
+IPv4/IPv6 Observable + Indicator -> Vulnerability
+Domain-Name Observable + Indicator -> Malware
+Domain-Name Observable + Indicator -> Threat-Actor-Group
+Domain-Name Observable + Indicator -> Vulnerability
+IPv4/IPv6 Observable + Indicator -> External Reference to Collection
+Domain-Name Observable + Indicator -> External Reference to Collection
+X509-Certificate Observable + Indicator -> External Reference to Collection
+
+Censys { Analyst-defined CenQL query, Collection }
+Censys API { List Collections API, Collection Search API }
+OpenCTI Output { IPv4/IPv6 Observable + Indicator, Domain-Name Observable + Indicator, X509-Certificate Observable + Indicator, Malware, Threat-Actor-Group, Vulnerability, External Reference to Collection }

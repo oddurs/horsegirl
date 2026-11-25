@@ -1,0 +1,14 @@
+# Converted from corpus/flowcharts/0053.mmd by corpus/convert.py.
+Interpret -> Plan
+Plan -> Realize
+Realize -> Evaluate
+Evaluate -> Interpret: bounded correction signal
+Interpret -> World State
+Plan -> World State
+Realize -> World State
+Evaluate -> World State
+Table Compiler -> Plan: epoch tables
+Input -> Interpret
+Realize -> Surface Output
+
+Unified Control Loop — one runtime { World State, Interpret, Plan, Realize, Evaluate }

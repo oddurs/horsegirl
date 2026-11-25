@@ -1,0 +1,51 @@
+# Converted from corpus/flowcharts/0235.mmd by corpus/convert.py.
+Web UI -> REST API
+Terminal UI -> Rule Engine
+Terminal UI -> NAT Engine
+Terminal UI -> Connection Tracker
+CLI Tool -> Rule Engine
+CLI Tool -> NAT Engine
+CLI Tool -> Shaping Engine
+CLI Tool -> VPN Engine
+CLI Tool -> Geo-IP Engine
+REST API -> Rule Engine
+REST API -> NAT Engine
+REST API -> Shaping Engine
+REST API -> Connection Tracker
+REST API -> Audit Log
+REST API -> Metrics Collector
+Rule Engine -> pf Firewall
+NAT Engine -> pf Firewall
+Shaping Engine -> pf Firewall
+VPN Engine -> pf Firewall
+VPN Engine -> WireGuard
+VPN Engine -> IPsec
+Geo-IP Engine -> pf Firewall
+TLS Engine -> pf Firewall
+Cluster Engine -> pf Firewall
+Cluster Engine -> CARP/pfsync
+AI/ML Engine -> Connection Tracker
+AI/ML Engine -> Auto-Responder
+Auto-Responder -> pf Firewall
+Plugin Manager -> pf Firewall
+Connection Tracker -> pf Firewall
+Metrics Collector -> pf Firewall
+Metrics Collector -> SQLite
+Metrics Collector -> PostgreSQL
+Rule Engine -> SQLite
+NAT Engine -> SQLite
+Shaping Engine -> SQLite
+VPN Engine -> SQLite
+Geo-IP Engine -> SQLite
+TLS Engine -> SQLite
+Cluster Engine -> SQLite
+Rule Engine -> Audit Log
+NAT Engine -> Audit Log
+Audit Log -> SQLite
+
+User Interfaces { Web UI, Terminal UI, CLI Tool }
+API Layer { REST API }
+Core Engines { Rule Engine, NAT Engine, Shaping Engine, VPN Engine, Geo-IP Engine, TLS Engine, Cluster Engine }
+Intelligence { AI/ML Engine, Plugin Manager, Auto-Responder }
+Data Layer { Connection Tracker, Metrics Collector, Audit Log, SQLite, PostgreSQL }
+Kernel / OS { pf Firewall, WireGuard, IPsec, CARP/pfsync }

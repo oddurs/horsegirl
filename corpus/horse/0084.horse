@@ -1,0 +1,12 @@
+# Converted from corpus/flowcharts/0084.mmd by corpus/convert.py.
+Full Dataset -> Traffic Label
+Traffic Label -> Normal Training Pool: BENIGN
+Traffic Label -> Attack Test Pool: ATTACK
+Normal Training Pool -> Train/Test Split
+Train/Test Split -> Train Normal
+Train/Test Split -> Test Normal
+Train Normal -> Fit Scaler
+Fit Scaler -> Train PCA
+Train PCA -> Normal Error Distribution
+Test Normal -> Evaluation
+Attack Test Pool -> Evaluation

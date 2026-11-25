@@ -1,0 +1,25 @@
+# Converted from corpus/flowcharts/0050.mmd by corpus/convert.py.
+☁️ Internet -> Internet Gateway
+Internet Gateway -> Application Load Balancer
+Application Load Balancer -> ECS Service
+ECS Service -> EFS
+ECS Service -> S3 Bucket
+ECS Service -> SQS Queue
+ECS Service -> SNS Topic
+ECS Service -> SSM Parameter
+ECS Service -> Secrets Manager
+KMS CMK -> EFS
+KMS CMK -> S3 Bucket
+KMS CMK -> SSM Parameter
+KMS CMK -> Secrets Manager
+AWS CloudTrail -> S3 Bucket
+GuardDuty -> VPC Flow Logs
+AWS Config -> VPC Flow Logs
+VPC Flow Logs -> KMS CMK
+
+FedRAMP Authorization Boundary { "VPC: fedramp-complex-vpc (10.30.0.0/16)" }
+"VPC: fedramp-complex-vpc (10.30.0.0/16)" { Public Tier - SC-7, Application Tier - Private (AU-2), Data Tier - Encrypted (CM-2), "Security & Compliance - AC-6, AU-2" }
+Public Tier - SC-7 { Internet Gateway, NAT Gateway, Application Load Balancer }
+Application Tier - Private (AU-2) { ECS Service, EFS, SSM Parameter, Secrets Manager }
+Data Tier - Encrypted (CM-2) { S3 Bucket, SQS Queue, SNS Topic }
+"Security & Compliance - AC-6, AU-2" { KMS CMK, AWS CloudTrail, GuardDuty, AWS Config, VPC Flow Logs }

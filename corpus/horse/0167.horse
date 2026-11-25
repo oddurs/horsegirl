@@ -1,0 +1,14 @@
+# Converted from corpus/flowcharts/0167.mmd by corpus/convert.py.
+분산 데이터 (파티션들) -> RDD
+분산 데이터 (파티션들) -> DataFrame
+분산 데이터 (파티션들) -> Dataset&[T&]
+RDD -> Catalyst 옵티마이저: 개입 불가
+DataFrame -> Catalyst 옵티마이저
+Dataset&[T&] -> Catalyst 옵티마이저
+Catalyst 옵티마이저 -> 트랜스포메이션
+RDD -> 트랜스포메이션
+트랜스포메이션 -> narrow (셔플 없음)
+narrow (셔플 없음) -> 액션: 액션이 트리거
+
+추상화 계층 — 무엇으로 표현하는가 { RDD, DataFrame, Dataset&[T&] }
+실행 계층 — 언제 실행되는가 { 트랜스포메이션, narrow (셔플 없음), 액션 }

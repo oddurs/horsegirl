@@ -1,0 +1,12 @@
+# Converted from corpus/flowcharts/0042.mmd by corpus/convert.py.
+Input Text -> Text Preprocessing
+Text Preprocessing -> Split into Chunks
+Split into Chunks -> Generate Summary
+Split into Chunks -> Generate QA Pairs
+Generate Summary -> LLM Inference
+Generate QA Pairs -> LLM Inference
+LLM Inference -> Document Summary
+LLM Inference -> QA Pairs
+Document Summary -> Results Object
+QA Pairs -> Results Object
+Results Object -> Save to JSON

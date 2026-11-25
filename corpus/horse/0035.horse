@@ -1,0 +1,11 @@
+# Converted from corpus/flowcharts/0035.mmd by corpus/convert.py.
+JuOS 原始系统 -> OpenJuOS: 开源发布
+OpenJuOS -> ProperOS: 被继承
+ProperOS -> ProperOS2: 完全重构
+OpenJuOS -> OpenJuOS
+ProperOS -> ProperOS
+ProperOS2 -> ProperOS 2
+
+OpenJuOS { "包格式: .jupk", "清单: InstallAppLog.f", 无引导系统, "桌面: .f → .app", ❌ 桌面重名Bug }
+ProperOS { "包格式: .jupk + .jspk", "清单: .f + MainIndex.json", "引导: BootRepair", "桌面: .f + .plink", 3个安装函数, ⚠️ 依赖OpenJuOS遗产 }
+ProperOS 2 { "包格式: .jspk + .pjspk", "清单: MainIndex.json统一", "引导: ProLoader + StBoot", "桌面: .plink统一", "包管理器: ppkg", ✅ 完全独立 }

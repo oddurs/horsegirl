@@ -1,0 +1,15 @@
+# Converted from corpus/flowcharts/0027.mmd by corpus/convert.py.
+User query -> Query understanding
+PDF fixture -> Mixed-source corpus
+Scanned OCR fixture -> Mixed-source corpus
+Webpage fixture -> Mixed-source corpus
+Table fixture -> Mixed-source corpus
+Tool/API fixture -> Mixed-source corpus
+Query understanding -> Mixed-source corpus
+Mixed-source corpus -> Ingestion and normalization
+Ingestion and normalization -> Local / production indexes
+Local / production indexes -> Hierarchy Search
+Hierarchy Search -> Evidence assembly
+Evidence assembly -> LLM or deterministic answer step
+LLM or deterministic answer step -> Verification and evaluation
+Verification and evaluation -> Final answer with trace

@@ -1,0 +1,8 @@
+# Converted from corpus/flowcharts/0197.mmd by corpus/convert.py.
+Server -> sync application: environ and start_response
+sync application -> Server: response iterable
+Server -> async application: receive()
+async application -> Server: send()
+
+"WSGI: one request = one function call" { Server, sync application }
+"ASGI: one connection = events over time" { Server, async application }

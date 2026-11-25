@@ -1,0 +1,14 @@
+# Converted from corpus/flowcharts/0033.mmd by corpus/convert.py.
+VoteBot -> REST
+REST -> EmojiUI
+EmojiUI -> gRPC
+gRPC -> EmojiSvc
+EmojiUI -> gRPC
+gRPC -> EmojiVoting
+EmojiUI -> Console: logs
+EmojiSvc -> Console: logs
+EmojiVoting -> Console: logs
+VoteBot -> Console: logs
+
+EmojiVoto { VoteBot, REST, EmojiUI, gRPC, EmojiSvc, EmojiVoting }
+Monitoring { Console }

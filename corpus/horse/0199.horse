@@ -1,0 +1,12 @@
+# Converted from corpus/flowcharts/0199.mmd by corpus/convert.py.
+"GraphState: 'knowledge'" -> Write-Ahead Log: writes
+"GraphState: 'users'" -> Write-Ahead Log: writes
+Snapshot Engine -> "GraphState: 'knowledge'": reads all
+Snapshot Engine -> "GraphState: 'users'": reads all
+Write-Ahead Log -> "GraphState: 'knowledge'": recovery replay
+Snapshot Engine -> "GraphState: 'knowledge'": recovery restore
+
+Engine (RwLock>>>) { "GraphState: 'knowledge'", "GraphState: 'users'" }
+"GraphState: 'knowledge'" { AdjacencyStore, PropertyStore, VectorIndex (HNSW), TextIndex (BM25), StringInterner }
+"GraphState: 'users'" { AdjacencyStore, PropertyStore, VectorIndex }
+Persistence Layer { Write-Ahead Log, Snapshot Engine }

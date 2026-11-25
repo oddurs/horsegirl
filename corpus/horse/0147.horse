@@ -1,0 +1,17 @@
+# Converted from corpus/flowcharts/0147.mmd by corpus/convert.py.
+[0] clarify -> [1] discover
+[1] discover -> [2] specify
+[2] specify -> [3] spec-challenge
+[3] spec-challenge -> [4] author: approved
+[4] author -> [5] design
+[5] design -> [6] design-review
+[6] design-review -> [7] plan: approved
+[7] plan -> [8] plan-review
+[8] plan-review -> [9] execute: approved
+[9] execute -> [10] verify
+[10] verify -> [11] review
+[11] review -> [12] learn
+[12] learn -> [13] prepare-next
+[3] spec-challenge -> [2] specify: rejected
+[6] design-review -> [5] design: rejected
+[8] plan-review -> [7] plan: rejected

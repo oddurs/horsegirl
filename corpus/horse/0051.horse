@@ -1,0 +1,14 @@
+# Converted from corpus/flowcharts/0051.mmd by corpus/convert.py.
+🚶 Start -> Step 1
+Step 1 -> Step 2
+Step 2 -> Step 3
+Step 3 -> Step 4
+Step 4 -> 🏁 Top
+"🎯 Climbing Stairs: n = 5" -> 📊 Dynamic Programming
+📊 Dynamic Programming -> 🔢 Fibonacci Pattern
+🔢 Fibonacci Pattern -> "✅ Answer: 8 ways"
+
+"🎯 Climbing Stairs: n = 5" { 🚶 Start, Step 1, Step 2, Step 3, Step 4, 🏁 Top }
+📊 Dynamic Programming { dp[0] = 1, dp[1] = 1, dp[2] = 2, dp[3] = 3, dp[4] = 5, dp[5] = 8 }
+🔢 Fibonacci Pattern { dp[i] = dp[i-1] + dp[i-2], "From i-1: take 1 step", "From i-2: take 2 steps" }
+"✅ Answer: 8 ways" { 1+1+1+1+1, "1+1+1+2, 1+1+2+1, 1+2+1+1, 2+1+1+1", "1+2+2, 2+1+2, 2+2+1" }

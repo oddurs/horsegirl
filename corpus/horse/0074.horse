@@ -1,0 +1,26 @@
+# Converted from corpus/flowcharts/0074.mmd by corpus/convert.py.
+OpenClaw Agent -> "@epsilla/clawtrace plugin"
+"@epsilla/clawtrace plugin" -> Ingest Service: POST /v1/traces/events
+Ingest Service -> Raw JSON Events
+Raw JSON Events -> Databricks Lakeflow
+Databricks Lakeflow -> Iceberg Silver Tables
+Iceberg Silver Tables -> PuppyGraph
+PuppyGraph -> Backend API: Cypher
+PuppyGraph -> Tracy MCP Server: Cypher
+Backend API -> Neon PostgreSQL
+Payment Service -> Neon PostgreSQL
+Payment Service -> Stripe
+Tracy MCP Server -> Tracy Agent: tool results
+Tracy Agent -> Backend API: SSE stream
+ClawTrace UI -> Backend API: REST API
+ClawTrace UI -> Backend API: SSE
+Backend API -> Payment Service: deficit check
+
+Agent Runtime { OpenClaw Agent, "@epsilla/clawtrace plugin" }
+Ingest Layer { Ingest Service }
+Data Lake { Raw JSON Events, Databricks Lakeflow, Iceberg Silver Tables }
+Graph Layer { PuppyGraph }
+Backend Services { Backend API, Payment Service, Tracy MCP Server }
+AI Layer { Tracy Agent }
+Frontend { ClawTrace UI, Documentation }
+External { Neon PostgreSQL, Stripe }
