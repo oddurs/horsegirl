@@ -3,15 +3,15 @@ id: 30
 uid: e66b6f6e-e7e6-4f25-9bdc-89a216afec01
 title: Measure text with bundled metrics
 type: feature
-status: doing
+status: done
 milestone: v0.1
 assignee: Oddur Sigurdsson
-claimed: 2026-11-25
 depends_on:
 - 19
 - 22
 created: 2026-11-25
 updated: 2026-11-25
+closed_at: 2026-11-25
 priority: p0
 risk: medium
 surface: svg
@@ -32,7 +32,7 @@ Implement the text measurement that the spike chose, behind one function: text a
 ## Acceptance criteria
 
 - [x] Widths for 100 reference labels are within 3 percent of the browser measurement recorded in the spike.
-- [ ] The function gives the same result on Linux, macOS and in WebAssembly, held by CI.
+- [x] The function gives the same result on Linux, macOS and in WebAssembly, held by CI.
 
 ## 2026-11-25
 
@@ -49,3 +49,7 @@ Criterion 1: scripts/task check ran crates/horsegirl-core/tests/text.rs natively
 ## 2026-11-25
 
 Criterion 2: every_target_gives_the_same_bits compares the f64 width and height of 108 labels with crates/horsegirl-core/tests/text-widths.tsv. Watched pass on x86_64 Linux and on wasm32-wasip1 under Node. With one width in the file changed to 47.8126, the wasm32-wasip1 run failed with exit status 1, so the runner reports a failure. macOS runs in the new CI job core-macos (scripts/task test:core); this criterion is ticked only after that job passes on the pull request.
+
+## 2026-11-25
+
+Criterion 2: CI run 45558800117 on PR 22 passed. Job core-macos (macos-latest) ran scripts/task test:core: native 8 unit and 2 integration tests passed, wasm32-wasip1 8 and 2 passed, including every_target_gives_the_same_bits. Job check (ubuntu-latest) ran the same tests natively and on wasm32-wasip1: passed. required needs core-macos.
