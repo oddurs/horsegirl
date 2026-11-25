@@ -56,7 +56,7 @@ An agent writes a horsegirl file, checks it, applies the fixes, and draws a flow
 
 ## later — Later
 
-`··········` 0% · 0 of 21 done
+`··········` 0% · 0 of 22 done
 
 Nothing on a date. Good ideas wait here until a release needs them.
 
@@ -81,6 +81,7 @@ Nothing on a date. Good ideas wait here until a release needs them.
 - [ ] [`BUG-148`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/BUG-148-an-arrival-that-cannot-move-keeps-its-level-line-apart-from-every-other-line.md) An arrival that cannot move keeps its level line apart from every other line <sup>bug · p2 · layout</sup>
 - [ ] [`0149`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0149-the-overlap-detector-reports-a-thing-in-the-box-of-a-group-that-does-not-hold-it.md) The overlap detector reports a thing in the box of a group that does not hold it <sup>feature · p2 · check</sup>
 - [ ] [`0150`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0150-the-route-phase-orders-the-upright-lines-of-a-corridor-in-less-than-cubic-time.md) The route phase orders the upright lines of a corridor in less than cubic time <sup>chore · p2 · layout</sup>
+- [ ] [`0151`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0151-a-comment-line-that-reads-as-a-link-or-a-block-gets-a-warning.md) A comment line that reads as a link or a block gets a warning <sup>feature · p2 · check</sup>
 
 ## v0.2 — Trot
 

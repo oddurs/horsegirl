@@ -53,6 +53,10 @@ The benchmark (item 41) shows that agents write a comment form that the parser d
 
 ## Acceptance criteria
 
-- [ ] The choice, its evidence and its consequences are recorded.
-- [ ] If the choice changes the language card, the card states the comment form in one line and still holds fewer than 200 words.
-- [ ] If the choice removes or changes the form, the parser and its tests follow in the same pull request or in a follow-up item.
+- [x] The choice, its evidence and its consequences are recorded.
+- [x] If the choice changes the language card, the card states the comment form in one line and still holds fewer than 200 words.
+- [x] If the choice removes or changes the form, the parser and its tests follow in the same pull request or in a follow-up item.
+
+## 2026-11-25
+
+Decision recorded in the item: keep '#' comment lines and state them on the card. Evidence: scripts/task check exit 0 in the worktree; nextest printed PASS for horsegirl-core::check the_comment_form_is_on_the_language_card_and_reads_as_written, tests::the_card_fits_in_a_prompt, tests::the_card_has_five_rules and horsegirl::cli spec_prints_the_card. wc -w spec.txt printed 148 (was 139). The form is unchanged, so the parser and its tests do not change; criterion 3 holds with no follow-up.
