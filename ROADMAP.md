@@ -12,7 +12,7 @@ named for gaits: Walk, Trot, Canter, Gallop.
 
 ## v0.1 — Walk
 
-`··········` 0% · 0 of 43 done · due 2027-01-31
+`··········` 0% · 0 of 42 done · due 2027-01-31
 
 An agent writes a horsegirl file, checks it, applies the fixes, and draws a flow diagram as SVG, from the command line or over MCP.
 
@@ -50,7 +50,6 @@ An agent writes a horsegirl file, checks it, applies the fixes, and draws a flow
 - [ ] [`LENS-36`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/LENS-36-flow.md) flow <sup>lens · p0 · lens</sup>
 - [ ] [`0037`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0037-the-command-line-check-fix-fmt-draw-spec.md) The command line: check, fix, fmt, draw, spec <sup>feature · p0 · cli</sup>
 - [ ] [`0038`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0038-an-mcp-server-with-spec-check-fix-and-draw.md) An MCP server with spec, check, fix and draw <sup>feature · p0 · mcp</sup>
-- [ ] [`0039`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0039-a-golden-test-harness-for-files-diagnostics-and-pictures.md) A golden test harness for files, diagnostics and pictures <sup>chore · p0 · workflow</sup>
 - [ ] [`0040`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0040-draw-the-corpus-in-ci-and-count-overlaps.md) Draw the corpus in CI and count overlaps <sup>chore · p0 · bench</sup>
 - [ ] [`0041`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0041-the-first-benchmark-can-a-model-write-it-from-the-card.md) The first benchmark: can a model write it from the card? <sup>feature · p1 · bench</sup>
 - [ ] [`0042`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0042-release-binaries-with-checksums-and-an-install-script.md) Release binaries with checksums and an install script <sup>chore · p0 · release</sup>

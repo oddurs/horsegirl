@@ -36,3 +36,7 @@ Write the SVG backend. Colours and fonts are CSS variables with fallbacks. Each 
 ## 2026-11-25
 
 SPIKE-19 answer: the SVG font stack is Arial, "Liberation Sans", Helvetica, sans-serif, because the core measures in Arial metrics. 0118 adds textLength to each label so other faces keep the measured width.
+
+## 2026-11-25
+
+0039 added the golden harness in crates/horsegirl-core/tests/golden.rs. Add the SVG as one more entry in OUTPUTS ('svg'), written for each case that draws, so a change to a picture shows as a diff beside its tree and diagnostics.
