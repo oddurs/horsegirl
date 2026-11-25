@@ -53,3 +53,7 @@ Criterion 3: horsegirl_core::overlap::overlaps reads a Scene and returns each co
 ## 2026-11-25
 
 What the next items need to know. Layout.paths has the points of each link and Layout.labels the centre of each label; Graph.labels takes the size of each label. fn scene in crates/horsegirl-core/tests/layout.rs turns a Layout into a Placement and a Scene: LENS-36 owns that step. A bend is no longer outside every group that does not hold both ends: it lies inside a group of one end while that group has the rank of the bend. A path can pass a bend up to 6 px from the point in Layout.bends, when two upright lines each arrive where the other leaves. The gap between two ranks is no longer fixed: it grows with the upright lines and with the widest label between the two ranks. A node with a link to itself makes its rank wider by the loop room at both sides. Looked at the eleven pictures as SVG in Chromium.
+
+## Result
+
+The layout routes each link at right angles and turns only between two ranks, so no path crosses the box of a thing on the eleven test diagrams, and each label is on its path and off every box. horsegirl_core::overlap::overlaps reads a scene and reports each collision. 18 links still pass through a group that holds neither of their ends: item 0146.
