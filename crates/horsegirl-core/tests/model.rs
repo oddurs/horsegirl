@@ -234,3 +234,19 @@ fn two_runs_give_the_same_model() {
         format!("{:?}", model(CHECKOUT))
     );
 }
+
+#[test]
+fn a_long_line_of_names_lowers_in_linear_time() {
+    // Each link once measured the whole line again: a fan of 20,000 names
+    // cost the square of the line, and a cross of n names the cube.
+    let fan: Vec<String> = (0..20_000).map(|i| format!("N{i}")).collect();
+    let fan = fan.join(",");
+    for source in [format!("{fan} -> B: go\n"), format!("A -> {fan}: go\n")] {
+        let tree = parse(&source).tree;
+        let start = std::time::Instant::now();
+        let model = lower(&tree);
+        let spent = start.elapsed();
+        assert_eq!(model.links.len(), 20_000);
+        assert!(spent.as_secs() < 5, "took {spent:?}");
+    }
+}

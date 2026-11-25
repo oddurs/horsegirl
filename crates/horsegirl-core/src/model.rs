@@ -167,9 +167,11 @@ impl Lowering {
             return;
         }
         let label = child(node, NodeKind::Label).map(text);
+        // span walks the whole line, so it runs once and not once per link.
+        let span = span(node);
         for &a in &from {
             for &b in &to {
-                self.add_link(a, b, label.as_deref(), span(node));
+                self.add_link(a, b, label.as_deref(), span.clone());
             }
         }
     }
