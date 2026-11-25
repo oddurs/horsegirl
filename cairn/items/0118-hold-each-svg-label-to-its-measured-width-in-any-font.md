@@ -3,14 +3,14 @@ id: 118
 uid: 7ed8e545-58a3-49b6-8767-902975f17b48
 title: Hold each SVG label to its measured width in any font
 type: feature
-status: doing
+status: done
 milestone: v0.1
 assignee: Oddur Sigurdsson
-claimed: 2026-11-25
 depends_on:
 - 34
 created: 2026-11-25
 updated: 2026-11-25
+closed_at: 2026-11-25
 priority: p0
 risk: low
 surface: svg
