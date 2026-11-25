@@ -10,6 +10,7 @@ depends_on:
 - 23
 created: 2026-11-25
 updated: 2026-11-25
+closed_at: 2026-11-25
 priority: p1
 risk: low
 surface: language
@@ -56,3 +57,7 @@ Fix round 1: a bare fact value that ends in ' ?' is now quoted, so the fact sort
 ## 2026-11-25
 
 Round 2: after rebase on main, the property test compares model::lower output (spans and mentions cleared, facts sorted by key). It passes on the corpus and on 1.5M random files. A quoted text now stays exact in names, values and labels.
+
+## 2026-11-25
+
+Round 4, after the rebase on main (#31, #32, #33): scripts/task check exited 0. cargo test -p horsegirl-core --test format: 7 passed, with rule spans cleared in the test projection and the cases 'A -x B: reason' and 'A -> B ?' added. HORSEGIRL_FUZZ_ROUNDS=2000000 in release: 7 passed. fmt and fmt --check now name a bare name that needs quotes and holds a quote, and exit 1: 'A { k: x"y ?, a: b }' and 'A { #a"b }' both printed 'has no canonical form' and exit 1. fmt --check on 'A->B' printed 'would change' and exit 1; on examples/checkout.horse it exited 0.

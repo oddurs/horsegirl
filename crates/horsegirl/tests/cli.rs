@@ -91,6 +91,20 @@ mod fmt {
     }
 
     #[test]
+    fn a_name_that_quotes_cannot_hold_exits_1_and_is_named() {
+        for input in ["A { k: x\"y ?, a: b }\nC->D\n", "A { #a\"b }\nC->D\n"] {
+            for args in [&["--check"][..], &[]] {
+                let out = run(args, input);
+                assert_eq!(out.status.code(), Some(1), "{input:?}");
+                assert_eq!(text(&out.stdout), "");
+                assert!(text(&out.stderr).contains("has no canonical form"));
+            }
+        }
+        let out = run(&["--check"], "A { #a\"b }\n");
+        assert!(text(&out.stderr).contains("`#a\"b`"));
+    }
+
+    #[test]
     fn a_usage_mistake_exits_2() {
         assert_eq!(run(&["--bogus"], "").status.code(), Some(2));
         assert_eq!(run(&["a", "b"], "").status.code(), Some(2));

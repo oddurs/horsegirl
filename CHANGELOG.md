@@ -8,11 +8,13 @@ the project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 ### Added
 
 - `horsegirl fmt [--check] [FILE]` and `horsegirl_core::format::format` print a
-  file in one canonical form: one fact on each line, one space around an arrow,
-  the facts of a line in the order of their keys, and quotes only on a name that
-  needs them (ADR-119). Comments stay. `--check` exits 1 when the file would
-  change. A file with an error has no canonical form, so `fmt` names each error
-  and exits 1.
+  file in one canonical form: one statement on each line, one space around an
+  arrow, the facts of a statement in the order of their keys, and quotes only
+  on a name that needs them (ADR-119). Comments stay. `--check` exits 1 when
+  the file would change. A file with an error has no canonical form, so `fmt`
+  names each error and exits 1. A bare name that needs quotes and holds a `"`
+  has no canonical form either: `fmt` names it and exits 1, and
+  `horsegirl_core::format::unquotable_name` gives it.
 - `horsegirl_core::syntax::parse` reads a file into a lossless tree: names,
   links with `->`, rules with `-x`, braces with parts and facts, `show` lines,
   a final `?`, a citation after `@`, and names and values in double quotes. A

@@ -1,7 +1,7 @@
 //! The formatter keeps the model, settles on one form, and reads its own
 //! output.
 
-use horsegirl_core::format::format;
+use horsegirl_core::format::{format, unquotable_name};
 use horsegirl_core::model::{Model, lower};
 use horsegirl_core::syntax::{Element, Node, TokenKind, parse};
 
@@ -17,6 +17,9 @@ fn model(source: &str) -> Model {
     }
     for link in &mut model.links {
         link.span = 0..0;
+    }
+    for rule in &mut model.rules {
+        rule.span = 0..0;
     }
     model
 }
@@ -58,9 +61,11 @@ fn promises(source: &str) -> String {
         Ok(once.as_str()),
         "not idempotent on {source:?}"
     );
-    // A file the formatter cannot write in a canonical form stays as it is,
-    // so the layout rules hold only for a file that changed or was clean.
-    if once != source {
+    // A file with no canonical form stays as it is, with its own line breaks.
+    // The layout rules hold for every other file.
+    if unquotable_name(source).is_some() {
+        assert_eq!(once, source, "a file with no canonical form changed");
+    } else {
         assert!(once.is_empty() || once.ends_with('\n') && !once.ends_with("\n\n"));
         assert!(!once.contains('\r'));
     }
@@ -79,6 +84,8 @@ fn the_layout_settles_on_one_form() {
         ("A->B", "A -> B\n"),
         ("A   ->   B :  pay  now", "A -> B: pay now\n"),
         ("A,B,C  -x  D", "A, B, C -x D\n"),
+        ("A -x B: reason", "A -x B: reason\n"),
+        ("A -> B ?", "A -> B ?\n"),
         ("  Web   app  \r\n\r\n\r\n\r\nB\r\n", "Web app\n\nB\n"),
         ("\n\nA\n\n\n", "A\n"),
         ("", ""),

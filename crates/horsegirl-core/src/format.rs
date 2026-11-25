@@ -3,10 +3,10 @@
 //! The formatter reads the lossless tree and prints it again. It changes the
 //! layout and the spelling of a name, and nothing that the file states:
 //!
-//! - One fact on each line, indented two spaces for each level of braces.
+//! - One statement on each line, indented two spaces for each level of braces.
 //! - One space around an arrow, none before a colon, one after it.
 //! - A comma and a space between names and between facts.
-//! - The facts of one line in the order of their keys.
+//! - The facts of one statement in the order of their keys.
 //! - A block that holds one line of names or facts stays on the line of its
 //!   name. Any other block has a line for each part.
 //! - A name or a value in quotes loses them when a bare one reads the same
@@ -16,6 +16,12 @@
 //! - Line breaks are `\n`, and the file ends with one.
 //!
 //! A file with an error has no canonical form, so the formatter refuses it.
+//!
+//! Two bare names need quotes and cannot have them, because quotes cannot hold
+//! a `"`: a name that starts with `#` and holds a `"`, and a fact value that
+//! ends in ` ?` and holds a `"`. A file with such a name has no canonical form
+//! that states the same things. The formatter returns that file as it is, and
+//! [`unquotable_name`] gives the name.
 
 use crate::syntax::{Diagnostic, Element, Node, NodeKind, Token, TokenKind, parse};
 
@@ -35,11 +41,13 @@ pub fn format(source: &str) -> Result<String, Vec<Diagnostic>> {
     if !errors.is_empty() {
         return Err(errors);
     }
-    // A bare name that starts with `#` reads as a name after a `{`, and as a
-    // comment at the start of a line. The formatter can move it to the start of
-    // a line, and quotes cannot hold a name with a `"`. No form is both
-    // canonical and the same file, so the file stays as it is.
-    if hides_a_comment(&parse.tree) {
+    // Two bare names need quotes. A name that starts with `#` reads as a name
+    // after a `{` and as a comment at the start of a line, and the formatter
+    // can move it there. A fact value that ends in ` ?` reads as a guess when
+    // the sort moves it to the end of the line. Quotes cannot hold a `"`, so
+    // with a `"` in such a name no form is both canonical and the same file,
+    // and the file stays as it is.
+    if unquotable(&parse.tree).is_some() {
         return Ok(source.to_owned());
     }
     let mut out = String::new();
@@ -47,9 +55,18 @@ pub fn format(source: &str) -> Result<String, Vec<Diagnostic>> {
     Ok(out)
 }
 
-/// Whether a bare name holds a `"` and needs quotes: it starts with `#`, or it
-/// is a fact value that ends in ` ?`. Quotes cannot hold a `"`.
-fn hides_a_comment(node: &Node<'_>) -> bool {
+/// The first name in `source` that keeps the file from a canonical form.
+///
+/// The name is bare, needs quotes and holds a `"`: it starts with `#`, or it
+/// is a fact value that ends in ` ?`. [`format`] returns a file with such a
+/// name as it is, so a caller asks here whether the file is in canonical form
+/// or has none.
+#[must_use]
+pub fn unquotable_name(source: &str) -> Option<String> {
+    unquotable(&parse(source).tree)
+}
+
+fn unquotable(node: &Node<'_>) -> Option<String> {
     let named = matches!(
         node.kind,
         NodeKind::Name | NodeKind::Key | NodeKind::Value | NodeKind::Arg
@@ -58,11 +75,11 @@ fn hides_a_comment(node: &Node<'_>) -> bool {
         let text = squeeze(node);
         let needs_quotes =
             text.starts_with('#') || (node.kind == NodeKind::Value && text.ends_with(" ?"));
-        return needs_quotes && text.contains('"');
+        return (needs_quotes && text.contains('"')).then_some(text);
     }
-    node.children.iter().any(|child| match child {
-        Element::Node(inner) => hides_a_comment(inner),
-        Element::Token(_) => false,
+    node.children.iter().find_map(|child| match child {
+        Element::Node(inner) => unquotable(inner),
+        Element::Token(_) => None,
     })
 }
 
@@ -298,7 +315,7 @@ fn name(node: &Node<'_>) -> String {
         };
     }
     // A bare name moves to the start of a line when a block opens out, and `#`
-    // starts a comment there. `hides_a_comment` has dealt with a name that
+    // starts a comment there. `unquotable` has dealt with a name that
     // quotes cannot hold.
     let bare_name = squeeze(node);
     // A trailing `?` in a fact value would become a guess when the fact sort

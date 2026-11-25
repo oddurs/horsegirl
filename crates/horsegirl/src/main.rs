@@ -17,7 +17,9 @@ Usage: horsegirl fmt [--check] [FILE]
 
 Prints FILE, or standard input when FILE is `-` or absent, in its canonical
 form. With --check, prints nothing and exits 1 when the file would change.
-A file with an error has no canonical form: fmt names each error and exits 1.";
+A file with an error has no canonical form: fmt names each error and exits 1.
+A bare name that needs quotes and holds a `\"` has none either: fmt names it
+and exits 1.";
 
 fn main() -> ExitCode {
     let mut args = std::env::args().skip(1);
@@ -82,25 +84,29 @@ fn fmt(args: Vec<String>) -> ExitCode {
             return ExitCode::from(2);
         }
     };
-    match horsegirl_core::format::format(&source) {
-        Ok(text) if check => {
-            if text == source {
-                ExitCode::SUCCESS
-            } else {
-                eprintln!("horsegirl fmt: {label} would change");
-                ExitCode::FAILURE
-            }
-        }
-        Ok(text) => {
-            print!("{text}");
-            ExitCode::SUCCESS
-        }
+    let text = match horsegirl_core::format::format(&source) {
+        Ok(text) => text,
         Err(errors) => {
             for error in errors {
                 let line = source[..error.span.start].matches('\n').count() + 1;
                 eprintln!("{label}:{line}: {} {}", error.code, error.message);
             }
-            ExitCode::FAILURE
+            return ExitCode::FAILURE;
         }
+    };
+    // The formatter returns such a file as it is. Without this report, --check
+    // would pass a file that is in no canonical form.
+    if let Some(name) = horsegirl_core::format::unquotable_name(&source) {
+        eprintln!(
+            "horsegirl fmt: {label} has no canonical form: the name `{name}` needs quotes, and quotes cannot hold a `\"`. Rename it without the `\"`."
+        );
+        return ExitCode::FAILURE;
     }
+    if !check {
+        print!("{text}");
+    } else if text != source {
+        eprintln!("horsegirl fmt: {label} would change");
+        return ExitCode::FAILURE;
+    }
+    ExitCode::SUCCESS
 }
