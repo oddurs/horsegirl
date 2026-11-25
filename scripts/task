@@ -49,7 +49,7 @@ lint() {
   cargo clippy --manifest-path "$generator" --all-targets --locked -- -D warnings
   scripts/check-core-deps
   if optional shellcheck; then
-    shellcheck scripts/task scripts/agent scripts/setup scripts/check-pr-title scripts/check-core-deps scripts/dependabot-update-type scripts/dependabot-automerge .githooks/* tests/agent.sh tests/dependabot.sh tests/automerge.sh tests/pins.sh tests/core-deps.sh tools/text-metrics/generate.sh
+    shellcheck scripts/task scripts/agent scripts/setup scripts/check-pr-title scripts/check-core-deps scripts/dependabot-update-type scripts/dependabot-automerge .githooks/* tests/agent.sh tests/dependabot.sh tests/automerge.sh tests/pins.sh tests/core-deps.sh tests/install.sh install.sh tools/text-metrics/generate.sh
   fi
   # The converted corpus is generated: a file that differs from the script is stale.
   if optional python3; then
@@ -91,6 +91,7 @@ test_all() {
   sh tests/automerge.sh
   sh tests/pins.sh
   sh tests/core-deps.sh
+  sh tests/install.sh
 }
 
 build() {

@@ -1,14 +1,24 @@
 name: release
 
+# A version tag builds an archive for each target and publishes the archives
+# with SHA256SUMS, a build attestation and install.sh. A manual run builds the
+# same files and keeps them as workflow artifacts. A manual run publishes only
+# when it runs on a tag and dry-run is off.
 on:
   push:
     tags: ["v*"]
+  workflow_dispatch:
+    inputs:
+      dry-run:
+        description: Build every archive and publish nothing
+        type: boolean
+        default: true
 
 permissions:
-  contents: write
+  contents: read
 
 jobs:
-  release:
+  check:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -19,7 +29,108 @@ jobs:
       - run: scripts/task check
         env:
           CI: ""
+
+  build:
+    strategy:
+      matrix:
+        include:
+          # musl links the binary statically, so one Linux archive runs on
+          # every distribution.
+          - target: x86_64-unknown-linux-musl
+            os: ubuntu-latest
+          - target: aarch64-unknown-linux-musl
+            os: ubuntu-24.04-arm
+          - target: x86_64-apple-darwin
+            os: macos-latest
+          - target: aarch64-apple-darwin
+            os: macos-latest
+    runs-on: ${{ matrix.os }}
+    env:
+      TARGET: ${{ matrix.target }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install the pinned toolchain and the target
+        run: |
+          rustup show active-toolchain || rustup toolchain install
+          rustup target add "$TARGET"
+      - run: cargo build --release --locked -p horsegirl --target "$TARGET"
+      # install.sh expects the binary at horsegirl-<target>/horsegirl.
+      - name: Pack the archive
+        run: |
+          name="horsegirl-$TARGET"
+          mkdir "$name"
+          cp "target/$TARGET/release/horsegirl" README.md LICENSE-MIT LICENSE-APACHE "$name/"
+          tar -czf "$name.tar.gz" "$name"
+      # A binary with no INTERP program header needs no dynamic loader.
+      - name: Check that the Linux binary is static
+        if: runner.os == 'Linux'
+        run: |
+          file "horsegirl-$TARGET/horsegirl"
+          if readelf --program-headers "horsegirl-$TARGET/horsegirl" | grep INTERP; then
+            echo "horsegirl-$TARGET/horsegirl needs a dynamic loader" >&2
+            exit 1
+          fi
+      # The macOS runner is aarch64, so it cannot run the x86_64 binary
+      # without Rosetta.
+      - name: Run the binary
+        if: matrix.target != 'x86_64-apple-darwin'
+        run: |
+          "horsegirl-$TARGET/horsegirl" --version
+          "horsegirl-$TARGET/horsegirl" check examples/checkout.horse
+      - uses: actions/upload-artifact@v4
+        with:
+          name: horsegirl-${{ matrix.target }}
+          path: horsegirl-${{ matrix.target }}.tar.gz
+          if-no-files-found: error
+
+  # Collects the archives, writes SHA256SUMS, and keeps the whole release as
+  # one workflow artifact. A dry run stops here.
+  sums:
+    needs: [check, build]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: horsegirl-*
+          merge-multiple: true
+          path: dist
+      - name: Write SHA256SUMS
+        working-directory: dist
+        run: |
+          count=$(find . -name 'horsegirl-*.tar.gz' | wc -l)
+          test "$count" -eq 4
+          sha256sum horsegirl-*.tar.gz >SHA256SUMS
+          cp ../install.sh .
+          cat SHA256SUMS
+      - uses: actions/upload-artifact@v4
+        with:
+          name: release
+          path: dist/
+          if-no-files-found: error
+
+  publish:
+    needs: sums
+    if: github.ref_type == 'tag' && !inputs.dry-run
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      id-token: write
+      attestations: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: release
+          path: dist
+      - uses: actions/attest-build-provenance@v2
+        with:
+          subject-path: dist/horsegirl-*.tar.gz
+      # A tag with a hyphen, such as v0.1.0-rc.1, is a pre-release.
       - name: Create the release
         env:
           GH_TOKEN: ${{ github.token }}
-        run: gh release create "$GITHUB_REF_NAME" --generate-notes --verify-tag
+          TAG: ${{ github.ref_name }}
+        run: |
+          set -- --prerelease=false
+          case "$TAG" in *-*) set -- --prerelease ;; esac
+          gh release create "$TAG" --repo "$GITHUB_REPOSITORY" --generate-notes --verify-tag "$@" dist/*

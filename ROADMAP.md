@@ -35,11 +35,11 @@ An agent writes a horsegirl file, checks it, applies the fixes, and draws a flow
 - [ ] [`BUG-158`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/BUG-158-a-label-keeps-the-white-space-that-its-measured-width-counts.md) A label keeps the white space that its measured width counts <sup>bug · p1 · render</sup>
 - [ ] [`0159`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0159-draw-names-a-lens-it-cannot-draw-with-a-diagnostic-code.md) draw names a lens it cannot draw with a diagnostic code <sup>feature · p2 · cli</sup>
 - [ ] [`0041`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0041-the-first-benchmark-can-a-model-write-it-from-the-card.md) The first benchmark: can a model write it from the card? <sup>feature · p1 · bench</sup>
-- [ ] [`0042`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0042-release-binaries-with-checksums-and-an-install-script.md) Release binaries with checksums and an install script <sup>chore · p0 · release</sup>
 - [ ] [`0043`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0043-quickstart-and-language-reference-for-v0-1.md) Quickstart and language reference for v0.1 <sup>docs · p1 · language</sup>
 - [ ] [`0049`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0049-an-honest-gallery-drawn-by-ci.md) An honest gallery, drawn by CI <sup>feature · p2 · site</sup>
 - [ ] [`0052`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0052-a-daily-report-of-what-the-backlog-needs-from-a-person.md) A daily report of what the backlog needs from a person <sup>feature · p2 · workflow</sup>
 - [ ] [`0054`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0054-cut-a-release-with-one-command.md) Cut a release with one command <sup>chore · p1 · workflow</sup>
+- [ ] [`0042`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0042-release-binaries-with-checksums-and-an-install-script.md) Release binaries with checksums and an install script <sup>chore · p0 · release</sup>
 - [ ] [`0053`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0053-merge-passing-patch-and-minor-dependency-updates-automatically.md) Merge passing patch and minor dependency updates automatically <sup>chore · p2 · workflow</sup>
 
 ## later — Later

@@ -30,7 +30,22 @@ the plan.
 
 ## Install
 
-There is no release yet. Build from a checkout with the Rust toolchain named in
+On Linux or macOS, on x86_64 or aarch64:
+
+```sh
+curl -fsSL https://raw.githubusercontent.com/oddurs/horsegirl/main/install.sh | sh
+```
+
+The script downloads the archive for your machine from the latest release,
+checks it against the `SHA256SUMS` file of that release, and puts `horsegirl`
+in `~/.local/bin`. It stops and installs nothing when the checksum does not
+match. Set `HORSEGIRL_VERSION=v0.1.0` to install one release, which is
+necessary for a pre-release, and `HORSEGIRL_INSTALL_DIR` to choose another
+directory. Each release also carries a build attestation:
+`gh attestation verify <archive> --repo oddurs/horsegirl` checks it.
+
+There is no release yet, so the script has nothing to download. Until the
+first release, build from a checkout with the Rust toolchain named in
 `rust-toolchain.toml`:
 
 ```sh
