@@ -1,0 +1,14 @@
+File
+  Link
+    Names
+      Name "\"Sensors: wind\""
+      Comma ","
+      Name "\"a -> b\""
+    Arrow "->"
+    Names
+      Name "\"Hub, main\""
+    Colon ":"
+    Label "\"GET /users/{id}\""
+  Show
+    Keyword "show"
+    Lens "flow"

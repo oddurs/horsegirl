@@ -62,6 +62,24 @@ version in `site/package.json`. Without pnpm, `scripts/task` skips the site
 verbs locally. CI always runs them.
 Never use `--no-verify`.
 
+## Golden tests
+
+The parser and its diagnostics are contracts. The golden tests hold them as
+text in `crates/horsegirl-core/tests/golden`. A case is one `.horse` file.
+Beside it, `<case>.tree` holds the tree and `<case>.diagnostics.json` holds the
+diagnostics.
+
+To add a case, write the `.horse` file. To accept an intended change, or to
+write the expectations of a new case, run:
+
+```sh
+HORSEGIRL_BLESS=1 cargo test -p horsegirl-core --test golden
+```
+
+The command writes every expectation and removes the expectations of a case
+that is gone. Read the diff before you commit it: the diff is what a reviewer
+reads.
+
 ## Review
 
 This repository has one maintainer, so a pull request needs zero approvals and

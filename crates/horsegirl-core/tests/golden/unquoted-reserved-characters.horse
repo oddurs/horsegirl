@@ -1,0 +1,4 @@
+Renderer PixiJS / @pixi/react -> B
+A -> B: returns {id}
+api { note: django :8000 }
+show flow

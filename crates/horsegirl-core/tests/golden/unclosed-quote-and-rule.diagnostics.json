@@ -1,0 +1,11 @@
+[
+  {
+    "code": "E0005",
+    "line": 1,
+    "column": 9,
+    "span": [8, 21],
+    "text": "\"never closed",
+    "message": "A double quote opens here and does not close. Add the closing `\"` on the same line.",
+    "fix": null
+  }
+]

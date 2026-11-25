@@ -1,0 +1,24 @@
+File
+  Error "Renderer PixiJS / @pixi/react -> B"
+  Error
+    Word "A"
+    Arrow "->"
+    Word "B"
+    Colon ":"
+    Word "returns"
+    Block
+      Open "{"
+      Things
+        Names
+          Name "id"
+      Close "}"
+  Things
+    Names
+      Name "api"
+    Block
+      Open "{"
+      Error "note: django :8000 "
+      Close "}"
+  Show
+    Keyword "show"
+    Lens "flow"
