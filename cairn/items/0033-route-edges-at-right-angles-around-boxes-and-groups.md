@@ -3,13 +3,14 @@ id: 33
 uid: 7978c04f-2397-4fe3-9dd3-28fda10516a3
 title: Route edges at right angles around boxes and groups
 type: feature
-status: doing
+status: done
 milestone: v0.1
 assignee: Oddur Sigurdsson
 depends_on:
 - 32
 created: 2026-11-25
 updated: 2026-11-25
+closed_at: 2026-11-25
 priority: p0
 risk: high
 surface: none
@@ -29,8 +30,8 @@ Route each link as an orthogonal path between ports on its two boxes. Paths avoi
 
 ## Acceptance criteria
 
-- [ ] No path crosses a box on any corpus diagram.
-- [ ] Each link label sits on its path and overlaps no box.
+- [x] No path crosses the box of a thing on any corpus diagram.
+- [x] Each link label sits on its path, overlaps no box of a thing and lies across no group border.
 - [x] The overlap detector that the corpus test uses is part of this item.
 
 ## 2026-11-25
@@ -72,3 +73,7 @@ Review round 3: off_borders moved a label to 3 px under the top border of a grou
 ## 2026-11-25
 
 Review round 4: off_borders took the nearest clear height and did not ask which side of the border it is on, so a label could move wholly inside a group that holds neither end of its link. The earlier note is wrong where it says 6 labels are inside such a group: the corpus test with the new count printed 7 on 10-platform against the old off_borders ('left: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7]'). off_borders now takes the groups that hold neither end, and a clear height outside all of them comes before a nearer height inside one. The count is now 4, all on 10-platform, and each_link_label_sits_on_its_path_and_overlaps_no_box asserts it for each of the eleven files. layout.positions did not change. 'scripts/task check' exited 0. Criterion 2 is unticked: with 'box' read as the box of a thing or of a group, as criterion 1 is read, 4 labels are inside the box of a group that their link has no end in. It is true with 'box' read as the box of a thing and the border of a group. The owner decides the meaning of 'box' for criteria 1 and 2 together. Not measured: the count on generated graphs after the change. Not changed: a label that is inside such a group and across no border does not move. The comment on Layout now says that the box of a label can pass the corner at 0, 0.
+
+## 2026-11-25
+
+Owner decision: in criteria 1 and 2, 'box' means the box of a thing. A link through a group that holds neither of its ends is the work of item 0146, which is now p0 in v0.1, so the release still does not ship with such links unnamed. The tests no_path_crosses_the_box_of_a_thing_on_any_corpus_diagram and each_link_label_sits_on_its_path_and_overlaps_no_box passed in scripts/task check on main at c8ebb1c.

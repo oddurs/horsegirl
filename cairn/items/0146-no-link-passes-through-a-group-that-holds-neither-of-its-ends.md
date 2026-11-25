@@ -9,7 +9,7 @@ depends_on:
 - 33
 created: 2026-11-25
 updated: 2026-11-25
-priority: p2
+priority: p0
 risk: low
 surface: none
 area: layout
@@ -56,3 +56,7 @@ About the note before this one: the two numbers of the experiment (0 on 07-compi
 ## 2026-11-25
 
 From review round 4 of item 0033: a label follows its link into the group. With a label on every link, 4 labels on 10-platform are wholly inside a group that holds neither end of their link. The overlap detector does not report a label there. The test each_link_label_sits_on_its_path_and_overlaps_no_box holds the count for each file in 'inside', and the count must fall with the links. The review counted, on 3000 generated graphs (seed 7), 82 labels across the border of such a group before the label move.
+
+## Accepted priority: p0 (Oddur Sigurdsson, 2026-11-25)
+
+Proposed by Oddur Sigurdsson on 2026-11-25.

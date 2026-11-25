@@ -9,7 +9,7 @@ depends_on:
 - 34
 created: 2026-11-25
 updated: 2026-11-25
-priority: p2
+priority: p0
 risk: low
 surface: svg
 area: render
@@ -35,3 +35,7 @@ Put `textLength` on each SVG `text` element, set to the measured width, with `le
 ## Proposed priority: p2 -> p0 (Oddur Sigurdsson, 2026-11-25)
 
 Most SVG viewers lack the measured face unless it is Arial-compatible; without textLength a wider fallback such as DejaVu Sans overflows every box by up to 29 percent (SPIKE-19).
+
+## Accepted priority: p0 (Oddur Sigurdsson, 2026-11-25)
+
+Proposed by Oddur Sigurdsson on 2026-11-25.

@@ -12,14 +12,14 @@ named for gaits: Walk, Trot, Canter, Gallop.
 
 ## v0.1 — Walk
 
-`··········` 0% · 0 of 39 done · due 2027-01-31
+`··········` 0% · 0 of 37 done · due 2027-01-31
 
 An agent writes a horsegirl file, checks it, applies the fixes, and draws a flow diagram as SVG, from the command line or over MCP.
 
 - [ ] [`0115`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0115-reserve-the-horsegirl-name-on-crates-io-and-npm.md) Reserve the horsegirl name on crates.io and npm <sup>chore · p2 · release</sup>
 - [ ] [`0116`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0116-fail-the-check-when-the-core-crate-gains-a-dependency-that-does-i-o.md) Fail the check when the core crate gains a dependency that does I/O <sup>chore · p2 · workflow</sup>
 - [ ] [`0117`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0117-the-mcp-tool-schemas-are-a-reviewed-contract-in-both-protocol-eras.md) The MCP tool schemas are a reviewed contract in both protocol eras <sup>feature · p2 · mcp</sup>
-- [ ] [`0118`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0118-hold-each-svg-label-to-its-measured-width-in-any-font.md) Hold each SVG label to its measured width in any font <sup>feature · p2 · render</sup>
+- [ ] [`0118`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0118-hold-each-svg-label-to-its-measured-width-in-any-font.md) Hold each SVG label to its measured width in any font <sup>feature · p0 · render</sup>
 - [ ] [`0120`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0120-the-typo-check-leaves-sibling-names-alone.md) The typo check leaves sibling names alone <sup>feature · p2 · check</sup>
 - [ ] [`0122`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0122-fewer-crossings-in-the-layered-layout-measured-against-a-reference.md) Fewer crossings in the layered layout, measured against a reference <sup>feature · p2 · layout</sup>
 - [ ] [`0123`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0123-draw-a-link-that-starts-or-ends-at-a-group.md) Draw a link that starts or ends at a group <sup>feature · p2 · layout</sup>
@@ -41,7 +41,7 @@ An agent writes a horsegirl file, checks it, applies the fixes, and draws a flow
 - [ ] [`0141`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0141-a-group-box-is-wide-enough-for-its-name.md) A group box is wide enough for its name <sup>feature · p2 · layout</sup>
 - [ ] [`0144`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0144-a-path-that-the-parser-reads-as-a-group-gets-a-warning-with-the-quote-fix.md) A path that the parser reads as a group gets a warning with the quote fix <sup>feature · p2 · check</sup>
 - [ ] [`0145`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0145-each-golden-case-that-draws-holds-its-svg.md) Each golden case that draws holds its SVG <sup>chore · p2 · render</sup>
-- [ ] [`0146`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0146-no-link-passes-through-a-group-that-holds-neither-of-its-ends.md) No link passes through a group that holds neither of its ends <sup>feature · p2 · layout</sup>
+- [ ] [`0146`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0146-no-link-passes-through-a-group-that-holds-neither-of-its-ends.md) No link passes through a group that holds neither of its ends <sup>feature · p0 · layout</sup>
 - [ ] [`LENS-36`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/LENS-36-flow.md) flow <sup>lens · p0 · lens</sup>
 - [ ] [`0037`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0037-the-command-line-check-fix-fmt-draw-spec.md) The command line: check, fix, fmt, draw, spec <sup>feature · p0 · cli</sup>
 - [ ] [`0038`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0038-an-mcp-server-with-spec-check-fix-and-draw.md) An MCP server with spec, check, fix and draw <sup>feature · p0 · mcp</sup>
@@ -52,8 +52,6 @@ An agent writes a horsegirl file, checks it, applies the fixes, and draws a flow
 - [ ] [`0049`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0049-an-honest-gallery-drawn-by-ci.md) An honest gallery, drawn by CI <sup>feature · p2 · site</sup>
 - [ ] [`0052`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0052-a-daily-report-of-what-the-backlog-needs-from-a-person.md) A daily report of what the backlog needs from a person <sup>feature · p2 · workflow</sup>
 - [ ] [`0054`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0054-cut-a-release-with-one-command.md) Cut a release with one command <sup>chore · p1 · workflow</sup>
-- [ ] [`0026`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0026-rules-with-x-and-guesses-with.md) Rules with -x and guesses with ? <sup>feature · p1 · model</sup>
-- [ ] [`0033`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0033-route-edges-at-right-angles-around-boxes-and-groups.md) Route edges at right angles around boxes and groups <sup>feature · p0 · layout</sup>
 - [ ] [`0053`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0053-merge-passing-patch-and-minor-dependency-updates-automatically.md) Merge passing patch and minor dependency updates automatically <sup>chore · p2 · workflow</sup>
 
 ## later — Later
