@@ -7,7 +7,7 @@
 //! HORSEGIRL_FUZZ_ROUNDS=40000000 cargo test --release -p horsegirl-core --test fuzz
 //! ```
 
-use horsegirl_core::syntax::{Element, Node, NodeKind, Token, parse};
+use horsegirl_core::syntax::{Diagnostic, Element, Node, NodeKind, Token, parse};
 
 const CHECKOUT: &str = include_str!("../../../examples/checkout.horse");
 
@@ -27,6 +27,12 @@ A -> -> B
 A -> \"B
 Renderer PixiJS / @pixi/react -> B: mail bob@example.com
 A {x} -> B
+Team @pixi {
+  owner: Web
+}
+Services { Orders, Payments } -> Postgres: save
+A -> B: x {
+}
 ";
 
 /// The pieces that random input is made from. The marks of the language come
@@ -180,6 +186,38 @@ fn exercise(source: &str) {
     }
 
     assert!(parse(source) == result, "two runs differ on {source:?}");
+
+    // A fix that adds quotes repairs its text and breaks nothing else.
+    let errors = errors(&result.diagnostics);
+    for diagnostic in &result.diagnostics {
+        let Some(fix) = diagnostic
+            .fix
+            .as_ref()
+            .filter(|_| diagnostic.code == "E0004")
+        else {
+            continue;
+        };
+        let fixed = format!(
+            "{}{}{}",
+            &source[..fix.span.start],
+            fix.text,
+            &source[fix.span.end..]
+        );
+        let after = errors_of(&fixed);
+        assert!(
+            after <= errors,
+            "the fix {fix:?} takes {source:?} from {errors} errors to {after}"
+        );
+    }
+}
+
+fn errors(diagnostics: &[Diagnostic]) -> usize {
+    let errors = diagnostics.iter().filter(|d| d.code.starts_with('E'));
+    errors.count()
+}
+
+fn errors_of(source: &str) -> usize {
+    errors(&parse(source).diagnostics)
 }
 
 #[test]
