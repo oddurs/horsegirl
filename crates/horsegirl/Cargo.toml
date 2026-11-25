@@ -20,5 +20,10 @@ serde = { version = "1", features = ["derive"] }
 serde_json = "1"
 tokio = { version = "1", default-features = false, features = ["rt"] }
 
+# The example is the corpus gate; its own tests run with the workspace tests.
+[[example]]
+name = "corpus"
+test = true
+
 [lints]
 workspace = true

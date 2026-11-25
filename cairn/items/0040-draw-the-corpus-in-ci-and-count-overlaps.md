@@ -46,3 +46,7 @@ Criterion 1: scripts/task check (exit 0) printed 'corpus: 198 of 239 files draw 
 ## 2026-11-25
 
 Criterion 2: with BASELINE set to 199 the example printed 'corpus: 198 files draw clean, fewer than the baseline of 199...' and exited 1; with 198 it exited 0. scripts/task test runs it under set -eu, so a drop fails the check job. Also: python3 corpus/convert.py --check exited 1 after a line was added to corpus/horse/0001.horse, and 0 after regeneration; scripts/task lint runs it.
+
+## 2026-11-25
+
+Review round 1: the count left out pictures that drop a link (item 0123). corpus.rs now compares the Role::Link shapes of each scene with model.links.len(). cargo run --locked --quiet -p horsegirl --example corpus printed 'corpus: 176 of 239 files draw with zero overlaps and every link (baseline 176)' and 'files with a link left out: 25'. cargo test -p horsegirl --example corpus: 2 passed.

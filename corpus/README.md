@@ -65,7 +65,8 @@ in `horse/` differs from what the script writes, so commit the files after you
 change the script.
 
 The example draws each file with the flow lens and counts the files whose
-picture has no overlap of any kind. `scripts/task test` runs it, so CI prints
+picture has no overlap of any kind and draws every link. `scripts/task test` runs it, so CI prints
 the count. The run fails when the count is below `BASELINE` in
 `crates/horsegirl/examples/corpus.rs`. A file with an error in `check` gives no
-picture, so it is not clean.
+picture, so it is not clean. A picture that leaves out a link of the file is
+not clean either.
