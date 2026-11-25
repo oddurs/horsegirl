@@ -33,7 +33,7 @@ An agent writes a horsegirl file, checks it, applies the fixes, and draws a flow
 - [ ] [`BUG-152`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/BUG-152-a-link-label-stays-legible-where-it-sits-on-its-own-line.md) A link label stays legible where it sits on its own line <sup>bug · p2 · render</sup>
 - [ ] [`BUG-158`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/BUG-158-a-label-keeps-the-white-space-that-its-measured-width-counts.md) A label keeps the white space that its measured width counts <sup>bug · p1 · render</sup>
 - [ ] [`0159`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0159-draw-names-a-lens-it-cannot-draw-with-a-diagnostic-code.md) draw names a lens it cannot draw with a diagnostic code <sup>feature · p2 · cli</sup>
-- [ ] [`0041`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0041-the-first-benchmark-can-a-model-write-it-from-the-card.md) The first benchmark: can a model write it from the card? <sup>feature · p1 · bench</sup>
+- [ ] [`BUG-161`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/BUG-161-a-written-against-the-name-marks-a-guess-or-says-why-not.md) A ? written against the name marks a guess, or says why not <sup>bug · p2 · language</sup>
 - [ ] [`0043`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0043-quickstart-and-language-reference-for-v0-1.md) Quickstart and language reference for v0.1 <sup>docs · p1 · language</sup>
 - [ ] [`0049`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0049-an-honest-gallery-drawn-by-ci.md) An honest gallery, drawn by CI <sup>feature · p2 · site</sup>
 - [ ] [`0052`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0052-a-daily-report-of-what-the-backlog-needs-from-a-person.md) A daily report of what the backlog needs from a person <sup>feature · p2 · workflow</sup>
@@ -43,7 +43,7 @@ An agent writes a horsegirl file, checks it, applies the fixes, and draws a flow
 
 ## later — Later
 
-`··········` 0% · 0 of 26 done
+`··········` 0% · 0 of 27 done
 
 Nothing on a date. Good ideas wait here until a release needs them.
 
@@ -73,6 +73,7 @@ Nothing on a date. Good ideas wait here until a release needs them.
 - [ ] [`BUG-156`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/BUG-156-a-show-line-with-a-misspelt-lens-and-a-bad-argument-becomes-a-thing.md) A show line with a misspelt lens and a bad argument becomes a thing <sup>bug · p2 · language</sup>
 - [ ] [`0157`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0157-a-file-with-more-than-one-show-line-draws-each-of-them.md) A file with more than one show line draws each of them <sup>feature · p2 · cli</sup>
 - [ ] [`0160`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0160-the-spike-21-prototype-leaves-the-tree-now-that-the-server-exists.md) The SPIKE-21 prototype leaves the tree now that the server exists <sup>chore · p2 · mcp</sup>
+- [ ] [`BUG-162`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/BUG-162-e0412-leaves-version-names-such-as-billing-v1-and-billing-v2-alone.md) E0412 leaves version names such as Billing v1 and Billing v2 alone <sup>bug · p2 · check</sup>
 
 ## v0.2 — Trot
 
