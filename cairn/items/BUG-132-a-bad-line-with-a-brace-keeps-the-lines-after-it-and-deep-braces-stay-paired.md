@@ -58,3 +58,7 @@ Story note from the review of item 23: a_story_line_that_fails_after_its_block_g
 ## 2026-11-25
 
 Round 1 review: criterion 2 held only for two layouts. 'G { A' repeated 70 times, then 70 closing braces, gave six E0007 and six E0003. statement now pairs the brace at which open stopped with skip_block when the error is E0007. cargo test -p horsegirl-core --test syntax braces_past: 1 passed, with the 'G { A' layout added; the same test without the parser change fails with six E0007 and six E0003. scripts/task check: exit 0.
+
+## 2026-11-25
+
+Review round 2: a name that needs quotes, a space and a { with a part after it (G@x { A / B / }) now keeps its group in the recovery; a { after a label stays a stray mark and its later } gives E0003, held by a test and stated in the changelog. scripts/task check exited 0: 297 tests run, 297 passed, including a_name_that_needs_quotes_keeps_its_group_across_lines and the fuzz test with G@x { A in the seed. The new test failed without the parser change (left [Error, Things, Error, Things], right [Error, Things]).
