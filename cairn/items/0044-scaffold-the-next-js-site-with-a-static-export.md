@@ -3,8 +3,10 @@ id: 44
 uid: 2a374060-be4a-4d0f-aaa5-c091e9690e67
 title: Scaffold the Next.js site with a static export
 type: feature
-status: planned
+status: doing
 milestone: v0.1
+assignee: Oddur Sigurdsson
+claimed: 2026-11-25
 created: 2026-11-25
 updated: 2026-11-25
 priority: p0

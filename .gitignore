@@ -3,6 +3,8 @@
 node_modules/
 .next/
 /site/out/
+/site/next-env.d.ts
+*.tsbuildinfo
 
 # OS and editors
 .DS_Store
