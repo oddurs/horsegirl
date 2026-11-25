@@ -711,6 +711,8 @@ fn an_unclosed_quote_in_a_citation_is_an_error() {
         "A -> B @ \"src/a.rs:3",
         "A { owner: X @ \"src/a.rs:3\n}\n",
         "A -> B @ src/\"a.rs:3",
+        "A -> B @ src/\"a\"/\"b.rs:3",
+        "A -> B @ a\"b\"c\"d.rs:3",
     ] {
         let parse = parse(source);
         let codes: Vec<&str> = parse.diagnostics.iter().map(|d| d.code).collect();

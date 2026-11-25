@@ -679,14 +679,14 @@ impl<'s> Parser<'s> {
         end
     }
 
-    /// The span from a double quote inside the path tokens `from..to` to the
+    /// The span from the last double quote inside the path tokens `from..to` to the
     /// end of its line, when nothing closes the quote. The lexer reads a quote
     /// inside a word as a character of the word, so no `Unclosed` token marks
     /// it. The scan runs once, on the line that gives the error.
     fn stray_quote(&self, from: usize, to: usize) -> Option<std::ops::Range<usize>> {
         let start = self.span_at(from).start;
         let end = self.span_at(to).start;
-        let quote = start + self.source[start..end].find('"')?;
+        let quote = start + self.source[start..end].rfind('"')?;
         let line = self.source[quote..]
             .find('\n')
             .map_or(self.source.len(), |n| quote + n);
