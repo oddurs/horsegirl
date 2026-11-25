@@ -1,0 +1,4 @@
+Web app -> API gateway: POST /checkout
+Web app -x Postgres: never directly
+API gateway -> Cache ?
+show flow
