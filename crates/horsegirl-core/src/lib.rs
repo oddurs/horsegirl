@@ -2,9 +2,10 @@
 //!
 //! The crate is at the start of its roadmap. Today it carries the one-page
 //! language card that an agent reads before it writes a file, the parser that
-//! reads a file into a lossless tree, and the text measurement that sizes each
-//! node to its label.
+//! reads a file into a lossless tree, the model that the tree lowers into, and
+//! the text measurement that sizes each node to its label.
 
+pub mod model;
 pub mod syntax;
 pub mod text;
 

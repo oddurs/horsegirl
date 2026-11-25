@@ -1,0 +1,233 @@
+Model {
+    things: [
+        Thing {
+            name: "Web app",
+            mentions: [
+                0..7,
+                59..66,
+                237..244,
+                328..335,
+            ],
+            parent: None,
+            facts: [
+                Fact {
+                    key: "owner",
+                    value: "Apps",
+                },
+            ],
+        },
+        Thing {
+            name: "Mobile app",
+            mentions: [
+                9..19,
+                68..78,
+                246..256,
+            ],
+            parent: None,
+            facts: [
+                Fact {
+                    key: "owner",
+                    value: "Apps",
+                },
+            ],
+        },
+        Thing {
+            name: "API gateway",
+            mentions: [
+                23..34,
+                35..46,
+                187..198,
+                339..350,
+                369..380,
+            ],
+            parent: None,
+            facts: [
+                Fact {
+                    key: "owner",
+                    value: "Platform",
+                },
+            ],
+        },
+        Thing {
+            name: "Payments",
+            mentions: [
+                50..58,
+                129..137,
+                411..419,
+                457..465,
+            ],
+            parent: Some(
+                5,
+            ),
+            facts: [
+                Fact {
+                    key: "owner",
+                    value: "Commerce",
+                },
+            ],
+        },
+        Thing {
+            name: "Postgres",
+            mentions: [
+                82..90,
+                200..208,
+                440..448,
+            ],
+            parent: None,
+            facts: [
+                Fact {
+                    key: "owner",
+                    value: "Platform",
+                },
+            ],
+        },
+        Thing {
+            name: "Services",
+            mentions: [
+                108..116,
+            ],
+            parent: None,
+            facts: [],
+        },
+        Thing {
+            name: "Orders",
+            mentions: [
+                121..127,
+                384..390,
+                401..407,
+                430..436,
+            ],
+            parent: Some(
+                5,
+            ),
+            facts: [
+                Fact {
+                    key: "owner",
+                    value: "Commerce",
+                },
+            ],
+        },
+        Thing {
+            name: "Notify",
+            mentions: [
+                160..166,
+                469..475,
+                484..490,
+            ],
+            parent: Some(
+                5,
+            ),
+            facts: [
+                Fact {
+                    key: "owner",
+                    value: "Growth",
+                },
+            ],
+        },
+        Thing {
+            name: "Events",
+            mentions: [
+                210..216,
+                494..500,
+                512..518,
+            ],
+            parent: None,
+            facts: [
+                Fact {
+                    key: "owner",
+                    value: "Platform",
+                },
+            ],
+        },
+        Thing {
+            name: "Email provider",
+            mentions: [
+                273..287,
+                522..536,
+            ],
+            parent: None,
+            facts: [
+                Fact {
+                    key: "owner",
+                    value: "External",
+                },
+            ],
+        },
+    ],
+    links: [
+        Link {
+            from: 0,
+            to: 2,
+            labels: [
+                "POST /checkout",
+            ],
+            span: 0..34,
+        },
+        Link {
+            from: 1,
+            to: 2,
+            labels: [],
+            span: 0..34,
+        },
+        Link {
+            from: 2,
+            to: 3,
+            labels: [],
+            span: 35..58,
+        },
+        Link {
+            from: 2,
+            to: 6,
+            labels: [
+                "create",
+            ],
+            span: 369..398,
+        },
+        Link {
+            from: 6,
+            to: 3,
+            labels: [
+                "charge",
+            ],
+            span: 401..427,
+        },
+        Link {
+            from: 6,
+            to: 4,
+            labels: [
+                "save",
+            ],
+            span: 430..454,
+        },
+        Link {
+            from: 3,
+            to: 7,
+            labels: [
+                "paid",
+            ],
+            span: 457..481,
+        },
+        Link {
+            from: 7,
+            to: 8,
+            labels: [
+                "publish",
+            ],
+            span: 484..509,
+        },
+        Link {
+            from: 8,
+            to: 9,
+            labels: [
+                "send",
+            ],
+            span: 512..542,
+        },
+    ],
+    shows: [
+        Show {
+            lens: "flow",
+            arg: None,
+        },
+    ],
+}
