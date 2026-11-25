@@ -31,3 +31,7 @@ Write the quickstart and the language reference for v0.1: the five rules, `-x`, 
 
 - [ ] A reader can complete the described task with the current program.
 - [ ] Every example in the reference is a file in the golden tests.
+
+## 2026-11-25
+
+From item 23: the parser reads forms that the card does not spell out, and the reference must state them. A link label holds a comma, a colon and an arrow without quotes and runs to the end of the line; a brace or an @ in a label needs quotes. -x is a rule only as a whole word, so Dash-x is a name. A ? is a guess only as a final whole word. A citation is @ and a path with no space. A line that holds one of , : { -> and starts with show or story is not a show line or a story. A key: value pair is a fact only inside braces. Braces nest 64 deep at most (E0007).
