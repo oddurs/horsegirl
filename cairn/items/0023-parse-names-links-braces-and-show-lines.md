@@ -52,3 +52,7 @@ Criterion 3: scripts/task check printed 'PASS horsegirl-core::syntax three_bad_l
 ## 2026-11-25
 
 Criterion 4: ran HORSEGIRL_FUZZ_ROUNDS=13000000 cargo test --release -p horsegirl-core --test fuzz on the committed parser (7fb6b5c). It printed 'test result: ok. 1 passed; 0 failed; finished in 774.43s' (12 min 54 s, 39 million inputs). Each input is checked for: no panic, print-back equal to the input, tokens that tile the source, spans on character boundaries, diagnostics in order, and two equal runs. The fuzzer is in the repository, with a fixed seed, and makes inputs from random pieces and from edits of two good files. It is not guided by coverage; item 97 adds that in CI.
+
+## 2026-11-25
+
+Fix round 1 (review of PR #27). Ran scripts/task check: exit 0, '29 tests run: 29 passed' natively and 'test result: ok. 14 passed' for tests/syntax.rs in WebAssembly. New tests: 11 rows for @ and braces in a_name_or_a_value_that_needs_quotes_gets_them_from_the_fix, an_arrow_after_a_block_is_not_called_a_second_arrow, a_long_line_of_quoted_names_parses_in_linear_time. With the old lexer the last test failed: '"\"\" " took 30.415254619s' for 60 KB; with the new lexer the test takes 0.069 s. Criterion 4 again on the changed parser: HORSEGIRL_FUZZ_ROUNDS=13000000 cargo test --release --locked -p horsegirl-core --test fuzz printed 'test result: ok. 1 passed; 0 failed; finished in 744.34s' (39 million inputs, 12 min 24 s).
