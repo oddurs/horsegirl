@@ -2,7 +2,7 @@
 
 use std::fmt::Write as _;
 
-use horsegirl_core::model::{Fact, Model, Show, lower};
+use horsegirl_core::model::{Fact, Model, Rule, Show, lower};
 use horsegirl_core::syntax::parse;
 
 const CHECKOUT: &str = include_str!("../../../examples/checkout.horse");
@@ -130,6 +130,86 @@ fn a_rule_mentions_things_and_makes_no_link() {
     let model = model("A -x B: never\n");
     assert_eq!(names(&model), ["A", "B"]);
     assert_eq!(model.links, []);
+}
+
+#[test]
+fn a_rule_is_stored_with_its_reason() {
+    let model = model("A -x B: the web app never reads the table\nA -x C\n");
+    assert_eq!(
+        model.rules,
+        [
+            Rule {
+                from: 0,
+                to: 1,
+                reason: Some("the web app never reads the table".into()),
+                span: 0..41,
+                guess: false,
+            },
+            Rule {
+                from: 0,
+                to: 2,
+                reason: None,
+                span: 42..48,
+                guess: false,
+            },
+        ]
+    );
+}
+
+#[test]
+fn a_rule_fans_out_and_is_stored_once() {
+    let model = model("A, B -x C: no\nA -x C: no\nA -x C: later\n");
+    let rules: Vec<_> = model
+        .rules
+        .iter()
+        .map(|r| (r.from, r.to, r.reason.as_deref()))
+        .collect();
+    assert_eq!(
+        rules,
+        [
+            (0, 2, Some("no")),
+            (1, 2, Some("no")),
+            (0, 2, Some("later"))
+        ]
+    );
+}
+
+#[test]
+fn a_final_question_mark_marks_a_guessed_rule() {
+    let model = model("A -x B ?\nC -x D: why ?\nE -x F\n");
+    let guesses: Vec<bool> = model.rules.iter().map(|r| r.guess).collect();
+    assert_eq!(guesses, [true, true, false]);
+    assert_eq!(model.rules[1].reason.as_deref(), Some("why"));
+}
+
+#[test]
+fn a_firm_statement_makes_a_guessed_rule_firm() {
+    let model = model("A -x B ?\nA -x B\nC -x D\nC -x D ?\n");
+    assert_eq!(model.rules.len(), 2);
+    assert!(!model.rules[0].guess);
+    assert!(!model.rules[1].guess);
+}
+
+#[test]
+fn a_final_question_mark_marks_a_guess() {
+    let model = model("A -> B ?\nC -> D: maybe ?\nE -> F ? @ a.rs:3\nG -> H\n");
+    let guesses: Vec<bool> = model.links.iter().map(|l| l.guess).collect();
+    assert_eq!(guesses, [true, true, true, false]);
+    assert_eq!(model.links[1].labels, ["maybe"]);
+}
+
+#[test]
+fn a_question_mark_inside_a_label_is_not_a_guess() {
+    let model = model("A -> B: ok?\nC -> D: is it ok ?x\nIs it? -> E\n");
+    assert!(model.links.iter().all(|l| !l.guess), "{:?}", model.links);
+    assert_eq!(model.links[0].labels, ["ok?"]);
+}
+
+#[test]
+fn one_firm_statement_makes_a_guess_firm() {
+    let model = model("A -> B ?\nA -> B\nC -> D\nC -> D ?\nE -> F ?\nE -> F ?\n");
+    let guesses: Vec<bool> = model.links.iter().map(|l| l.guess).collect();
+    assert_eq!(guesses, [false, false, true]);
 }
 
 #[test]

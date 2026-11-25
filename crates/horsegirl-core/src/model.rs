@@ -24,6 +24,9 @@ pub struct Model {
     /// Every link, in the order of its first statement. A link stated twice
     /// is one link.
     pub links: Vec<Link>,
+    /// Every `-x` rule, in the order of its first statement. A rule is a claim
+    /// that a link must not exist, so it is never a link.
+    pub rules: Vec<Rule>,
     /// Every `show` line, in order.
     pub shows: Vec<Show>,
 }
@@ -55,6 +58,23 @@ pub struct Link {
     pub labels: Vec<String>,
     /// The bytes of the first line that states the link.
     pub span: Range<usize>,
+    /// Every statement of the link ends in `?`. One firm statement makes the
+    /// link firm, because the file then states it as true.
+    pub guess: bool,
+}
+
+/// `from -x to: reason`: a link that must not exist.
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub struct Rule {
+    pub from: ThingId,
+    pub to: ThingId,
+    /// The words after the colon, if there are any.
+    pub reason: Option<String>,
+    /// The bytes of the first line that states the rule.
+    pub span: Range<usize>,
+    /// Every statement of the rule ends in `?`. One firm statement makes the
+    /// rule firm, as it does for a link.
+    pub guess: bool,
 }
 
 /// `show lens`, or `show lens of name`.
@@ -105,7 +125,8 @@ impl Model {
 /// Lowers a parsed file into the model.
 ///
 /// An `Error` node states nothing, so its names make no thing: the parser has
-/// reported it already. A `-x` rule mentions its things but is not a link.
+/// reported it already. A `-x` rule mentions its things and is stored as a
+/// rule, not as a link.
 /// A story's links are plain links; the order of a story is not kept yet.
 #[must_use]
 pub fn lower(tree: &Node<'_>) -> Model {
@@ -163,20 +184,60 @@ impl Lowering {
         };
         let from = self.names(from, scope);
         let to = self.names(to, scope);
-        if node.kind == NodeKind::Rule {
-            return;
-        }
         let label = child(node, NodeKind::Label).map(text);
         // span walks the whole line, so it runs once and not once per link.
         let span = span(node);
+        let guess = node.children.iter().any(
+            |element| matches!(element, Element::Token(token) if token.kind == TokenKind::Guess),
+        );
+        if node.kind == NodeKind::Rule {
+            for &a in &from {
+                for &b in &to {
+                    self.add_rule(a, b, label.as_deref(), span.clone(), guess);
+                }
+            }
+            return;
+        }
         for &a in &from {
             for &b in &to {
-                self.add_link(a, b, label.as_deref(), span.clone());
+                self.add_link(a, b, label.as_deref(), span.clone(), guess);
             }
         }
     }
 
-    fn add_link(&mut self, from: ThingId, to: ThingId, label: Option<&str>, span: Range<usize>) {
+    fn add_rule(
+        &mut self,
+        from: ThingId,
+        to: ThingId,
+        reason: Option<&str>,
+        span: Range<usize>,
+        guess: bool,
+    ) {
+        let known =
+            self.model.rules.iter_mut().find(|rule| {
+                rule.from == from && rule.to == to && rule.reason.as_deref() == reason
+            });
+        if let Some(rule) = known {
+            rule.guess &= guess;
+        } else {
+            self.model.rules.push(Rule {
+                from,
+                to,
+                reason: reason.map(str::to_owned),
+                span,
+                guess,
+            });
+        }
+    }
+
+    fn add_link(
+        &mut self,
+        from: ThingId,
+        to: ThingId,
+        label: Option<&str>,
+        span: Range<usize>,
+        guess: bool,
+    ) {
         let links = &mut self.model.links;
         let index = *self.links.entry((from, to)).or_insert_with(|| {
             links.push(Link {
@@ -184,9 +245,11 @@ impl Lowering {
                 to,
                 labels: Vec::new(),
                 span,
+                guess,
             });
             links.len() - 1
         });
+        links[index].guess &= guess;
         let labels = &mut links[index].labels;
         if let Some(label) = label
             && !labels.iter().any(|known| known == label)
