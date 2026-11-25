@@ -3,12 +3,12 @@ id: 134
 uid: 34868b30-2b2c-421b-9173-54ae199d2cc7
 title: Every text that needs quotes gets them in one step
 type: bug
-status: doing
+status: done
 milestone: v0.1
 assignee: Oddur Sigurdsson
-claimed: 2026-11-25
 created: 2026-11-25
 updated: 2026-11-25
+closed_at: 2026-11-25
 priority: p2
 risk: low
 surface: diagnostics
