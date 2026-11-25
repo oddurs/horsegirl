@@ -3,12 +3,12 @@ id: 17
 uid: 3c31376a-7080-4be4-b372-e90b7a3963b4
 title: Do names with spaces survive real diagrams?
 type: spike
-status: doing
+status: done
 milestone: v0.1
 assignee: Oddur Sigurdsson
-claimed: 2026-11-25
 created: 2026-11-25
 updated: 2026-11-25
+closed_at: 2026-11-25
 priority: p0
 risk: medium
 surface: language
