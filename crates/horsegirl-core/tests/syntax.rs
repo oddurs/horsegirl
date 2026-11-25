@@ -527,15 +527,20 @@ fn braces_that_nest_too_deep_are_an_error_and_not_a_crash() {
 
 #[test]
 fn a_bad_line_with_an_open_brace_keeps_the_lines_after_it() {
-    let source = "A -> B: uses {braces\nC -> D\nshow flow\n";
-    let parse = parse(source);
-    assert_eq!(parse.tree.to_string(), source);
-    assert_eq!(
-        kinds(&parse.tree),
-        [NodeKind::Error, NodeKind::Link, NodeKind::Show]
-    );
-    let codes: Vec<_> = parse.diagnostics.iter().map(|d| d.code).collect();
-    assert_eq!(codes, ["E0001"]);
+    for (source, code) in [
+        ("A -> B: uses {braces\nC -> D\nshow flow\n", "E0001"),
+        ("A@b -> C: uses {braces\nC -> D\nshow flow\n", "E0004"),
+    ] {
+        let parse = parse(source);
+        assert_eq!(parse.tree.to_string(), source);
+        assert_eq!(
+            kinds(&parse.tree),
+            [NodeKind::Error, NodeKind::Link, NodeKind::Show],
+            "{source:?}"
+        );
+        let codes: Vec<_> = parse.diagnostics.iter().map(|d| d.code).collect();
+        assert_eq!(codes, [code], "{source:?}");
+    }
 }
 
 #[test]
@@ -549,7 +554,13 @@ fn a_bad_line_keeps_a_block_whose_brace_ends_the_line() {
 
 #[test]
 fn a_name_that_needs_quotes_keeps_its_group_across_lines() {
-    for source in ["G@x { A\nB\n}\nafter\n", "Team: x { A\nB\n}\nafter\n"] {
+    for (source, code) in [
+        ("G@x { A\nB\n}\nafter\n", "E0004"),
+        ("Team: x { A\nB\n}\nafter\n", "E0004"),
+        ("G@x, H { A\nB\n}\nafter\n", "E0004"),
+        ("G@x{ A\nB\n}\nafter\n", "E0004"),
+        ("{ A\nB\n}\nafter\n", "E0006"),
+    ] {
         let parse = parse(source);
         assert_eq!(parse.tree.to_string(), source);
         assert_eq!(
@@ -558,7 +569,7 @@ fn a_name_that_needs_quotes_keeps_its_group_across_lines() {
             "{source:?}"
         );
         let codes: Vec<_> = parse.diagnostics.iter().map(|d| d.code).collect();
-        assert_eq!(codes, ["E0004"], "{source:?}");
+        assert_eq!(codes, [code], "{source:?}");
     }
 }
 

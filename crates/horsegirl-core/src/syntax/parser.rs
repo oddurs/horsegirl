@@ -314,7 +314,7 @@ impl<'s> Parser<'s> {
                         // Any other `{` is a stray mark of the bad line, as in
                         // `A -> B: uses {braces`. A block for it would swallow
                         // the good lines after it.
-                        Some(TokenKind::Open) if self.opens_block() => {
+                        Some(TokenKind::Open) if self.opens_block(start) => {
                             if depth < MAX_DEPTH {
                                 self.block(depth, &mut children);
                             } else {
@@ -1150,20 +1150,38 @@ impl<'s> Parser<'s> {
         Ok(())
     }
 
-    /// Whether the `{` at the current token opens a block of a bad line: it
-    /// closes on its line, it ends the line, or a space puts it after the name
-    /// that failed, as in `G@x { A`. Quotes make that name good, and then the
-    /// `{` opens a group, so the recovery reads the same block.
-    fn opens_block(&self) -> bool {
-        let after_name = matches!(self.last, Some((first, Text::Name))
-            if self.kind_at(self.pos - 1) == Some(TokenKind::Space)
-                && self.skip(self.extent(first, Text::Name)) == self.pos);
-        after_name
+    /// Whether the `{` at the current token opens a block of the bad line
+    /// that starts at token `start`. A label or a value cannot open a group,
+    /// so a `{` in one is a stray mark, as in `A -> B: uses {braces`, unless it
+    /// closes on its line or ends the line. A `{` in any other place opens a
+    /// block, as in `G@x { A`, because quotes repair that line into a group.
+    fn opens_block(&self, start: usize) -> bool {
+        let stray = matches!(self.last, Some((_, Text::Label | Text::Value)))
+            || self.after_link_colon(start);
+        !stray
             || self.closes[self.pos].is_some()
             || matches!(
                 self.kind_at(self.skip(self.pos + 1)),
                 None | Some(TokenKind::Newline)
             )
+    }
+
+    /// Whether the line that starts at token `start` has, before the current
+    /// token, an arrow and then a colon outside its blocks: the current token
+    /// is then in the label of a link.
+    fn after_link_colon(&self, start: usize) -> bool {
+        let mut depth = 0usize;
+        let mut arrow = false;
+        for token in &self.tokens[start..self.pos] {
+            match token.kind {
+                TokenKind::Open => depth += 1,
+                TokenKind::Close => depth = depth.saturating_sub(1),
+                TokenKind::Arrow | TokenKind::Cross if depth == 0 => arrow = true,
+                TokenKind::Colon if depth == 0 && arrow => return true,
+                _ => {}
+            }
+        }
+        false
     }
 
     /// Reads a block that nests too deep as plain tokens, up to the `}` that
