@@ -15,19 +15,40 @@ optional() {
   return 1
 }
 
-fmt() { cargo fmt --all; }
+# Runs one script of the site in site/. The Rust checks stand alone, so the site
+# verbs run only where site/ exists, and a contributor without pnpm skips them.
+site_installed=
+site() {
+  [ -d site ] || return 0
+  optional pnpm || return 0
+  if [ -z "$site_installed" ]; then
+    pnpm --dir site install --frozen-lockfile
+    site_installed=1
+  fi
+  NEXT_TELEMETRY_DISABLED=1 pnpm --dir site run "$1"
+}
 
-fmt_check() { cargo fmt --all -- --check; }
+fmt() {
+  cargo fmt --all
+  site fmt
+}
+
+fmt_check() {
+  cargo fmt --all -- --check
+  site fmt:check
+}
 
 lint() {
   cargo clippy --workspace --all-targets --locked -- -D warnings
   if optional shellcheck; then
-    shellcheck scripts/task scripts/agent scripts/setup scripts/check-pr-title scripts/dependabot-update-type scripts/dependabot-automerge .githooks/* tests/agent.sh tests/dependabot.sh tests/automerge.sh
+    shellcheck scripts/task scripts/agent scripts/setup scripts/check-pr-title scripts/dependabot-update-type scripts/dependabot-automerge .githooks/* tests/agent.sh tests/dependabot.sh tests/automerge.sh tests/pins.sh
   fi
   # The backlog is part of the tree: an invalid item or a stale roadmap is a lint error.
   if [ -f cairn.toml ] && optional cairn; then
     cairn check --render --strict
   fi
+  site lint
+  site typecheck
 }
 
 test_all() {
@@ -39,9 +60,14 @@ test_all() {
   sh tests/agent.sh
   sh tests/dependabot.sh
   sh tests/automerge.sh
+  sh tests/pins.sh
 }
 
-build() { cargo build --workspace --locked; }
+build() {
+  cargo build --workspace --locked
+  # Builds site/out and serves it under the base path to prove every link resolves.
+  site build
+}
 
 case "${1:-}" in
   fmt) fmt ;;
