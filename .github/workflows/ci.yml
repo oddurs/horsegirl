@@ -57,6 +57,14 @@ jobs:
           node-version-file: site/.node-version
           cache: pnpm
           cache-dependency-path: site/pnpm-lock.yaml
+      # The site build runs an accessibility check in headless Chrome. The runner
+      # image ships Chrome; this step fails loudly if an image drops it.
+      - name: Find Chrome
+        if: hashFiles('site/package.json') != ''
+        run: |
+          chrome="$(command -v google-chrome)"
+          "$chrome" --version
+          echo "CHROME=$chrome" >> "$GITHUB_ENV"
       - run: scripts/task check
       # scripts/task check builds site/out. Every run keeps it as an artifact,
       # and the deploy job publishes the one from a push to main.
