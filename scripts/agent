@@ -238,7 +238,7 @@ cmd_land() {
       say "pushing $branch"
       git -C "$here" push --quiet --force-with-lease origin "$branch"
     fi
-    (cd "$here" && gh pr merge --auto --squash >/dev/null) || say "auto-merge was not set; it may already be merging"
+    (cd "$here" && gh pr merge --auto --squash >/dev/null 2>&1) || true
     # Poll, so that a moved default branch is noticed at once and not after CI.
     waited=0
     while [ "$waited" -lt 2700 ]; do
@@ -250,6 +250,11 @@ cmd_land() {
           return 0
           ;;
         CLOSED*) die "the pull request for $branch is closed" ;;
+        "OPEN CLEAN")
+          # Auto-merge cannot be set on a pull request that is already
+          # mergeable, so nothing would ever merge it. Merge it now.
+          (cd "$here" && gh pr merge --squash >/dev/null 2>&1) || true
+          ;;
         "OPEN BEHIND" | "OPEN DIRTY")
           say "the default branch moved; bringing $branch up to date again"
           continue 2
