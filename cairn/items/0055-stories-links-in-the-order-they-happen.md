@@ -30,3 +30,7 @@ Parse `story <name> { ... }` and keep its links as ordered steps in the model. A
 
 - [ ] The checkout story lowers to seven ordered steps.
 - [ ] A lens that needs a story reports E0301 with the fix text when the file has none.
+
+## 2026-11-25
+
+From the review of item 23 (PR #27): inside braces, the fix for 'Sensors: wind -> Hub' is 'Sensors: "wind -> Hub"', a fact. In a story block the author meant a link, so the fix there must be '"Sensors: wind" -> Hub'.

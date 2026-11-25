@@ -35,3 +35,7 @@ Define the diagnostic type: severity, code (`E`, `W`, `N` plus four digits), lin
 ## 2026-11-25
 
 SPIKE-21 fixes the JSON shape of a diagnostic and a fix: keys code, severity, message, span, fix (null when none); span {start,end} with end exclusive; position {line,column}, both 1-based, column in Unicode scalar values; fix {confidence: safe|suggested, description, edits: [{span, text}]} against the original source, sorted, non-overlapping. Keys are sorted by name on the MCP wire, so the --json line should use the same serde_json::Value conversion.
+
+## 2026-11-25
+
+From the review of item 23 (PR #27): two fixes of one parse can overlap. 'A { B @ x } -> C' gives an E0004 fix for bytes 0..11 and one for bytes 4..9. A tool that applies every fix of one run corrupts the line. Decide here: at most one fix for one line, or the outer fix wins.

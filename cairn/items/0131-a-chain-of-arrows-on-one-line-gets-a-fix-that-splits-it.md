@@ -31,3 +31,7 @@ Give the second arrow its own code. Carry a fix that rewrites `A -> B -> C` to `
 - [ ] `A -> B -> C` gives one diagnostic with its own code, and its fix gives the lines `A -> B` and `B -> C`.
 - [ ] `A -> B -> C: label` gives the same diagnostic with a fix that is marked as suggested.
 - [ ] A name in quotes that holds `->` gives no diagnostic.
+
+## 2026-11-25
+
+From the review of item 23 (PR #27): 'A -> B: pay -> C: ship' parses clean as one link with the label 'pay -> C: ship'. This item should cover that chain too.
