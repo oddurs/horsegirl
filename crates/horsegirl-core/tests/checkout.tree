@@ -1,0 +1,159 @@
+File
+  Link
+    Names
+      Name "Web app"
+      Comma ","
+      Name "Mobile app"
+    Arrow "->"
+    Names
+      Name "API gateway"
+  Link
+    Names
+      Name "API gateway"
+    Arrow "->"
+    Names
+      Name "Payments"
+  Rule
+    Names
+      Name "Web app"
+      Comma ","
+      Name "Mobile app"
+    Cross "-x"
+    Names
+      Name "Postgres"
+    Colon ":"
+    Label "never directly"
+  Things
+    Names
+      Name "Services"
+    Block
+      Open "{"
+      Things
+        Names
+          Name "Orders"
+          Comma ","
+          Name "Payments"
+        Block
+          Open "{"
+          Facts
+            Fact
+              Key "owner"
+              Colon ":"
+              Value "Commerce"
+          Close "}"
+      Things
+        Names
+          Name "Notify"
+        Block
+          Open "{"
+          Facts
+            Fact
+              Key "owner"
+              Colon ":"
+              Value "Growth"
+          Close "}"
+      Close "}"
+  Things
+    Names
+      Name "API gateway"
+      Comma ","
+      Name "Postgres"
+      Comma ","
+      Name "Events"
+    Block
+      Open "{"
+      Facts
+        Fact
+          Key "owner"
+          Colon ":"
+          Value "Platform"
+      Close "}"
+  Things
+    Names
+      Name "Web app"
+      Comma ","
+      Name "Mobile app"
+    Block
+      Open "{"
+      Facts
+        Fact
+          Key "owner"
+          Colon ":"
+          Value "Apps"
+      Close "}"
+  Things
+    Names
+      Name "Email provider"
+    Block
+      Open "{"
+      Facts
+        Fact
+          Key "owner"
+          Colon ":"
+          Value "External"
+      Close "}"
+  Story
+    Keyword "story"
+    Name "checkout"
+    Block
+      Open "{"
+      Link
+        Names
+          Name "Web app"
+        Arrow "->"
+        Names
+          Name "API gateway"
+        Colon ":"
+        Label "POST /checkout"
+      Link
+        Names
+          Name "API gateway"
+        Arrow "->"
+        Names
+          Name "Orders"
+        Colon ":"
+        Label "create"
+      Link
+        Names
+          Name "Orders"
+        Arrow "->"
+        Names
+          Name "Payments"
+        Colon ":"
+        Label "charge"
+      Link
+        Names
+          Name "Orders"
+        Arrow "->"
+        Names
+          Name "Postgres"
+        Colon ":"
+        Label "save"
+      Link
+        Names
+          Name "Payments"
+        Arrow "->"
+        Names
+          Name "Notify"
+        Colon ":"
+        Label "paid"
+      Link
+        Names
+          Name "Notify"
+        Arrow "->"
+        Names
+          Name "Events"
+        Colon ":"
+        Label "publish"
+      Link
+        Names
+          Name "Events"
+        Arrow "->"
+        Names
+          Name "Email provider"
+        Colon ":"
+        Label "send"
+      Close "}"
+  Show
+    Keyword "show"
+    Lens "flow"
