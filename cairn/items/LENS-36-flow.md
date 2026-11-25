@@ -50,3 +50,7 @@ show flow
 - [ ] Missing facts produce a diagnostic that names them.
 - [ ] The lens is in the language reference with its dials.
 - [ ] The lens is declared as data (field to channel), not as code paths in the solver.
+
+## 2026-11-25
+
+From the review of item 23: `show sequence of S, T` parses as two things with no message, and a `show` line whose argument needs quotes is not read as a `show` line. BUG-136 holds the inputs and the criteria. The flow lens must not rely on the parser to reject such a line until BUG-136 is done.

@@ -32,3 +32,7 @@ In the recovery of `statement`, open a block only when its `}` is on the same li
 - [ ] `A -> B: uses {braces\nC -> D\nshow flow\n` gives a tree in which `C -> D` is a `Link` and `show flow` is a `Show` at the top level.
 - [ ] 70 nested groups that close correctly give E0007 and no E0003, and a thing after the last `}` is at the top level.
 - [ ] The fuzz test passes with both inputs in its seed file.
+
+## 2026-11-25
+
+From the review of item 23: `story s {} x` gives E0001 for `x`, and the line is an Error node. The parser still gives W0010 for the story on that line. The model skips an Error node, so the warning names a story that does not exist. Give W0010 only when the story line parses, and add this input to the tests.
