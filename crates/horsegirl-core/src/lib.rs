@@ -4,12 +4,14 @@
 //! language card that an agent reads before it writes a file, the parser that
 //! reads a file into a lossless tree, the diagnostics it gives with their
 //! codes, the model that the tree lowers into, the checks that read the
-//! model, the text measurement that sizes each node to its label, and the
-//! scene of positioned shapes that every backend draws.
+//! model, the formatter that prints the tree in one canonical form, the text
+//! measurement that sizes each node to its label, and the scene of positioned
+//! shapes that every backend draws.
 
 pub mod check;
 pub mod codes;
 pub mod diagnostic;
+pub mod format;
 pub mod model;
 pub mod scene;
 pub mod syntax;

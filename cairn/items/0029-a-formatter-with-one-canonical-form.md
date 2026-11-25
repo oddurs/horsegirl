@@ -3,8 +3,9 @@ id: 29
 uid: 962335df-38e4-43f7-81d8-ee0c4a99d04f
 title: A formatter with one canonical form
 type: feature
-status: planned
+status: doing
 milestone: v0.1
+assignee: Oddur Sigurdsson
 depends_on:
 - 23
 created: 2026-11-25
