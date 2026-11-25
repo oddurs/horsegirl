@@ -12,7 +12,7 @@ named for gaits: Walk, Trot, Canter, Gallop.
 
 ## v0.1 — Walk
 
-`··········` 0% · 0 of 37 done · due 2027-01-31
+`··········` 0% · 0 of 36 done · due 2027-01-31
 
 An agent writes a horsegirl file, checks it, applies the fixes, and draws a flow diagram as SVG, from the command line or over MCP.
 
@@ -44,7 +44,6 @@ An agent writes a horsegirl file, checks it, applies the fixes, and draws a flow
 - [ ] [`0041`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0041-the-first-benchmark-can-a-model-write-it-from-the-card.md) The first benchmark: can a model write it from the card? <sup>feature · p1 · bench</sup>
 - [ ] [`0042`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0042-release-binaries-with-checksums-and-an-install-script.md) Release binaries with checksums and an install script <sup>chore · p0 · release</sup>
 - [ ] [`0043`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0043-quickstart-and-language-reference-for-v0-1.md) Quickstart and language reference for v0.1 <sup>docs · p1 · language</sup>
-- [ ] [`0044`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0044-scaffold-the-next-js-site-with-a-static-export.md) Scaffold the Next.js site with a static export <sup>feature · p0 · site</sup>
 - [ ] [`0045`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0045-design-tokens-and-base-components-from-the-concept-page.md) Design tokens and base components from the concept page <sup>feature · p1 · site</sup>
 - [ ] [`0046`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0046-the-landing-page.md) The landing page <sup>feature · p1 · site</sup>
 - [ ] [`0047`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0047-render-the-docs-directory-as-site-pages.md) Render the docs directory as site pages <sup>feature · p1 · site</sup>
