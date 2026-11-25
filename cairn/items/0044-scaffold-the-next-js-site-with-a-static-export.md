@@ -43,3 +43,7 @@ Criterion 2: the build runs site/scripts/check-export.mjs, which serves site/out
 ## 2026-11-25
 
 Criterion 3: runtime dependencies are next, react and react-dom, each stated in the pull request with what it replaces. Development dependencies: typescript, @types/react, @types/react-dom, @types/node, @biomejs/biome (one tool for format and lint, in place of ESLint plus Prettier). next.config.ts sets agentRules: false so next dev does not write site/AGENTS.md for some callers only.
+
+## 2026-11-25
+
+Fix round 1: added root mise.toml pinning pnpm 12.23.0 and tests/pins.sh. Ran rm -rf site/out && scripts/task check with no mise x wrapper: exit=0, log shows 'using pnpm v12.23.0' and 'check-export: 7 paths served from /horsegirl/, all present'; site/out/index.html exists. tests/pins.sh fails with a message when mise.toml is missing or pins 12.22.0.

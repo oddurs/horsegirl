@@ -41,7 +41,7 @@ fmt_check() {
 lint() {
   cargo clippy --workspace --all-targets --locked -- -D warnings
   if optional shellcheck; then
-    shellcheck scripts/task scripts/agent scripts/setup scripts/check-pr-title scripts/dependabot-update-type scripts/dependabot-automerge .githooks/* tests/agent.sh tests/dependabot.sh tests/automerge.sh
+    shellcheck scripts/task scripts/agent scripts/setup scripts/check-pr-title scripts/dependabot-update-type scripts/dependabot-automerge .githooks/* tests/agent.sh tests/dependabot.sh tests/automerge.sh tests/pins.sh
   fi
   # The backlog is part of the tree: an invalid item or a stale roadmap is a lint error.
   if [ -f cairn.toml ] && optional cairn; then
@@ -60,6 +60,7 @@ test_all() {
   sh tests/agent.sh
   sh tests/dependabot.sh
   sh tests/automerge.sh
+  sh tests/pins.sh
 }
 
 build() {

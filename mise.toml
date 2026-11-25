@@ -1,0 +1,6 @@
+# The pnpm that site/package.json names in packageManager. A version-manager
+# shim for pnpm sits on PATH even when no version is chosen, so scripts/task
+# runs the site checks with it; without this pin the shim exits with an error.
+# tests/pins.sh keeps the two versions equal.
+[tools]
+pnpm = "12.23.0"
