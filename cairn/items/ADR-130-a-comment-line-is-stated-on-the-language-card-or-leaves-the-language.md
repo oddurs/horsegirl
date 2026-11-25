@@ -3,12 +3,12 @@ id: 130
 uid: a2c4b80e-00f3-4fd7-b5ca-801c04d2a966
 title: A comment line is stated on the language card or leaves the language
 type: decision
-status: doing
+status: done
 milestone: v0.1
 assignee: Oddur Sigurdsson
-claimed: 2026-11-25
 created: 2026-11-25
 updated: 2026-11-25
+closed_at: 2026-11-25
 priority: p2
 risk: low
 surface: language
