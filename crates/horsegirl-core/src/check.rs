@@ -2,9 +2,11 @@
 //!
 //! A thing exists from its first mention, so a typo makes a new thing with no
 //! error from the parser. The checks read the model and report a typo, a thing
-//! with no link, a link that breaks a `-x` rule, a guess and an unknown lens.
+//! with no link, a link that breaks a `-x` rule, a guess, an unknown lens and
+//! a lens whose facts the file does not state.
 
 use crate::diagnostic::{Confidence, Diagnostic, Edit, Fix, LineIndex};
+use crate::lens::Need;
 use crate::model::{Model, Thing, ThingId, lower};
 use crate::syntax::parse;
 
@@ -32,6 +34,7 @@ pub fn of_model(source: &str, model: &Model) -> Vec<Diagnostic> {
     diagnostics.extend(broken_rules(source, model));
     diagnostics.extend(guesses(model));
     diagnostics.extend(lenses(model));
+    diagnostics.extend(needs(model));
     sort(&mut diagnostics);
     diagnostics
 }
@@ -216,6 +219,33 @@ fn lenses(model: &Model) -> Vec<Diagnostic> {
             }
         })
         .collect()
+}
+
+/// E0301: a `show` line whose lens needs facts that the file does not state.
+/// The message names each missing fact, so the picture is never drawn empty
+/// without a reason.
+fn needs(model: &Model) -> Vec<Diagnostic> {
+    let mut found = Vec::new();
+    for show in &model.shows {
+        let Some(lens) = crate::lens::find(&show.lens) else {
+            continue;
+        };
+        for need in lens.missing(model) {
+            let message = match need {
+                Need::Links => format!(
+                    "`show {}` orders things by their links, and this file has no link, so there is nothing to order. Add a link with `->`, as in `Web app -> API gateway`.",
+                    lens.name
+                ),
+            };
+            found.push(Diagnostic {
+                code: "E0301",
+                span: show.span.clone(),
+                message,
+                fix: None,
+            });
+        }
+    }
+    found
 }
 
 /// The number of edits between two names: a character added, removed or

@@ -90,6 +90,9 @@ pub struct Scene {
     pub height: f64,
     /// The font size of every label, in pixels.
     pub font_size: f64,
+    /// The key of the fact whose value picks the palette slot of a thing, as
+    /// the lens binds `colour`. `None` draws every thing in one colour.
+    pub colour: Option<String>,
     /// Every shape in the order to draw it: a later shape covers an earlier
     /// one. Groups come first, outer before inner, then links, then things,
     /// then labels.
@@ -192,6 +195,7 @@ pub fn build(model: &Model, placement: &Placement, style: Style) -> Scene {
         width: 0.0,
         height: 0.0,
         font_size: style.size,
+        colour: None,
         shapes,
     })
 }
@@ -304,6 +308,9 @@ impl Scene {
             number(self.height),
             number(self.font_size)
         );
+        if let Some(key) = &self.colour {
+            writeln!(out, "  \"colour\": {},", string(key)).expect("a String takes any write");
+        }
         if self.shapes.is_empty() {
             out.push_str("  \"shapes\": []\n}\n");
             return out;
