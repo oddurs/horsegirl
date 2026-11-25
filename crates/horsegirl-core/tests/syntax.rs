@@ -551,7 +551,8 @@ fn a_bad_line_keeps_a_block_whose_brace_ends_the_line() {
 fn braces_past_the_depth_limit_stay_paired() {
     let lines = format!("{}{}after\n", "G {\n".repeat(70), "}\n".repeat(70));
     let one_line = format!("{}{}\nafter\n", "G { ".repeat(70), "} ".repeat(70));
-    for source in [lines, one_line] {
+    let part_after = format!("{}{}after\n", "G { A\n".repeat(70), "}\n".repeat(70));
+    for source in [lines, one_line, part_after] {
         let parse = parse(&source);
         assert_eq!(parse.tree.to_string(), source);
         let codes: Vec<_> = parse.diagnostics.iter().map(|d| d.code).collect();

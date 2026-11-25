@@ -300,7 +300,14 @@ impl<'s> Parser<'s> {
                 kind
             }
             Err(error) => {
+                // `open` stops at the `{` that nests too deep. The `{` pairs
+                // with its `}` whatever follows it on the line, so that the
+                // `}` does not close the group around it.
+                let too_deep = error.code == "E0007";
                 self.diagnostics.push(error);
+                if too_deep && self.kind() == Some(TokenKind::Open) {
+                    self.skip_block(&mut children);
+                }
                 loop {
                     match self.kind() {
                         None | Some(TokenKind::Newline | TokenKind::Close) => break,

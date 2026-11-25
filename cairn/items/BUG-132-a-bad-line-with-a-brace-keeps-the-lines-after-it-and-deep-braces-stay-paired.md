@@ -54,3 +54,7 @@ Criterion 3: the fuzz seed moved from the FORMS constant to crates/horsegirl-cor
 ## 2026-11-25
 
 Story note from the review of item 23: a_story_line_that_fails_after_its_block_gives_no_story_note passes; 'story s {} x' gives only E0001. Before the change it gave [W0010, E0001].
+
+## 2026-11-25
+
+Round 1 review: criterion 2 held only for two layouts. 'G { A' repeated 70 times, then 70 closing braces, gave six E0007 and six E0003. statement now pairs the brace at which open stopped with skip_block when the error is E0007. cargo test -p horsegirl-core --test syntax braces_past: 1 passed, with the 'G { A' layout added; the same test without the parser change fails with six E0007 and six E0003. scripts/task check: exit 0.
