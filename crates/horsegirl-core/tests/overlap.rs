@@ -193,6 +193,22 @@ fn a_label_on_a_thing_that_it_does_not_name_is_found() {
 }
 
 #[test]
+fn a_label_across_the_border_of_a_group_is_found() {
+    let g = group("g", (0.0, 0.0, 120.0, 100.0));
+    let inside = label(&["a"], (40.0, 60.0, 40.0, 16.0));
+    assert_eq!(found(vec![g.clone(), inside]), []);
+    let outside = label(&["a"], (40.0, 100.0, 40.0, 16.0));
+    assert_eq!(found(vec![g.clone(), outside]), []);
+    let bottom = label(&["a"], (40.0, 92.0, 40.0, 16.0));
+    assert_eq!(found(vec![g.clone(), bottom]), [(Kind::LabelOnGroup, 1, 0)]);
+    let side = label(&["a"], (100.0, 40.0, 40.0, 16.0));
+    assert_eq!(found(vec![g.clone(), side]), [(Kind::LabelOnGroup, 1, 0)]);
+    // The name of a group can be wider than its box.
+    let name = label(&["g"], (10.0, 10.0, 200.0, 16.0));
+    assert_eq!(found(vec![g, name]), []);
+}
+
+#[test]
 fn the_label_of_a_link_has_its_centre_on_the_link() {
     let line = link(
         "a",
@@ -252,4 +268,15 @@ fn a_collision_reads_as_a_sentence_with_both_names() {
     let found = overlaps(&scene);
     assert_eq!(found.len(), 1);
     assert_eq!(found[0].describe(&scene), "link `a -> b` crosses thing `c`");
+    let scene = Scene {
+        shapes: vec![
+            group("g", (0.0, 0.0, 120.0, 100.0)),
+            label(&["a"], (40.0, 92.0, 40.0, 16.0)),
+        ],
+        ..scene
+    };
+    assert_eq!(
+        overlaps(&scene)[0].describe(&scene),
+        "label `a` lies across the border of group `g`"
+    );
 }

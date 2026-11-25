@@ -45,7 +45,8 @@ the project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   link that passes through a group that holds neither of its ends, a link that
   crosses the border of its own group more than once, two links with no end
   in common that lie on each other, a label on the box of another thing, a
-  link label that is not on its link, and two labels that overlap.
+  label across the border of a group, a link label that is not on its link,
+  and two labels that overlap.
 
 ### Changed
 
@@ -69,5 +70,7 @@ the project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   that holds neither end of its link. A link from a thing to itself is a
   loop at the right side of its box. `Graph::labels` gives the size of the
   label of each link, and the layout gives the centre of each label on its
-  path, with a gap between two ranks that is wide enough for the label. The
-  paths are in `Layout::paths` and the labels in `Layout::labels`.
+  path, with a gap between two ranks that is wide enough for the label. A
+  label that would lie across the border of a group moves along its upright
+  line to 3 px from that border. The paths are in `Layout::paths` and the
+  labels in `Layout::labels`.

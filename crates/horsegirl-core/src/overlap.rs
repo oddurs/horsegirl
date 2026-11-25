@@ -28,6 +28,9 @@ pub enum Kind {
     Links,
     /// A label overlaps the box of a thing that it does not name.
     LabelOnThing,
+    /// A label lies across the border of a group. A label inside a group is
+    /// no collision, and the name of a group is not held to its own border.
+    LabelOnGroup,
     /// The centre of the label of a link is not on its link.
     LabelOffLink,
     /// Two labels overlap.
@@ -60,6 +63,7 @@ impl Overlap {
             Kind::LinkOnGroup => format!("{first} crosses the border of {second} too often"),
             Kind::Links => format!("{first} lies on {second}"),
             Kind::LabelOnThing | Kind::Labels => format!("{first} covers {second}"),
+            Kind::LabelOnGroup => format!("{first} lies across the border of {second}"),
             Kind::LabelOffLink => format!("{first} is not on {second}"),
         }
     }
@@ -129,6 +133,14 @@ pub fn overlaps(scene: &Scene) -> Vec<Overlap> {
         for &(j, thing) in &things {
             if label.of != thing.of && share(&label.rect, &thing.rect) {
                 report(Kind::LabelOnThing, i, j);
+            }
+        }
+    }
+    for &(i, label) in &labels {
+        for (j, group) in of_role(Role::Group) {
+            let across = share(&label.rect, &group.rect) && !holds(&group.rect, &label.rect);
+            if label.of != group.of && across {
+                report(Kind::LabelOnGroup, i, j);
             }
         }
     }

@@ -60,7 +60,7 @@ An agent writes a horsegirl file, checks it, applies the fixes, and draws a flow
 
 ## later — Later
 
-`··········` 0% · 0 of 16 done
+`··········` 0% · 0 of 20 done
 
 Nothing on a date. Good ideas wait here until a release needs them.
 
@@ -80,6 +80,10 @@ Nothing on a date. Good ideas wait here until a release needs them.
 - [ ] [`0128`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0128-a-label-that-changes-script-is-never-measured-narrower-than-the-browser-draws-it.md) A label that changes script is never measured narrower than the browser draws it <sup>feature · p2 · render</sup>
 - [ ] [`0138`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0138-fmt-writes-a-file-in-place.md) fmt writes a file in place <sup>feature · p2 · cli</sup>
 - [ ] [`0143`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0143-a-rule-against-a-group-also-forbids-links-to-its-parts.md) A rule against a group also forbids links to its parts <sup>feature · p2 · check</sup>
+- [ ] [`BUG-147`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/BUG-147-two-links-between-the-same-two-things-in-opposite-directions-are-drawn-apart.md) Two links between the same two things in opposite directions are drawn apart <sup>bug · p2 · layout</sup>
+- [ ] [`BUG-148`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/BUG-148-an-arrival-that-cannot-move-keeps-its-level-line-apart-from-every-other-line.md) An arrival that cannot move keeps its level line apart from every other line <sup>bug · p2 · layout</sup>
+- [ ] [`0149`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0149-the-overlap-detector-reports-a-thing-in-the-box-of-a-group-that-does-not-hold-it.md) The overlap detector reports a thing in the box of a group that does not hold it <sup>feature · p2 · check</sup>
+- [ ] [`0150`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0150-the-route-phase-orders-the-upright-lines-of-a-corridor-in-less-than-cubic-time.md) The route phase orders the upright lines of a corridor in less than cubic time <sup>chore · p2 · layout</sup>
 
 ## v0.2 — Trot
 

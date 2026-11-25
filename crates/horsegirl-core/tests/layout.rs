@@ -14,7 +14,7 @@
 
 use std::fmt::Write as _;
 
-use horsegirl_core::layout::{Graph, Group, Layout, NODE_GAP, Node, RANK_GAP, layout};
+use horsegirl_core::layout::{Graph, Group, LABEL_CLEAR, Layout, NODE_GAP, Node, RANK_GAP, layout};
 use horsegirl_core::model::{Link, Model, Thing, lower};
 use horsegirl_core::overlap::{Kind, overlaps};
 use horsegirl_core::scene::{Placement, Point, Rect, Scene, build};
@@ -375,7 +375,10 @@ fn no_path_crosses_the_box_of_a_thing_on_any_corpus_diagram() {
 
 // The ten diagrams of the spike have no label, so each link gets one here.
 // Two labels can still cover each other: item 0124 gives each label its own
-// room.
+// room. A box is the box of a thing or of a group: no label lies on the box
+// of a thing or across the border of a group. A label can still be inside a
+// group that holds neither end of its link, when the link passes through
+// that group.
 #[test]
 fn each_link_label_sits_on_its_path_and_overlaps_no_box() {
     let mut labels = 0;
@@ -395,6 +398,25 @@ fn each_link_label_sits_on_its_path_and_overlaps_no_box() {
 // starts, and each of the two from `b` ends where a link from `a` starts. No
 // order of the two upright lines keeps the level lines apart, so one link
 // arrives beside the middle of its box.
+// The smallest input from the review of this phase. The upright line of
+// `a -> c` leaves `G` through its top, and the middle of the line is 3 px
+// from that border.
+#[test]
+fn a_label_on_a_line_that_leaves_a_group_is_off_the_border_of_the_group() {
+    let flow = flow("G {\n  a, b\n}\na -> c: charge\nb -> d\nc -> b\n");
+    let picture = layout(&flow.graph, None);
+    let collisions = collisions(&flow, &picture, &[]);
+    assert!(collisions.is_empty(), "{collisions:#?}");
+    let (label, group) = (picture.labels[0].unwrap(), picture.groups[0].unwrap());
+    let size = flow.graph.labels[0].unwrap();
+    let room = label.y - size.height / 2.0 - group.y;
+    assert!((room - LABEL_CLEAR).abs() < 1e-6, "{room}");
+    let path = &picture.paths[0];
+    assert_eq!((path[1].x, path[2].x), (label.x, label.x));
+    let (top, bottom) = (path[1].y.min(path[2].y), path[1].y.max(path[2].y));
+    assert!(top < label.y && label.y < bottom, "{path:?}");
+}
+
 #[test]
 fn two_pairs_of_links_that_cross_do_not_lie_on_each_other() {
     let flow = flow("a -> c, d\nb -> c, d\n");

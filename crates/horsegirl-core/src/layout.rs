@@ -30,6 +30,9 @@ pub const BEND_GAP: f64 = 12.0;
 pub const RANK_GAP: f64 = 64.0;
 /// The distance from the border of a group to what it holds.
 pub const GROUP_PAD: f64 = 14.0;
+/// The room between a border of a group and a label that the layout moved
+/// off that border.
+pub const LABEL_CLEAR: f64 = 3.0;
 /// The room at the top of a group for its name.
 pub const GROUP_TITLE: f64 = 30.0;
 
@@ -88,7 +91,8 @@ pub struct Layout {
     pub paths: Vec<Vec<Point>>,
     /// The centre of the label of each link that has one. It is on the path
     /// of the link, and a label of the size in the [`Graph`] overlaps no box
-    /// of a node there.
+    /// of a node there. It lies across no border of a group when its upright
+    /// line has a height that is clear of every border.
     pub labels: Vec<Option<Point>>,
 }
 
@@ -159,7 +163,12 @@ pub fn layout(graph: &Graph, _seed: Option<&Layout>) -> Layout {
     let routes = route::route(&net, &centres, &label_widths(graph, &net));
     let columns = columns(&net, &graph.groups, &chains, &routes.gaps);
     let (nodes, groups) = boxes(&net, &centres, &edges, &columns, &loops);
-    let (paths, labels) = paths(graph, &net, &nodes, &columns, &routes, &loops);
+    let (paths, mut labels) = paths(graph, &net, &nodes, &columns, &routes, &loops);
+    for (link, centre) in labels.iter_mut().enumerate() {
+        if let (Some(centre), Some(size)) = (centre.as_mut(), label(graph, link)) {
+            centre.y = off_borders(*centre, size, &paths[link], &groups);
+        }
+    }
     let bends = bends(&net, &centres, &columns);
     let mut picture = Layout {
         nodes,
@@ -580,6 +589,46 @@ fn paths(
         labels.push(centre.filter(|_| label(graph, link).is_some()));
     }
     (paths, labels)
+}
+
+/// The height of a label that lies across no border of a group.
+///
+/// A label is at the middle of an upright line, and a line that leaves a
+/// group through its top or its bottom has that border somewhere on it. A
+/// label that lies across a border moves along its upright line to the
+/// nearest height where it is [`LABEL_CLEAR`] from every border that it
+/// would lie across. It stays where it is when the line has no such height.
+fn off_borders(centre: Point, size: Size, path: &[Point], groups: &[Option<Rect>]) -> f64 {
+    let half = size.width / 2.0;
+    let beside =
+        |group: &&Rect| group.x < centre.x + half && centre.x - half < group.x + group.width;
+    let borders: Vec<f64> = groups
+        .iter()
+        .flatten()
+        .filter(beside)
+        .flat_map(|group| [group.y, group.y + group.height])
+        .collect();
+    let half = size.height / 2.0;
+    let across = |y: f64| borders.iter().any(|border| (border - y).abs() < half);
+    if !across(centre.y) {
+        return centre.y;
+    }
+    // The upright line that holds the label.
+    let line = path.windows(2).find_map(|pair| {
+        let (top, bottom) = (pair[0].y.min(pair[1].y), pair[0].y.max(pair[1].y));
+        let holds = pair[0].x - centre.x == 0.0 && pair[1].x - centre.x == 0.0;
+        (holds && top <= centre.y && centre.y <= bottom).then_some((top, bottom))
+    });
+    let Some((top, bottom)) = line else {
+        return centre.y;
+    };
+    let reach = half + LABEL_CLEAR;
+    borders
+        .iter()
+        .flat_map(|border| [border - reach, border + reach])
+        .filter(|&y| top <= y && y <= bottom && !across(y))
+        .min_by(|a, b| (a - centre.y).abs().total_cmp(&(b - centre.y).abs()))
+        .unwrap_or(centre.y)
 }
 
 /// A link from a node to itself: a loop at the right side of the box, above

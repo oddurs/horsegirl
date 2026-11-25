@@ -19,7 +19,7 @@ label  API gateway -> Orders  348.7666015625,78
 path  Orders -> Payments  465.552734375,78 532.359375,78
 label  Orders -> Payments  498.9560546875,78
 path  Orders -> Postgres  465.552734375,78 492.9560546875,78 492.9560546875,152 535.859375,152
-label  Orders -> Postgres  492.9560546875,115
+label  Orders -> Postgres  492.9560546875,120.8203125
 path  Payments -> Notify  622.607421875,78 686.607421875,78
 label  Payments -> Notify  654.607421875,78
 path  Notify -> Events  750.3935546875,78 828.3935546875,78
