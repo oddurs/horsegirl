@@ -177,9 +177,12 @@ pub fn elk(graph: &Graph, seed: Option<&Picture>) -> Result<Picture, String> {
             if inner.parent == group {
                 let mut value = json!({
                     "id": format!("g{g}"),
-                    "layoutOptions": { "elk.padding": format!(
-                        "[top={TITLE},left={PAD},bottom={PAD},right={PAD}]"
-                    ) },
+                    // ELK does not pass the two gaps of the root down to a group.
+                    "layoutOptions": {
+                        "elk.padding": format!("[top={TITLE},left={PAD},bottom={PAD},right={PAD}]"),
+                        "elk.spacing.nodeNode": NODE_GAP,
+                        "elk.layered.spacing.nodeNodeBetweenLayers": RANK_GAP,
+                    },
                     "children": child(graph, Some(g), seed),
                 });
                 // ELK refuses a graph whose groups do not use the strategy of the root.
@@ -310,4 +313,26 @@ pub fn elk(graph: &Graph, seed: Option<&Picture>) -> Result<Picture, String> {
             .collect(),
         edges,
     })
+}
+
+#[cfg(test)]
+mod tests {
+    use super::{NODE_GAP, RANK_GAP, elk};
+    use crate::model;
+
+    /// ELK does not pass a spacing option down to a group, so each group must set it.
+    #[test]
+    fn elk_uses_the_same_gaps_inside_a_group() -> Result<(), String> {
+        let graph = model::parse("a -> b\na -> c\nG {\na, b, c\n}\n")?;
+        let picture = elk(&graph, None)?;
+        let [a, b, c] = picture.nodes[..] else {
+            return Err(format!("{} things", picture.nodes.len()));
+        };
+        let between_layers = b.x - (a.x + a.w);
+        let (upper, lower) = if b.y < c.y { (b, c) } else { (c, b) };
+        let in_layer = lower.y - (upper.y + upper.h);
+        assert!((between_layers - RANK_GAP).abs() < 0.5, "{between_layers}");
+        assert!((in_layer - NODE_GAP).abs() < 0.5, "{in_layer}");
+        Ok(())
+    }
 }

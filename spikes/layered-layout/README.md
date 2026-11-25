@@ -27,6 +27,10 @@ Every candidate reads the same graph (`src/model.rs`), with the same box sizes a
 gaps. One renderer draws every picture (`src/svg.rs`) and one module scores every picture
 (`src/measure.rs`). The adapters for the three crates are in `src/crates.rs`.
 
+ELK does not pass the node gap and the layer gap of the root down to a group. The elk adapter
+sets the two gaps on the root and on every group. `cargo test --release` checks the two gaps
+inside an elk group.
+
 ## The diagrams
 
 The ten files in `corpus/` were written for this spike. The corpus of public flowcharts
@@ -55,11 +59,11 @@ The spike leaves out three things on purpose:
 | 01-checkout | 9 | 9 | own | 1047 x 164 | 0 | 0 | 0 | 0 | 1 | 8 | 1042 |
 | 01-checkout | 9 | 9 | dagre | 1083 x 178 | 0 | 0 | 0 | 0 | 0 | 7 | 874 |
 | 01-checkout | 9 | 9 | graphlay | 1138 x 140 | 0 | 0 | 0 | 0 | 0 | 8 | 1368 |
-| 01-checkout | 9 | 9 | elk | 984 x 110 | 0 | 0 | 0 | 0 | 0 | 8 | 973 |
+| 01-checkout | 9 | 9 | elk | 1072 x 110 | 0 | 0 | 0 | 0 | 0 | 8 | 1193 |
 | 02-ci-pipeline | 18 | 22 | own | 2089 x 268 | 0 | 0 | 0 | 0 | 0 | 30 | 3733 |
 | 02-ci-pipeline | 18 | 22 | dagre | 2129 x 420 | 0 | 0 | 0 | 3 | 0 | 19 | 3936 |
 | 02-ci-pipeline | 18 | 22 | graphlay | 2587 x 290 | 0 | 0 | 0 | 0 | 6 | 32 | 5927 |
-| 02-ci-pipeline | 18 | 22 | elk | 2013 x 258 | 0 | 0 | 0 | 0 | 1 | 28 | 3966 |
+| 02-ci-pipeline | 18 | 22 | elk | 2389 x 270 | 0 | 0 | 0 | 0 | 1 | 28 | 5054 |
 | 03-order-states | 15 | 20 | own | 1754 x 132 | 0 | 0 | 0 | 0 | 1 | 52 | 4574 |
 | 03-order-states | 15 | 20 | dagre | 1711 x 208 | 0 | 0 | 0 | 1 | 1 | 17 | 4227 |
 | 03-order-states | 15 | 20 | graphlay | 1733 x 204 | 0 | 0 | 0 | 0 | 0 | 20 | 4214 |
@@ -67,7 +71,7 @@ The spike leaves out three things on purpose:
 | 04-data-pipeline | 19 | 22 | own | 1740 x 744 | 0 | 0 | 0 | 0 | 0 | 38 | 6498 |
 | 04-data-pipeline | 19 | 22 | dagre | 1870 x 580 | 0 | 0 | 0 | 1 | 0 | 23 | 5162 |
 | 04-data-pipeline | 19 | 22 | graphlay | 2023 x 321 | 0 | 0 | 0 | 0 | 3 | 37 | 7350 |
-| 04-data-pipeline | 19 | 22 | elk | 1524 x 339 | 0 | 0 | 0 | 0 | 0 | 32 | 4713 |
+| 04-data-pipeline | 19 | 22 | elk | 1646 x 347 | 0 | 0 | 0 | 0 | 0 | 32 | 5387 |
 | 05-sign-in | 15 | 20 | own | 1534 x 174 | 0 | 0 | 0 | 0 | 0 | 52 | 6064 |
 | 05-sign-in | 15 | 20 | dagre | 1549 x 340 | 0 | 0 | 0 | 0 | 5 | 20 | 6316 |
 | 05-sign-in | 15 | 20 | graphlay | 1706 x 288 | 0 | 0 | 0 | 0 | 0 | 22 | 6489 |
@@ -75,11 +79,11 @@ The spike leaves out three things on purpose:
 | 06-cluster-request | 17 | 23 | own | 1846 x 450 | 0 | 0 | 0 | 0 | 9 | 38 | 4375 |
 | 06-cluster-request | 17 | 23 | dagre | 1976 x 450 | 0 | 0 | 0 | 1 | 3 | 28 | 4132 |
 | 06-cluster-request | 17 | 23 | graphlay | 2374 x 310 | 0 | 0 | 0 | 0 | 7 | 44 | 6297 |
-| 06-cluster-request | 17 | 23 | elk | 1899 x 258 | 0 | 0 | 0 | 0 | 1 | 38 | 3558 |
+| 06-cluster-request | 17 | 23 | elk | 2221 x 266 | 0 | 0 | 0 | 0 | 1 | 38 | 4674 |
 | 07-compiler | 16 | 18 | own | 1362 x 260 | 0 | 1 | 0 | 0 | 1 | 42 | 4583 |
 | 07-compiler | 16 | 18 | dagre | 1340 x 516 | 0 | 0 | 0 | 1 | 3 | 16 | 4181 |
 | 07-compiler | 16 | 18 | graphlay | 1551 x 381 | 0 | 0 | 0 | 0 | 3 | 29 | 6787 |
-| 07-compiler | 16 | 18 | elk | 1270 x 327 | 0 | 0 | 0 | 0 | 1 | 30 | 4439 |
+| 07-compiler | 16 | 18 | elk | 1490 x 335 | 0 | 0 | 0 | 0 | 1 | 30 | 5595 |
 | 08-module-deps | 22 | 37 | own | 933 x 378 | 0 | 0 | 0 | 0 | 22 | 88 | 8337 |
 | 08-module-deps | 22 | 37 | dagre | 911 x 546 | 0 | 0 | 0 | 1 | 14 | 41 | 6585 |
 | 08-module-deps | 22 | 37 | graphlay | 981 x 468 | 0 | 0 | 0 | 0 | 3 | 52 | 7499 |
@@ -91,7 +95,7 @@ The spike leaves out three things on purpose:
 | 10-platform | 34 | 44 | own | 1988 x 1128 | 0 | 3 | 0 | 0 | 44 | 112 | 25939 |
 | 10-platform | 34 | 44 | dagre | 2200 x 1540 | 0 | 0 | 0 | 0 | 48 | 104 | 28689 |
 | 10-platform | 34 | 44 | graphlay | 3330 x 980 | 0 | 0 | 0 | 0 | 137 | 152 | 47974 |
-| 10-platform | 34 | 44 | elk | 2458 x 604 | 0 | 0 | 0 | 0 | 25 | 158 | 27611 |
+| 10-platform | 34 | 44 | elk | 2682 x 636 | 0 | 0 | 0 | 0 | 25 | 158 | 30628 |
 
 | candidate | overlaps | touching | group faults | links through a box | crossings | bends |
 | --- | --- | --- | --- | --- | --- | --- |
@@ -137,33 +141,33 @@ A cell is: things that moved, pairs of things that changed sides, and crossings 
 | diagram | things | own, no seed | own, seed | graphlay, no seed | graphlay, seed | elk, no seed | elk, seed | dagre |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | 01-checkout | 9 | 3, 0, 1 | 4, 0, 1 | 6, 0, 0 | 6, 0, 0 | 7, 3, 0 | 9, 2, 2 | 5, 3, 0 |
-| 02-ci-pipeline | 18 | 8, 30, 0 | 7, 8, 1 | 7, 0, 6 | 7, 0, 6 | 7, 8, 1 | 18, 33, 16 | 7, 21, 0 |
+| 02-ci-pipeline | 18 | 8, 30, 0 | 7, 8, 1 | 7, 0, 6 | 7, 0, 6 | 7, 8, 1 | 18, 31, 16 | 7, 21, 0 |
 | 03-order-states | 15 | 6, 1, 1 | 6, 0, 1 | 7, 25, 0 | 15, 11, 0 | 15, 53, 0 | 0, 0, 2 | 14, 15, 2 |
 | 04-data-pipeline | 19 | 18, 30, 0 | 6, 2, 6 | 10, 7, 7 | 10, 7, 7 | 10, 29, 0 | 19, 8, 8 | 18, 142, 1 |
 | 05-sign-in | 15 | 1, 0, 0 | 3, 0, 2 | 1, 0, 0 | 1, 0, 0 | 9, 17, 5 | 9, 1, 22 | 13, 59, 1 |
-| 06-cluster-request | 17 | 0, 0, 11 | 0, 0, 11 | 6, 9, 7 | 6, 9, 7 | 15, 88, 1 | 17, 7, 18 | 5, 0, 3 |
-| 07-compiler | 16 | 6, 1, 1 | 15, 5, 1 | 16, 23, 1 | 16, 23, 1 | 14, 12, 1 | 14, 18, 17 | 14, 0, 3 |
+| 06-cluster-request | 17 | 0, 0, 11 | 0, 0, 11 | 6, 9, 7 | 6, 9, 7 | 15, 86, 1 | 17, 7, 18 | 5, 0, 3 |
+| 07-compiler | 16 | 6, 1, 1 | 15, 5, 1 | 16, 23, 1 | 16, 23, 1 | 14, 12, 1 | 12, 18, 17 | 14, 0, 3 |
 | 08-module-deps | 22 | 12, 7, 26 | 3, 3, 38 | 9, 0, 3 | 16, 4, 3 | 9, 1, 3 | 10, 12, 44 | 12, 0, 14 |
 | 09-incident | 24 | 2, 2, 2 | 0, 0, 5 | 9, 34, 0 | 24, 47, 0 | 8, 7, 0 | 13, 2, 18 | 12, 11, 1 |
-| 10-platform | 34 | 13, 0, 44 | 24, 0, 44 | 16, 34, 127 | 16, 34, 127 | 34, 230, 26 | 34, 132, 126 | 34, 457, 63 |
-| total | 189 | 69, 71, 86 | 68, 18, 110 | 87, 132, 151 | 117, 135, 151 | 128, 448, 37 | 143, 215, 273 | 134, 708, 88 |
+| 10-platform | 34 | 13, 0, 44 | 24, 0, 44 | 16, 34, 127 | 16, 34, 127 | 34, 218, 26 | 34, 151, 126 | 34, 457, 63 |
+| total | 189 | 69, 71, 86 | 68, 18, 110 | 87, 132, 151 | 117, 135, 151 | 128, 434, 37 | 141, 232, 273 | 134, 708, 88 |
 
 No edit: each row seeds a diagram with its own picture. dagre has no input for positions.
 A cell is: things that moved, the longest move in pixels, and crossings before and after.
 
 | diagram | things | own | graphlay | elk |
 | --- | --- | --- | --- | --- |
-| 01-checkout | 9 | 0, 0, 1 to 1 | 0, 0, 0 to 0 | 9, 40, 0 to 2 |
-| 02-ci-pipeline | 18 | 0, 0, 0 to 0 | 0, 0, 6 to 6 | 18, 201, 1 to 15 |
+| 01-checkout | 9 | 0, 0, 1 to 1 | 0, 0, 0 to 0 | 9, 30, 0 to 2 |
+| 02-ci-pipeline | 18 | 0, 0, 0 to 0 | 0, 0, 6 to 6 | 18, 132, 1 to 15 |
 | 03-order-states | 15 | 0, 0, 1 to 1 | 0, 0, 0 to 1 | 0, 0, 0 to 2 |
-| 04-data-pipeline | 19 | 6, 24, 0 to 3 | 0, 0, 3 to 3 | 19, 181, 0 to 7 |
+| 04-data-pipeline | 19 | 6, 24, 0 to 3 | 0, 0, 3 to 3 | 19, 161, 0 to 7 |
 | 05-sign-in | 15 | 2, 12, 0 to 4 | 0, 0, 0 to 3 | 9, 24, 5 to 20 |
-| 06-cluster-request | 17 | 0, 0, 9 to 9 | 0, 0, 7 to 7 | 17, 132, 1 to 16 |
-| 07-compiler | 16 | 6, 36, 1 to 4 | 0, 0, 3 to 3 | 14, 121, 1 to 16 |
+| 06-cluster-request | 17 | 0, 0, 9 to 9 | 0, 0, 7 to 7 | 17, 120, 1 to 16 |
+| 07-compiler | 16 | 6, 36, 1 to 4 | 0, 0, 3 to 3 | 12, 121, 1 to 16 |
 | 08-module-deps | 22 | 4, 24, 22 to 31 | 0, 0, 3 to 3 | 3, 26, 3 to 42 |
 | 09-incident | 24 | 0, 0, 2 to 2 | 0, 0, 0 to 5 | 13, 20, 0 to 17 |
-| 10-platform | 34 | 15, 36, 44 to 44 | 0, 0, 137 to 137 | 34, 852, 25 to 125 |
-| total | 189 | 33, 80 to 99 | 0, 159 to 168 | 136, 36 to 262 |
+| 10-platform | 34 | 15, 36, 44 to 44 | 0, 0, 137 to 137 | 31, 712, 25 to 115 |
+| total | 189 | 33, 80 to 99 | 0, 159 to 168 | 131, 36 to 252 |
 
 own fails the no-edit run: 33 of 189 things move when a diagram is seeded with its own picture.
 Every longest move is a multiple of 12 px, the gap beside a bend. A bend has no seed in the

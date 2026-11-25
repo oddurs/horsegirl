@@ -1,72 +1,72 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="-4.0 -4.0 1556.0 371.0" width="1556" height="371" font-family="Helvetica, Arial, sans-serif" font-size="13">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-4.0 -4.0 1678.0 379.0" width="1678" height="379" font-family="Helvetica, Arial, sans-serif" font-size="13">
 <defs><marker id="tip" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="#444"/></marker></defs>
-<rect x="-4.0" y="-4.0" width="1556.0" height="371.0" fill="#fff"/>
-<rect x="27.0" y="47.0" width="171.2" height="304.0" rx="6" fill="#000" fill-opacity="0.04" stroke="#999"/>
-<text x="37.0" y="66.0" fill="#555">Sources</text>
-<rect x="643.4" y="35.0" width="673.2" height="236.0" rx="6" fill="#000" fill-opacity="0.04" stroke="#999"/>
+<rect x="-4.0" y="-4.0" width="1678.0" height="379.0" fill="#fff"/>
+<rect x="27.0" y="39.0" width="171.2" height="320.0" rx="6" fill="#000" fill-opacity="0.04" stroke="#999"/>
+<text x="37.0" y="58.0" fill="#555">Sources</text>
+<rect x="643.4" y="35.0" width="795.2" height="244.0" rx="6" fill="#000" fill-opacity="0.04" stroke="#999"/>
 <text x="653.4" y="54.0" fill="#555">Warehouse</text>
-<rect x="792.4" y="65.0" width="164.0" height="192.0" rx="6" fill="#000" fill-opacity="0.04" stroke="#999"/>
-<text x="802.4" y="84.0" fill="#555">Staging</text>
-<rect x="986.4" y="71.0" width="311.2" height="136.0" rx="6" fill="#000" fill-opacity="0.04" stroke="#999"/>
-<text x="996.4" y="90.0" fill="#555">Marts</text>
-<polyline points="184.2,151.0 233.2,151.0 233.2,301.0 267.2,301.0" fill="none" stroke="#444" stroke-width="1.2" marker-end="url(#tip)"/>
-<polyline points="184.2,207.0 223.2,207.0 223.2,307.0 267.2,307.0" fill="none" stroke="#444" stroke-width="1.2" marker-end="url(#tip)"/>
-<polyline points="184.2,263.0 213.2,263.0 213.2,313.0 267.2,313.0" fill="none" stroke="#444" stroke-width="1.2" marker-end="url(#tip)"/>
-<polyline points="184.2,319.0 267.2,319.0" fill="none" stroke="#444" stroke-width="1.2" marker-end="url(#tip)"/>
-<polyline points="155.4,95.0 243.2,95.0 243.2,295.0 267.2,295.0" fill="none" stroke="#444" stroke-width="1.2" marker-end="url(#tip)"/>
-<polyline points="396.0,307.0 460.0,307.0" fill="none" stroke="#444" stroke-width="1.2" marker-end="url(#tip)"/>
-<polyline points="574.4,313.0 930.0,313.0" fill="none" stroke="#444" stroke-width="1.2" marker-end="url(#tip)"/>
-<polyline points="574.4,301.0 584.4,301.0 584.4,122.0 657.4,122.0" fill="none" stroke="#444" stroke-width="1.2" marker-end="url(#tip)"/>
-<polyline points="757.4,131.0 767.4,131.0 767.4,225.0 817.2,225.0" fill="none" stroke="#444" stroke-width="1.2" marker-end="url(#tip)"/>
-<polyline points="757.4,122.0 777.4,122.0 777.4,169.0 806.4,169.0" fill="none" stroke="#444" stroke-width="1.2" marker-end="url(#tip)"/>
-<polyline points="757.4,113.0 810.0,113.0" fill="none" stroke="#444" stroke-width="1.2" marker-end="url(#tip)"/>
-<polyline points="931.6,225.0 971.4,225.0 971.4,181.0 1000.4,181.0" fill="none" stroke="#444" stroke-width="1.2" marker-end="url(#tip)"/>
-<polyline points="942.4,175.0 971.4,175.0 971.4,169.0 1000.4,169.0" fill="none" stroke="#444" stroke-width="1.2" marker-end="url(#tip)"/>
-<polyline points="938.8,113.0 1002.8,113.0" fill="none" stroke="#444" stroke-width="1.2" marker-end="url(#tip)"/>
-<polyline points="942.4,163.0 971.4,163.0 971.4,125.0 1002.8,125.0" fill="none" stroke="#444" stroke-width="1.2" marker-end="url(#tip)"/>
-<polyline points="1122.0,175.0 1132.0,175.0 1132.0,131.0 1142.0,131.0" fill="none" stroke="#444" stroke-width="1.2" marker-end="url(#tip)"/>
-<polyline points="1117.2,119.0 1142.0,119.0" fill="none" stroke="#444" stroke-width="1.2" marker-end="url(#tip)"/>
-<polyline points="1263.6,125.0 1273.6,125.0 1273.6,126.0 1385.6,126.0" fill="none" stroke="#444" stroke-width="1.2" marker-end="url(#tip)"/>
-<polyline points="1263.6,134.0 1273.6,134.0 1273.6,136.0 1331.6,136.0 1331.6,186.0 1385.6,186.0" fill="none" stroke="#444" stroke-width="1.2" marker-end="url(#tip)"/>
-<polyline points="1263.6,116.0 1331.6,116.0 1331.6,36.0 1385.6,36.0" fill="none" stroke="#444" stroke-width="1.2" marker-end="url(#tip)"/>
-<polyline points="1385.6,24.0 12.0,24.0 12.0,95.0 69.8,95.0" fill="none" stroke="#444" stroke-width="1.2" marker-end="url(#tip)"/>
-<polyline points="1030.0,313.0 1385.6,313.0" fill="none" stroke="#444" stroke-width="1.2" marker-end="url(#tip)"/>
-<rect x="41.0" y="133.0" width="143.2" height="36.0" rx="4" fill="#fff" stroke="#222"/>
-<text x="112.6" y="151.0" text-anchor="middle" dominant-baseline="central" fill="#111">Postgres replica</text>
-<rect x="267.2" y="289.0" width="128.8" height="36.0" rx="4" fill="#fff" stroke="#222"/>
-<text x="331.6" y="307.0" text-anchor="middle" dominant-baseline="central" fill="#111">Landing bucket</text>
+<rect x="826.4" y="65.0" width="164.0" height="200.0" rx="6" fill="#000" fill-opacity="0.04" stroke="#999"/>
+<text x="836.4" y="84.0" fill="#555">Staging</text>
+<rect x="1064.4" y="71.0" width="355.2" height="140.0" rx="6" fill="#000" fill-opacity="0.04" stroke="#999"/>
+<text x="1074.4" y="90.0" fill="#555">Marts</text>
+<polyline points="184.2,147.0 233.2,147.0 233.2,309.0 267.2,309.0" fill="none" stroke="#444" stroke-width="1.2" marker-end="url(#tip)"/>
+<polyline points="184.2,207.0 223.2,207.0 223.2,315.0 267.2,315.0" fill="none" stroke="#444" stroke-width="1.2" marker-end="url(#tip)"/>
+<polyline points="184.2,267.0 213.2,267.0 213.2,321.0 267.2,321.0" fill="none" stroke="#444" stroke-width="1.2" marker-end="url(#tip)"/>
+<polyline points="184.2,327.0 267.2,327.0" fill="none" stroke="#444" stroke-width="1.2" marker-end="url(#tip)"/>
+<polyline points="155.4,87.0 243.2,87.0 243.2,303.0 267.2,303.0" fill="none" stroke="#444" stroke-width="1.2" marker-end="url(#tip)"/>
+<polyline points="396.0,315.0 460.0,315.0" fill="none" stroke="#444" stroke-width="1.2" marker-end="url(#tip)"/>
+<polyline points="574.4,321.0 991.0,321.0" fill="none" stroke="#444" stroke-width="1.2" marker-end="url(#tip)"/>
+<polyline points="574.4,309.0 584.4,309.0 584.4,122.0 657.4,122.0" fill="none" stroke="#444" stroke-width="1.2" marker-end="url(#tip)"/>
+<polyline points="757.4,131.0 767.4,131.0 767.4,233.0 851.2,233.0" fill="none" stroke="#444" stroke-width="1.2" marker-end="url(#tip)"/>
+<polyline points="757.4,122.0 777.4,122.0 777.4,173.0 840.4,173.0" fill="none" stroke="#444" stroke-width="1.2" marker-end="url(#tip)"/>
+<polyline points="757.4,113.0 844.0,113.0" fill="none" stroke="#444" stroke-width="1.2" marker-end="url(#tip)"/>
+<polyline points="965.6,233.0 1005.4,233.0 1005.4,185.0 1078.4,185.0" fill="none" stroke="#444" stroke-width="1.2" marker-end="url(#tip)"/>
+<polyline points="976.4,179.0 1005.4,179.0 1005.4,173.0 1078.4,173.0" fill="none" stroke="#444" stroke-width="1.2" marker-end="url(#tip)"/>
+<polyline points="972.8,113.0 1080.8,113.0" fill="none" stroke="#444" stroke-width="1.2" marker-end="url(#tip)"/>
+<polyline points="976.4,167.0 1005.4,167.0 1005.4,125.0 1080.8,125.0" fill="none" stroke="#444" stroke-width="1.2" marker-end="url(#tip)"/>
+<polyline points="1200.0,179.0 1210.0,179.0 1210.0,131.0 1264.0,131.0" fill="none" stroke="#444" stroke-width="1.2" marker-end="url(#tip)"/>
+<polyline points="1195.2,119.0 1264.0,119.0" fill="none" stroke="#444" stroke-width="1.2" marker-end="url(#tip)"/>
+<polyline points="1385.6,125.0 1395.6,125.0 1395.6,126.0 1507.6,126.0" fill="none" stroke="#444" stroke-width="1.2" marker-end="url(#tip)"/>
+<polyline points="1385.6,134.0 1395.6,134.0 1395.6,136.0 1453.6,136.0 1453.6,186.0 1507.6,186.0" fill="none" stroke="#444" stroke-width="1.2" marker-end="url(#tip)"/>
+<polyline points="1385.6,116.0 1453.6,116.0 1453.6,36.0 1507.6,36.0" fill="none" stroke="#444" stroke-width="1.2" marker-end="url(#tip)"/>
+<polyline points="1507.6,24.0 12.0,24.0 12.0,87.0 69.8,87.0" fill="none" stroke="#444" stroke-width="1.2" marker-end="url(#tip)"/>
+<polyline points="1091.0,321.0 1507.6,321.0" fill="none" stroke="#444" stroke-width="1.2" marker-end="url(#tip)"/>
+<rect x="41.0" y="129.0" width="143.2" height="36.0" rx="4" fill="#fff" stroke="#222"/>
+<text x="112.6" y="147.0" text-anchor="middle" dominant-baseline="central" fill="#111">Postgres replica</text>
+<rect x="267.2" y="297.0" width="128.8" height="36.0" rx="4" fill="#fff" stroke="#222"/>
+<text x="331.6" y="315.0" text-anchor="middle" dominant-baseline="central" fill="#111">Landing bucket</text>
 <rect x="62.6" y="189.0" width="121.6" height="36.0" rx="4" fill="#fff" stroke="#222"/>
 <text x="123.4" y="207.0" text-anchor="middle" dominant-baseline="central" fill="#111">Stripe export</text>
-<rect x="84.2" y="245.0" width="100.0" height="36.0" rx="4" fill="#fff" stroke="#222"/>
-<text x="134.2" y="263.0" text-anchor="middle" dominant-baseline="central" fill="#111">Web events</text>
-<rect x="62.6" y="301.0" width="121.6" height="36.0" rx="4" fill="#fff" stroke="#222"/>
-<text x="123.4" y="319.0" text-anchor="middle" dominant-baseline="central" fill="#111">Mobile events</text>
-<rect x="69.8" y="77.0" width="85.6" height="36.0" rx="4" fill="#fff" stroke="#222"/>
-<text x="112.6" y="95.0" text-anchor="middle" dominant-baseline="central" fill="#111">CRM dump</text>
-<rect x="460.0" y="289.0" width="114.4" height="36.0" rx="4" fill="#fff" stroke="#222"/>
-<text x="517.2" y="307.0" text-anchor="middle" dominant-baseline="central" fill="#111">Schema check</text>
-<rect x="930.0" y="295.0" width="100.0" height="36.0" rx="4" fill="#fff" stroke="#222"/>
-<text x="980.0" y="313.0" text-anchor="middle" dominant-baseline="central" fill="#111">Quarantine</text>
+<rect x="84.2" y="249.0" width="100.0" height="36.0" rx="4" fill="#fff" stroke="#222"/>
+<text x="134.2" y="267.0" text-anchor="middle" dominant-baseline="central" fill="#111">Web events</text>
+<rect x="62.6" y="309.0" width="121.6" height="36.0" rx="4" fill="#fff" stroke="#222"/>
+<text x="123.4" y="327.0" text-anchor="middle" dominant-baseline="central" fill="#111">Mobile events</text>
+<rect x="69.8" y="69.0" width="85.6" height="36.0" rx="4" fill="#fff" stroke="#222"/>
+<text x="112.6" y="87.0" text-anchor="middle" dominant-baseline="central" fill="#111">CRM dump</text>
+<rect x="460.0" y="297.0" width="114.4" height="36.0" rx="4" fill="#fff" stroke="#222"/>
+<text x="517.2" y="315.0" text-anchor="middle" dominant-baseline="central" fill="#111">Schema check</text>
+<rect x="991.0" y="303.0" width="100.0" height="36.0" rx="4" fill="#fff" stroke="#222"/>
+<text x="1041.0" y="321.0" text-anchor="middle" dominant-baseline="central" fill="#111">Quarantine</text>
 <rect x="657.4" y="104.0" width="100.0" height="36.0" rx="4" fill="#fff" stroke="#222"/>
 <text x="707.4" y="122.0" text-anchor="middle" dominant-baseline="central" fill="#111">Raw tables</text>
-<rect x="817.2" y="207.0" width="114.4" height="36.0" rx="4" fill="#fff" stroke="#222"/>
-<text x="874.4" y="225.0" text-anchor="middle" dominant-baseline="central" fill="#111">Clean orders</text>
-<rect x="806.4" y="151.0" width="136.0" height="36.0" rx="4" fill="#fff" stroke="#222"/>
-<text x="874.4" y="169.0" text-anchor="middle" dominant-baseline="central" fill="#111">Clean customers</text>
-<rect x="810.0" y="95.0" width="128.8" height="36.0" rx="4" fill="#fff" stroke="#222"/>
-<text x="874.4" y="113.0" text-anchor="middle" dominant-baseline="central" fill="#111">Clean sessions</text>
-<rect x="1000.4" y="157.0" width="121.6" height="36.0" rx="4" fill="#fff" stroke="#222"/>
-<text x="1061.2" y="175.0" text-anchor="middle" dominant-baseline="central" fill="#111">Revenue model</text>
-<rect x="1002.8" y="101.0" width="114.4" height="36.0" rx="4" fill="#fff" stroke="#222"/>
-<text x="1060.0" y="119.0" text-anchor="middle" dominant-baseline="central" fill="#111">Funnel model</text>
-<rect x="1142.0" y="107.0" width="121.6" height="36.0" rx="4" fill="#fff" stroke="#222"/>
-<text x="1202.8" y="125.0" text-anchor="middle" dominant-baseline="central" fill="#111">Metrics layer</text>
-<rect x="1385.6" y="108.0" width="150.4" height="36.0" rx="4" fill="#fff" stroke="#222"/>
-<text x="1460.8" y="126.0" text-anchor="middle" dominant-baseline="central" fill="#111">Finance dashboard</text>
-<rect x="1385.6" y="168.0" width="143.2" height="36.0" rx="4" fill="#fff" stroke="#222"/>
-<text x="1457.2" y="186.0" text-anchor="middle" dominant-baseline="central" fill="#111">Growth dashboard</text>
-<rect x="1385.6" y="12.0" width="114.4" height="36.0" rx="4" fill="#fff" stroke="#222"/>
-<text x="1442.8" y="30.0" text-anchor="middle" dominant-baseline="central" fill="#111">Reverse sync</text>
-<rect x="1385.6" y="295.0" width="100.0" height="36.0" rx="4" fill="#fff" stroke="#222"/>
-<text x="1435.6" y="313.0" text-anchor="middle" dominant-baseline="central" fill="#111">Data alert</text>
+<rect x="851.2" y="215.0" width="114.4" height="36.0" rx="4" fill="#fff" stroke="#222"/>
+<text x="908.4" y="233.0" text-anchor="middle" dominant-baseline="central" fill="#111">Clean orders</text>
+<rect x="840.4" y="155.0" width="136.0" height="36.0" rx="4" fill="#fff" stroke="#222"/>
+<text x="908.4" y="173.0" text-anchor="middle" dominant-baseline="central" fill="#111">Clean customers</text>
+<rect x="844.0" y="95.0" width="128.8" height="36.0" rx="4" fill="#fff" stroke="#222"/>
+<text x="908.4" y="113.0" text-anchor="middle" dominant-baseline="central" fill="#111">Clean sessions</text>
+<rect x="1078.4" y="161.0" width="121.6" height="36.0" rx="4" fill="#fff" stroke="#222"/>
+<text x="1139.2" y="179.0" text-anchor="middle" dominant-baseline="central" fill="#111">Revenue model</text>
+<rect x="1080.8" y="101.0" width="114.4" height="36.0" rx="4" fill="#fff" stroke="#222"/>
+<text x="1138.0" y="119.0" text-anchor="middle" dominant-baseline="central" fill="#111">Funnel model</text>
+<rect x="1264.0" y="107.0" width="121.6" height="36.0" rx="4" fill="#fff" stroke="#222"/>
+<text x="1324.8" y="125.0" text-anchor="middle" dominant-baseline="central" fill="#111">Metrics layer</text>
+<rect x="1507.6" y="108.0" width="150.4" height="36.0" rx="4" fill="#fff" stroke="#222"/>
+<text x="1582.8" y="126.0" text-anchor="middle" dominant-baseline="central" fill="#111">Finance dashboard</text>
+<rect x="1507.6" y="168.0" width="143.2" height="36.0" rx="4" fill="#fff" stroke="#222"/>
+<text x="1579.2" y="186.0" text-anchor="middle" dominant-baseline="central" fill="#111">Growth dashboard</text>
+<rect x="1507.6" y="12.0" width="114.4" height="36.0" rx="4" fill="#fff" stroke="#222"/>
+<text x="1564.8" y="30.0" text-anchor="middle" dominant-baseline="central" fill="#111">Reverse sync</text>
+<rect x="1507.6" y="303.0" width="100.0" height="36.0" rx="4" fill="#fff" stroke="#222"/>
+<text x="1557.6" y="321.0" text-anchor="middle" dominant-baseline="central" fill="#111">Data alert</text>
 </svg>

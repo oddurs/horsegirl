@@ -36,7 +36,7 @@ Five days.
 
 Build our own Sugiyama pipeline in the core crate, with five phases: orient, rank, order, place, route. Do not depend on a layout crate, and do not port ELK. Use the published designs of dagre and ELK as the reference for each phase, and copy no code from them.
 
-Our own pipeline is the only candidate that keeps the arrangement of a diagram with groups when it gets earlier positions. elk also takes earlier positions, and does not keep the arrangement: 215 pairs of things change sides with elk and 18 with own. The prototype does not yet hold a picture still: a seed of centres alone is not enough, and the seed must also carry the order of each layer. The prototype also draws four pairs of boxes with no gap between them, and item 0032 must not copy that fault. Our own pipeline is also the smallest candidate: its native code is 3.5 times smaller than dagre, 6.5 times smaller than graphlay and 39 times smaller than elk. The port of ELK draws the best pictures today. If the stability rule did not exist, the port of ELK would be the answer.
+Our own pipeline is the only candidate that keeps the arrangement of a diagram with groups when it gets earlier positions. elk also takes earlier positions, and does not keep the arrangement: 232 pairs of things change sides with elk and 18 with own. The prototype does not yet hold a picture still: a seed of centres alone is not enough, and the seed must also carry the order of each layer. The prototype also draws four pairs of boxes with no gap between them, and item 0032 must not copy that fault. Our own pipeline is also the smallest candidate: its native code is 3.5 times smaller than dagre, 6.5 times smaller than graphlay and 39 times smaller than elk. The port of ELK draws the best pictures today. If the stability rule did not exist, the port of ELK would be the answer.
 
 ### The candidates
 
@@ -65,7 +65,7 @@ All four candidates drew the same ten diagrams with the same box sizes and the s
 - No candidate overlaps two boxes or breaks a group.
 - own draws four pairs of boxes with a gap of 0 px, where the node gap is 24 px. In `07-compiler`, `Checks` is at y -128 to -92 and `Lens` is at y -92 to -56. In `10-platform` the pairs are `Search index` and `Data lake`, `Analytics sink` and `Notifier`, `Cache` and `Accounts database`. No other candidate draws such a pair.
 - The cause is two rules of the prototype together. A group has a marker in every rank that the group spans, and the place phase gives a marker a gap of 0 px (`place` in `src/own.rs`). The order phase can put the marker between two things of the group. Rank 4 of `07-compiler` is `Checks`, the marker of `Core`, `Lens`. Then no constraint holds the two things 24 px apart. The smallest input is in the README of the spike: 5 things, 1 group, 3 links.
-- elk has the fewest crossings and the most compact pictures. `10-platform` is 604 px high with elk and 1128 px high with own.
+- elk has the fewest crossings and the most compact pictures. `10-platform` is 636 px high with elk and 1128 px high with own.
 - own has 2 crossings or fewer on seven of the ten diagrams. Six of the seven are acceptable. The seventh, `07-compiler`, has the touching pair. own is loose on `10-platform`. Its weak phase is the order phase, in two cases. The first case is a dense graph without groups: `08-module-deps` has 22 crossings with own, 3 with elk, 3 with graphlay and 14 with dagre. That diagram alone is 22 of the 80 crossings of own. The second case is nested groups: `06-cluster-request` has 9 crossings with own and 1 with elk.
 - dagre sends 8 links through a box. It returns control points for a curve and has no router, so item 0033 would be needed with it too.
 - graphlay has the most crossings on diagrams with groups: 137 on `10-platform`.
@@ -104,11 +104,11 @@ The measurement, from `cargo run --release -- seed`: each of the ten diagrams ge
 | own, seed | 68 | 18 | 110 |
 | graphlay, no seed | 87 | 132 | 151 |
 | graphlay, seed | 117 | 135 | 151 |
-| elk, no seed | 128 | 448 | 37 |
-| elk, seed | 143 | 215 | 273 |
+| elk, no seed | 128 | 434 | 37 |
+| elk, seed | 141 | 232 | 273 |
 | dagre | 134 | 708 | 88 |
 
-With a seed, own keeps the arrangement: 18 pairs change sides, against 71 without a seed. The seed costs own 24 crossings. The 68 things that still move do not all move because of the edit. The next table shows that 33 things move with no edit at all. With a seed, elk goes from 37 crossings to 273 and still moves 143 things. SPIKE-75 decides the cost function. This spike shows only that the two phases can take the seed.
+With a seed, own keeps the arrangement: 18 pairs change sides, against 71 without a seed. The seed costs own 24 crossings. The 68 things that still move do not all move because of the edit. The next table shows that 33 things move with no edit at all. With a seed, elk goes from 37 crossings to 273 and still moves 141 things. SPIKE-75 decides the cost function. This spike shows only that the two phases can take the seed.
 
 The same command then runs each candidate with no edit: the seed is the picture that the candidate drew for the same graph. A layout that holds a picture still moves nothing in this run.
 
@@ -116,7 +116,7 @@ The same command then runs each candidate with no edit: the seed is the picture 
 | --- | --- | --- | --- | --- |
 | own | 33 | 5 | 80 | 99 |
 | graphlay | 0 | 0 | 159 | 168 |
-| elk | 136 | 9 | 36 | 262 |
+| elk | 131 | 9 | 36 | 252 |
 
 The seeded layout of own is not a fixed point. The five diagrams, with the things that moved, the longest move and the crossings:
 
@@ -128,7 +128,7 @@ The seeded layout of own is not a fixed point. The five diagrams, with the thing
 | 08-module-deps | 4 of 22 | 24 px | 22 to 31 |
 | 10-platform | 15 of 34 | 36 px | 44 to 44 |
 
-Every longest move is a multiple of 12 px, which is the gap beside a bend (`BEND_GAP`). The prototype gives no seed to a bend (`seed: None` in `build`), so the order phase sorts the bends again from a different start and ends at a different order. The spike did not test a seed that carries the bends. graphlay moves no thing, and its crossings change on three diagrams without groups because its routes change. elk moves 136 things when it gets its own picture back.
+Every longest move is a multiple of 12 px, which is the gap beside a bend (`BEND_GAP`). The prototype gives no seed to a bend (`seed: None` in `build`), so the order phase sorts the bends again from a different start and ends at a different order. The spike did not test a seed that carries the bends. graphlay moves no thing, and its crossings change on three diagrams without groups because its routes change. elk moves 131 things when it gets its own picture back.
 
 ### Evidence: size, dependencies and licence
 
@@ -165,6 +165,7 @@ One small program for each candidate, built for size and stripped. The numbers a
 - The seed measurement is one edit for each diagram. The interactive mode of ELK got one configuration inside the time box. A better configuration may exist.
 - The score had no count of touching boxes until the second review, so the fault was found by a reviewer and not by the spike. The count sees a gap below 1 px only. A gap between 1 px and the node gap is not counted, and the spike did not look for one.
 - The prototype routes links with one track for each source in each gap. Item 0033 replaces it.
+- Until the third review, the elk adapter set the node gap and the layer gap on the root only. ELK does not pass the two gaps down to a group, so elk drew 33 pairs of boxes 20 px apart inside groups. The adapter now sets the two gaps on every group, and a test in `src/crates.rs` checks the two gaps inside an elk group. No test checks the gaps of dagre or graphlay inside a group.
 
 ### Follow-up items
 
@@ -210,3 +211,7 @@ Review round 1. Ran 'cargo run --release -- seed' with the new no-edit run: seed
 ## 2026-11-25
 
 Review round 2. Added the column 'touching' to measure.rs (pairs of boxes that do not overlap and have less than one pixel between them). Ran 'cargo run --release -- draw' in spikes/layered-layout: totals printed own 0 overlaps, 4 touching, 0 group faults, 0 links through a box, 80 crossings; dagre 0, 0, 0, 8, 74; graphlay 0, 0, 0, 0, 159; elk 0, 0, 0, 0, 36. The 4 pairs are 07-compiler Checks and Lens, and 10-platform Search index and Data lake, Analytics sink and Notifier, Cache and Accounts database. 'git status' showed no change to the forty pictures. Ran the five-thing input of the reviewer from a directory outside the repository: own printed touching 1 (e at y -128, a at y -92, both 36 high), the other three printed 0. The Answer names the pairs and the cause, and 0032 has a note that states the gap. The conclusion stands.
+
+## 2026-11-25
+
+Review round 3. The elk adapter set elk.spacing.nodeNode and elk.layered.spacing.nodeNodeBetweenLayers on the root only, so elk used 20 px for both gaps inside a group. Added the test elk_uses_the_same_gaps_inside_a_group to spikes/layered-layout/src/crates.rs: before the fix it failed with a gap of 20.00000076293945, and after the fix 'cargo test --release' printed 'test result: ok. 1 passed; 0 failed'. Ran 'cargo run --release -- draw' twice with identical output: six elk pictures changed (01, 02, 04, 06, 07, 10), 10-platform with elk is 2682 x 636, elk crossings stay 36 and bends stay 436. Ran 'cargo run --release -- seed': elk pairs that changed sides are 434 without a seed and 232 with a seed, things that moved with a seed are 141, and the no-edit run of elk is 131 things moved and crossings 36 to 252. No number of own, dagre or graphlay changed. The conclusion does not change.
