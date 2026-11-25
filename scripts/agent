@@ -14,7 +14,7 @@ common=$(cd "$here" && cd "$(git rev-parse --git-common-dir)" && pwd)
 root=$(dirname "$common") # the primary checkout
 name=$(basename "$root")
 branch_re='^(feat|fix|chore|docs|perf|refactor|test)/[a-z0-9][a-z0-9._-]*$'
-commit_re='^(feat|fix|chore|docs|perf|refactor|test|build|ci|revert)(\([a-z0-9._/-]+\))?!?: [^ ].*[^. ]$'
+commit_re=$(cat "$here/scripts/commit-pattern")
 
 default_branch() {
   ref=$(git -C "$root" symbolic-ref -q --short refs/remotes/origin/HEAD 2>/dev/null) && {
