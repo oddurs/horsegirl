@@ -706,6 +706,18 @@ fn a_citation_path_with_paired_quotes_stays_a_citation() {
 }
 
 #[test]
+fn a_bad_citation_with_paired_quotes_is_not_an_unclosed_quote() {
+    for source in [
+        "A -> B @ src/\"a\".rs",
+        "A -> B @ \"src a.rs\"",
+        "A -> B @ \"x\" y",
+    ] {
+        let codes: Vec<&str> = parse(source).diagnostics.iter().map(|d| d.code).collect();
+        assert!(!codes.contains(&"E0005"), "{source:?}: {codes:?}");
+    }
+}
+
+#[test]
 fn an_unclosed_quote_in_a_citation_is_an_error() {
     for source in [
         "A -> B @ \"src/a.rs:3",

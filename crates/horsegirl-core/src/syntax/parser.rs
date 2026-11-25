@@ -680,17 +680,22 @@ impl<'s> Parser<'s> {
     }
 
     /// The span from the last double quote inside the path tokens `from..to` to the
-    /// end of its line, when nothing closes the quote. The lexer reads a quote
+    /// end of its line, when the path holds an odd count of double quotes. An even
+    /// count means every quote has a partner, so none is unclosed. The lexer reads a quote
     /// inside a word as a character of the word, so no `Unclosed` token marks
     /// it. The scan runs once, on the line that gives the error.
     fn stray_quote(&self, from: usize, to: usize) -> Option<std::ops::Range<usize>> {
         let start = self.span_at(from).start;
         let end = self.span_at(to).start;
-        let quote = start + self.source[start..end].rfind('"')?;
+        let path = &self.source[start..end];
+        if path.matches('"').count().is_multiple_of(2) {
+            return None;
+        }
+        let quote = start + path.rfind('"')?;
         let line = self.source[quote..]
             .find('\n')
             .map_or(self.source.len(), |n| quote + n);
-        (!self.source[quote + 1..line].contains('"')).then_some(quote..line)
+        Some(quote..line)
     }
 
     /// Whether the fact ends at `index`: only a guess mark and a citation
