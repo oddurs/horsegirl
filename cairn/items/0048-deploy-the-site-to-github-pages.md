@@ -3,14 +3,14 @@ id: 48
 uid: ac23293c-44c2-45ce-8dca-68d134797ce4
 title: Deploy the site to GitHub Pages
 type: chore
-status: doing
+status: done
 milestone: v0.1
 assignee: Oddur Sigurdsson
-claimed: 2026-11-25
 depends_on:
 - 44
 created: 2026-11-25
 updated: 2026-11-25
+closed_at: 2026-11-25
 priority: p0
 risk: low
 surface: none
@@ -31,7 +31,7 @@ Add a workflow that builds the site on every pull request and deploys `site/out`
 
 ## Acceptance criteria
 
-- [ ] A merge to `main` updates https://oddurs.github.io/horsegirl within ten minutes.
+- [x] A merge to `main` updates https://oddurs.github.io/horsegirl within ten minutes.
 - [x] The deploy job has only the permissions that Pages needs.
 - [x] The `required` check covers the site build.
 
@@ -54,3 +54,7 @@ Criterion 1 is open: it can only be watched after a merge to main.
 ## 2026-11-25
 
 CI run 45556101850 on head 376a90c: check pass (steps 'Run scripts/task check' and 'Upload the site' pass), required pass, pr-title pass, deploy skipped (PR event). PR mergeable.
+
+## 2026-11-25
+
+Verified on main: the push for 510710e started CI at 06:21:12Z, the deploy job succeeded, and the run ended at 06:22:31Z. https://oddurs.github.io/horsegirl/ answers 200 with the page title horsegirl.
