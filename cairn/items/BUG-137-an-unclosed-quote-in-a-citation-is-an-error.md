@@ -3,12 +3,12 @@ id: 137
 uid: e455b4ed-a418-4087-a298-1718d4e94d91
 title: An unclosed quote in a citation is an error
 type: bug
-status: doing
+status: done
 milestone: v0.1
 assignee: Oddur Sigurdsson
-claimed: 2026-11-25
 created: 2026-11-25
 updated: 2026-11-25
+closed_at: 2026-11-25
 priority: p1
 risk: low
 surface: diagnostics
