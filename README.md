@@ -1,7 +1,7 @@
 # horsegirl
 
 [![ci](https://github.com/oddurs/horsegirl/actions/workflows/ci.yml/badge.svg)](https://github.com/oddurs/horsegirl/actions/workflows/ci.yml)
-[![license: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+[![license: MIT OR Apache-2.0](https://img.shields.io/badge/license-MIT%20OR%20Apache--2.0-blue.svg)](#license)
 
 An agent-first diagram language. An agent states the facts about a system once.
 A lens turns the same facts into a flow, a sequence, a matrix, or another picture.
@@ -67,4 +67,11 @@ a terminal.
 
 ## License
 
-MIT. See [LICENSE](LICENSE).
+Licensed under either of the [MIT licence](LICENSE-MIT) or the
+[Apache License, Version 2.0](LICENSE-APACHE), at your option.
+
+A contribution that you submit for inclusion in this project is licensed the
+same way, with no additional terms.
+
+The files under `corpus/` belong to their authors. `corpus/README.md` names the
+source and the licence of each.
