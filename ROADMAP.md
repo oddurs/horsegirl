@@ -12,12 +12,11 @@ named for gaits: Walk, Trot, Canter, Gallop.
 
 ## v0.1 — Walk
 
-`··········` 0% · 0 of 22 done · due 2027-01-31
+`··········` 0% · 0 of 21 done · due 2027-01-31
 
 An agent writes a horsegirl file, checks it, applies the fixes, and draws a flow diagram as SVG, from the command line or over MCP.
 
 - [ ] [`0115`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0115-reserve-the-horsegirl-name-on-crates-io-and-npm.md) Reserve the horsegirl name on crates.io and npm <sup>chore · p2 · release</sup>
-- [ ] [`0117`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0117-the-mcp-tool-schemas-are-a-reviewed-contract-in-both-protocol-eras.md) The MCP tool schemas are a reviewed contract in both protocol eras <sup>feature · p2 · mcp</sup>
 - [ ] [`0122`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0122-fewer-crossings-in-the-layered-layout-measured-against-a-reference.md) Fewer crossings in the layered layout, measured against a reference <sup>feature · p2 · layout</sup>
 - [ ] [`0123`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0123-draw-a-link-that-starts-or-ends-at-a-group.md) Draw a link that starts or ends at a group <sup>feature · p2 · layout</sup>
 - [ ] [`0124`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0124-reserve-room-for-link-labels-in-the-layered-layout.md) Reserve room for link labels in the layered layout <sup>feature · p2 · layout</sup>
