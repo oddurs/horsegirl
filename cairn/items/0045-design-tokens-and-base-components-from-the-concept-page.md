@@ -53,3 +53,7 @@ Not ported: the webfonts (filed as 0126), the data-theme override and the rosett
 ## Result
 
 The site has the concept page tokens in site/app/tokens.css, held to the concept page by site/tests/tokens.test.ts, and seven base components in site/components, shown on /design/. The site build fails on a serious axe finding or a focus stop with no outline, in light and dark, at 1280px and 390px.
+
+## 2026-11-25
+
+Fix round 1 for PR #20. Criteria 2 and 3 were false once the branch met main: check-a11y failed 4 times on /docs/design/ (contrast of pre > code in dark, scrollable pre without focus at 390px), and the Tab walk stopped at the first repeated name, so it skipped controls. After the merge and the fix, scripts/task check exits 0 and prints 'check-a11y: 24 page loads, no serious finding, focus visible at every stop'. /docs/design/ now reports 16 focus stops, equal to its tabbable count. With the old name-based walk restored, the new assertion fails: 'Tab made 5 stops, the page has 16 tabbable elements'. With the nested <main> restored, the check fails 32 times on landmark-main-is-top-level and landmark-no-duplicate-main.
