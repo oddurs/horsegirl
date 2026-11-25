@@ -100,8 +100,11 @@ cmd_start() {
   item=$(echo "${branch#*/}" | sed -n 's/^\([0-9][0-9]*\)-.*/\1/p')
   if [ -n "$item" ] && [ -f "$wt/cairn.toml" ] && command -v cairn >/dev/null 2>&1; then
     say "claiming item $item"
-    cairn -C "$wt" claim "$item" ||
-      say "warning: item $item was not claimed; read the message above before you continue"
+    if ! cairn -C "$wt" claim "$item"; then
+      git -C "$root" worktree remove --force "$wt"
+      git -C "$root" branch --quiet -D "$branch"
+      die "item $item was not claimed, so the worktree was removed. Read the message above."
+    fi
   fi
   say "ready. Move there with: cd $wt"
 }
@@ -137,7 +140,7 @@ cmd_pr() {
   def=$(default_branch)
   branch=$(current_branch)
   [ "$branch" != "$def" ] || die "you are on $def; start a branch with: scripts/agent start <type>/<slug>"
-  cmd_check
+  [ -n "${checked:-}" ] || cmd_check
   say "pushing $branch"
   git -C "$here" push --quiet -u origin "$branch"
   if url=$(cd "$here" && gh pr view --json url -q .url 2>/dev/null); then
@@ -171,17 +174,22 @@ rebase_onto_default() {
     return 0
   fi
   say "rebasing $(current_branch) onto origin/$def"
-  git -C "$here" rebase "origin/$def" >/dev/null 2>&1 && return 0
-  while [ -d "$(git -C "$here" rev-parse --git-path rebase-merge)" ]; do
-    conflicts=$(git -C "$here" diff --name-only --diff-filter=U)
-    if [ "$conflicts" != "ROADMAP.md" ]; then
-      die "the rebase stopped on a conflict in: $(echo "$conflicts" | tr '\n' ' '). Resolve it in $here, run 'git rebase --continue', then run this command again."
-    fi
-    say "generating ROADMAP.md again"
-    cairn -C "$here" render -q --no-hooks
-    git -C "$here" add ROADMAP.md
-    GIT_EDITOR=true git -C "$here" rebase --continue >/dev/null 2>&1 || true
-  done
+  if ! out=$(git -C "$here" rebase "origin/$def" 2>&1); then
+    while [ -d "$(git -C "$here" rev-parse --git-path rebase-merge)" ]; do
+      conflicts=$(git -C "$here" diff --name-only --diff-filter=U)
+      if [ "$conflicts" != "ROADMAP.md" ]; then
+        die "the rebase stopped on a conflict in: $(echo "$conflicts" | tr '\n' ' '). Resolve it in $here, run 'git rebase --continue', then run this command again."
+      fi
+      say "generating ROADMAP.md again"
+      cairn -C "$here" render -q --no-hooks ||
+        die "cairn render failed during the rebase. Fix the backlog in $here, run 'git add ROADMAP.md && git rebase --continue', then run this command again."
+      git -C "$here" add ROADMAP.md
+      GIT_EDITOR=true git -C "$here" rebase --continue >/dev/null 2>&1 || true
+    done
+  fi
+  # Whatever happened above, the only acceptable result is a finished rebase.
+  git -C "$here" merge-base --is-ancestor "origin/$def" HEAD ||
+    die "the rebase onto origin/$def did not complete: ${out:-no output}"
   # A roadmap generated mid-rebase can be stale once every commit is replayed.
   if [ -f "$here/cairn.toml" ] && command -v cairn >/dev/null 2>&1; then
     cairn -C "$here" render -q --no-hooks
@@ -192,8 +200,13 @@ rebase_onto_default() {
 }
 
 cmd_sync() {
+  [ -z "$(git -C "$here" status --porcelain)" ] || die "the working tree has uncommitted changes; commit them first"
   rebase_onto_default
   say "up to date with origin/$(default_branch). Push with: scripts/agent land"
+}
+
+pr_state() {
+  (cd "$here" && gh pr view --json state,mergeStateStatus -q '.state + " " + .mergeStateStatus' 2>/dev/null) || echo "UNKNOWN UNKNOWN"
 }
 
 # Bring the branch up to date, push it, and wait until its pull request merges.
@@ -205,36 +218,49 @@ cmd_land() {
   [ -z "$(git -C "$here" status --porcelain)" ] || die "the working tree has uncommitted changes"
   attempt=0
   while :; do
+    case "$(pr_state)" in
+      MERGED*)
+        say "merged"
+        return 0
+        ;;
+      CLOSED*) die "the pull request for $branch is closed" ;;
+    esac
     attempt=$((attempt + 1))
-    [ "$attempt" -le 6 ] || die "the pull request did not land after 6 attempts; read 'gh pr view $branch'"
+    [ "$attempt" -le 20 ] || die "the pull request did not land after 20 attempts; read 'gh pr view $branch'"
+    git -C "$here" fetch --quiet origin
+    # A force-push must never remove a commit this worktree has not seen.
+    if git -C "$here" rev-parse --verify --quiet "origin/$branch" >/dev/null &&
+      ! git -C "$here" merge-base --is-ancestor "origin/$branch" HEAD; then
+      die "origin/$branch has commits that this worktree lacks. Bring them in with 'git pull --rebase origin $branch', then run this command again."
+    fi
     rebase_onto_default
-    if [ "$(git -C "$here" rev-parse HEAD)" != "$(git -C "$here" rev-parse "origin/$branch" 2>/dev/null)" ]; then
+    if [ "$(git -C "$here" rev-parse HEAD)" != "$(git -C "$here" rev-parse --verify --quiet "origin/$branch")" ]; then
       say "pushing $branch"
       git -C "$here" push --quiet --force-with-lease origin "$branch"
     fi
-    (cd "$here" && gh pr merge --auto --squash >/dev/null)
-    # Checks take a moment to register for a new commit.
+    (cd "$here" && gh pr merge --auto --squash >/dev/null) || say "auto-merge was not set; it may already be merging"
+    # Poll, so that a moved default branch is noticed at once and not after CI.
     waited=0
-    until (cd "$here" && gh pr checks >/dev/null 2>&1) || [ "$waited" -ge 60 ]; do
-      [ "$(cd "$here" && gh pr view --json state -q .state)" = "MERGED" ] && break
-      sleep 5
-      waited=$((waited + 5))
+    while [ "$waited" -lt 2700 ]; do
+      sleep 10
+      waited=$((waited + 10))
+      case "$(pr_state)" in
+        MERGED*)
+          say "merged"
+          return 0
+          ;;
+        CLOSED*) die "the pull request for $branch is closed" ;;
+        "OPEN BEHIND" | "OPEN DIRTY")
+          say "the default branch moved; bringing $branch up to date again"
+          continue 2
+          ;;
+      esac
+      buckets=$(cd "$here" && gh pr checks --required --json bucket -q '.[].bucket' 2>/dev/null) || buckets=
+      case "$buckets" in
+        *fail* | *cancel*) die "a required check failed on $branch; read 'gh pr checks' in $here" ;;
+      esac
     done
-    (cd "$here" && gh pr checks --watch --interval 10 >/dev/null 2>&1) ||
-      [ "$(cd "$here" && gh pr view --json state -q .state)" = "MERGED" ] ||
-      die "a check failed on $branch; read 'gh pr checks' in $here"
-    waited=0
-    while [ "$waited" -lt 60 ]; do
-      state=$(cd "$here" && gh pr view --json state -q .state)
-      if [ "$state" = "MERGED" ]; then
-        say "merged"
-        return 0
-      fi
-      [ "$state" = "OPEN" ] || die "the pull request for $branch is $state"
-      sleep 5
-      waited=$((waited + 5))
-    done
-    say "not merged yet; the default branch probably moved. Trying again."
+    die "the pull request for $branch did not merge within 45 minutes"
   done
 }
 
@@ -247,6 +273,12 @@ item_field() { cairn -C "$2" show "$1" --raw | sed -n "s/^$3: *//p" | head -n 1 
 cmd_take() {
   command -v cairn >/dev/null 2>&1 || die "cairn is not installed; see CONTRIBUTING.md"
   id=${1:-}
+  # Choose from the backlog as it is on the default branch, not as it was.
+  git -C "$root" fetch --quiet origin
+  if [ "$(git -C "$root" rev-parse --abbrev-ref HEAD)" = "$(default_branch)" ] &&
+    [ -z "$(git -C "$root" status --porcelain)" ]; then
+    git -C "$root" merge --quiet --ff-only "origin/$(default_branch)"
+  fi
   if [ -z "$id" ]; then
     id=$(cairn -C "$root" next --view agent --ids --limit 1)
     [ -n "$id" ] || die "nothing is ready in the agent view; see 'cairn next --blocked'"
@@ -262,6 +294,7 @@ cmd_take() {
     *) kind=chore ;;
   esac
   slug=$(printf '%s' "$title" | tr '[:upper:]' '[:lower:]' | sed 's/[^a-z0-9][^a-z0-9]*/-/g; s/^-//; s/-$//' | cut -c1-40 | sed 's/-$//')
+  [ -n "$slug" ] || slug=item
   branch=$(printf '%s/%04d-%s' "$kind" "$number" "$slug")
   cmd_start "$branch" >&2
   cairn -C "$(worktree_of "$branch")" prompt "$number"
@@ -294,6 +327,9 @@ cmd_finish() {
   fi
   [ -z "$(git -C "$here" status --porcelain -- . ':!cairn' ':!ROADMAP.md')" ] ||
     die "there are uncommitted changes outside the backlog; commit them first"
+  # Check before the item is closed, so a failure leaves no close commit behind.
+  cmd_check
+  checked=1
   if [ "$(item_field "$number" "$here" status)" != "done" ]; then
     say "closing item $number"
     cairn -C "$here" close "$number" -q
@@ -303,21 +339,21 @@ cmd_finish() {
     git -C "$here" add -A cairn ROADMAP.md
     git -C "$here" commit --quiet -m "docs(backlog): close $ref"
   fi
-  tmp=
+  item_body=
   if [ -z "$body" ]; then
-    tmp=$(mktemp)
+    item_body=$(mktemp)
     # Everything the item says above its criteria, then the reference.
     cairn -C "$here" show "$number" --raw | awk '
-      body && /^## Acceptance criteria/ { exit }
+      body && tolower($0) ~ /^## acceptance criteria/ { exit }
       body { print }
       /^(---|\.\.\.)[[:space:]]*$/ { seen++; if (seen == 2) body = 1 }
-    ' >"$tmp"
-    printf 'Refs: %s\n' "$ref" >>"$tmp"
-    body=$tmp
+    ' >"$item_body"
+    printf 'Refs: %s\n' "$ref" >>"$item_body"
+    body=$item_body
   fi
   # shellcheck disable=SC2086 # $auto is one flag or nothing
   cmd_pr $auto --body-file "$body"
-  [ -z "$tmp" ] || rm -f "$tmp"
+  [ -z "$item_body" ] || rm -f "$item_body"
 }
 
 cmd_done() {

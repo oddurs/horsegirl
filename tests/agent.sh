@@ -105,7 +105,30 @@ GH
   grep -q "^Refs: 0001" "$GH_LOG.body" || fail "the pull request body lacks the Refs line"
   grep -q "Acceptance criteria" "$GH_LOG.body" && fail "the pull request body repeats the criteria"
   grep -q "pr merge --auto --squash" "$GH_LOG" || fail "finish did not set the pull request to merge itself"
+
+  # The default branch moves and touches the generated roadmap. sync must end
+  # with a finished rebase, a current roadmap and a clean tree.
   cd "$tmp/repo"
+  printf '%b' "$body" | cairn new "A second item" -t feature -s planned -q --no-hooks --stdin >/dev/null
+  cairn render -q
+  git add -A
+  git commit -q -m "docs: add a second item"
+  git push -q origin main
+  cd "$wt"
+  scripts/agent sync >/dev/null 2>&1 || fail "sync failed when the default branch had moved"
+  git merge-base --is-ancestor origin/main HEAD || fail "sync reported success without a finished rebase"
+  [ -z "$(git status --porcelain)" ] || fail "sync left uncommitted changes"
+  cairn check --render --strict >/dev/null 2>&1 || fail "sync left a stale roadmap or an invalid backlog"
+  [ -f feature.txt ] || fail "sync lost the branch's work"
+
+  echo dirty >>feature.txt
+  scripts/agent sync >/dev/null 2>&1 && fail "sync accepted a dirty working tree"
+  git checkout -q feature.txt
+  cd "$tmp/repo"
+elif [ -n "${CI:-}" ]; then
+  fail "cairn is required in CI, and it is missing"
+else
+  echo "tests/agent.sh: cairn not found; take, finish and sync were not tested" >&2
 fi
 
 hook=$src/.githooks/commit-msg
