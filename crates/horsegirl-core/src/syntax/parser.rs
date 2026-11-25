@@ -645,9 +645,10 @@ impl<'s> Parser<'s> {
             return None;
         }
         let text = &self.source[self.span_at(path).start..self.span_at(end).start];
-        // A path holds no quote. The check reads the path and no more, so it
+        // An odd count of quotes means one quote has no partner. Paired quotes
+        // stay part of the path. The check reads the path and no more, so it
         // stays linear on a line of many `@`.
-        if text.contains('"') {
+        if text.bytes().filter(|&byte| byte == b'"').count() % 2 == 1 {
             return None;
         }
         let (file, line) = text.rsplit_once(':')?;

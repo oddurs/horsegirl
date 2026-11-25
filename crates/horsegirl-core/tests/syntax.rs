@@ -697,6 +697,15 @@ fn a_line_with_a_mistake_gets_the_mistake_and_no_note() {
 }
 
 #[test]
+fn a_citation_path_with_paired_quotes_stays_a_citation() {
+    for source in ["A -> B @ src/\"a\".rs:3", "A -> B @ \"src a.rs\":3"] {
+        let (tree, codes) = read(source);
+        assert_eq!(codes, [""; 0], "{source:?}");
+        assert!(tree.contains("Cite"), "{source:?}: {tree}");
+    }
+}
+
+#[test]
 fn an_unclosed_quote_in_a_citation_is_an_error() {
     for source in [
         "A -> B @ \"src/a.rs:3",
@@ -707,9 +716,6 @@ fn an_unclosed_quote_in_a_citation_is_an_error() {
         let codes: Vec<&str> = parse.diagnostics.iter().map(|d| d.code).collect();
         assert_eq!(codes, ["E0005"], "{source:?}");
         assert_eq!(parse.tree.to_string(), source);
-        assert!(
-            !format!("{:?}", kinds(&parse.tree)).contains("Cite"),
-            "{source:?}"
-        );
+        assert!(!format!("{:?}", parse.tree).contains("Cite"), "{source:?}");
     }
 }
