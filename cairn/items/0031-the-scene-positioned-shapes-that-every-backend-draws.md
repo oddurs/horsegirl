@@ -48,3 +48,7 @@ Choices to revisit: a link with several labels shows one label 'a, b'; a group n
 ## Result
 
 The scene lives in crates/horsegirl-core/src/scene.rs: Scene { width, height, font_size, shapes } with each Shape holding a role (thing, group, link, label), the names it draws (of), a rect, the points of a link, the text of a label and the facts. A layout returns a Placement (a rect per thing, points per link, a label centre per link) and scene::build joins it with the model. Scene::to_json is the stable form; tests/checkout.scene.json holds the reference.
+
+## 2026-11-25
+
+Review round 1: added a_link_stated_with_two_labels_shows_both. cargo test -p horsegirl-core --test scene: 8 passed. With labels[0].clone() in place of the join, the new test FAILED and 7 passed. scripts/task check exit 0.
