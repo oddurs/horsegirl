@@ -38,6 +38,7 @@ An agent writes a horsegirl file, checks it, applies the fixes, and draws a flow
 - [ ] [`BUG-137`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/BUG-137-an-unclosed-quote-in-a-citation-is-an-error.md) An unclosed quote in a citation is an error <sup>bug · p1 · language</sup>
 - [ ] [`BUG-139`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/BUG-139-a-thing-placed-in-two-groups-or-a-group-placed-inside-itself-is-an-error.md) A thing placed in two groups, or a group placed inside itself, is an error <sup>bug · p2 · check</sup>
 - [ ] [`BUG-140`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/BUG-140-a-quote-fix-for-a-link-target-keeps-the-label-outside-the-quotes.md) A quote fix for a link target keeps the label outside the quotes <sup>bug · p2 · language</sup>
+- [ ] [`0141`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0141-a-group-box-is-wide-enough-for-its-name.md) A group box is wide enough for its name <sup>feature · p2 · layout</sup>
 - [ ] [`0144`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0144-a-path-that-the-parser-reads-as-a-group-gets-a-warning-with-the-quote-fix.md) A path that the parser reads as a group gets a warning with the quote fix <sup>feature · p2 · check</sup>
 - [ ] [`0145`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0145-each-golden-case-that-draws-holds-its-svg.md) Each golden case that draws holds its SVG <sup>chore · p2 · render</sup>
 - [ ] [`0028`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0028-read-mermaid-habits-and-say-what-was-changed.md) Read Mermaid habits and say what was changed <sup>feature · p1 · check</sup>
@@ -54,7 +55,6 @@ An agent writes a horsegirl file, checks it, applies the fixes, and draws a flow
 - [ ] [`0052`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0052-a-daily-report-of-what-the-backlog-needs-from-a-person.md) A daily report of what the backlog needs from a person <sup>feature · p2 · workflow</sup>
 - [ ] [`0054`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0054-cut-a-release-with-one-command.md) Cut a release with one command <sup>chore · p1 · workflow</sup>
 - [ ] [`0026`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0026-rules-with-x-and-guesses-with.md) Rules with -x and guesses with ? <sup>feature · p1 · model</sup>
-- [ ] [`0032`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0032-layered-layout-rank-order-and-place.md) Layered layout: rank, order and place <sup>feature · p0 · layout</sup>
 - [ ] [`0053`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0053-merge-passing-patch-and-minor-dependency-updates-automatically.md) Merge passing patch and minor dependency updates automatically <sup>chore · p2 · workflow</sup>
 
 ## later — Later
