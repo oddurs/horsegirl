@@ -13,7 +13,8 @@
 //! would remove. Some passes no order removes: two groups under one parent
 //! can each have a link to a third group that only goes through the other.
 //! A net with one group ends with no pass: one move puts every item that is
-//! outside the group above it.
+//! outside the group above it. The same move does that for a group inside
+//! other groups, at each of the groups around it.
 //!
 //! A move changes some ranks, and the search counts again the steps that
 //! start or end in those ranks only. A group takes another place only when a
@@ -40,9 +41,10 @@ enum Move {
         group: usize,
         above: bool,
     },
-    /// Every item that is beside a group, under the same parent, goes to one
-    /// side of it in every rank. `Side` moves one link, and that can push
-    /// another link through the group. This move takes every link at once.
+    /// Every item that is beside a group or beside a group around it goes
+    /// to one side of that group, in every rank of the group. `Side` moves
+    /// one link, and that can push another link through the group. This
+    /// move takes every link at once.
     Clear { group: usize, above: bool },
     /// The entry that ends before a position of a rank and the entry that
     /// starts there exchange their places. An entry is an item, or every
@@ -355,8 +357,14 @@ impl Search<'_> {
             }
             Move::Clear { group, above } => {
                 let (low, high) = self.net.spans[group].unwrap_or((0, 0));
+                let chain = &self.chains[group];
+                // An item beside a group around this one has links to the
+                // items beside this one. So each group of the chain gets a
+                // clear side, or those links pass through this group.
                 for layer in &mut self.net.layers[low..=high] {
-                    clear(layer, items, &self.chains[group], above);
+                    for depth in 1..=chain.len() {
+                        clear(layer, items, &chain[..depth], above);
+                    }
                 }
             }
             Move::Transpose { rank, at } => transpose(&mut self.net.layers[rank], items, at),

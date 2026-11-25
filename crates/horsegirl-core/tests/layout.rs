@@ -543,6 +543,54 @@ fn no_link_passes_through_the_only_group_of_a_generated_graph() {
     }
 }
 
+// From the second review of the pass search. `n0 -> n5` went through `Inner`.
+// To put the items of `Outer` on one side of `Inner` pushes `n5 -> n6`
+// through it, and to put `n0 -> n5` on one side pushes `n0 -> n2` through
+// it. The items beside `Outer` must change their side in the same move.
+#[test]
+fn every_link_beside_a_group_inside_a_group_takes_one_side_of_it() {
+    let source = "n0 -> n5\nn2 -> n4\nn5 -> n6\nn2 -> n1\nn0 -> n2\n\
+                  Outer {\n  n1, n5\n  Inner {\n    n3, n4\n  }\n}\n";
+    let flow = flow(source);
+    let picture = layout(&flow.graph, None);
+    let collisions = collisions(&flow, &picture, &[]);
+    assert!(collisions.is_empty(), "{collisions:#?}");
+}
+
+// With one group inside another an order with no pass exists: in every rank,
+// every item outside both groups is above the outer group, and every item of
+// the outer group that is outside the inner group is above the inner group.
+#[test]
+fn no_link_passes_through_a_group_inside_a_group_of_a_generated_graph() {
+    let mut next = sequence(25);
+    for round in 0..1000 {
+        let count = 2 + next(12);
+        let nodes: Vec<Node> = (0..count)
+            .map(|_| Node {
+                width: 50.0,
+                height: 36.0,
+                group: [None, Some(0), Some(1)][next(3)],
+            })
+            .collect();
+        let links: Vec<(usize, usize)> = (0..next(2 * count))
+            .map(|_| (next(count), next(count)))
+            .collect();
+        let graph = Graph {
+            nodes,
+            groups: vec![Group { parent: None }, Group { parent: Some(0) }],
+            labels: Vec::new(),
+            links,
+        };
+        let picture = layout(&graph, None);
+        let texts = vec![None; graph.links.len()];
+        let through = through_groups(&named(graph.clone(), texts), &picture);
+        assert!(
+            through.is_empty(),
+            "graph {round}: {through:#?}\n{graph:#?}"
+        );
+    }
+}
+
 // `Middle` has the ranks of both ends of `a -> c`. The sweeps put `Middle`
 // between `From` and `To`, and the path went through the box of `Middle`.
 // Each thing is in a group, so only another order of the groups keeps the

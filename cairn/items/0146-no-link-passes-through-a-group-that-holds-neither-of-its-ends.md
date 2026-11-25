@@ -98,3 +98,7 @@ Fix round 1, finding 2 (cost on a structured graph): true. Three changes, and no
 ## 2026-11-25
 
 Correction to the note before this one: change (1), the limit on Shift, came in the same step as Clear, so no run shows that (1) alone changes no result. Changes (2) and (3) and the count of the changed ranks were each measured apart: 640 and 576 passes, 19183 and 19072 crossings, before and after.
+
+## 2026-11-25
+
+Review round 2: Move::Clear now clears each group of the chain of the group, so a group inside a group gets a clear side at every level. Before the change, every_link_beside_a_group_inside_a_group_takes_one_side_of_it printed 'link n0 -> n5 passes through group Inner' and the generated test of 1000 graphs with one group inside another failed at graph 55. After the change, cargo test -p horsegirl-core --test layout printed '23 passed; 0 failed', tests/layout.positions did not change, and scripts/task check exited 0.
