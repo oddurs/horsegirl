@@ -515,19 +515,18 @@ fn every_link_beside_a_group_inside_a_group_takes_one_side_of_it() {
     assert!(collisions.is_empty(), "{collisions:#?}");
 }
 
-// With one group inside another an order with no pass exists: in every rank,
-// every item outside both groups is above the outer group, and every item of
-// the outer group that is outside the inner group is above the inner group.
-#[test]
-fn no_link_passes_through_a_group_inside_a_group_of_a_generated_graph() {
-    let mut next = sequence(25);
-    for round in 0..1000 {
-        let count = 2 + next(12);
+// With a chain of groups, each inside the one before, an order with no pass
+// exists: in every rank, every item that is beside a group of the chain is
+// above that group.
+fn no_link_passes_through_a_chain_of_groups(seed: u32, depth: usize, most: usize, rounds: usize) {
+    let mut next = sequence(seed);
+    for round in 0..rounds {
+        let count = 2 + next(most);
         let nodes: Vec<Node> = (0..count)
             .map(|_| Node {
                 width: 50.0,
                 height: 36.0,
-                group: [None, Some(0), Some(1)][next(3)],
+                group: next(depth + 1).checked_sub(1),
             })
             .collect();
         let links: Vec<(usize, usize)> = (0..next(2 * count))
@@ -535,7 +534,11 @@ fn no_link_passes_through_a_group_inside_a_group_of_a_generated_graph() {
             .collect();
         let graph = Graph {
             nodes,
-            groups: vec![Group { parent: None }, Group { parent: Some(0) }],
+            groups: (0..depth)
+                .map(|g| Group {
+                    parent: g.checked_sub(1),
+                })
+                .collect(),
             labels: Vec::new(),
             links,
         };
@@ -547,6 +550,26 @@ fn no_link_passes_through_a_group_inside_a_group_of_a_generated_graph() {
             "graph {round}: {through:#?}\n{graph:#?}"
         );
     }
+}
+
+#[test]
+fn no_link_passes_through_a_group_inside_a_group_of_a_generated_graph() {
+    no_link_passes_through_a_chain_of_groups(25, 2, 12, 1000);
+}
+
+// From the third review of the pass search. Graph 70 of this sequence kept
+// `n14 -> n16` through the outer group. The outer group has ranks that the
+// inner group does not have, and the items beside the outer group kept their
+// side in those ranks.
+#[test]
+fn no_link_passes_through_a_group_inside_a_group_of_a_large_generated_graph() {
+    no_link_passes_through_a_chain_of_groups(6, 2, 25, 400);
+}
+
+#[test]
+fn no_link_passes_through_a_chain_of_three_or_four_groups_of_a_generated_graph() {
+    no_link_passes_through_a_chain_of_groups(11, 3, 25, 400);
+    no_link_passes_through_a_chain_of_groups(12, 4, 25, 400);
 }
 
 // `Middle` has the ranks of both ends of `a -> c`. The sweeps put `Middle`
@@ -673,6 +696,37 @@ fn sequence(seed: u32) -> impl FnMut(usize) -> usize {
         state = state.wrapping_mul(1_664_525).wrapping_add(1_013_904_223);
         (state >> 16) as usize % below
     }
+}
+
+// From the third review of the pass search. A net of 100 nodes in 10 groups
+// with 390 links has hundreds of passes that no order removes. The search
+// took 40 times as long as every other phase together. The search now stops
+// at a limit on its work. The limit is a count, so the picture is the same
+// on every run.
+#[test]
+fn a_dense_graph_stops_the_pass_search_at_its_limit() {
+    let mut next = sequence(9);
+    let nodes: Vec<Node> = (0..100)
+        .map(|i| Node {
+            width: 50.0,
+            height: 36.0,
+            group: Some(i % 10),
+        })
+        .collect();
+    let graph = Graph {
+        nodes,
+        groups: vec![Group { parent: None }; 10],
+        labels: Vec::new(),
+        links: (0..390).map(|_| (next(100), next(100))).collect(),
+    };
+    let start = std::time::Instant::now();
+    let picture = layout(&graph, None);
+    let time = start.elapsed();
+    let faults = faults(&graph, &picture);
+    assert!(faults.is_empty(), "{faults:#?}");
+    // A debug build takes 2 seconds with the limit and 208 seconds with no
+    // limit.
+    assert!(time.as_secs() < 120, "the layout took {time:?}");
 }
 
 // 300 graphs from a fixed sequence of numbers, with loops, nested groups and

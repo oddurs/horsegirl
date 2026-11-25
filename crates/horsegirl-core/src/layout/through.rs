@@ -13,15 +13,17 @@
 //! would remove. Some passes no order removes: two groups under one parent
 //! can each have a link to a third group that only goes through the other.
 //! A net with one group ends with no pass: one move puts every item that is
-//! outside the group above it. The same move does that for a group inside
-//! other groups, at each of the groups around it.
+//! outside the group above it. The same move does that for a chain of
+//! groups, each inside the one before: it clears each group of the chain in
+//! every rank of that group.
 //!
 //! A move changes some ranks, and the search counts again the steps that
 //! start or end in those ranks only. A group takes another place only when a
 //! link passes through it or through a group under the same parent. So a
 //! large net with few passes costs little. A large net with hundreds of
-//! passes that no order removes is slow: each pass gives two moves in each
-//! round.
+//! passes that no order removes gives two moves for each pass in each round.
+//! The search has a limit on its work, so such a net costs a fixed amount
+//! and can keep a pass that a longer search removes.
 
 use super::order::{arrange, crossed, positions};
 use super::{Group, Item, Net, real, shared};
@@ -42,7 +44,7 @@ enum Move {
         above: bool,
     },
     /// Every item that is beside a group or beside a group around it goes
-    /// to one side of that group, in every rank of the group. `Side` moves
+    /// to one side of that group, in every rank of that group. `Side` moves
     /// one link, and that can push another link through the group. This
     /// move takes every link at once.
     Clear { group: usize, above: bool },
@@ -63,6 +65,14 @@ struct Check {
     /// other.
     turned: bool,
 }
+
+/// The most work that one search does. The unit is one item or one step of
+/// a rank that the search counts again. The largest search of the corpus
+/// diagrams does 23 thousand, and a dense net of 100 nodes in 10 groups with
+/// 390 links needs 86 million to end. A search that reaches the limit adds
+/// less than 0.1 s to a release build. The limit is a count and not a time,
+/// so the same input gives the same order on every machine.
+const LIMIT: usize = 1_000_000;
 
 struct Search<'a> {
     net: &'a mut Net,
@@ -88,10 +98,12 @@ struct Search<'a> {
     crossings: Vec<usize>,
     /// The passes, then the crossings.
     cost: (usize, usize),
+    /// The work so far, in the unit of `LIMIT`.
+    work: usize,
 }
 
 /// Changes the order of the ranks until no move removes a pass or a
-/// crossing.
+/// crossing, or until the work reaches `LIMIT`.
 ///
 /// `keys` are the numbers that gave the groups of `net.layers` their order.
 /// A net with no pass keeps its order.
@@ -149,6 +161,7 @@ pub(super) fn keep_out(net: &mut Net, groups: &[Group], keys: &[f64]) {
         top: vec![f64::INFINITY; groups.len() * net.layers.len()],
         crossings: vec![0; net.layers.len()],
         cost: (0, 0),
+        work: 0,
         net,
     };
     search.recount(0, last);
@@ -158,6 +171,10 @@ pub(super) fn keep_out(net: &mut Net, groups: &[Group], keys: &[f64]) {
     loop {
         let before = search.cost;
         for change in search.moves() {
+            // Each move is kept or undone, so the order is whole here.
+            if search.work > LIMIT {
+                return;
+            }
             let cost = search.cost;
             let (low, high) = search.ranks(change);
             let layers = search.net.layers[low..=high].to_vec();
@@ -208,6 +225,7 @@ impl Search<'_> {
             }
         }
         for gap in low.saturating_sub(1)..=high {
+            self.work += self.gaps[gap].len() + self.net.layers[gap].len();
             let steps = self.gaps[gap].iter();
             let now = crossed(
                 &steps
@@ -303,7 +321,10 @@ impl Search<'_> {
         for &(link, group) in &passes {
             moves.extend([true, false].map(|above| Move::Side { link, group, above }));
         }
-        for group in (0..self.groups.len()).filter(|&g| through[g]) {
+        // A pass through a group can need a clear side at a group inside
+        // it: the link that passes has an end beside the inner group.
+        let around = |&g: &usize| self.chains[g].iter().any(|&outer| through[outer]);
+        for group in (0..self.groups.len()).filter(around) {
             moves.extend([true, false].map(|above| Move::Clear { group, above }));
         }
         for (rank, layer) in self.net.layers.iter().enumerate() {
@@ -317,9 +338,9 @@ impl Search<'_> {
         let net = &*self.net;
         match change {
             // A rank that the group has no item in keeps its order.
-            Move::Shift { group, .. } | Move::Clear { group, .. } => {
-                net.spans[group].unwrap_or((0, 0))
-            }
+            Move::Shift { group, .. } => net.spans[group].unwrap_or((0, 0)),
+            // The outermost group has every rank of the groups inside it.
+            Move::Clear { group, .. } => net.spans[self.chains[group][0]].unwrap_or((0, 0)),
             Move::Side { link, .. } => {
                 let path = &net.paths[link];
                 (
@@ -356,13 +377,16 @@ impl Search<'_> {
                 }
             }
             Move::Clear { group, above } => {
-                let (low, high) = self.net.spans[group].unwrap_or((0, 0));
                 let chain = &self.chains[group];
                 // An item beside a group around this one has links to the
                 // items beside this one. So each group of the chain gets a
-                // clear side, or those links pass through this group.
-                for layer in &mut self.net.layers[low..=high] {
-                    for depth in 1..=chain.len() {
+                // clear side in each of its own ranks, or those links pass
+                // through this group or through a group around it.
+                for depth in 1..=chain.len() {
+                    let Some((low, high)) = self.net.spans[chain[depth - 1]] else {
+                        continue;
+                    };
+                    for layer in &mut self.net.layers[low..=high] {
                         clear(layer, items, &chain[..depth], above);
                     }
                 }

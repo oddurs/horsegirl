@@ -56,3 +56,7 @@ Make a move that fails cost less. `recount` runs a second time to undo a move: k
 ## 2026-11-25
 
 Pull request 48, fix round 1, did the first part of the old proposal: Shift only for a group with a pass and the groups under the same parent, and a count of the changed ranks only. The body now states the code as it is and what is left. The sentence 'A real diagram of that size has fewer' was wrong for the time: copies of 10-platform were slow too, and the body has that table.
+
+## 2026-11-25
+
+Pull request 48, fix round 3, added the last resort of the proposal: keep_out stops when its work reaches LIMIT = 1 000 000 items and steps counted again in through.rs. The third review found dense files that this item did not measure. Release build, horsegirl draw -o -, least of 5 runs: 100 things in 10 top-level groups with 390 random links took 3.6 s with no limit, 173 ms with the limit and 97 ms with no search; 150 things in 15 groups with 579 links took 27 s, 319 ms and 228 ms; 80 things in 20 groups with 160 links took 0.46 s, 89 ms and 15 ms. So the search now adds less than 0.1 s to a file. What is left for this item: a search that reaches the limit stops with passes that a longer search removes, so a move that fails must cost less before the limit can go. Measure the tables of the body again: the limit changes the column 'search today'.

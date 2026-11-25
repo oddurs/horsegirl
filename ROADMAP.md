@@ -12,50 +12,38 @@ named for gaits: Walk, Trot, Canter, Gallop.
 
 ## v0.1 — Walk
 
-`··········` 0% · 0 of 36 done · due 2027-01-31
+`··········` 0% · 0 of 24 done · due 2027-01-31
 
 An agent writes a horsegirl file, checks it, applies the fixes, and draws a flow diagram as SVG, from the command line or over MCP.
 
 - [ ] [`0115`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0115-reserve-the-horsegirl-name-on-crates-io-and-npm.md) Reserve the horsegirl name on crates.io and npm <sup>chore · p2 · release</sup>
-- [ ] [`0116`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0116-fail-the-check-when-the-core-crate-gains-a-dependency-that-does-i-o.md) Fail the check when the core crate gains a dependency that does I/O <sup>chore · p2 · workflow</sup>
 - [ ] [`0117`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0117-the-mcp-tool-schemas-are-a-reviewed-contract-in-both-protocol-eras.md) The MCP tool schemas are a reviewed contract in both protocol eras <sup>feature · p2 · mcp</sup>
-- [ ] [`0118`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0118-hold-each-svg-label-to-its-measured-width-in-any-font.md) Hold each SVG label to its measured width in any font <sup>feature · p0 · render</sup>
-- [ ] [`0120`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0120-the-typo-check-leaves-sibling-names-alone.md) The typo check leaves sibling names alone <sup>feature · p2 · check</sup>
 - [ ] [`0122`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0122-fewer-crossings-in-the-layered-layout-measured-against-a-reference.md) Fewer crossings in the layered layout, measured against a reference <sup>feature · p2 · layout</sup>
 - [ ] [`0123`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0123-draw-a-link-that-starts-or-ends-at-a-group.md) Draw a link that starts or ends at a group <sup>feature · p2 · layout</sup>
 - [ ] [`0124`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0124-reserve-room-for-link-labels-in-the-layered-layout.md) Reserve room for link labels in the layered layout <sup>feature · p2 · layout</sup>
-- [ ] [`0125`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0125-check-the-layered-layout-choice-on-the-corpus-of-public-flowcharts.md) Check the layered layout choice on the corpus of public flowcharts <sup>chore · p2 · layout</sup>
-- [ ] [`0126`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0126-the-site-sets-its-type-in-the-concept-page-fonts.md) The site sets its type in the concept page fonts <sup>feature · p2 · site</sup>
-- [ ] [`BUG-127`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/BUG-127-every-docs-page-has-a-level-one-heading.md) Every docs page has a level-one heading <sup>bug · p2 · site</sup>
 - [ ] [`BUG-129`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/BUG-129-the-site-highlighter-colours-a-link-s-target-as-a-fact-key.md) The site highlighter colours a link's target as a fact key <sup>bug · p2 · site</sup>
-- [ ] [`ADR-130`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/ADR-130-a-comment-line-is-stated-on-the-language-card-or-leaves-the-language.md) A comment line is stated on the language card or leaves the language <sup>decision · p2 · language</sup>
 - [ ] [`0131`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0131-a-chain-of-arrows-on-one-line-gets-a-fix-that-splits-it.md) A chain of arrows on one line gets a fix that splits it <sup>feature · p2 · check</sup>
 - [ ] [`BUG-132`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/BUG-132-a-bad-line-with-a-brace-keeps-the-lines-after-it-and-deep-braces-stay-paired.md) A bad line with a brace keeps the lines after it, and deep braces stay paired <sup>bug · p2 · language</sup>
 - [ ] [`BUG-133`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/BUG-133-an-empty-link-label-is-an-error.md) An empty link label is an error <sup>bug · p2 · language</sup>
 - [ ] [`BUG-134`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/BUG-134-every-text-that-needs-quotes-gets-them-in-one-step.md) Every text that needs quotes gets them in one step <sup>bug · p2 · language</sup>
 - [ ] [`BUG-135`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/BUG-135-only-a-line-feed-alone-or-after-a-carriage-return-ends-a-line.md) Only a line feed, alone or after a carriage return, ends a line <sup>bug · p2 · language</sup>
-- [ ] [`BUG-136`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/BUG-136-a-show-line-with-a-mistake-in-its-argument-is-read-as-a-show-line.md) A show line with a mistake in its argument is read as a show line <sup>bug · p1 · language</sup>
-- [ ] [`BUG-137`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/BUG-137-an-unclosed-quote-in-a-citation-is-an-error.md) An unclosed quote in a citation is an error <sup>bug · p1 · language</sup>
 - [ ] [`BUG-139`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/BUG-139-a-thing-placed-in-two-groups-or-a-group-placed-inside-itself-is-an-error.md) A thing placed in two groups, or a group placed inside itself, is an error <sup>bug · p2 · check</sup>
 - [ ] [`BUG-140`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/BUG-140-a-quote-fix-for-a-link-target-keeps-the-label-outside-the-quotes.md) A quote fix for a link target keeps the label outside the quotes <sup>bug · p2 · language</sup>
 - [ ] [`0141`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0141-a-group-box-is-wide-enough-for-its-name.md) A group box is wide enough for its name <sup>feature · p2 · layout</sup>
-- [ ] [`0144`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0144-a-path-that-the-parser-reads-as-a-group-gets-a-warning-with-the-quote-fix.md) A path that the parser reads as a group gets a warning with the quote fix <sup>feature · p2 · check</sup>
-- [ ] [`0145`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0145-each-golden-case-that-draws-holds-its-svg.md) Each golden case that draws holds its SVG <sup>chore · p2 · render</sup>
-- [ ] [`LENS-36`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/LENS-36-flow.md) flow <sup>lens · p0 · lens</sup>
-- [ ] [`0037`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0037-the-command-line-check-fix-fmt-draw-spec.md) The command line: check, fix, fmt, draw, spec <sup>feature · p0 · cli</sup>
-- [ ] [`0038`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0038-an-mcp-server-with-spec-check-fix-and-draw.md) An MCP server with spec, check, fix and draw <sup>feature · p0 · mcp</sup>
-- [ ] [`0040`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0040-draw-the-corpus-in-ci-and-count-overlaps.md) Draw the corpus in CI and count overlaps <sup>chore · p0 · bench</sup>
+- [ ] [`BUG-152`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/BUG-152-a-link-label-stays-legible-where-it-sits-on-its-own-line.md) A link label stays legible where it sits on its own line <sup>bug · p2 · render</sup>
+- [ ] [`BUG-158`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/BUG-158-a-label-keeps-the-white-space-that-its-measured-width-counts.md) A label keeps the white space that its measured width counts <sup>bug · p1 · render</sup>
+- [ ] [`0159`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0159-draw-names-a-lens-it-cannot-draw-with-a-diagnostic-code.md) draw names a lens it cannot draw with a diagnostic code <sup>feature · p2 · cli</sup>
 - [ ] [`0041`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0041-the-first-benchmark-can-a-model-write-it-from-the-card.md) The first benchmark: can a model write it from the card? <sup>feature · p1 · bench</sup>
-- [ ] [`0042`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0042-release-binaries-with-checksums-and-an-install-script.md) Release binaries with checksums and an install script <sup>chore · p0 · release</sup>
 - [ ] [`0043`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0043-quickstart-and-language-reference-for-v0-1.md) Quickstart and language reference for v0.1 <sup>docs · p1 · language</sup>
 - [ ] [`0049`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0049-an-honest-gallery-drawn-by-ci.md) An honest gallery, drawn by CI <sup>feature · p2 · site</sup>
 - [ ] [`0052`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0052-a-daily-report-of-what-the-backlog-needs-from-a-person.md) A daily report of what the backlog needs from a person <sup>feature · p2 · workflow</sup>
 - [ ] [`0054`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0054-cut-a-release-with-one-command.md) Cut a release with one command <sup>chore · p1 · workflow</sup>
+- [ ] [`0042`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0042-release-binaries-with-checksums-and-an-install-script.md) Release binaries with checksums and an install script <sup>chore · p0 · release</sup>
 - [ ] [`0053`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0053-merge-passing-patch-and-minor-dependency-updates-automatically.md) Merge passing patch and minor dependency updates automatically <sup>chore · p2 · workflow</sup>
 
 ## later — Later
 
-`··········` 0% · 0 of 23 done
+`··········` 0% · 0 of 28 done
 
 Nothing on a date. Good ideas wait here until a release needs them.
 
@@ -80,8 +68,13 @@ Nothing on a date. Good ideas wait here until a release needs them.
 - [ ] [`BUG-148`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/BUG-148-an-arrival-that-cannot-move-keeps-its-level-line-apart-from-every-other-line.md) An arrival that cannot move keeps its level line apart from every other line <sup>bug · p2 · layout</sup>
 - [ ] [`0149`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0149-the-overlap-detector-reports-a-thing-in-the-box-of-a-group-that-does-not-hold-it.md) The overlap detector reports a thing in the box of a group that does not hold it <sup>feature · p2 · check</sup>
 - [ ] [`0150`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0150-the-route-phase-orders-the-upright-lines-of-a-corridor-in-less-than-cubic-time.md) The route phase orders the upright lines of a corridor in less than cubic time <sup>chore · p2 · layout</sup>
+- [ ] [`0151`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0151-a-comment-line-that-reads-as-a-link-or-a-block-gets-a-warning.md) A comment line that reads as a link or a block gets a warning <sup>feature · p2 · check</sup>
+- [ ] [`0153`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0153-e0412-leaves-a-plural-beside-its-singular-alone.md) E0412 leaves a plural beside its singular alone <sup>chore · p2 · check</sup>
 - [ ] [`0154`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0154-a-link-goes-round-a-group-that-stands-between-its-two-ends.md) A link goes round a group that stands between its two ends <sup>feature · p2 · layout</sup>
 - [ ] [`0155`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0155-the-pass-search-of-the-order-phase-takes-less-than-50-ms-on-a-graph-of-100-nodes.md) The pass search of the order phase takes less than 50 ms on a graph of 100 nodes <sup>chore · p2 · layout</sup>
+- [ ] [`BUG-156`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/BUG-156-a-show-line-with-a-misspelt-lens-and-a-bad-argument-becomes-a-thing.md) A show line with a misspelt lens and a bad argument becomes a thing <sup>bug · p2 · language</sup>
+- [ ] [`0157`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0157-a-file-with-more-than-one-show-line-draws-each-of-them.md) A file with more than one show line draws each of them <sup>feature · p2 · cli</sup>
+- [ ] [`0160`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0160-the-spike-21-prototype-leaves-the-tree-now-that-the-server-exists.md) The SPIKE-21 prototype leaves the tree now that the server exists <sup>chore · p2 · mcp</sup>
 
 ## v0.2 — Trot
 
