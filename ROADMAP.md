@@ -12,7 +12,7 @@ named for gaits: Walk, Trot, Canter, Gallop.
 
 ## v0.1 — Walk
 
-`··········` 0% · 0 of 37 done · due 2027-01-31
+`··········` 0% · 0 of 36 done · due 2027-01-31
 
 An agent writes a horsegirl file, checks it, applies the fixes, and draws a flow diagram as SVG, from the command line or over MCP.
 
@@ -41,7 +41,6 @@ An agent writes a horsegirl file, checks it, applies the fixes, and draws a flow
 - [ ] [`0141`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0141-a-group-box-is-wide-enough-for-its-name.md) A group box is wide enough for its name <sup>feature · p2 · layout</sup>
 - [ ] [`0144`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0144-a-path-that-the-parser-reads-as-a-group-gets-a-warning-with-the-quote-fix.md) A path that the parser reads as a group gets a warning with the quote fix <sup>feature · p2 · check</sup>
 - [ ] [`0145`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0145-each-golden-case-that-draws-holds-its-svg.md) Each golden case that draws holds its SVG <sup>chore · p2 · render</sup>
-- [ ] [`0146`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0146-no-link-passes-through-a-group-that-holds-neither-of-its-ends.md) No link passes through a group that holds neither of its ends <sup>feature · p0 · layout</sup>
 - [ ] [`LENS-36`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/LENS-36-flow.md) flow <sup>lens · p0 · lens</sup>
 - [ ] [`0037`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0037-the-command-line-check-fix-fmt-draw-spec.md) The command line: check, fix, fmt, draw, spec <sup>feature · p0 · cli</sup>
 - [ ] [`0038`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0038-an-mcp-server-with-spec-check-fix-and-draw.md) An MCP server with spec, check, fix and draw <sup>feature · p0 · mcp</sup>
@@ -56,7 +55,7 @@ An agent writes a horsegirl file, checks it, applies the fixes, and draws a flow
 
 ## later — Later
 
-`··········` 0% · 0 of 21 done
+`··········` 0% · 0 of 23 done
 
 Nothing on a date. Good ideas wait here until a release needs them.
 
@@ -81,6 +80,8 @@ Nothing on a date. Good ideas wait here until a release needs them.
 - [ ] [`BUG-148`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/BUG-148-an-arrival-that-cannot-move-keeps-its-level-line-apart-from-every-other-line.md) An arrival that cannot move keeps its level line apart from every other line <sup>bug · p2 · layout</sup>
 - [ ] [`0149`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0149-the-overlap-detector-reports-a-thing-in-the-box-of-a-group-that-does-not-hold-it.md) The overlap detector reports a thing in the box of a group that does not hold it <sup>feature · p2 · check</sup>
 - [ ] [`0150`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0150-the-route-phase-orders-the-upright-lines-of-a-corridor-in-less-than-cubic-time.md) The route phase orders the upright lines of a corridor in less than cubic time <sup>chore · p2 · layout</sup>
+- [ ] [`0154`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0154-a-link-goes-round-a-group-that-stands-between-its-two-ends.md) A link goes round a group that stands between its two ends <sup>feature · p2 · layout</sup>
+- [ ] [`0155`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0155-the-pass-search-of-the-order-phase-takes-less-than-50-ms-on-a-graph-of-100-nodes.md) The pass search of the order phase takes less than 50 ms on a graph of 100 nodes <sup>chore · p2 · layout</sup>
 
 ## v0.2 — Trot
 
