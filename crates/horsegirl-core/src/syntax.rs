@@ -23,12 +23,14 @@ pub enum TokenKind {
     Quoted,
     /// A double quote that does not close, with the rest of its line.
     Unclosed,
-    /// `->`
+    /// `->`, or Mermaid's `-->`.
     Arrow,
     /// `-x` as a whole word.
     Cross,
     Comma,
     Colon,
+    /// A `;` that ends its line.
+    Semi,
     /// `{`
     Open,
     /// `}`

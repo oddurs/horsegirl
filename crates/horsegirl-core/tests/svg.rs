@@ -47,7 +47,10 @@ fn the_svg_is_well_formed_xml() {
         "{svg}"
     );
     assert!(svg.contains(">x &lt; y</text>"), "{svg}");
-    assert!(svg.contains("class=\"thing owner-platform-team\""), "{svg}");
+    assert!(
+        svg.contains("class=\"thing slot-1 owner-platform-team\""),
+        "{svg}"
+    );
     assert!(svg.contains("<title>a &amp; b</title>"), "{svg}");
 }
 
@@ -110,7 +113,7 @@ fn each_shape_has_a_class_for_its_role_and_for_its_facts() {
     let model = model(CHECKOUT);
     for owner in model.owners() {
         let class = format!(" owner-{}", owner.to_lowercase());
-        assert!(svg.contains(&format!("class=\"thing{class}\"")), "{class}");
+        assert!(svg.contains(&format!("{class}\" x=")), "{class}");
         assert!(svg.contains(&format!("class=\"label{class}\"")), "{class}");
     }
     assert_eq!(svg.matches("class=\"group").count(), 1);
@@ -245,4 +248,22 @@ fn text(text: &str) -> Result<(), String> {
         }
     }
     Ok(())
+}
+
+#[test]
+fn the_picture_draws_its_own_paper_before_any_shape() {
+    let svg = checkout();
+    let page = svg
+        .find("<rect class=\"page\" x=\"-1\" y=\"-1\"")
+        .expect("a page rect");
+    assert!(page < svg.find("class=\"thing").expect("a thing"));
+    assert!(svg.contains(".horsegirl .page{fill:var(--hg-paper,"));
+}
+
+#[test]
+fn only_a_thing_takes_a_palette_slot_for_its_owner() {
+    let source = "Team { owner: Ghost }\nTeam { A, B }\nA -> B\nA { owner: X }\nB { owner: Y }\n";
+    let svg = draw(&scene(source), "owners");
+    assert!(svg.contains("class=\"thing slot-1 owner-x\""), "{svg}");
+    assert!(svg.contains("class=\"thing slot-2 owner-y\""), "{svg}");
 }

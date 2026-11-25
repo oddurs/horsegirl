@@ -12,7 +12,7 @@ pub(super) fn lex(source: &str) -> Vec<Token<'_>> {
     let mut line_start = true;
     while let Some(first) = source[start..].chars().next() {
         let rest = &source[start..];
-        let (kind, len) = token(rest, first, line_start);
+        let (kind, len) = token(source, start, first, line_start);
         line_start = match kind {
             TokenKind::Newline => true,
             TokenKind::Space => line_start,
@@ -29,7 +29,8 @@ pub(super) fn lex(source: &str) -> Vec<Token<'_>> {
 }
 
 /// The kind and the length in bytes of the token at the start of `rest`.
-fn token(rest: &str, first: char, line_start: bool) -> (TokenKind, usize) {
+fn token(source: &str, start: usize, first: char, line_start: bool) -> (TokenKind, usize) {
+    let rest = &source[start..];
     if let Some(len) = newline(rest) {
         return (TokenKind::Newline, len);
     }
@@ -46,7 +47,8 @@ fn token(rest: &str, first: char, line_start: bool) -> (TokenKind, usize) {
         '{' => (TokenKind::Open, 1),
         '}' => (TokenKind::Close, 1),
         '@' => (TokenKind::At, 1),
-        '-' if rest.starts_with("->") => (TokenKind::Arrow, 2),
+        '-' if arrow(rest).is_some() => (TokenKind::Arrow, arrow(rest).unwrap_or(2)),
+        ';' if ends_line(&rest[1..]) && !follows_semi(&source[..start]) => (TokenKind::Semi, 1),
         // The scan stops at the closing quote. A scan to the end of the line
         // for every quote makes a long line of quoted names quadratic.
         '"' => match rest[1..].find(['"', '\n']) {
@@ -55,7 +57,12 @@ fn token(rest: &str, first: char, line_start: bool) -> (TokenKind, usize) {
         },
         _ => {
             let len = run(rest, |tail, c| {
-                is_space(c) || RESERVED.contains(&c) || tail.starts_with("->")
+                is_space(c)
+                    || RESERVED.contains(&c)
+                    || arrow(tail).is_some()
+                    || (c == ';'
+                        && ends_line(&tail[1..])
+                        && !follows_semi(&source[..source.len() - tail.len()]))
             });
             let kind = if &rest[..len] == "-x" {
                 TokenKind::Cross
@@ -65,6 +72,26 @@ fn token(rest: &str, first: char, line_start: bool) -> (TokenKind, usize) {
             (kind, len)
         }
     }
+}
+
+/// Whether a `;` is the last mark before the end of `before`, spaces and tabs
+/// aside. `;;` and `; ;` are not marks: removing one `;` would leave the other
+/// at the line end and change the name.
+fn follows_semi(before: &str) -> bool {
+    before.trim_end_matches([' ', '\t']).ends_with(';')
+}
+
+/// The length of the arrow at the start of `rest`. `->` is the arrow. Mermaid
+/// writes `-->`, and the reader takes a run of dashes before the `>` as one.
+fn arrow(rest: &str) -> Option<usize> {
+    let dashes = rest.bytes().take_while(|&byte| byte == b'-').count();
+    (dashes > 0 && rest[dashes..].starts_with('>')).then_some(dashes + 1)
+}
+
+/// Whether only spaces are left on the line, or a `}` closes the block.
+fn ends_line(rest: &str) -> bool {
+    let rest = rest.trim_start_matches([' ', '\t']);
+    rest.is_empty() || rest.starts_with(['\n', '\r', '}'])
 }
 
 /// The length of the line break at the start of `rest`, if one is there.

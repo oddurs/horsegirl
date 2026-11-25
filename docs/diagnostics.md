@@ -95,6 +95,7 @@ code that the table does not hold. To regenerate it, run
 | `E0300` | error | A `show` line names a lens that does not exist. The message lists the lenses, and a lens one edit from a known lens gets a safe fix. |
 | `E0412` | error | A name is written once and is one edit from a name written more often, so it is likely a typo that makes a new thing. The safe fix writes the other name. When more than one such name is one edit away, the message names each and there is no fix. |
 | `E0500` | error | A link breaks a `-x` rule in the same direction. |
+| `N0101` | note | A line is written the way Mermaid writes it: `-->`, quotes that a name does not need, a space before the colon of a label, or a `;` at the end. The fix writes the canonical form. |
 | `N0200` | note | A link or a rule ends in `?` in every statement, so it is a guess. |
 | `W0010` | warning | A story is parsed, and this version does not order its links. |
 | `W0107` | warning | A thing has no link and no rule, so it stands alone in every picture. A group needs no link of its own. |
