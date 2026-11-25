@@ -19,7 +19,8 @@ use super::{Group, Item, Net, real};
 
 const ROUNDS: usize = 24;
 
-pub(super) fn order(net: &mut Net, groups: &[Group]) {
+/// The result is the work of the pass search.
+pub(super) fn order(net: &mut Net, groups: &[Group]) -> usize {
     let count = net.items.len();
     let mut before = vec![Vec::new(); count];
     let mut after = vec![Vec::new(); count];
@@ -84,7 +85,7 @@ pub(super) fn order(net: &mut Net, groups: &[Group]) {
         }
     }
     net.layers = best;
-    keep_out(net, groups, &best_keys);
+    keep_out(net, groups, &best_keys)
 }
 
 /// The index of each item in its rank.

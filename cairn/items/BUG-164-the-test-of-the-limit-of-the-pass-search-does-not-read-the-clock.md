@@ -3,8 +3,10 @@ id: 164
 uid: c1743a5f-9eb4-40cf-a9fa-f27ff4666367
 title: The test of the limit of the pass search does not read the clock
 type: bug
-status: backlog
+status: doing
 milestone: v0.1
+assignee: Oddur Sigurdsson
+claimed: 2026-11-25
 created: 2026-11-25
 updated: 2026-11-25
 priority: p1
@@ -33,6 +35,10 @@ Let `keep_out` report whether the search reached the limit, or the work count, t
 
 ## Acceptance criteria
 
-- [ ] The test fails when `LIMIT` is `10_000_000`.
-- [ ] The test does not use `std::time`.
-- [ ] `tests/layout.positions` does not change.
+- [x] The test fails when `LIMIT` is `10_000_000`.
+- [x] The test does not use `std::time`.
+- [x] `tests/layout.positions` does not change.
+
+## 2026-11-25
+
+Ran the new unit test with LIMIT 1_000_000: passed in 2.5 s. With LIMIT 10_000_000 it failed: 'the search passed its limit: 10000567'. The test file layout.rs has no std::time. scripts/task check exited 0 and tests/layout.positions has no diff.
