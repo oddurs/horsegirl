@@ -58,6 +58,33 @@ jobs:
           cache: pnpm
           cache-dependency-path: site/pnpm-lock.yaml
       - run: scripts/task check
+      # scripts/task check builds site/out. Every run keeps it as an artifact,
+      # and the deploy job publishes the one from a push to main.
+      - name: Upload the site
+        if: hashFiles('site/out/index.html') != ''
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: site/out
+
+  # Not in `required`: a pull request skips it. The check job already builds
+  # the site, so `required` covers the build.
+  deploy:
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    needs: check
+    runs-on: ubuntu-latest
+    # Pages needs these two scopes and nothing else.
+    permissions:
+      pages: write
+      id-token: write
+    concurrency:
+      group: pages
+      cancel-in-progress: false
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
 
   # The job always runs, so `required` never sees it as skipped on a push.
   pr-title:

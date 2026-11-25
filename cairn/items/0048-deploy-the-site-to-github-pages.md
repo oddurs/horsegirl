@@ -3,8 +3,10 @@ id: 48
 uid: ac23293c-44c2-45ce-8dca-68d134797ce4
 title: Deploy the site to GitHub Pages
 type: chore
-status: planned
+status: doing
 milestone: v0.1
+assignee: Oddur Sigurdsson
+claimed: 2026-11-25
 depends_on:
 - 44
 created: 2026-11-25
