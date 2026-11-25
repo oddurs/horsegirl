@@ -3,16 +3,16 @@ id: 27
 uid: d469ae36-cdf6-48e4-ad46-814c8f82f985
 title: 'The first checks: typos, orphans, broken rules, guesses'
 type: feature
-status: doing
+status: done
 milestone: v0.1
 assignee: Oddur Sigurdsson
-claimed: 2026-11-25
 depends_on:
 - 24
 - 25
 - 26
 created: 2026-11-25
 updated: 2026-11-25
+closed_at: 2026-11-25
 priority: p0
 risk: medium
 surface: diagnostics
