@@ -31,6 +31,14 @@ Add `svg` to `OUTPUTS` in the golden harness. Write `<case>.svg` for each case t
 
 ## Acceptance criteria
 
-- [ ] Each golden case with no error has a `.svg` expectation that the golden test holds byte for byte.
-- [ ] `HORSEGIRL_BLESS=1 cargo test -p horsegirl-core --test golden` writes the SVG expectations and removes an SVG expectation that has no case.
-- [ ] `checkout.svg` is drawn with the layered layout, not the stand-in.
+- [x] Each golden case with no error has a `.svg` expectation that the golden test holds byte for byte.
+- [x] `HORSEGIRL_BLESS=1 cargo test -p horsegirl-core --test golden` writes the SVG expectations and removes an SVG expectation that has no case.
+- [x] `checkout.svg` is drawn with the layered layout, not the stand-in.
+
+## 2026-11-25
+
+Ran cargo test -p horsegirl-core --test golden: 4 passed with quoted-names.svg held. Only quoted-names has no error; the other three cases hold an E diagnostic and draw nothing.
+
+## 2026-11-25
+
+Ran HORSEGIRL_BLESS=1 on the golden test with a stray golden/gone.svg: it was removed, and the plain run then passed. checkout.svg was blessed with the svg test using lens::draw with FLOW; cargo test -p horsegirl-core --test svg printed 14 passed. scripts/task check exited 0. The stand-in in tests/support stays: scene.rs and theme.rs still use it.
