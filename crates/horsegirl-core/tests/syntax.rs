@@ -443,6 +443,53 @@ fn a_show_line_names_a_lens_and_an_argument() {
 }
 
 #[test]
+fn a_show_line_with_a_mistake_in_its_argument_is_still_a_show_line() {
+    for (source, quoted) in [
+        (
+            "show rings from GET /users/{id}",
+            "show rings from \"GET /users/{id}\"",
+        ),
+        (
+            "show rings from Sensors: wind",
+            "show rings from \"Sensors: wind\"",
+        ),
+        ("show sequence of a@b", "show sequence of \"a@b\""),
+        // With no space after the join word, the fix adds one.
+        ("show rings from{id}", "show rings from \"{id}\""),
+        // A name may hold a colon in double quotes, so the fix keeps every byte.
+        ("show rings from: x", "show rings from \": x\""),
+    ] {
+        let error = only(source);
+        assert_eq!(error.code, "E0004", "{source}");
+        assert_eq!(fixed(source), quoted);
+        let (tree, codes) = read(quoted);
+        assert_eq!(codes, [""; 0], "{quoted}");
+        assert_eq!(kinds(&parse(quoted).tree), [NodeKind::Show], "{tree}");
+    }
+    for source in ["show sequence of S, T", "show rings from, T"] {
+        let error = only(source);
+        assert_eq!(error.code, "E0008", "{source}");
+        assert!(error.message.contains("one name"), "{}", error.message);
+        assert_eq!(error.fix, None, "{source}");
+        assert_eq!(kinds(&parse(source).tree), [NodeKind::Error], "{source}");
+    }
+    // A link or a group after the lens is an error in the show line too.
+    for (source, code) in [
+        ("show flow of A -> B", "E0004"),
+        ("show lanes by X { a, b }", "E0008"),
+    ] {
+        let (tree, codes) = read(source);
+        assert_eq!(codes, [code], "{source}");
+        assert_eq!(kinds(&parse(source).tree), [NodeKind::Error], "{tree}");
+    }
+    // Without a lens and `of`, `from` or `by`, `show` is a word of a name.
+    let (tree, codes) = read("show, A -> B\nshow { owner: X }\n");
+    assert_eq!(codes, [""; 0]);
+    assert!(tree.contains("Name \"show\""), "{tree}");
+    assert!(!tree.contains("Show"), "{tree}");
+}
+
+#[test]
 fn each_mistake_has_its_own_code() {
     for (source, code) in [
         ("A -> B -> C", "E0001"),
