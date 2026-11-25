@@ -3,12 +3,12 @@ id: 19
 uid: 81738782-b85a-4ca7-9d07-69dcd747f0dc
 title: How do we measure text without a browser?
 type: spike
-status: doing
+status: done
 milestone: v0.1
 assignee: Oddur Sigurdsson
-claimed: 2026-11-25
 created: 2026-11-25
 updated: 2026-11-25
+closed_at: 2026-11-25
 priority: p0
 risk: medium
 surface: svg
