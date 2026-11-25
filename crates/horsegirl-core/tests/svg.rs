@@ -154,6 +154,21 @@ fn each_label_is_held_to_its_measured_width() {
     }
 }
 
+// The table measures an unknown character as one em. Held to that width, an
+// Arabic label draws at more than twice its natural width.
+#[test]
+fn a_label_outside_the_metrics_table_keeps_its_natural_width() {
+    let svg = draw(&scene("\"مرحبا بالعالم\" -> B\n"), "arabic");
+    let arabic = svg
+        .lines()
+        .find(|l| l.ends_with(">مرحبا بالعالم</text>"))
+        .expect(&svg);
+    assert!(!arabic.contains("textLength"), "{arabic}");
+    assert!(!arabic.contains("lengthAdjust"), "{arabic}");
+    let latin = svg.lines().find(|l| l.ends_with(">B</text>")).expect(&svg);
+    assert!(latin.contains(" textLength=\""), "{latin}");
+}
+
 #[test]
 fn the_svg_has_a_title_and_a_desc() {
     let svg = checkout();

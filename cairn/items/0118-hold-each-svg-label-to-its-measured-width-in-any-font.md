@@ -30,7 +30,7 @@ Put `textLength` on each SVG `text` element, set to the measured width, with `le
 
 ## Acceptance criteria
 
-- [x] Every SVG `text` element that draws a label carries `textLength` equal to its measured width and `lengthAdjust="spacingAndGlyphs"`, held by the SVG snapshot.
+- [x] Every SVG `text` element that draws a label whose characters the metrics table holds carries `textLength` equal to its measured width and `lengthAdjust="spacingAndGlyphs"`, held by the SVG snapshot. A label with a character outside the table carries neither attribute, held by a test.
 - [x] In headless Chromium, Firefox and WebKit, the reference flow drawn in DejaVu Sans has each label's bounding box within 1 pixel of its measured width.
 - [x] A screenshot of the reference flow in DejaVu Sans shows no label outside its box.
 
@@ -53,3 +53,11 @@ Criterion 2: playwright-core 1.65.1 (Chromium 1255, Firefox 1572, WebKit 2388 WP
 ## 2026-11-25
 
 Criterion 3: screenshots of the reference flow in DejaVu Sans in Chromium, Firefox and WebKit show every thing and group label inside its box; the bounding-box check agreed (each label bbox inside the rect that holds its anchor). Link labels have no box of their own. In the stand-in placement, POST /checkout (87 px) sits on an 80 px gap and touches the edges of Web app and API gateway in every face, as it does in Liberation Sans; that is the stand-in layout, which 0145 replaces.
+
+## 2026-11-25
+
+Exception to criterion 1, from review of #43: the table measures a character it does not hold as one em, an over-estimate. With textLength, "مرحبا بالعالم" at 12 px drew at 147.33 px against a natural 62.75 to 64.35 px in Chromium, Firefox and WebKit. svg::draw now writes textLength and lengthAdjust only when text::holds(label) is true and the width is above 0; any other label keeps its natural width. Criterion 1 now states this exception. Arabic, Thai and Devanagari labels take this path; a CJK label also takes it, although one em is close to its natural width.
+
+## 2026-11-25
+
+Criterion 1 again, after review fix: tests/svg.rs a_label_outside_the_metrics_table_keeps_its_natural_width draws "مرحبا بالعالم" -> B and asserts the Arabic text has no textLength or lengthAdjust and B has textLength. With svg.rs reverted it FAILED (12 passed, 1 failed); with the fix cargo test -p horsegirl-core --test svg printed 13 passed. The checkout.svg snapshot is unchanged and each_label_is_held_to_its_measured_width still passes. scripts/task check exited 0.
