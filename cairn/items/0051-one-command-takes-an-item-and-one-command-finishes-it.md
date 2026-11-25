@@ -3,10 +3,12 @@ id: 51
 uid: 3b84421c-a112-4fea-b7e6-0605d38f82c7
 title: One command takes an item and one command finishes it
 type: feature
-status: planned
+status: done
 milestone: v0.1
+assignee: Oddur Sigurdsson
 created: 2026-11-25
 updated: 2026-11-25
+closed_at: 2026-11-25
 priority: p0
 risk: medium
 surface: none
@@ -27,7 +29,7 @@ Add `scripts/agent take [<id>]`: with no id it takes the first item in the `agen
 
 ## Acceptance criteria
 
-- [ ] `scripts/agent take` on a clean checkout ends with a worktree, a claimed item and the prompt on standard output.
-- [ ] `scripts/agent finish` on an item with an unticked criterion stops and names the criterion.
-- [ ] The pull request body is built from the item: problem, approach, and a `Refs:` line.
-- [ ] The test script covers both commands against a scratch repository.
+- [x] `scripts/agent take` on a clean checkout ends with a worktree, a claimed item and the prompt on standard output.
+- [x] `scripts/agent finish` on an item with an unticked criterion stops and names the criterion.
+- [x] The pull request body is built from the item: problem, approach, and a `Refs:` line.
+- [x] The test script covers both commands against a scratch repository.
