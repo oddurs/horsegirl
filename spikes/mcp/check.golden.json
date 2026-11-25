@@ -1,0 +1,41 @@
+{
+  "diagnostics": [
+    {
+      "code": "E0001",
+      "fix": {
+        "confidence": "safe",
+        "description": "Replace `-->` with `->`.",
+        "edits": [
+          {
+            "span": {
+              "end": {
+                "column": 9,
+                "line": 1
+              },
+              "start": {
+                "column": 6,
+                "line": 1
+              }
+            },
+            "text": "->"
+          }
+        ]
+      },
+      "message": "`-->` is not an arrow. Write `->` for a link.",
+      "severity": "error",
+      "span": {
+        "end": {
+          "column": 9,
+          "line": 1
+        },
+        "start": {
+          "column": 6,
+          "line": 1
+        }
+      }
+    }
+  ],
+  "errors": 1,
+  "notes": 0,
+  "warnings": 0
+}

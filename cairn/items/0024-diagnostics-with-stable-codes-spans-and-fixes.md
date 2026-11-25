@@ -31,3 +31,7 @@ Define the diagnostic type: severity, code (`E`, `W`, `N` plus four digits), lin
 - [ ] The JSON shape is documented and held by a snapshot test.
 - [ ] The text form shows the source line and marks the span.
 - [ ] Every code in the code base appears in a generated catalogue, and a test fails when one is missing.
+
+## 2026-11-25
+
+SPIKE-21 fixes the JSON shape of a diagnostic and a fix: keys code, severity, message, span, fix (null when none); span {start,end} with end exclusive; position {line,column}, both 1-based, column in Unicode scalar values; fix {confidence: safe|suggested, description, edits: [{span, text}]} against the original source, sorted, non-overlapping. Keys are sorted by name on the MCP wire, so the --json line should use the same serde_json::Value conversion.

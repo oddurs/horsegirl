@@ -18,11 +18,11 @@ An agent writes a horsegirl file, checks it, applies the fixes, and draws a flow
 
 - [ ] [`0115`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0115-reserve-the-horsegirl-name-on-crates-io-and-npm.md) Reserve the horsegirl name on crates.io and npm <sup>chore · p2 · release</sup>
 - [ ] [`0116`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0116-fail-the-check-when-the-core-crate-gains-a-dependency-that-does-i-o.md) Fail the check when the core crate gains a dependency that does I/O <sup>chore · p2 · workflow</sup>
+- [ ] [`0117`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0117-the-mcp-tool-schemas-are-a-reviewed-contract-in-both-protocol-eras.md) The MCP tool schemas are a reviewed contract in both protocol eras <sup>feature · p2 · mcp</sup>
 - [ ] [`ADR-16`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/ADR-16-confirm-the-licence-before-the-first-release.md) Confirm the licence before the first release <sup>decision · p1 · release</sup>
 - [ ] [`SPIKE-17`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/SPIKE-17-do-names-with-spaces-survive-real-diagrams.md) Do names with spaces survive real diagrams? <sup>spike · p0 · language</sup>
 - [ ] [`SPIKE-18`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/SPIKE-18-which-layered-layout-design-do-we-build-on.md) Which layered layout design do we build on? <sup>spike · p0 · layout</sup>
 - [ ] [`SPIKE-19`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/SPIKE-19-how-do-we-measure-text-without-a-browser.md) How do we measure text without a browser? <sup>spike · p0 · render</sup>
-- [ ] [`SPIKE-21`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/SPIKE-21-which-mcp-library-and-what-shape-is-a-tool-result.md) Which MCP library, and what shape is a tool result? <sup>spike · p1 · mcp</sup>
 - [ ] [`0023`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0023-parse-names-links-braces-and-show-lines.md) Parse names, links, braces and show lines <sup>feature · p0 · language</sup>
 - [ ] [`0024`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0024-diagnostics-with-stable-codes-spans-and-fixes.md) Diagnostics with stable codes, spans and fixes <sup>feature · p0 · check</sup>
 - [ ] [`0025`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0025-lower-the-tree-into-things-links-groups-and-facts.md) Lower the tree into things, links, groups and facts <sup>feature · p0 · model</sup>

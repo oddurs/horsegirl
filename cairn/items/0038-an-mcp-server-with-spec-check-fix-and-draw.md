@@ -31,3 +31,7 @@ Serve `spec`, `check`, `fix` and `draw` as MCP tools over stdio, using the libra
 
 - [ ] A scripted MCP client calls each tool and receives the documented shape.
 - [ ] `check` returns every diagnostic with its fix in one call.
+
+## 2026-11-25
+
+SPIKE-21 answered: build on rmcp 3.11.0 (exact pin, default features off, features server, macros, transport-io), stdio only, dual-era. check returns Json<T>: structuredContent plus one text block with the same JSON; isError is false when diagnostics are found. Use #[tool_handler(name = "horsegirl")] so serverInfo is not 'rmcp', and replace schemars' 'format: uint32' with schema_with. Prototype: spikes/mcp/.
