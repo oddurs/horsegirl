@@ -45,3 +45,7 @@ Criterion 2: check-a11y now fails when document scrollWidth exceeds clientWidth.
 ## 2026-11-25
 
 Criterion 3: site/scripts/check-lighthouse.mjs runs Lighthouse 13.6.0 on the landing page as a phone and as a desktop, three runs each, and fails when the median for performance or accessibility is under 95. It runs in the site build, so the CI check job runs it. CI run 45563394030 on f186337 (PR #23) succeeded and printed mobile performance 100 (runs: 100, 100, 100), mobile accessibility 100, desktop performance 100, desktop accessibility 100. With lang removed from <html> and the lede at low contrast, the check printed 'accessibility 92 (runs: 92, 92, 92), under 95', named color-contrast and html-has-lang, and exited 1. On a loaded local machine single mobile runs ranged 96 to 100, which is why the check takes a median.
+
+## Result
+
+The site root is a landing page that says there is no release, lists the commands read from the binary's USAGE text (held to --help by a test), shows the real language card and a picture drawn by hand that is labelled as such, and links the roadmap. The site build fails on a page wider than its window, and on a Lighthouse median under 95 for performance or accessibility on the landing page.
