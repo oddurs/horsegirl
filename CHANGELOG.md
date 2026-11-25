@@ -7,6 +7,14 @@ the project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Added
 
+- `horsegirl check [--json] [FILE]` prints every diagnostic of a file, as text
+  or as one JSON object per line. `horsegirl fix [--json] [FILE]` applies every
+  safe fix in place, changes no other byte, and prints what is left.
+  `horsegirl draw [--to svg] [-o OUT] [--json] [FILE]` writes the picture
+  beside the file or to `OUT`, and refuses a file with an error. Each command
+  exits 0 when the file has no error, 1 when it has one, and 2 for a usage
+  mistake. `horsegirl_core::diagnostic::apply_safe` makes the safe fixes.
+- `horsegirl fmt` prints the errors of a file in the text form of a diagnostic.
 - `horsegirl fmt [--check] [FILE]` and `horsegirl_core::format::format` print a
   file in one canonical form: one statement on each line, one space around an
   arrow, the facts of a statement in the order of their keys, and quotes only
