@@ -52,3 +52,7 @@ Criterion 3: crates/horsegirl/tests/cli.rs fmt::check_exits_1_when_the_file_woul
 ## 2026-11-25
 
 Fix round 1: a bare fact value that ends in ' ?' is now quoted, so the fact sort cannot turn it into a guess. Test: quotes_stay_only_where_a_name_needs_them and a generator piece.
+
+## 2026-11-25
+
+Round 2: after rebase on main, the property test compares model::lower output (spans and mentions cleared, facts sorted by key). It passes on the corpus and on 1.5M random files. A quoted text now stays exact in names, values and labels.

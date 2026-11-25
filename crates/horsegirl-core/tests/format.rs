@@ -2,57 +2,23 @@
 //! output.
 
 use horsegirl_core::format::format;
-use horsegirl_core::syntax::{Element, Node, NodeKind, TokenKind, parse};
+use horsegirl_core::model::{Model, lower};
+use horsegirl_core::syntax::{Element, Node, TokenKind, parse};
 
-/// The facts of a file as text, with every choice of layout removed: no space
-/// or line break, a name without its quotes and with one space between words,
-/// and the facts of a line in the order of their keys. Two files with one
-/// projection state the same things. Comments are not facts, so the test of
-/// comments is separate.
-fn squeeze(text: &str) -> String {
-    text.split(|c: char| c.is_whitespace() || c == '\u{feff}')
-        .filter(|word| !word.is_empty())
-        .collect::<Vec<_>>()
-        .join(" ")
-}
-
-fn model(node: &Node<'_>) -> String {
-    let words = |text: &str| {
-        let text = text
-            .strip_prefix('"')
-            .and_then(|t| t.strip_suffix('"'))
-            .unwrap_or(text);
-        squeeze(text)
-    };
-    if matches!(
-        node.kind,
-        NodeKind::Name | NodeKind::Key | NodeKind::Value | NodeKind::Arg
-    ) {
-        return format!("{:?}({})", node.kind, words(&node.to_string()));
+/// What a file states, with every choice of layout removed. Source bytes are
+/// cleared, and the facts of a thing are in the order of their keys, because
+/// the formatter sorts them. The sort is stable, as in the formatter. Two files
+/// with one projection state the same things.
+fn model(source: &str) -> Model {
+    let mut model = lower(&parse(source).tree);
+    for thing in &mut model.things {
+        thing.mentions.clear();
+        thing.facts.sort_by(|a, b| a.key.cmp(&b.key));
     }
-    if node.kind == NodeKind::Label {
-        return format!("Label({})", squeeze(&node.to_string()));
+    for link in &mut model.links {
+        link.span = 0..0;
     }
-    let mut parts = Vec::new();
-    for child in &node.children {
-        match child {
-            Element::Node(inner) => parts.push((model(inner), inner.kind == NodeKind::Fact)),
-            Element::Token(token) => {
-                if !matches!(
-                    token.kind,
-                    TokenKind::Space | TokenKind::Newline | TokenKind::Comment | TokenKind::Comma
-                ) {
-                    parts.push((format!("{:?}({})", token.kind, token.text), false));
-                }
-            }
-        }
-    }
-    if node.kind == NodeKind::Facts {
-        // Facts hold nothing but facts here, and the sort is stable.
-        parts.sort_by_key(|(text, _)| text.split(')').next().unwrap_or("").to_owned());
-    }
-    let parts: Vec<_> = parts.into_iter().map(|(text, _)| text).collect();
-    format!("{:?}[{}]", node.kind, parts.join(" "))
+    model
 }
 
 fn comments(node: &Node<'_>, found: &mut Vec<String>) {
@@ -79,8 +45,8 @@ fn promises(source: &str) -> String {
         after.diagnostics
     );
     assert_eq!(
-        model(&before.tree),
-        model(&after.tree),
+        model(source),
+        model(&once),
         "the model changed in {source:?} to {once:?}"
     );
     let (mut kept, mut now) = (Vec::new(), Vec::new());
@@ -127,6 +93,7 @@ fn the_layout_settles_on_one_form() {
         ("A -> B   ?   @   src/a.ts:17", "A -> B ? @ src/a.ts:17\n"),
         ("A ? ", "A ?\n"),
         ("A -> B  :", "A -> B:\n"),
+        ("A -> B:  x  \"a   b\"  y", "A -> B: x \"a   b\" y\n"),
         ("story s {\nA -> B\n}", "story s {\n  A -> B\n}\n"),
         ("show   sequence   of   s", "show sequence of s\n"),
         ("show flow", "show flow\n"),
@@ -160,7 +127,12 @@ fn quotes_stay_only_where_a_name_needs_them() {
             "A { owner: X ?, kind: y }",
             "A { kind: y, owner: \"X ?\" }\n",
         ),
-        ("\"  a   b \"", "a b\n"),
+        ("\"  a   b \"", "\"  a   b \"\n"),
+        ("\"a  b\" -> \"a b\"", "\"a  b\" -> a b\n"),
+        ("\"Web   app\" -> B", "\"Web   app\" -> B\n"),
+        ("\" Web\" -> B", "\" Web\" -> B\n"),
+        ("A -> B: \"a   b\"", "A -> B: \"a   b\"\n"),
+        ("A { note: \"x   y\" }", "A { note: \"x   y\" }\n"),
         (
             "A -> B: \"GET /users/{id}\"",
             "A -> B: \"GET /users/{id}\"\n",
@@ -203,7 +175,7 @@ fn every_horse_file_in_the_repository_keeps_its_model() {
 /// failure repeats. Many of the files have errors, and the test skips those.
 #[test]
 fn random_files_keep_their_model_and_settle() {
-    const PIECES: [&str; 36] = [
+    const PIECES: [&str; 38] = [
         "owner: X ?, kind: y",
         "A",
         "B",
@@ -240,6 +212,8 @@ fn random_files_keep_their_model_and_settle() {
         "\"\"",
         "\u{feff}",
         "\"show x\"",
+        "\"a   b\"",
+        "\" a\"",
     ];
     let mut state = 0x9e37_79b9_7f4a_7c15_u64;
     let mut next = move |limit: usize| {

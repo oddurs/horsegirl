@@ -129,7 +129,7 @@ fn link(node: &Node<'_>) -> String {
             Element::Token(token) if token.kind == TokenKind::Colon => text.push(':'),
             Element::Node(inner) if inner.kind == NodeKind::Label => {
                 text.push(' ');
-                text.push_str(&squeeze(inner));
+                text.push_str(&label(inner));
             }
             Element::Token(token) if token.kind == TokenKind::Arrow => text.push_str(" -> "),
             Element::Token(token) if token.kind == TokenKind::Cross => text.push_str(" -x "),
@@ -285,9 +285,11 @@ fn name(node: &Node<'_>) -> String {
     if let [token] = tokens[..]
         && token.kind == TokenKind::Quoted
     {
-        let inside = squeeze_text(&token.text[1..token.text.len() - 1]);
-        return if bare(&inside) {
-            inside
+        // The model keeps the text inside quotes exactly, so the formatter
+        // drops the quotes only when the bare text is the same text.
+        let inside = &token.text[1..token.text.len() - 1];
+        return if bare(inside) && inside == squeeze_text(inside) {
+            inside.to_owned()
         } else {
             token.text.to_owned()
         };
@@ -318,9 +320,58 @@ fn bare(text: &str) -> bool {
         && !["show", "story"].contains(&words[0])
 }
 
+/// A label. A label of one quoted text keeps that text exactly, as the model
+/// does. Any other label has one space between words.
+fn label(node: &Node<'_>) -> String {
+    let mut tokens = Vec::new();
+    collect(node, &mut tokens);
+    if let [token] = tokens[..]
+        && token.kind == TokenKind::Quoted
+    {
+        return token.text.to_owned();
+    }
+    squeeze(node)
+}
+
+fn collect<'a, 's>(node: &'a Node<'s>, into: &mut Vec<&'a Token<'s>>) {
+    for child in &node.children {
+        match child {
+            Element::Node(inner) => collect(inner, into),
+            Element::Token(token) => into.push(token),
+        }
+    }
+}
+
 /// The tokens of a node as text, with each run of spaces as one space.
+/// A quoted token is exact text, as in the model, so its spaces stay.
 fn squeeze(node: &Node<'_>) -> String {
-    squeeze_text(&node.to_string())
+    let mut tokens = Vec::new();
+    collect(node, &mut tokens);
+    let mut out = String::new();
+    let mut gap = false;
+    for token in tokens {
+        if token.kind == TokenKind::Quoted {
+            if gap && !out.is_empty() {
+                out.push(' ');
+            }
+            gap = false;
+            out.push_str(token.text);
+            continue;
+        }
+        for c in token.text.chars() {
+            // The lexer reads a byte order mark as a space, so the formatter does too.
+            if c.is_whitespace() || c == '\u{feff}' {
+                gap = true;
+            } else {
+                if gap && !out.is_empty() {
+                    out.push(' ');
+                }
+                gap = false;
+                out.push(c);
+            }
+        }
+    }
+    out
 }
 
 fn squeeze_text(text: &str) -> String {
