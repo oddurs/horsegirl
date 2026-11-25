@@ -16,6 +16,12 @@ const MAX_DEPTH: usize = 64;
 /// a megabyte with an error in each fact must not give a megabyte for each.
 const MAX_QUOTE: usize = 60;
 
+/// A fix quotes a text of this many bytes and no more. A longer text gets the
+/// message and no fix, so the cost of one diagnostic does not grow with its
+/// line. Braces that do not pair the way the parser reads them can make one
+/// text of most of a line, and each fix once held a copy of it.
+const MAX_FIX: usize = 200;
+
 type Children<'s> = Vec<Element<'s>>;
 
 pub(super) fn parse(source: &str) -> Parse<'_> {
@@ -820,10 +826,14 @@ impl<'s> Parser<'s> {
     /// A `{` is a character of the text only when it closes on its line. A
     /// name or a label also ends before a `{` that follows a space and holds a
     /// comma, a colon or an arrow: `Services { Orders, Payments }` is a group,
-    /// and quotes would make one thing of it.
+    /// and quotes would make one thing of it. A name that needs quotes before
+    /// such a `{` ends there too: `Team@x { A }` is a group with one part, as
+    /// `Team { A }` is.
     fn extent(&self, from: usize, text: Text) -> usize {
         let mut end = from;
         let mut index = from;
+        // Whether the name holds a reserved character so far.
+        let mut reserved = false;
         loop {
             let kind = match self.kind_at(index) {
                 None | Some(TokenKind::Newline | TokenKind::Close) => return end,
@@ -835,18 +845,20 @@ impl<'s> Parser<'s> {
                 TokenKind::Open => match self.closes[index] {
                     None => true,
                     Some(close) => {
+                        let spaced =
+                            index > from && self.kind_at(index - 1) == Some(TokenKind::Space);
                         let block = text != Text::Value
-                            && index > from
-                            && self.kind_at(index - 1) == Some(TokenKind::Space)
-                            && self.tokens[index..close].iter().any(|token| {
-                                matches!(
-                                    token.kind,
-                                    TokenKind::Comma
-                                        | TokenKind::Colon
-                                        | TokenKind::Arrow
-                                        | TokenKind::Cross
-                                )
-                            });
+                            && spaced
+                            && (reserved
+                                || self.tokens[index..close].iter().any(|token| {
+                                    matches!(
+                                        token.kind,
+                                        TokenKind::Comma
+                                            | TokenKind::Colon
+                                            | TokenKind::Arrow
+                                            | TokenKind::Cross
+                                    )
+                                }));
                         if !block {
                             // The braces are matched, so the text goes on
                             // after the `}` and reads no token twice.
@@ -860,6 +872,9 @@ impl<'s> Parser<'s> {
             if stops {
                 return end;
             }
+            // A comma or an arrow ends a name, so only these stay in one.
+            reserved |= text == Text::Name
+                && matches!(kind, TokenKind::At | TokenKind::Colon | TokenKind::Open);
             if kind != TokenKind::Space {
                 end = index + 1;
             }
@@ -871,6 +886,7 @@ impl<'s> Parser<'s> {
         let what = text.word();
         let text = &self.source[span.clone()];
         // A quoted name cannot hold a double quote, so no fix exists then.
+        // A text longer than `MAX_FIX` gets no fix either.
         // In `A -x@b` the quote would touch the `-x` and make one word of the
         // two, so a space goes between them.
         let space = if self.source[..span.start].ends_with("-x") {
@@ -878,7 +894,7 @@ impl<'s> Parser<'s> {
         } else {
             ""
         };
-        let fix = (!text.contains('"')).then(|| Fix {
+        let fix = (text.len() <= MAX_FIX && !text.contains('"')).then(|| Fix {
             span: span.clone(),
             text: format!("{space}\"{text}\""),
         });

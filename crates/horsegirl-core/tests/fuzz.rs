@@ -231,3 +231,39 @@ fn no_input_makes_the_parser_panic_or_lose_a_byte() {
         exercise(&mutant(&mut random, FORMS));
     }
 }
+
+// The soup above is 60 pieces at most, and a cost that grows with the square
+// of a line shows only on a long one. Two or three pieces in a row, again and
+// again, make such a line: `a@b {}{` and then `}` once gave a fix as long as
+// the line for each fact.
+#[test]
+fn a_long_input_gives_a_bounded_text_for_each_diagnostic() {
+    let rounds =
+        std::env::var("HORSEGIRL_FUZZ_ROUNDS").map_or(60, |rounds| rounds.parse().unwrap());
+    let mut random = Random(0xD1B5_4A32_D192_ED03);
+    for _ in 0..rounds {
+        let mut source = String::new();
+        for _ in 0..2 + random.below(2) {
+            let unit: String = (0..2 + random.below(2)).map(|_| random.piece()).collect();
+            source.push_str(&unit.repeat(35_000 / unit.len()));
+        }
+        let result = parse(&source);
+        let start: String = source.chars().take(20).collect();
+        assert!(
+            result.tree.to_string() == source,
+            "lost a byte of {start:?}"
+        );
+        assert!(
+            result.diagnostics.len() <= source.len(),
+            "{start:?} gave {} diagnostics",
+            result.diagnostics.len()
+        );
+        for diagnostic in &result.diagnostics {
+            let fix = diagnostic.fix.as_ref().map_or(0, |fix| fix.text.len());
+            assert!(
+                diagnostic.message.len() + fix < 1_000,
+                "{diagnostic:?} is long, in {start:?}"
+            );
+        }
+    }
+}

@@ -224,6 +224,14 @@ fn a_name_or_a_value_that_needs_quotes_gets_them_from_the_fix() {
         ("@pixi/react { A, B }", "\"@pixi/react\" { A, B }"),
         ("Team@x { A -> B }", "\"Team@x\" { A -> B }"),
         ("Team: x {\n  A\n}", "\"Team: x\" {\n  A\n}"),
+        // A group with one part is a group too. The name needs its quotes in
+        // any case, so the block stays outside them.
+        ("Team@x { A }", "\"Team@x\" { A }"),
+        ("Team @pixi/react { Web }", "\"Team @pixi/react\" { Web }"),
+        ("A, B@x { C }", "A, \"B@x\" { C }"),
+        // Braces with no space before them are characters of the name.
+        ("GET@v1 /users/{id} -> B", "\"GET@v1 /users/{id}\" -> B"),
+        ("A {x} @y -> B", "\"A {x} @y\" -> B"),
         // A quote that touches `-x` would be a character of that word.
         ("A -x@pixi/react", "A -x \"@pixi/react\""),
     ] {
@@ -237,6 +245,9 @@ fn a_name_or_a_value_that_needs_quotes_gets_them_from_the_fix() {
     assert_eq!(read(&fixed(story)).1, ["W0010"]);
     let story = "story s@x { A -> B }";
     assert_eq!(fixed(story), "story \"s@x\" { A -> B }");
+    assert_eq!(read(&fixed(story)).1, ["W0010"]);
+    let story = "story s@x { A }";
+    assert_eq!(fixed(story), "story \"s@x\" { A }");
     assert_eq!(read(&fixed(story)).1, ["W0010"]);
     // Without a block, `story` is a word of the name.
     assert_eq!(fixed("story s@x -> B"), "\"story s@x\" -> B");
@@ -258,9 +269,13 @@ fn a_group_or_an_open_block_is_never_quoted_into_a_name() {
     }
     // A block cannot follow a link. The name still gets its quotes, and the
     // fix leaves the brace outside them for the next message.
-    let source = "A -> B @x {\n}";
-    assert_eq!(fixed(source), "A -> \"B @x\" {\n}");
-    assert_eq!(only(&fixed(source)).code, "E0001");
+    for (source, repaired) in [
+        ("A -> B @x {\n}", "A -> \"B @x\" {\n}"),
+        ("A -> B@x { C }", "A -> \"B@x\" { C }"),
+    ] {
+        assert_eq!(fixed(source), repaired);
+        assert_eq!(only(repaired).code, "E0001");
+    }
 }
 
 // A name in quotes needs no more quotes. The `@` after it is the mistake.
@@ -309,22 +324,41 @@ fn a_long_line_of_quoted_names_parses_in_linear_time() {
         "{a: b {y} } ",
         "A @b {x} ",
     ] {
-        let source = piece.repeat(60_000 / piece.len());
-        let start = std::time::Instant::now();
-        let parse = parse(&source);
-        let spent = start.elapsed();
-        assert!(parse.tree.to_string() == source, "lost a byte of {piece:?}");
-        assert!(spent.as_secs() < 5, "{piece:?} took {spent:?}");
-        let text = parse
-            .diagnostics
-            .iter()
-            .map(|d| d.message.len() + d.fix.as_ref().map_or(0, |fix| fix.text.len()));
-        let text: usize = text.sum();
-        assert!(
-            text < 100 * source.len(),
-            "{piece:?} gave {text} bytes of diagnostics"
-        );
+        linear(&piece.repeat(60_000 / piece.len()));
     }
+    // Past 64 levels the parser opens no block, so the braces of a line do
+    // not pair the way the parser reads them. Each fact once quoted most of
+    // the line in its fix: 4.7 GB for 480 KB.
+    for piece in ["a@b {}{", "a@b{}{", "a@b {} {"] {
+        let count = 60_000 / piece.len();
+        linear(&format!("{}{}", piece.repeat(count), "}".repeat(count)));
+    }
+    linear(&format!(
+        "{}{}{}",
+        "{ } {a: b ".repeat(8_000),
+        "-x:?".repeat(20_000),
+        " {x} }  a: b ".repeat(6_000)
+    ));
+}
+
+/// Parses `source` and holds the time and the size of what comes back.
+#[cfg(not(target_family = "wasm"))]
+fn linear(source: &str) {
+    let piece: String = source.chars().take(20).collect();
+    let start = std::time::Instant::now();
+    let parse = parse(source);
+    let spent = start.elapsed();
+    assert!(parse.tree.to_string() == source, "lost a byte of {piece:?}");
+    assert!(spent.as_secs() < 5, "{piece:?} took {spent:?}");
+    let text = parse
+        .diagnostics
+        .iter()
+        .map(|d| d.message.len() + d.fix.as_ref().map_or(0, |fix| fix.text.len()));
+    let text: usize = text.sum();
+    assert!(
+        text < 100 * source.len(),
+        "{piece:?} gave {text} bytes of diagnostics"
+    );
 }
 
 #[test]
@@ -334,7 +368,10 @@ fn a_message_quotes_the_start_of_a_long_text() {
     assert_eq!(long.code, "E0004");
     assert!(long.message.len() < 200, "{}", long.message);
     assert!(long.message.contains("..."), "{}", long.message);
-    // The fix holds the whole text.
+    // A fix would hold the whole text, so a text this long gets none.
+    assert_eq!(long.fix, None);
+    let source = format!("A -> B: {} {{x}}", "word ".repeat(39));
+    assert_eq!(only(&source).span.len(), 199);
     assert_eq!(read(&fixed(&source)).1, [""; 0]);
 }
 
