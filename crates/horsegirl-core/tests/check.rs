@@ -210,6 +210,24 @@ fn a_lens_one_edit_from_a_known_lens_gets_a_safe_fix() {
 }
 
 #[test]
+fn the_comment_form_is_on_the_language_card_and_reads_as_written() {
+    // ADR-130: an agent that reads only the card must know that a line
+    // which starts with `#` is a comment, or a name such as `#1 priority`
+    // disappears without a diagnostic.
+    let stated: Vec<&str> = horsegirl_core::SPEC
+        .lines()
+        .filter(|line| line.contains('#') && line.contains("comment"))
+        .collect();
+    assert_eq!(stated.len(), 1, "one card line states the comment form");
+
+    let source = "# a remark -> not a link\n  # an indented remark\nA -> B\n";
+    assert_eq!(codes(&check(source)), [""; 0]);
+    let model = lower(&parse(source).tree);
+    assert!(model.find("A").is_some() && model.find("B").is_some());
+    assert!(model.find("a remark").is_none() && model.find("not a link").is_none());
+}
+
+#[test]
 fn every_lens_is_on_the_language_card() {
     for lens in LENSES {
         assert!(
