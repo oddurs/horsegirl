@@ -3,12 +3,12 @@ id: 18
 uid: 7e4d4ca9-0d39-4196-828f-bad060fa9dbb
 title: Which layered layout design do we build on?
 type: spike
-status: doing
+status: done
 milestone: v0.1
 assignee: Oddur Sigurdsson
-claimed: 2026-11-25
 created: 2026-11-25
 updated: 2026-11-25
+closed_at: 2026-11-25
 priority: p0
 risk: high
 surface: none
