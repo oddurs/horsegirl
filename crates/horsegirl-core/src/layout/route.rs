@@ -209,8 +209,9 @@ fn tied(trunks: &[Trunk], into: &[f64], free: &[bool]) -> Option<usize> {
 ///
 /// The trunks are put in a row one at a time. The next trunk is one that no
 /// waiting trunk must stand before, and among those the one that crosses the
-/// fewest lines when it stands before the rest. A trunk then takes the first
-/// track after every trunk of the row that is beside it.
+/// fewest lines when it stands before the rest. Two neighbours of the row
+/// then exchange their places where that removes a crossing. A trunk then
+/// takes the first track after every trunk of the row that is beside it.
 fn tracks(trunks: &[Trunk], into: &[f64], free: &[bool]) -> Vec<usize> {
     let within = |y: f64, trunk: &Trunk| trunk.top < y && y < trunk.bottom;
     // The crossings of two trunks when `left` has the lower track: the line
@@ -222,7 +223,6 @@ fn tracks(trunks: &[Trunk], into: &[f64], free: &[bool]) -> Vec<usize> {
     };
     let beside = |a: &Trunk, b: &Trunk| a.top - BEND_GAP < b.bottom && b.top - BEND_GAP < a.bottom;
 
-    let mut track = vec![0; trunks.len()];
     let mut row: Vec<usize> = Vec::new();
     let mut waiting: Vec<usize> = (0..trunks.len()).collect();
     while !waiting.is_empty() {
@@ -249,14 +249,33 @@ fn tracks(trunks: &[Trunk], into: &[f64], free: &[bool]) -> Vec<usize> {
                     .then(y_a.total_cmp(&y_b))
             })
             .expect("a trunk is waiting");
-        let trunk = waiting.remove(next);
-        track[trunk] = row
+        row.push(waiting.remove(next));
+    }
+    // The choice above weighs a trunk against every waiting trunk at once,
+    // so two neighbours of the row can stand the wrong way round. They
+    // exchange their places where that removes a crossing and no step ties
+    // them. Each exchange removes a crossing, so the loop ends.
+    let mut improved = true;
+    while improved {
+        improved = false;
+        for at in 1..row.len() {
+            let (left, right) = (&trunks[row[at - 1]], &trunks[row[at]]);
+            if before(left, right, into, free).is_none()
+                && crossings(right, left) < crossings(left, right)
+            {
+                row.swap(at - 1, at);
+                improved = true;
+            }
+        }
+    }
+    let mut track = vec![0; trunks.len()];
+    for (at, &trunk) in row.iter().enumerate() {
+        track[trunk] = row[..at]
             .iter()
             .filter(|&&placed| beside(&trunks[placed], &trunks[trunk]))
             .map(|&placed| track[placed] + 1)
             .max()
             .unwrap_or(0);
-        row.push(trunk);
     }
     track
 }

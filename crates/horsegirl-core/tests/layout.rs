@@ -383,18 +383,44 @@ fn no_path_crosses_the_box_of_a_thing_on_any_corpus_diagram() {
     assert_eq!(links, 255);
 }
 
-// How many points two links cross at, on each of the eleven pictures. The
-// order phase removes a pass through a group before it removes a crossing,
-// and that must not cost a crossing here: before it removed a pass,
-// `07-compiler` had 2 crossings and `10-platform` had 49. A number that
-// falls is a better picture: write the new number here.
-#[test]
-fn the_crossings_of_each_corpus_diagram_do_not_rise() {
-    let crossed: Vec<usize> = DIAGRAMS
+/// How many points two links cross at, on each of the eleven pictures.
+fn corpus_crossings() -> Vec<usize> {
+    DIAGRAMS
         .iter()
         .map(|(_, source)| crossings(&layout(&flow(source).graph, None)))
-        .collect();
-    assert_eq!(crossed, [0, 0, 0, 3, 0, 0, 4, 1, 23, 2, 18]);
+        .collect()
+}
+
+// The committed numbers. The order phase removes a pass through a group
+// before it removes a crossing, and that must not cost a crossing here:
+// before it removed a pass, `07-compiler` had 2 crossings and `10-platform`
+// had 49. Before the order phase exchanged neighbours, `03-order-states` had
+// 3 crossings and `08-module-deps` had 23. A number that falls is a better
+// picture: write the new number here.
+#[test]
+fn the_crossings_of_each_corpus_diagram_do_not_rise() {
+    let crossed = corpus_crossings();
+    assert_eq!(crossed, [0, 0, 0, 1, 0, 0, 4, 1, 11, 2, 18]);
+    assert_eq!(crossed[1..].iter().sum::<usize>(), 37);
+}
+
+// The reference is the scores table of `spikes/layered-layout/README.md`.
+// On the ten diagrams of the spike, its prototype left the crossings of
+// `PROTOTYPE`, the ELK port left 36 in total, and dagre left 14 on
+// `08-module-deps`. These limits do not move when a committed number falls.
+#[test]
+fn the_spike_diagrams_cross_no_more_than_the_reference_allows() {
+    const PROTOTYPE: [usize; 10] = [1, 0, 1, 0, 0, 9, 1, 22, 2, 44];
+    let crossed = &corpus_crossings()[1..];
+    for ((name, _), (now, limit)) in DIAGRAMS[1..].iter().zip(crossed.iter().zip(PROTOTYPE)) {
+        assert!(
+            *now <= limit,
+            "{name}: {now} crossings, the prototype {limit}"
+        );
+    }
+    assert!(crossed[7] <= 14, "08-module-deps: {}", crossed[7]);
+    let total: usize = crossed.iter().sum();
+    assert!(total <= 36 * 3 / 2, "{total} crossings on the ten diagrams");
 }
 
 // The ten diagrams of the spike have no label, so each link gets one here.

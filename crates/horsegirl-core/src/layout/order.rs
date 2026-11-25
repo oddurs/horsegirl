@@ -1,8 +1,9 @@
 //! The order phase: sort each rank so that few links cross.
 //!
 //! Each rank is sorted by the mean position of the neighbours of each item
-//! in the rank beside it, forward and back, and the order with the fewest
-//! crossings is kept.
+//! in the rank beside it, forward and back. Two neighbours of a rank then
+//! exchange their places where that removes a crossing. The order with the
+//! fewest crossings is kept.
 //!
 //! Two rules keep a group in one piece. In each rank, the items of a group
 //! are next to each other. The groups under one parent have one order, and
@@ -14,7 +15,7 @@
 
 use std::collections::BTreeMap;
 
-use super::through::keep_out;
+use super::through::{keep_out, transpose};
 use super::{Group, Item, Net, real};
 
 const ROUNDS: usize = 24;
@@ -77,6 +78,7 @@ pub(super) fn order(net: &mut Net, groups: &[Group]) -> usize {
                 .collect();
             arrange(&mut net.layers[rank], &value, &net.items, groups, &keys);
         }
+        untangle(net, &before, &after);
         let now = crossings(&net.layers, &net.steps, count);
         if now < fewest {
             fewest = now;
@@ -86,6 +88,58 @@ pub(super) fn order(net: &mut Net, groups: &[Group]) -> usize {
     }
     net.layers = best;
     keep_out(net, groups, &best_keys)
+}
+
+/// Exchanges two neighbouring entries of a rank where that leaves fewer
+/// crossings, until no exchange does. An entry is an item, or every item of
+/// one group, so the links of a group count as one unit. A sweep gives each
+/// entry the mean place of its neighbours, and two entries with many shared
+/// neighbours can stand the wrong way round after it.
+///
+/// Each exchange that stays removes a crossing, so the loop ends.
+fn untangle(net: &mut Net, before: &[Vec<usize>], after: &[Vec<usize>]) {
+    let mut at = positions(&net.layers, net.items.len());
+    // The crossings among the steps of the items of one part of a rank.
+    // An exchange changes no other crossing: every other step keeps its
+    // place, and the two entries keep the positions between them.
+    let cost = |part: &[usize], at: &[f64]| {
+        let below: Vec<(f64, f64)> = part
+            .iter()
+            .flat_map(|&i| before[i].iter().map(move |&j| (at[j], at[i])))
+            .collect();
+        let above: Vec<(f64, f64)> = part
+            .iter()
+            .flat_map(|&i| after[i].iter().map(move |&j| (at[i], at[j])))
+            .collect();
+        crossed(&below) + crossed(&above)
+    };
+    let mut improved = true;
+    while improved {
+        improved = false;
+        for layer in &mut net.layers {
+            for index in 1..layer.len() {
+                let Some((start, end)) = transpose(layer, &net.items, index) else {
+                    continue;
+                };
+                // The positions are still the ones before the exchange.
+                let was = cost(&layer[start..end], &at);
+                renumber(&mut at, layer, start, end);
+                if cost(&layer[start..end], &at) < was {
+                    improved = true;
+                } else {
+                    layer[start..end].rotate_right(index - start);
+                    renumber(&mut at, layer, start, end);
+                }
+            }
+        }
+    }
+}
+
+/// Writes the positions of one part of a rank.
+fn renumber(at: &mut [f64], layer: &[usize], start: usize, end: usize) {
+    for (index, &i) in layer.iter().enumerate().take(end).skip(start) {
+        at[i] = real(index);
+    }
 }
 
 /// The index of each item in its rank.
