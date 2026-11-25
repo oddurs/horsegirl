@@ -3,10 +3,12 @@ id: 119
 uid: cb05580b-48ff-424d-a94b-34e8a620616e
 title: Names that hold a reserved character are written in quotes
 type: decision
-status: backlog
+status: done
 milestone: v0.1
+assignee: Oddur Sigurdsson
 created: 2026-11-25
 updated: 2026-11-25
+closed_at: 2026-11-25
 priority: p2
 risk: low
 surface: language
@@ -33,7 +35,11 @@ The same characters reach fact values. Item 121 keeps the first line of a Mermai
 
 ## Decision
 
-Proposed, not yet decided: quotes as an escape. A name in double quotes may hold any character except a line break and a double quote. The same quoted form applies to a fact value: `api { note: "django :8000" }`. `fmt` removes quotes from a name or a fact value that does not need them, and adds them to one that does. Item 28 rewrites a Mermaid quoted name to a bare name only when the bare name is safe.
+Decided: quotes as an escape. A name in double quotes may hold any character except a line break and a double quote. The same quoted form applies to a fact value: `api { note: "django :8000" }`. `fmt` removes quotes from a name or a fact value that does not need them, and adds them to one that does. Item 28 rewrites a Mermaid quoted name to a bare name only when the bare name is safe.
+
+A bare name stays the normal form: nine names in ten need no quotes. A name or a fact value that needs quotes and lacks them is an error whose fix adds the quotes, so an agent that forgets them is corrected in one step. The language card states the quoted form in one line.
+
+The two examples from the corpus are written `wally { note: "install, list" }` and `api { note: "django :8000" }`. Each parses as one fact.
 
 ## Revisit when
 
@@ -41,6 +47,6 @@ The benchmark (item 41) shows that agents write quotes where they are not needed
 
 ## Acceptance criteria
 
-- [ ] The choice, its evidence and its consequences are recorded.
-- [ ] If the choice changes the language card, the card states the quoted form in one line.
-- [ ] The decision states whether the quoted form also holds a fact value, and how `{ note: install, list }` and `{ note: django :8000 }` are written so that they parse as one fact each.
+- [x] The choice, its evidence and its consequences are recorded.
+- [x] If the choice changes the language card, the card states the quoted form in one line.
+- [x] The decision states whether the quoted form also holds a fact value, and how `{ note: install, list }` and `{ note: django :8000 }` are written so that they parse as one fact each.

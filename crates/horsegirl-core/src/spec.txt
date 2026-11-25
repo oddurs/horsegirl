@@ -8,6 +8,7 @@ horsegirl in one page
                                            matrix | rings from T | seams by owner
 
 -x forbids a link.  A final ? marks a guess.
+Quote a name or a value that holds  , : { } @ ->  as in  "Sensors: wind" -> Hub
 One fact per line. Order is free outside a story.
 End a line with  @ path:line  to cite evidence.
 Run check after every edit. Apply the fix it returns.
