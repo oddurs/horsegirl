@@ -12,7 +12,7 @@ named for gaits: Walk, Trot, Canter, Gallop.
 
 ## v0.1 — Walk
 
-`··········` 0% · 0 of 35 done · due 2027-01-31
+`··········` 0% · 0 of 34 done · due 2027-01-31
 
 An agent writes a horsegirl file, checks it, applies the fixes, and draws a flow diagram as SVG, from the command line or over MCP.
 
@@ -25,7 +25,6 @@ An agent writes a horsegirl file, checks it, applies the fixes, and draws a flow
 - [ ] [`0124`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0124-reserve-room-for-link-labels-in-the-layered-layout.md) Reserve room for link labels in the layered layout <sup>feature · p2 · layout</sup>
 - [ ] [`0125`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0125-check-the-layered-layout-choice-on-the-corpus-of-public-flowcharts.md) Check the layered layout choice on the corpus of public flowcharts <sup>chore · p2 · layout</sup>
 - [ ] [`0126`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0126-the-site-sets-its-type-in-the-concept-page-fonts.md) The site sets its type in the concept page fonts <sup>feature · p2 · site</sup>
-- [ ] [`BUG-127`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/BUG-127-every-docs-page-has-a-level-one-heading.md) Every docs page has a level-one heading <sup>bug · p2 · site</sup>
 - [ ] [`BUG-129`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/BUG-129-the-site-highlighter-colours-a-link-s-target-as-a-fact-key.md) The site highlighter colours a link's target as a fact key <sup>bug · p2 · site</sup>
 - [ ] [`0131`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0131-a-chain-of-arrows-on-one-line-gets-a-fix-that-splits-it.md) A chain of arrows on one line gets a fix that splits it <sup>feature · p2 · check</sup>
 - [ ] [`BUG-132`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/BUG-132-a-bad-line-with-a-brace-keeps-the-lines-after-it-and-deep-braces-stay-paired.md) A bad line with a brace keeps the lines after it, and deep braces stay paired <sup>bug · p2 · language</sup>

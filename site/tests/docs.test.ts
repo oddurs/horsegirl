@@ -35,6 +35,17 @@ test("a new Markdown file becomes a page, and docs/concept is skipped", () => {
   );
 });
 
+test("a page without a level-one heading gets one from its file name", () => {
+  const pages = renderPages(
+    loadPages(tree({ "roadmap-intro.md": "Text.\n\n## Part\n", "b.md": "# Beta\n" })),
+  );
+  const intro = pages.find((p) => p.slug === "roadmap-intro");
+  assert.equal(intro?.title, "Roadmap intro");
+  assert.equal((intro?.html.match(/<h1 /g) ?? []).length, 1);
+  assert.match(intro?.html ?? "", /<h1 id="roadmap-intro">Roadmap intro /);
+  assert.equal((pages.find((p) => p.slug === "b")?.html.match(/<h1 /g) ?? []).length, 1);
+});
+
 test("headings get anchors, and a duplicate heading gets a suffix", () => {
   const [page] = renderPages(loadPages(tree({ "a.md": "# Same\n\n## Same\n" })));
   assert.match(page?.html ?? "", /<h1 id="same">/);
