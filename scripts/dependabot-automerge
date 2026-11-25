@@ -1,0 +1,16 @@
+#!/bin/sh
+# Usage: dependabot-automerge <auto|manual> <pull-request-url>
+# Turn auto-merge on for an "auto" pull request. Turn it off for a "manual"
+# one: Dependabot can push a major update to a pull request that already
+# has auto-merge on, and the old setting must not carry over.
+set -eu
+kind=$1
+url=$2
+if [ "$kind" = auto ]; then
+  gh pr merge --auto --squash "$url"
+else
+  armed=$(gh pr view "$url" --json autoMergeRequest --jq '.autoMergeRequest != null')
+  if [ "$armed" = true ]; then
+    gh pr merge --disable-auto "$url"
+  fi
+fi

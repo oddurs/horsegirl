@@ -30,6 +30,4 @@ jobs:
         run: |
           kind=$(gh api --paginate "$PR_API/commits" --jq '.[].commit.message' | scripts/dependabot-update-type)
           echo "update kind: $kind"
-          if [ "$kind" = auto ]; then
-            gh pr merge --auto --squash "$PR_URL"
-          fi
+          scripts/dependabot-automerge "$kind" "$PR_URL"
