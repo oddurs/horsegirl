@@ -31,3 +31,7 @@ Implement the text measurement that the spike chose, behind one function: text a
 
 - [ ] Widths for 100 reference labels are within 3 percent of the browser measurement recorded in the spike.
 - [ ] The function gives the same result on Linux, macOS and in WebAssembly, held by CI.
+
+## 2026-11-25
+
+SPIKE-19 answer: a table of advances plus kerning-class pair matrices, in integer font units, generated offline from Liberation Sans 2.1.5 (Arial metrics) and checked in as Rust source; the core reads no font. Characters outside the table measure as one em. The 100 reference labels are spikes/0019-text-metrics/labels.txt and the browser widths are the arial-metrics column of spikes/0019-text-metrics/browser.tsv. The spike prototype was within 0.051 percent on every label.
