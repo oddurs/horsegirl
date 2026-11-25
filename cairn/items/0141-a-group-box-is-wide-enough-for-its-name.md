@@ -28,3 +28,7 @@ Give `horsegirl_core::layout::Group` the width of its name. The layout widens th
 - [ ] A group with one narrow node and a name of 30 characters has a box at least as wide as the name plus the pad on each side.
 - [ ] No two boxes are closer than the node gap on the ten diagrams in `spikes/layered-layout/corpus` when each group has its name width.
 - [ ] A group whose name is narrower than its box has the same position as before.
+
+## 2026-11-25
+
+From item 0040: corpus/horse/0050.horse is the one corpus file with Kind::LabelOnGroup. The name of the nested group 'Data Tier - Encrypted (CM-2)' lies across the border of its parent group 'VPC: fedramp-complex-vpc (10.30.0.0/16)'. Run 'cargo run -p horsegirl --example corpus' to see the count.

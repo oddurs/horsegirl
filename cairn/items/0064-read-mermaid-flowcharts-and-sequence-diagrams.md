@@ -32,3 +32,7 @@ A new language with no importer starts with no users.
 - [ ] Every flowchart in the corpus converts, and the converted file passes `check` with no error.
 - [ ] A sequence diagram becomes a story.
 - [ ] Unsupported Mermaid diagram types fail with a message that lists the supported ones.
+
+## 2026-11-25
+
+From item 0040: corpus/convert.py is a stand-in converter that writes corpus/horse/*.horse for the corpus count in CI. When 'horsegirl convert' exists, make the corpus count read its output and remove the stand-in.
