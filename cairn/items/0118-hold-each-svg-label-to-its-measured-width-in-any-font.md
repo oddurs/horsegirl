@@ -65,3 +65,7 @@ Criterion 1 again, after review fix: tests/svg.rs a_label_outside_the_metrics_ta
 ## 2026-11-25
 
 Fix round 2: merged origin/main (#42, #44) into the branch as c4c8f94, resolved CHANGELOG.md, ran cairn render. scripts/task check exited 0 on the merged tree; cairn check printed 'ok: 152 item(s), 0 warning(s)'.
+
+## 2026-11-25
+
+Fix round 3: merged origin/main 9b7101a (#41), ran cairn render (ROADMAP.md drops the closed 0116 line). scripts/task check exit 0; scripts/check-core-deps exit 0; cairn check: ok, 152 items, 0 warnings.
