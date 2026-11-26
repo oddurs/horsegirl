@@ -12,14 +12,13 @@ named for gaits: Walk, Trot, Canter, Gallop.
 
 ## v0.1 — Walk
 
-`··········` 0% · 0 of 10 done · due 2027-01-31
+`··········` 0% · 0 of 9 done · due 2027-01-31
 
 An agent writes a horsegirl file, checks it, applies the fixes, and draws a flow diagram as SVG, from the command line or over MCP.
 
 - [ ] [`0115`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0115-reserve-the-horsegirl-name-on-crates-io-and-npm.md) Reserve the horsegirl name on crates.io and npm <sup>chore · p2 · release</sup>
 - [ ] [`BUG-169`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/BUG-169-two-links-from-one-thing-to-itself-draw-two-loops-and-two-labels-apart.md) Two links from one thing to itself draw two loops and two labels apart <sup>bug · p2 · layout</sup>
 - [ ] [`BUG-170`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/BUG-170-no-link-line-passes-through-the-label-of-another-link.md) No link line passes through the label of another link <sup>bug · p2 · layout</sup>
-- [ ] [`BUG-171`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/BUG-171-w0107-leaves-alone-a-thing-whose-group-has-a-link.md) W0107 leaves alone a thing whose group has a link <sup>bug · p2 · check</sup>
 - [ ] [`BUG-174`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/BUG-174-the-arrow-head-of-a-link-stays-clear-of-its-label.md) The arrow head of a link stays clear of its label <sup>bug · p2 · layout</sup>
 - [ ] [`0052`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0052-a-daily-report-of-what-the-backlog-needs-from-a-person.md) A daily report of what the backlog needs from a person <sup>feature · p2 · workflow</sup>
 - [ ] [`0054`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0054-cut-a-release-with-one-command.md) Cut a release with one command <sup>chore · p1 · workflow</sup>
