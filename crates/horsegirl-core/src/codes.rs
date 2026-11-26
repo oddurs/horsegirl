@@ -94,7 +94,7 @@ pub const CATALOGUE: &[Code] = &[
     },
     Code {
         code: "W0107",
-        summary: "A thing has no link and no rule, so it stands alone in every picture. A group needs no link of its own.",
+        summary: "A thing has no link and no rule, so it stands alone in every picture. A link or a rule that names its group, at any depth, counts as its own. A group needs no link of its own.",
     },
     Code {
         code: "W0108",

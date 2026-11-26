@@ -161,13 +161,25 @@ fn siblings(a: &str, b: &str) -> bool {
     }
 }
 
-/// W0107: a thing that no link and no rule names. A group needs no link of
-/// its own, because its parts carry them. A typo is reported once, as E0412.
+/// W0107: a thing that no link and no rule names, and that no group around it
+/// at any depth is named by either: the picture draws such a thing inside a box
+/// that a link reaches. A group needs no link of its own, because its parts
+/// carry them. A typo is reported once, as E0412.
 fn orphans(model: &Model, typos: &[(ThingId, Diagnostic)]) -> Vec<Diagnostic> {
-    let named = |id: ThingId| {
+    let named_directly = |id: ThingId| {
         let links = model.links.iter().map(|link| (link.from, link.to));
         let rules = model.rules.iter().map(|rule| (rule.from, rule.to));
         links.chain(rules).any(|(from, to)| from == id || to == id)
+    };
+    let named = |id: ThingId| {
+        let mut at = Some(id);
+        while let Some(thing) = at {
+            if named_directly(thing) {
+                return true;
+            }
+            at = model.things[thing].parent;
+        }
+        false
     };
     (0..model.things.len())
         .filter(|&id| !named(id))
