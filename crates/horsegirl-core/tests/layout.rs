@@ -395,13 +395,13 @@ fn corpus_crossings() -> Vec<usize> {
 // before it removes a crossing, and that must not cost a crossing here:
 // before it removed a pass, `07-compiler` had 2 crossings and `10-platform`
 // had 49. Before the order phase exchanged neighbours, `03-order-states` had
-// 3 crossings and `08-module-deps` had 23. A number that falls is a better
-// picture: write the new number here.
+// 3 crossings, `08-module-deps` had 23 and `09-incident` had 2. A number
+// that falls is a better picture: write the new number here.
 #[test]
 fn the_crossings_of_each_corpus_diagram_do_not_rise() {
     let crossed = corpus_crossings();
-    assert_eq!(crossed, [0, 0, 0, 1, 0, 0, 4, 1, 11, 2, 18]);
-    assert_eq!(crossed[1..].iter().sum::<usize>(), 37);
+    assert_eq!(crossed, [0, 0, 0, 1, 0, 0, 4, 1, 11, 0, 18]);
+    assert_eq!(crossed[1..].iter().sum::<usize>(), 35);
 }
 
 // The reference is the scores table of `spikes/layered-layout/README.md`.
@@ -824,6 +824,45 @@ fn no_generated_graph_has_a_fault() {
         let collisions = collisions(&flow, &picture, &[Kind::LinkThroughGroup, Kind::Labels]);
         assert!(collisions.is_empty(), "graph {round}: {collisions:#?}");
     }
+}
+
+// From the second review of the exchange of neighbours. The order phase
+// exchanged neighbours after each round, and the next round swept from the
+// exchanged ranks. Graph 2290 of this generator then drew 58 crossings, and
+// 28 before the exchange. The exchange now runs once, on the best order.
+#[test]
+fn the_exchange_of_neighbours_does_not_add_crossings_to_a_generated_graph() {
+    let mut next = sequence(1);
+    let mut graph = None;
+    for _ in 0..=2290 {
+        let groups: Vec<Group> = (0..next(6))
+            .map(|g| Group {
+                parent: (g > 0 && next(2) == 0).then(|| next(g)),
+            })
+            .collect();
+        let count = 1 + next(24);
+        let nodes: Vec<Node> = (0..count)
+            .map(|_| Node {
+                width: 40.0 + 10.0 * f64::from(u8::try_from(next(12)).unwrap()),
+                height: 36.0,
+                group: (!groups.is_empty() && next(3) > 0).then(|| next(groups.len())),
+            })
+            .collect();
+        let links: Vec<(usize, usize)> = (0..next(2 * count))
+            .map(|_| (next(count), next(count)))
+            .collect();
+        graph = Some(Graph {
+            nodes,
+            groups,
+            links,
+            labels: Vec::new(),
+        });
+    }
+    let graph = graph.unwrap();
+    let size = (graph.nodes.len(), graph.links.len(), graph.groups.len());
+    assert_eq!(size, (23, 37, 0));
+    let crossed = crossings(&layout(&graph, None));
+    assert!(crossed <= 28, "{crossed} crossings");
 }
 
 /// A graph that no file states, with a name for each node and each group, so

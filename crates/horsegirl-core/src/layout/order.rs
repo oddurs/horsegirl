@@ -1,9 +1,9 @@
 //! The order phase: sort each rank so that few links cross.
 //!
 //! Each rank is sorted by the mean position of the neighbours of each item
-//! in the rank beside it, forward and back. Two neighbours of a rank then
-//! exchange their places where that removes a crossing. The order with the
-//! fewest crossings is kept.
+//! in the rank beside it, forward and back. The order with the fewest
+//! crossings is kept. Two neighbours of a rank in that order then exchange
+//! their places where that removes a crossing.
 //!
 //! Two rules keep a group in one piece. In each rank, the items of a group
 //! are next to each other. The groups under one parent have one order, and
@@ -78,7 +78,6 @@ pub(super) fn order(net: &mut Net, groups: &[Group]) -> usize {
                 .collect();
             arrange(&mut net.layers[rank], &value, &net.items, groups, &keys);
         }
-        untangle(net, &before, &after);
         let now = crossings(&net.layers, &net.steps, count);
         if now < fewest {
             fewest = now;
@@ -87,6 +86,10 @@ pub(super) fn order(net: &mut Net, groups: &[Group]) -> usize {
         }
     }
     net.layers = best;
+    // Once, on the best order only. A round that sweeps from untangled ranks
+    // takes another path, and the best of those can have more crossings than
+    // the best of plain sweeps.
+    untangle(net, &before, &after);
     keep_out(net, groups, &best_keys)
 }
 
