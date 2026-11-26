@@ -813,6 +813,116 @@ fn a_link_from_a_node_to_itself_is_a_loop_at_the_side_of_its_box() {
     assert!(collisions.is_empty(), "{collisions:#?}");
 }
 
+// Each loop of a node had one place at the right side of its box, so two
+// loops lay on each other and their labels had one centre. The first loop
+// stays above the middle, where the links to other nodes leave, and the
+// second is its mirror under the middle. A file states one link for
+// `a -> a: one` and `a -> a: two`, with both labels, so the graph is built
+// here as another lens can give it.
+#[test]
+fn two_links_from_a_node_to_itself_draw_two_loops_apart() {
+    let (flow, picture) = loops(&["one", "two"], true);
+    let (a, paths) = (picture.nodes[0], &picture.paths);
+    let middle = a.y + a.height / 2.0;
+    for (path, above) in [(&paths[0], true), (&paths[1], false)] {
+        assert_eq!(path.len(), 4);
+        assert!(path.iter().all(|point| point.x >= a.x + a.width));
+        let inside = |point: &Point| a.y <= point.y && point.y <= a.y + a.height;
+        assert!(path.iter().all(inside), "{path:?}");
+        let side = |point: &Point| (point.y < middle) == above;
+        assert!(path.iter().all(side), "{path:?}");
+    }
+    loops_apart(&flow, &picture);
+}
+
+// Three loops: the third takes a column of its own beyond the first two.
+#[test]
+fn three_links_from_a_node_to_itself_draw_three_loops_apart() {
+    let (flow, picture) = loops(&["one", "two", "a longer third"], false);
+    loops_apart(&flow, &picture);
+}
+
+/// A node `n0` with a loop for each of `texts`, and a link to `n1` when
+/// `onward`.
+fn loops(texts: &[&str], onward: bool) -> (Flow, Layout) {
+    let mut links = vec![(0, 0); texts.len()];
+    let mut texts: Vec<Option<String>> = texts.iter().map(|&text| Some(text.into())).collect();
+    if onward {
+        links.push((0, 1));
+        texts.push(None);
+    }
+    let node = Node {
+        width: 60.0,
+        height: 36.0,
+        group: None,
+    };
+    let graph = Graph {
+        nodes: vec![node; 2],
+        groups: Vec::new(),
+        links: between_nodes(links),
+        labels: texts
+            .iter()
+            .map(|text| text.as_ref().map(|text| measure(text, STYLE)))
+            .collect(),
+    };
+    let picture = layout(&graph, None);
+    let faults = faults(&graph, &picture);
+    assert!(faults.is_empty(), "{faults:#?}");
+    (named(graph, texts), picture)
+}
+
+/// Asserts that no two loops of a picture lie on each other and that no two
+/// labels cover each other.
+fn loops_apart(flow: &Flow, picture: &Layout) {
+    let loops: Vec<usize> = (0..flow.graph.links.len())
+        .filter(|&link| flow.graph.links[link].0 == flow.graph.links[link].1)
+        .collect();
+    for (i, &first) in loops.iter().enumerate() {
+        for &second in &loops[i + 1..] {
+            let (first, second) = (&picture.paths[first], &picture.paths[second]);
+            for p in first.windows(2) {
+                for q in second.windows(2) {
+                    assert!(!lie_on((p[0], p[1]), (q[0], q[1])), "{first:?} {second:?}");
+                }
+            }
+        }
+    }
+    let labels: Vec<Rect> = loops
+        .iter()
+        .map(|&link| {
+            let centre = picture.labels[link].unwrap();
+            let size = flow.graph.labels[link].unwrap();
+            Rect {
+                x: centre.x - size.width / 2.0,
+                y: centre.y - size.height / 2.0,
+                width: size.width,
+                height: size.height,
+            }
+        })
+        .collect();
+    for (i, first) in labels.iter().enumerate() {
+        for second in &labels[i + 1..] {
+            assert!(room(first, second) >= 0.0, "{first:?} {second:?}");
+        }
+    }
+    let collisions = collisions(flow, picture, &[]);
+    assert!(collisions.is_empty(), "{collisions:#?}");
+}
+
+/// Whether two straight parts that are each level or upright share more
+/// than a point.
+fn lie_on((a, b): (Point, Point), (c, d): (Point, Point)) -> bool {
+    let span = |p: f64, q: f64| (p.min(q), p.max(q));
+    let shared = |(low, high): (f64, f64), (other_low, other_high): (f64, f64)| {
+        low.max(other_low) < high.min(other_high)
+    };
+    let same = |p: f64, q: f64| (p - q).abs() < 1e-9;
+    let level = same(a.y, b.y) && same(c.y, d.y) && same(a.y, c.y);
+    let upright = same(a.x, b.x) && same(c.x, d.x) && same(a.x, c.x);
+    (level && shared(span(a.x, b.x), span(c.x, d.x)))
+        || (upright && shared(span(a.y, b.y), span(c.y, d.y)))
+}
+
 // `x -> c` passes the ranks of `a` and `b`. It enters `G` at the left side
 // and stays inside, so it crosses the border of `G` once and the border of
 // `Inner` never.
@@ -1023,11 +1133,9 @@ fn no_generated_graph_has_a_fault() {
         assert!(faults.is_empty(), "graph {round}: {faults:#?}\n{graph:#?}");
         assert_eq!(picture, layout(&graph, None), "graph {round}");
         // A generated graph has groups that no order keeps every link out
-        // of. Two links from a node to itself draw one loop with one place
-        // for both labels: item 0169 has that.
+        // of.
         let flow = named(graph, texts);
         let mut collisions = collisions(&flow, &picture, &[Kind::LinkThroughGroup]);
-        collisions.retain(|found| !two_loops_of_one_node(found));
         crossed.extend(
             collisions
                 .extract_if(.., |found| found.contains(" crosses label "))
@@ -1076,23 +1184,6 @@ fn the_exchange_of_neighbours_does_not_add_crossings_to_a_generated_graph() {
     assert_eq!(size, (23, 37, 0));
     let crossed = crossings(&layout(&graph, None));
     assert!(crossed <= 28, "{crossed} crossings");
-}
-
-/// A collision of the labels of two links from one node to itself.
-fn two_loops_of_one_node(found: &str) -> bool {
-    let Some((first, second)) = found.split_once(" covers ") else {
-        return false;
-    };
-    match (link_names(first), link_names(second)) {
-        (Some((a, b)), Some((c, d))) => a == b && b == c && c == d,
-        _ => false,
-    }
-}
-
-/// The names of the two ends of a label as the overlap detector names it.
-fn link_names(label: &str) -> Option<(&str, &str)> {
-    let link = label.strip_prefix("label `")?.strip_suffix('`')?;
-    link.split_once(" -> ")
 }
 
 /// A graph that no file states, with a name for each node and each group, so
@@ -1432,8 +1523,7 @@ fn no_generated_graph_with_links_to_groups_has_a_fault() {
         // A generated graph has groups that no order keeps every link out
         // of, as in `no_generated_graph_has_a_fault`.
         let flow = named(graph, texts);
-        let mut collisions = collisions(&flow, &picture, &[Kind::LinkThroughGroup]);
-        collisions.retain(|found| !two_loops_of_one_node(found));
+        let collisions = collisions(&flow, &picture, &[Kind::LinkThroughGroup]);
         assert!(collisions.is_empty(), "graph {round}: {collisions:#?}");
     }
 }
