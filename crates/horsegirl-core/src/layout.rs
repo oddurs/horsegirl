@@ -62,11 +62,14 @@ pub struct Node {
 }
 
 /// A box around nodes and around other groups.
-#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+#[derive(Clone, Copy, Debug, PartialEq)]
 pub struct Group {
     /// The index of the group that holds this group. No group holds itself,
     /// directly or through other groups.
     pub parent: Option<usize>,
+    /// The width of the name of the group. The box is at least this wide
+    /// plus [`GROUP_PAD`] on each side, so the name stays inside it.
+    pub width: f64,
 }
 
 /// Where everything is. Each list has the order of its list in the [`Graph`].
@@ -471,7 +474,7 @@ fn columns(net: &Net, groups: &[Group], chains: &[Vec<usize>], gaps: &[f64]) -> 
     let mut border = vec![GROUP_PAD; groups.len()];
     let mut inner_first: Vec<usize> = (0..groups.len()).collect();
     inner_first.sort_by_key(|&g| std::cmp::Reverse(chains[g].len()));
-    for g in inner_first {
+    for &g in &inner_first {
         if let Some(parent) = groups[g].parent {
             border[parent] = f64::max(border[parent], border[g] + GROUP_PAD);
         }
@@ -486,7 +489,7 @@ fn columns(net: &Net, groups: &[Group], chains: &[Vec<usize>], gaps: &[f64]) -> 
             after[high] = f64::max(after[high], border[g]);
         }
     }
-    let width: Vec<f64> = net
+    let mut width: Vec<f64> = net
         .layers
         .iter()
         .map(|layer| {
@@ -496,6 +499,23 @@ fn columns(net: &Net, groups: &[Group], chains: &[Vec<usize>], gaps: &[f64]) -> 
                 .fold(0.0, f64::max)
         })
         .collect();
+    // A group with a name wider than its box gets the missing width in its
+    // first rank. Only the first rank grows, so a group whose name fits
+    // keeps its place. An inner group goes first: its growth can make the
+    // box of the group around it wide enough.
+    for &g in &inner_first {
+        let Some((low, high)) = net.spans[g] else {
+            continue;
+        };
+        let inside: f64 = (low..=high).map(|rank| width[rank]).sum();
+        let between: f64 = (low..high)
+            .map(|rank| gaps[rank] + before[rank + 1] + after[rank])
+            .sum();
+        let missing = groups[g].width + 2.0 * GROUP_PAD - (inside + between + 2.0 * border[g]);
+        if missing > 0.0 {
+            width[low] += missing;
+        }
+    }
     let mut left = vec![0.0; rank_count];
     let mut corridor = vec![0.0; rank_count];
     for rank in 0..rank_count {
@@ -782,7 +802,13 @@ mod tests {
                     group: Some(i % 10),
                 })
                 .collect(),
-            groups: vec![Group { parent: None }; 10],
+            groups: vec![
+                Group {
+                    parent: None,
+                    width: 0.0
+                };
+                10
+            ],
             labels: Vec::new(),
             links: (0..390).map(|_| (next(100), next(100))).collect(),
         };

@@ -15,7 +15,7 @@
 use std::fmt::Write as _;
 
 use horsegirl_core::layout::{
-    GROUP_TITLE, Graph, Group, LABEL_CLEAR, Layout, NODE_GAP, Node, RANK_GAP, layout,
+    GROUP_PAD, GROUP_TITLE, Graph, Group, LABEL_CLEAR, Layout, NODE_GAP, Node, RANK_GAP, layout,
 };
 use horsegirl_core::lens;
 use horsegirl_core::model::{Link, Model, Thing, lower};
@@ -328,6 +328,86 @@ fn the_reference_flow_places_nine_things_in_ranks_that_follow_the_links() {
 }
 
 #[test]
+fn a_group_box_is_as_wide_as_its_name_plus_the_pad_on_each_side() {
+    let name = "A group name of thirty letters";
+    assert_eq!(name.len(), 30);
+    let width = measure(name, STYLE).width;
+    let graph = Graph {
+        nodes: vec![Node {
+            width: 50.0,
+            height: 36.0,
+            group: Some(0),
+        }],
+        groups: vec![Group {
+            parent: None,
+            width,
+        }],
+        ..Graph::default()
+    };
+    let picture = layout(&graph, None);
+    let group = picture.groups[0].unwrap();
+    assert!(
+        group.width >= width + 2.0 * GROUP_PAD,
+        "the box is {} wide, the name {width}",
+        group.width
+    );
+    assert!(holds(&group, &picture.nodes[0]));
+}
+
+#[test]
+fn a_group_whose_name_fits_keeps_its_position() {
+    let graph = |width: f64| Graph {
+        nodes: vec![
+            Node {
+                width: 120.0,
+                height: 36.0,
+                group: Some(0),
+            },
+            Node {
+                width: 120.0,
+                height: 36.0,
+                group: None,
+            },
+        ],
+        groups: vec![Group {
+            parent: None,
+            width,
+        }],
+        links: vec![(0, 1)],
+        ..Graph::default()
+    };
+    let without = layout(&graph(0.0), None);
+    let with = layout(&graph(60.0), None);
+    assert_eq!(without, with);
+}
+
+#[test]
+fn a_wide_name_of_an_inner_group_widens_the_group_around_it() {
+    let graph = Graph {
+        nodes: vec![Node {
+            width: 50.0,
+            height: 36.0,
+            group: Some(1),
+        }],
+        groups: vec![
+            Group {
+                parent: None,
+                width: 10.0,
+            },
+            Group {
+                parent: Some(0),
+                width: 300.0,
+            },
+        ],
+        ..Graph::default()
+    };
+    let picture = layout(&graph, None);
+    let (outer, inner) = (picture.groups[0].unwrap(), picture.groups[1].unwrap());
+    assert!(inner.width >= 300.0 + 2.0 * GROUP_PAD);
+    assert!(holds(&outer, &inner));
+}
+
+#[test]
 fn no_two_boxes_are_closer_than_the_node_gap_on_any_corpus_diagram() {
     let mut things = 0;
     for (name, source) in DIAGRAMS {
@@ -457,7 +537,10 @@ fn a_link_beside_a_group_stays_on_one_side_of_it() {
     };
     let graph = Graph {
         nodes: vec![node(None), node(Some(0)), node(Some(0)), node(None)],
-        groups: vec![Group { parent: None }],
+        groups: vec![Group {
+            parent: None,
+            width: 0.0,
+        }],
         links: vec![(3, 0), (0, 1)],
         labels: Vec::new(),
     };
@@ -482,7 +565,10 @@ fn every_link_beside_a_group_takes_one_side_of_it() {
     let groups = [None, None, Some(0), None, None, Some(0)];
     let graph = Graph {
         nodes: groups.map(node).to_vec(),
-        groups: vec![Group { parent: None }],
+        groups: vec![Group {
+            parent: None,
+            width: 0.0,
+        }],
         links: vec![(1, 3), (4, 3), (4, 5), (4, 0)],
         labels: Vec::new(),
     };
@@ -512,7 +598,10 @@ fn no_link_passes_through_the_only_group_of_a_generated_graph() {
             .collect();
         let graph = Graph {
             nodes,
-            groups: vec![Group { parent: None }],
+            groups: vec![Group {
+                parent: None,
+                width: 0.0,
+            }],
             labels: Vec::new(),
             links,
         };
@@ -562,6 +651,7 @@ fn no_link_passes_through_a_chain_of_groups(seed: u32, depth: usize, most: usize
             groups: (0..depth)
                 .map(|g| Group {
                     parent: g.checked_sub(1),
+                    width: 0.0,
                 })
                 .collect(),
             labels: Vec::new(),
@@ -769,7 +859,13 @@ fn a_dense_graph_has_no_fault_when_the_pass_search_stops() {
         .collect();
     let graph = Graph {
         nodes,
-        groups: vec![Group { parent: None }; 10],
+        groups: vec![
+            Group {
+                parent: None,
+                width: 0.0
+            };
+            10
+        ],
         labels: Vec::new(),
         links: (0..390).map(|_| (next(100), next(100))).collect(),
     };
@@ -799,7 +895,13 @@ fn a_move_that_changes_no_rank_counts_toward_the_limit() {
     links.extend((0..60).map(|_| (line + next(40), line + next(40))));
     let graph = Graph {
         nodes,
-        groups: vec![Group { parent: None }; line / 2 + 8],
+        groups: vec![
+            Group {
+                parent: None,
+                width: 0.0
+            };
+            line / 2 + 8
+        ],
         labels: Vec::new(),
         links,
     };
@@ -817,6 +919,7 @@ fn no_generated_graph_has_a_fault() {
         let groups: Vec<Group> = (0..next(6))
             .map(|g| Group {
                 parent: (g > 0 && next(2) == 0).then(|| next(g)),
+                width: 40.0 * f64::from(u8::try_from(next(8)).unwrap()),
             })
             .collect();
         let count = 1 + next(24);
@@ -868,6 +971,7 @@ fn the_exchange_of_neighbours_does_not_add_crossings_to_a_generated_graph() {
         let groups: Vec<Group> = (0..next(6))
             .map(|g| Group {
                 parent: (g > 0 && next(2) == 0).then(|| next(g)),
+                width: 0.0,
             })
             .collect();
         let count = 1 + next(24);
@@ -1049,7 +1153,16 @@ fn a_group_that_holds_no_node_has_no_box() {
     };
     let graph = Graph {
         nodes: vec![node],
-        groups: vec![Group { parent: Some(1) }, Group { parent: None }],
+        groups: vec![
+            Group {
+                parent: Some(1),
+                width: 0.0,
+            },
+            Group {
+                parent: None,
+                width: 0.0,
+            },
+        ],
         links: vec![(0, 0)],
         labels: Vec::new(),
     };
