@@ -3,12 +3,12 @@ id: 161
 uid: 15975225-8b07-4d53-b401-bda5a35117f6
 title: A ? written against the name marks a guess, or says why not
 type: bug
-status: doing
+status: done
 milestone: v0.1
 assignee: Oddur Sigurdsson
-claimed: 2026-11-26
 created: 2026-11-25
 updated: 2026-11-26
+closed_at: 2026-11-26
 priority: p2
 risk: low
 surface: diagnostics

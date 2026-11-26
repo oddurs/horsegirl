@@ -12,7 +12,7 @@ named for gaits: Walk, Trot, Canter, Gallop.
 
 ## v0.1 — Walk
 
-`··········` 0% · 0 of 11 done · due 2027-01-31
+`··········` 0% · 0 of 10 done · due 2027-01-31
 
 An agent writes a horsegirl file, checks it, applies the fixes, and draws a flow diagram as SVG, from the command line or over MCP.
 
@@ -26,7 +26,6 @@ An agent writes a horsegirl file, checks it, applies the fixes, and draws a flow
 - [ ] [`0042`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0042-release-binaries-with-checksums-and-an-install-script.md) Release binaries with checksums and an install script <sup>chore · p0 · release</sup>
 - [ ] [`0053`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0053-merge-passing-patch-and-minor-dependency-updates-automatically.md) Merge passing patch and minor dependency updates automatically <sup>chore · p2 · workflow</sup>
 - [ ] [`BUG-158`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/BUG-158-a-label-keeps-the-white-space-that-its-measured-width-counts.md) A label keeps the white space that its measured width counts <sup>bug · p1 · render</sup>
-- [ ] [`BUG-161`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/BUG-161-a-written-against-the-name-marks-a-guess-or-says-why-not.md) A ? written against the name marks a guess, or says why not <sup>bug · p2 · language</sup>
 
 ## later — Later
 
