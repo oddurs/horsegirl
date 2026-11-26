@@ -88,10 +88,11 @@ fn arrow(rest: &str) -> Option<usize> {
     (dashes > 0 && rest[dashes..].starts_with('>')).then_some(dashes + 1)
 }
 
-/// Whether only spaces are left on the line, or a `}` closes the block.
+/// Whether only spaces are left on the line, or a `}` closes the block. A lone
+/// carriage return, U+2028 and U+0085 are spaces. The `\r` of `\r\n` is one too.
 fn ends_line(rest: &str) -> bool {
-    let rest = rest.trim_start_matches([' ', '\t']);
-    rest.is_empty() || rest.starts_with(['\n', '}']) || rest.starts_with("\r\n")
+    let rest = rest.trim_start_matches(|c| is_space(c) && c != '\n');
+    rest.is_empty() || rest.starts_with(['\n', '}'])
 }
 
 /// The length of the line break at the start of `rest`, if one is there.
