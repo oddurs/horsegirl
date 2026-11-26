@@ -562,8 +562,9 @@ fn the_spike_diagrams_cross_no_more_than_the_reference_allows() {
 
 // The ten diagrams of the spike have no label, so each link gets one here.
 // A box is the box of a thing or of a group: no label lies on the box of a
-// thing, across the border of a group or on another label, and no label is
-// inside a group that holds neither end of its link. The two links of `10-platform` that
+// thing, across the border of a group or on another label, no link crosses
+// the label of another link, and no label is inside a group that holds
+// neither end of its link. The two links of `10-platform` that
 // pass through `Shopping` have their labels outside it.
 #[test]
 fn each_link_label_sits_on_its_path_and_overlaps_no_box() {
@@ -864,6 +865,22 @@ fn two_labels_of_one_corridor_do_not_cover_each_other() {
 }
 
 // The room for labels must not change a picture that has no label.
+// `API gateway -> Payments` and `Orders -> Postgres` crossed the labels
+// `create` and `charge` of the reference file. A label now takes a place
+// that no line of another link crosses.
+#[test]
+fn no_link_crosses_the_label_of_another_link_in_the_reference_flow() {
+    let flow = flow(DIAGRAMS[0].1);
+    let picture = layout(&flow.graph, None);
+    let scene = scene(&flow, &picture);
+    let crossing: Vec<String> = overlaps(&scene)
+        .iter()
+        .filter(|overlap| overlap.kind == Kind::LinkOnLabel)
+        .map(|overlap| overlap.describe(&scene))
+        .collect();
+    assert!(crossing.is_empty(), "{crossing:#?}");
+}
+
 #[test]
 fn a_link_without_a_label_keeps_the_rank_gap() {
     for source in ["a -> b\nb -> c\na -> c\n", "a -> b: to b\nb -> c\n"] {
@@ -972,6 +989,7 @@ fn a_move_that_changes_no_rank_counts_toward_the_limit() {
 #[test]
 fn no_generated_graph_has_a_fault() {
     let mut next = sequence(7);
+    let mut crossed = Vec::new();
     for round in 0..300 {
         let groups: Vec<Group> = (0..next(6))
             .map(|g| Group {
@@ -1010,8 +1028,16 @@ fn no_generated_graph_has_a_fault() {
         let flow = named(graph, texts);
         let mut collisions = collisions(&flow, &picture, &[Kind::LinkThroughGroup]);
         collisions.retain(|found| !two_loops_of_one_node(found));
+        crossed.extend(
+            collisions
+                .extract_if(.., |found| found.contains(" crosses label "))
+                .map(|found| format!("graph {round}: {found}")),
+        );
         assert!(collisions.is_empty(), "graph {round}: {collisions:#?}");
     }
+    // In graph 17 a line runs 7 px from the label through the whole corridor,
+    // and the band of a group name is above it: item 0176 has that.
+    assert!(crossed.len() <= 1, "{crossed:#?}");
 }
 
 // From the second review of the exchange of neighbours. The order phase

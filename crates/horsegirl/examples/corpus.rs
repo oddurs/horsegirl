@@ -36,7 +36,7 @@ const BASELINE: usize = 224;
 /// the command line draws.
 const STYLE: Style = Style { size: 14.0 };
 
-const KINDS: [Kind; 9] = [
+const KINDS: [Kind; 10] = [
     Kind::Boxes,
     Kind::LinkOnThing,
     Kind::LinkThroughGroup,
@@ -46,6 +46,7 @@ const KINDS: [Kind; 9] = [
     Kind::LabelOnGroup,
     Kind::LabelOffLink,
     Kind::Labels,
+    Kind::LinkOnLabel,
 ];
 
 /// What one file gives.

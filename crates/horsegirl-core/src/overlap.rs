@@ -35,6 +35,10 @@ pub enum Kind {
     LabelOffLink,
     /// Two labels overlap.
     Labels,
+    /// A link crosses the label of another link. A part of the link that
+    /// lies on the link of the label is no collision: two links from one
+    /// thing share the line that leaves it.
+    LinkOnLabel,
 }
 
 /// One collision in a scene.
@@ -58,7 +62,7 @@ impl Overlap {
         let [first, second] = self.shapes.map(name);
         match self.kind {
             Kind::Boxes => format!("{first} overlaps {second}"),
-            Kind::LinkOnThing => format!("{first} crosses {second}"),
+            Kind::LinkOnThing | Kind::LinkOnLabel => format!("{first} crosses {second}"),
             Kind::LinkThroughGroup => format!("{first} passes through {second}"),
             Kind::LinkOnGroup => format!("{first} crosses the border of {second} too often"),
             Kind::Links => format!("{first} lies on {second}"),
@@ -167,7 +171,46 @@ pub fn overlaps(scene: &Scene) -> Vec<Overlap> {
             }
         }
     }
+    for (i, j) in links_on_labels(&links, &labels) {
+        report(Kind::LinkOnLabel, i, j);
+    }
     found
+}
+
+/// Each link and label of another link that the link crosses, as two
+/// indices in [`Scene::shapes`].
+fn links_on_labels(links: &[(usize, &Shape)], labels: &[(usize, &Shape)]) -> Vec<(usize, usize)> {
+    let mut found = Vec::new();
+    for &(i, link) in links {
+        for &(j, label) in labels.iter().filter(|(_, label)| label.of.len() == 2) {
+            let own: Vec<(Point, Point)> = links
+                .iter()
+                .filter(|(_, other)| other.of == label.of)
+                .flat_map(|(_, other)| parts(&other.points))
+                .collect();
+            if label.of != link.of && across_label(&link.points, &label.rect, &own) {
+                found.push((i, j));
+            }
+        }
+    }
+    found
+}
+
+/// A part of the path through `points` is inside the box of a label and does
+/// not lie on `own`, the parts of the link of the label.
+fn across_label(points: &[Point], label: &Rect, own: &[(Point, Point)]) -> bool {
+    parts(points).any(|(a, b)| {
+        inside(a, b, label).is_some_and(|(first, last)| {
+            let at = |t: f64| Point {
+                x: a.x + t * (b.x - a.x),
+                y: a.y + t * (b.y - a.y),
+            };
+            let (p, q) = (at(first), at(last));
+            let on =
+                |&(c, d): &(Point, Point)| distance(p, c, d) <= SLACK && distance(q, c, d) <= SLACK;
+            !own.iter().any(on)
+        })
+    })
 }
 
 /// Two boxes share room on both axes.

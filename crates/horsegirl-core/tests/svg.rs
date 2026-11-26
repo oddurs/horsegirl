@@ -213,9 +213,11 @@ fn an_empty_label_has_no_text_length() {
 }
 
 // The layout puts a link label on its own line. Drawn through the text, the
-// line reads as a strike-through (BUG-152).
+// line reads as a strike-through (BUG-152). A line of another link must not
+// pass through a label either: `API gateway -> Payments` arrives on the line
+// that holds `charge`, and it stops at the label too (BUG-170).
 #[test]
-fn no_link_line_is_drawn_across_the_text_of_its_own_label() {
+fn no_link_line_is_drawn_across_the_text_of_a_link_label() {
     let scene = scene(CHECKOUT);
     let svg = draw(&scene, "checkout");
     let paths: Vec<Vec<Vec<(f64, f64)>>> = svg
@@ -229,7 +231,12 @@ fn no_link_line_is_drawn_across_the_text_of_its_own_label() {
         .filter(|s| s.role == Role::Link)
         .collect();
     assert_eq!(paths.len(), links.len());
-    let mut labels = 0;
+    let labels: Vec<_> = scene
+        .shapes
+        .iter()
+        .filter(|s| s.role == Role::Label && s.of.len() == 2)
+        .collect();
+    assert_eq!(labels.len(), 7);
     for (link, path) in links.iter().zip(&paths) {
         // The cut keeps both ends, so the arrow head stays on the box.
         let first = link.points[0];
@@ -246,12 +253,7 @@ fn no_link_line_is_drawn_across_the_text_of_its_own_label() {
             "{:?}",
             link.of
         );
-        let own = scene
-            .shapes
-            .iter()
-            .filter(|s| s.role == Role::Label && s.of == link.of);
-        for label in own {
-            labels += 1;
+        for label in &labels {
             let r = label.rect;
             for run in path {
                 for pair in run.windows(2) {
@@ -262,14 +264,13 @@ fn no_link_line_is_drawn_across_the_text_of_its_own_label() {
                         && ay.max(by) > r.y;
                     assert!(
                         !across,
-                        "link {:?} crosses its label {:?}",
+                        "link {:?} crosses the label {:?}",
                         link.of, label.text
                     );
                 }
             }
         }
     }
-    assert_eq!(labels, 7);
 }
 
 /// The runs of points of a link path as the backend writes it: `M` starts a

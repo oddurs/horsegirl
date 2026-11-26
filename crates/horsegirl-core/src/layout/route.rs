@@ -14,17 +14,19 @@
 //! first trunk gets the track nearer to its item, and it has turned off the
 //! line before the second trunk joins.
 //!
-//! A label is centred on its path, and two labels of one corridor must not
-//! cover each other. A label first takes the middle of its upright line, or
-//! the middle of the corridor when its step is level. When that place covers
-//! a label of the corridor, the label moves along its upright line, or onto
-//! one of the two level lines of its step, to the nearest place that covers
-//! no label. A place on a level line can be past the end of the corridor:
-//! the corridor then grows to hold the label.
+//! A label is centred on its path. Two labels of one corridor must not cover
+//! each other, and a line of another step must not cross a label. A label
+//! first takes the middle of its upright line, or the middle of the corridor
+//! when its step is level. When a label or a line is in the way there, the
+//! label moves along its upright line, or onto one of the two level lines of
+//! its step, to the nearest place that covers no label and that no line
+//! crosses. The place also keeps out of the name band and off the borders of
+//! the groups that span the corridor. A place on a level line can be past
+//! the end of the corridor: the corridor then grows to hold the label.
 
 use std::collections::BTreeMap;
 
-use super::{BEND_GAP, Kind, Net, RANK_GAP, real};
+use super::{BEND_GAP, Kind, LABEL_CLEAR, Net, RANK_GAP, real};
 use crate::scene::Point;
 use crate::text::Size;
 
@@ -34,6 +36,9 @@ const CLOSE: f64 = 4.0;
 pub(super) const LABEL_PAD: f64 = 6.0;
 /// The least room between two labels of one corridor.
 const LABEL_SPACE: f64 = 4.0;
+/// The least room between a label and a line of another link. The SVG
+/// backend stops the line of the label's own link this far from it.
+const LINE_SPACE: f64 = 3.0;
 
 /// Where the steps of [`Net::steps`] turn. Each list has one entry for each
 /// step.
@@ -62,9 +67,26 @@ struct Trunk {
     bottom: f64,
 }
 
+/// The heights that a label keeps out of, besides lines and other labels.
+/// Each is a top and a bottom.
+#[derive(Clone, Debug, Default)]
+pub(super) struct Bands {
+    /// Each border of a group that spans the corridor. The top border is the
+    /// band under it that holds the name of the group.
+    pub borders: Vec<(f64, f64)>,
+    /// Each group that spans the corridor and holds neither end of the link.
+    /// A label there reads as a label of that group.
+    pub others: Vec<(f64, f64)>,
+}
+
 /// Routes every step. `labels` gives, for each step, the size of the label
-/// that sits on it.
-pub(super) fn route(net: &Net, centres: &[f64], labels: &[Option<Size>]) -> Routes {
+/// that sits on it, and `bands` the heights that the label keeps out of.
+pub(super) fn route(
+    net: &Net,
+    centres: &[f64],
+    labels: &[Option<Size>],
+    bands: &[Bands],
+) -> Routes {
     let count = net.steps.len();
     let mut routes = Routes {
         gaps: vec![RANK_GAP; net.layers.len()],
@@ -115,15 +137,15 @@ pub(super) fn route(net: &Net, centres: &[f64], labels: &[Option<Size>]) -> Rout
         };
         let mut gap = RANK_GAP.max(real(used + 1) * BEND_GAP).max(label_room);
         let mut placed: Vec<(Point, Size)> = Vec::new();
+        let at = |step: usize| (routes.from[step], routes.into[step], routes.track[step]);
         for &step in steps {
             let Some(size) = labels[step] else { continue };
-            let track = routes.track[step];
-            let centre = place_label(
-                (routes.from[step], routes.into[step], track),
-                size,
-                &placed,
-                gap,
-            );
+            let others: Vec<Line> = steps
+                .iter()
+                .filter(|&&other| other != step)
+                .flat_map(|&other| lines(at(other)))
+                .collect();
+            let centre = place_label(at(step), size, (&placed, &others, &bands[step]), gap);
             gap = gap.max(2.0 * (centre.x.abs() + size.width / 2.0 + LABEL_PAD));
             placed.push((centre, size));
             routes.labels[step] = Some(centre);
@@ -133,25 +155,118 @@ pub(super) fn route(net: &Net, centres: &[f64], labels: &[Option<Size>]) -> Rout
     routes
 }
 
+/// A straight part of a path in one corridor. A level part is at the height
+/// `at`, from `low` to `high` across the corridor. An upright part is at the
+/// distance `at` from the middle of the corridor, from `low` to `high` down
+/// the page. A level part that reaches an end of the corridor goes on to an
+/// item, so its end there is infinite.
+#[derive(Clone, Copy, Debug)]
+struct Line {
+    level: bool,
+    at: f64,
+    low: f64,
+    high: f64,
+}
+
+impl Line {
+    /// The line comes nearer than `reach` to a label at `centre`. `reach`
+    /// is half the width and half the height of the label, each with the
+    /// room it keeps from a line.
+    fn crosses(&self, centre: Point, reach: (f64, f64)) -> bool {
+        let (across, along, reach_across, reach_along) = if self.level {
+            (centre.y, centre.x, reach.1, reach.0)
+        } else {
+            (centre.x, centre.y, reach.0, reach.1)
+        };
+        (self.at - across).abs() < reach_across
+            && self.low < along + reach_along
+            && along - reach_along < self.high
+    }
+}
+
+/// The parts of the path of a step in its corridor. `step` is the height
+/// where the step leaves, the height where it arrives and its track.
+fn lines((from, into, track): (f64, f64, Option<f64>)) -> Vec<Line> {
+    let level = |at: f64, low: f64, high: f64| Line {
+        level: true,
+        at,
+        low,
+        high,
+    };
+    match track {
+        Some(x) => vec![
+            level(from, f64::NEG_INFINITY, x),
+            Line {
+                level: false,
+                at: x,
+                low: from.min(into),
+                high: from.max(into),
+            },
+            level(into, x, f64::INFINITY),
+        ],
+        None => vec![level(from, f64::NEG_INFINITY, f64::INFINITY)],
+    }
+}
+
+/// The parts of `others` that do not lie on `own`. Two links from one item
+/// share the line that leaves it, and a label on that line is on its own
+/// link, so the shared part is no obstacle to it.
+fn apart(others: &[Line], own: &[Line]) -> Vec<Line> {
+    let mut pieces: Vec<Line> = others.to_vec();
+    for mine in own {
+        pieces = pieces
+            .into_iter()
+            .flat_map(|line| {
+                let on = line.level == mine.level && line.at - mine.at == 0.0;
+                if !on || mine.high <= line.low || line.high <= mine.low {
+                    return vec![line];
+                }
+                let before = Line {
+                    high: mine.low,
+                    ..line
+                };
+                let after = Line {
+                    low: mine.high,
+                    ..line
+                };
+                [before, after]
+                    .into_iter()
+                    .filter(|piece| piece.low < piece.high)
+                    .collect()
+            })
+            .collect();
+    }
+    pieces
+}
+
 /// The centre of a label that covers none of the labels `placed` in its
-/// corridor. `step` is the height where the step leaves, the height where it
-/// arrives and its track. The x of each centre is a distance from the middle
-/// of the corridor, and the corridor is `gap` wide.
+/// corridor and that no line of another step crosses. `step` is the height
+/// where the step leaves, the height where it arrives and its track,
+/// `others` holds the lines of the other steps of the corridor, and `bands`
+/// the heights of the borders and of the groups that the label keeps out of.
+/// The x of each centre is a distance from the middle of the corridor, and
+/// the corridor is `gap` wide.
 ///
 /// The first choice is the middle of the upright line, or of the corridor
 /// for a level step. Then each place where the label stands beside a placed
-/// label: on the upright line above or under it, or on a level line to its
-/// left or right. A place that keeps the corridor as wide as it is comes
-/// before one that widens it, and then the nearer place comes first. A place
-/// on a level line right of every placed label always covers none, so a
-/// place is always found.
+/// label, beside a line or beside a band: on the upright line above or
+/// under it, or on a level line to its left or right. A place across no
+/// border comes first, then a place outside every other group, then a place
+/// that no line crosses, then a place that keeps the corridor as wide as it
+/// is, and then the nearer place. A place on a level line right of every
+/// placed label always covers none, so a place is always found. Some steps
+/// have no place that no line crosses: a line of another step can run close
+/// beside the whole path. The label then takes the place that the fewest
+/// lines cross.
 fn place_label(
     step: (f64, f64, Option<f64>),
     size: Size,
-    placed: &[(Point, Size)],
+    (placed, others, bands): (&[(Point, Size)], &[Line], &Bands),
     gap: f64,
 ) -> Point {
     let (from, into, track) = step;
+    let own = lines(step);
+    let others = apart(others, &own);
     let first = Point {
         x: track.unwrap_or(0.0),
         y: f64::midpoint(from, into),
@@ -163,22 +278,41 @@ fn place_label(
             (at.x - other.x).abs() >= wide || (at.y - other.y).abs() >= high
         })
     };
-    if clear(&first) {
+    let (half_wide, half_high) = (
+        size.width / 2.0 + LINE_SPACE,
+        size.height / 2.0 + LINE_SPACE,
+    );
+    let crossed = |at: &Point| {
+        let crosses = |line: &&Line| line.crosses(*at, (half_wide, half_high));
+        others.iter().filter(crosses).count()
+    };
+    let half = size.height / 2.0;
+    let within = |bands: &[(f64, f64)], at: &Point| {
+        let mut bands = bands.iter();
+        bands.any(|&(top, bottom)| top - half < at.y && at.y < bottom + half)
+    };
+    let worse = |at: &Point| {
+        (
+            within(&bands.borders, at),
+            within(&bands.others, at),
+            crossed(at),
+        )
+    };
+    if clear(&first) && worse(&first) == (false, false, 0) {
         return first;
     }
-    let mut spots = Vec::new();
+    let mut spots = vec![first];
     // The upright line, from the height where the step leaves to the height
     // where it arrives.
     if let Some(x) = track {
         let (top, bottom) = (from.min(into), from.max(into));
-        for (other, other_size) in placed {
-            let reach = f64::midpoint(size.height, other_size.height) + LABEL_SPACE;
-            for y in [other.y - reach, other.y + reach] {
-                if top <= y && y <= bottom {
-                    spots.push(Point { x, y });
-                }
-            }
-        }
+        spots.extend(
+            [top, bottom]
+                .into_iter()
+                .chain(heights(size, placed, &others, bands))
+                .filter(|y| top <= *y && *y <= bottom)
+                .map(|y| Point { x, y }),
+        );
     }
     // The level line at the height where the step leaves runs from the left
     // end of the corridor to the track, and the line at the height where it
@@ -191,17 +325,10 @@ fn place_label(
             (from, f64::NEG_INFINITY, f64::INFINITY),
         ),
     };
-    let rightmost = placed
-        .iter()
-        .map(|(other, other_size)| other.x + other_size.width / 2.0)
-        .fold(f64::NEG_INFINITY, f64::max);
-    let mut xs = vec![rightmost + size.width / 2.0 + LABEL_SPACE];
-    for (other, other_size) in placed {
-        let reach = f64::midpoint(size.width, other_size.width) + LABEL_SPACE;
-        xs.extend([other.x - reach, other.x + reach]);
-    }
+    let mut xs = places_across(size, placed, &others);
+    xs.push(first.x);
     for (y, low, high) in [left, right] {
-        for &x in &xs {
+        for &x in xs.iter().filter(|x| x.is_finite()) {
             spots.push(Point {
                 x: x.clamp(low, high),
                 y,
@@ -211,16 +338,76 @@ fn place_label(
     let cost = |at: &Point| {
         let grows = 2.0 * (at.x.abs() + size.width / 2.0 + LABEL_PAD) - gap;
         let far = (at.x - first.x).abs() + (at.y - first.y).abs();
-        (grows.max(0.0), far)
+        (worse(at), grows.max(0.0), far)
     };
     spots
         .into_iter()
         .filter(clear)
         .min_by(|a, b| {
-            let ((grow_a, far_a), (grow_b, far_b)) = (cost(a), cost(b));
-            grow_a.total_cmp(&grow_b).then(far_a.total_cmp(&far_b))
+            let ((worse_a, grow_a, far_a), (worse_b, grow_b, far_b)) = (cost(a), cost(b));
+            worse_a
+                .cmp(&worse_b)
+                .then(grow_a.total_cmp(&grow_b))
+                .then(far_a.total_cmp(&far_b))
         })
         .expect("a place right of every label covers none")
+}
+
+/// The heights where a label of `size` stands just above or under a placed
+/// label, a band or a line.
+fn heights(size: Size, placed: &[(Point, Size)], others: &[Line], bands: &Bands) -> Vec<f64> {
+    let half = size.height / 2.0;
+    let mut ys = Vec::new();
+    for (other, other_size) in placed {
+        let reach = f64::midpoint(size.height, other_size.height) + LABEL_SPACE;
+        ys.extend([other.y - reach, other.y + reach]);
+    }
+    for &(top, bottom) in bands.borders.iter().chain(&bands.others) {
+        ys.extend([top - half - LABEL_CLEAR, bottom + half + LABEL_CLEAR]);
+    }
+    let reach = half + LINE_SPACE;
+    for line in others {
+        let (top, bottom) = if line.level {
+            (line.at, line.at)
+        } else {
+            (line.low, line.high)
+        };
+        ys.extend([top - reach, bottom + reach]);
+    }
+    ys
+}
+
+/// The distances from the middle of the corridor where a label of `size`
+/// stands just left or right of a placed label or of a line that ends in
+/// the corridor, and past all of them on each side.
+fn places_across(size: Size, placed: &[(Point, Size)], others: &[Line]) -> Vec<f64> {
+    let ends = others.iter().flat_map(|line| {
+        if line.level {
+            [line.low, line.high]
+        } else {
+            [line.at, line.at]
+        }
+    });
+    let ends: Vec<f64> = ends.filter(|end| end.is_finite()).collect();
+    let half = size.width / 2.0;
+    let rightmost = placed
+        .iter()
+        .map(|(other, other_size)| other.x + other_size.width / 2.0 + LABEL_SPACE)
+        .chain(ends.iter().map(|end| end + LINE_SPACE))
+        .fold(f64::NEG_INFINITY, f64::max);
+    let leftmost = placed
+        .iter()
+        .map(|(other, other_size)| other.x - other_size.width / 2.0 - LABEL_SPACE)
+        .chain(ends.iter().map(|end| end - LINE_SPACE))
+        .fold(f64::INFINITY, f64::min);
+    let mut xs = vec![rightmost + half, leftmost - half];
+    for (other, other_size) in placed {
+        let reach = f64::midpoint(size.width, other_size.width) + LABEL_SPACE;
+        xs.extend([other.x - reach, other.x + reach]);
+    }
+    let reach = half + LINE_SPACE;
+    xs.extend(ends.iter().flat_map(|end| [end - reach, end + reach]));
+    xs
 }
 
 /// The trunks of one corridor, in the order of their items.

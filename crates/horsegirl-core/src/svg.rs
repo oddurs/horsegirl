@@ -132,11 +132,15 @@ fn element(
         // group that it sits on. So the line stops at the label instead, and
         // the label stays where the layout put it. A label of another link
         // between the same two things cuts the line too: both name the pair.
+        // So does a label on a line that this link shares with the link of
+        // the label, such as the line that two links from one thing leave
+        // on: that line stops at the label in both links, or it would pass
+        // through the text.
         Role::Link => {
             let holes: Vec<Rect> = scene
                 .shapes
                 .iter()
-                .filter(|s| s.role == Role::Label && s.of == shape.of)
+                .filter(|s| s.role == Role::Label && (s.of == shape.of || shares(scene, shape, s)))
                 .map(|s| pad(s.rect))
                 .collect();
             let mut d = String::new();
@@ -186,6 +190,43 @@ fn element(
     }
 }
 
+/// Every part of `link` that comes near `label` lies on the link that the
+/// label names.
+fn shares(scene: &Scene, link: &Shape, label: &Shape) -> bool {
+    let hole = pad(label.rect);
+    let parts = |points: &[Point]| -> Vec<(Point, Point)> {
+        points.windows(2).map(|pair| (pair[0], pair[1])).collect()
+    };
+    let own: Vec<(Point, Point)> = scene
+        .shapes
+        .iter()
+        .filter(|s| s.role == Role::Link && s.of == label.of)
+        .flat_map(|s| parts(&s.points))
+        .collect();
+    let near: Vec<(Point, Point)> = parts(&link.points)
+        .into_iter()
+        .filter_map(|(a, b)| {
+            let (t0, t1) = inside(a, b, hole)?;
+            let at = |t: f64| Point {
+                x: a.x + (b.x - a.x) * t,
+                y: a.y + (b.y - a.y) * t,
+            };
+            Some((at(t0), at(t1)))
+        })
+        .collect();
+    // Two links that share a line have the same numbers on it, and each part
+    // is level or upright, so a point on a part is exactly on it.
+    let on = |p: Point, (c, d): (Point, Point)| {
+        let within = |v: f64, low: f64, high: f64| low.min(high) <= v && v <= low.max(high);
+        let cross = (d.x - c.x) * (p.y - c.y) - (d.y - c.y) * (p.x - c.x);
+        cross == 0.0 && within(p.x, c.x, d.x) && within(p.y, c.y, d.y)
+    };
+    !near.is_empty()
+        && near
+            .iter()
+            .all(|&(p, q)| own.iter().any(|&part| on(p, part) && on(q, part)))
+}
+
 fn pad(r: Rect) -> Rect {
     Rect {
         x: r.x - LABEL_PAD,
@@ -233,7 +274,9 @@ fn cut(points: &[Point], holes: &[Rect]) -> Vec<Vec<Point>> {
 }
 
 /// The part of the segment from `a` to `b` inside `r`, as the range of `t`
-/// in `a + (b - a) * t`. `None` when the segment misses `r`.
+/// in `a + (b - a) * t`. `None` when the segment misses `r` or runs along
+/// its border: the layout keeps a line of another link that far from a
+/// label, and that line stays whole.
 fn inside(a: Point, b: Point, r: Rect) -> Option<(f64, f64)> {
     let (dx, dy) = (b.x - a.x, b.y - a.y);
     let (mut t0, mut t1) = (0.0_f64, 1.0_f64);
@@ -244,7 +287,7 @@ fn inside(a: Point, b: Point, r: Rect) -> Option<(f64, f64)> {
         (dy, r.y + r.height - a.y),
     ] {
         if p.abs() < f64::EPSILON {
-            if q < 0.0 {
+            if q <= 0.0 {
                 return None;
             }
         } else if p < 0.0 {

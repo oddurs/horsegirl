@@ -223,11 +223,11 @@ fn the_label_of_a_link_has_its_centre_on_the_link() {
         found(vec![line.clone(), off.clone()]),
         [(Kind::LabelOffLink, 1, 0)]
     );
-    // A link the other way round is another link.
+    // A link the other way round is another link, so it crosses the label.
     let back = link("b", "a", &[(132.0, 0.0), (132.0, 100.0)]);
     assert_eq!(
         found(vec![line, back, off.clone()]),
-        [(Kind::LabelOffLink, 2, 0)]
+        [(Kind::LabelOffLink, 2, 0), (Kind::LinkOnLabel, 1, 2)]
     );
     assert_eq!(found(vec![off]), [(Kind::LabelOffLink, 0, 0)]);
 }
@@ -239,6 +239,33 @@ fn two_labels_that_share_room_overlap() {
     assert_eq!(found(vec![first.clone(), second]), [(Kind::Labels, 0, 1)]);
     let beside = label(&["b"], (40.0, 0.0, 40.0, 16.0));
     assert_eq!(found(vec![first, beside]), []);
+}
+
+#[test]
+fn a_link_across_the_label_of_another_link_is_found() {
+    let own = link("a", "b", &[(60.0, 18.0), (130.0, 18.0), (130.0, 80.0)]);
+    let text = label(&["a", "b"], (110.0, 40.0, 40.0, 16.0));
+    let across = link("c", "d", &[(100.0, 48.0), (160.0, 48.0)]);
+    assert_eq!(
+        found(vec![own.clone(), text.clone(), across]),
+        [(Kind::LinkOnLabel, 2, 1)]
+    );
+    // A link that shares the upright line of the label crosses nothing, but
+    // the line where it turns off inside the label does.
+    let shared = link("a", "c", &[(60.0, 18.0), (130.0, 18.0), (130.0, 90.0)]);
+    assert_eq!(found(vec![own.clone(), text.clone(), shared]), []);
+    let turns = link(
+        "a",
+        "c",
+        &[(60.0, 18.0), (130.0, 18.0), (130.0, 50.0), (200.0, 50.0)],
+    );
+    assert_eq!(
+        found(vec![own.clone(), text.clone(), turns]),
+        [(Kind::LinkOnLabel, 2, 1)]
+    );
+    // A line along the edge of the label is not across it.
+    let edge = link("c", "d", &[(100.0, 40.0), (160.0, 40.0)]);
+    assert_eq!(found(vec![own, text, edge]), []);
 }
 
 #[test]
