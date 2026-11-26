@@ -59,3 +59,7 @@ Fix round 3: the review returned no verdict, so no finding was open. HORSEGIRL_F
 ## 2026-11-26
 
 Fix round (review of PR #72): a bare label holds a double quote, so the E0004 label message no longer says that a label cannot hold one. horsegirl check printed: 'A -> B: x "y"' and 'A -> C: "p" q' 0 errors; 'A -> D: say "hi" {x}' E0004 'holds `{`, `}` or `@`, so the label needs double quotes, and a label in double quotes cannot hold a double quote. Remove each double quote...'; 'A { note: a "b" c }' and 'x "y" -> B' E0004 'Remove each double quote', no fix. Criterion 3 reworded to state the label case. cargo test --test syntax double_quote: 2 passed (a_bare_label_holds_a_double_quote, a_text_that_holds_a_double_quote_is_told_to_remove_it). scripts/task check: 315 tests run: 315 passed, exit 0.
+
+## 2026-11-26
+
+Fix round 2: every text that holds a double quote and needs quotes gets one E0004 message, "a text in double quotes cannot hold a double quote". Test a_bare_text_holds_a_double_quote accepts x"y" -> A and A { note: x"y" } and checks the message for x"y"@z -> A, A -> x"y" {z} and A { note: x"y", z }. scripts/task check exit 0, 315 tests run: 315 passed. Criterion 3 stays true.
