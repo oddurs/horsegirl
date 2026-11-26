@@ -12,11 +12,10 @@ named for gaits: Walk, Trot, Canter, Gallop.
 
 ## v0.1 — Walk
 
-`··········` 0% · 0 of 9 done · due 2027-01-31
+`··········` 0% · 0 of 8 done · due 2027-01-31
 
 An agent writes a horsegirl file, checks it, applies the fixes, and draws a flow diagram as SVG, from the command line or over MCP.
 
-- [ ] [`0115`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0115-reserve-the-horsegirl-name-on-crates-io-and-npm.md) Reserve the horsegirl name on crates.io and npm <sup>chore · p2 · release</sup>
 - [ ] [`0153`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0153-e0412-leaves-a-plural-beside-its-singular-alone.md) E0412 leaves a plural beside its singular alone <sup>chore · p1 · check</sup>
 - [ ] [`BUG-162`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/BUG-162-e0412-leaves-version-names-such-as-billing-v1-and-billing-v2-alone.md) E0412 leaves version names such as Billing v1 and Billing v2 alone <sup>bug · p1 · check</sup>
 - [ ] [`BUG-179`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/BUG-179-a-drawing-keeps-a-margin-round-every-box.md) A drawing keeps a margin round every box <sup>bug · p2 · render</sup>
