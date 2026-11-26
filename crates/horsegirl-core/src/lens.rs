@@ -205,6 +205,7 @@ pub fn bind(model: &Model, lens: &Lens, style: Style) -> Bound {
             .iter()
             .map(|&thing| Group {
                 parent: parent(thing),
+                width: text::measure(&model.things[thing].name, style).width,
             })
             .collect(),
         labels: links.iter().map(label).collect(),
