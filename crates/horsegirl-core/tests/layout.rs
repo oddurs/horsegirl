@@ -424,10 +424,9 @@ fn the_spike_diagrams_cross_no_more_than_the_reference_allows() {
 }
 
 // The ten diagrams of the spike have no label, so each link gets one here.
-// Two labels can still cover each other: item 0124 gives each label its own
-// room. A box is the box of a thing or of a group: no label lies on the box
-// of a thing or across the border of a group, and no label is inside a group
-// that holds neither end of its link. The two links of `10-platform` that
+// A box is the box of a thing or of a group: no label lies on the box of a
+// thing, across the border of a group or on another label, and no label is
+// inside a group that holds neither end of its link. The two links of `10-platform` that
 // pass through `Shopping` have their labels outside it.
 #[test]
 fn each_link_label_sits_on_its_path_and_overlaps_no_box() {
@@ -438,7 +437,7 @@ fn each_link_label_sits_on_its_path_and_overlaps_no_box() {
         labels += picture.labels.iter().flatten().count();
         let faults = faults(&flow.graph, &picture);
         assert!(faults.is_empty(), "{name}: {faults:#?}");
-        let collisions = collisions(&flow, &picture, &[Kind::LinkThroughGroup, Kind::Labels]);
+        let collisions = collisions(&flow, &picture, &[Kind::LinkThroughGroup]);
         assert!(collisions.is_empty(), "{name}: {collisions:#?}");
         assert_eq!(labels_in_other_groups(&flow.graph, &picture), 0, "{name}");
     }
@@ -703,6 +702,35 @@ fn a_label_wider_than_the_rank_gap_widens_the_gap() {
     assert!(collisions.is_empty(), "{collisions:#?}");
 }
 
+// `a -> c` passes the rank of `b`, and its label is on its first step, in
+// the corridor of `a -> b`. Both labels were in the middle of the trunk that
+// leaves `a`, and they covered each other.
+#[test]
+fn two_labels_of_one_corridor_do_not_cover_each_other() {
+    let flow = flow("a -> b: to b\nb -> c\na -> c: to c\n");
+    let picture = layout(&flow.graph, None);
+    assert_eq!(picture.labels.iter().flatten().count(), 2);
+    let faults = faults(&flow.graph, &picture);
+    assert!(faults.is_empty(), "{faults:#?}");
+    let collisions = collisions(&flow, &picture, &[]);
+    assert!(collisions.is_empty(), "{collisions:#?}");
+}
+
+// The room for labels must not change a picture that has no label.
+#[test]
+fn a_link_without_a_label_keeps_the_rank_gap() {
+    for source in ["a -> b\nb -> c\na -> c\n", "a -> b: to b\nb -> c\n"] {
+        let flow = flow(source);
+        let picture = layout(&flow.graph, None);
+        let [_, b, c] = [picture.nodes[0], picture.nodes[1], picture.nodes[2]];
+        assert_eq!(c.x - (b.x + b.width), RANK_GAP, "{source:?}");
+    }
+    let flow = flow("a -> b\nb -> c\na -> c\n");
+    let picture = layout(&flow.graph, None);
+    let [a, b] = [picture.nodes[0], picture.nodes[1]];
+    assert_eq!(b.x - (a.x + a.width), RANK_GAP);
+}
+
 // The smallest input from the review of SPIKE-18. The prototype put the
 // marker of `G` between `e` and `a` in one rank, and the two boxes touched.
 #[test]
@@ -819,9 +847,11 @@ fn no_generated_graph_has_a_fault() {
         assert!(faults.is_empty(), "graph {round}: {faults:#?}\n{graph:#?}");
         assert_eq!(picture, layout(&graph, None), "graph {round}");
         // A generated graph has groups that no order keeps every link out
-        // of, and its labels are many for its size.
+        // of. Two links from a node to itself draw one loop with one place
+        // for both labels: item 0169 has that.
         let flow = named(graph, texts);
-        let collisions = collisions(&flow, &picture, &[Kind::LinkThroughGroup, Kind::Labels]);
+        let mut collisions = collisions(&flow, &picture, &[Kind::LinkThroughGroup]);
+        collisions.retain(|found| !two_loops_of_one_node(found));
         assert!(collisions.is_empty(), "graph {round}: {collisions:#?}");
     }
 }
@@ -863,6 +893,23 @@ fn the_exchange_of_neighbours_does_not_add_crossings_to_a_generated_graph() {
     assert_eq!(size, (23, 37, 0));
     let crossed = crossings(&layout(&graph, None));
     assert!(crossed <= 28, "{crossed} crossings");
+}
+
+/// A collision of the labels of two links from one node to itself.
+fn two_loops_of_one_node(found: &str) -> bool {
+    let Some((first, second)) = found.split_once(" covers ") else {
+        return false;
+    };
+    match (link_names(first), link_names(second)) {
+        (Some((a, b)), Some((c, d))) => a == b && b == c && c == d,
+        _ => false,
+    }
+}
+
+/// The names of the two ends of a label as the overlap detector names it.
+fn link_names(label: &str) -> Option<(&str, &str)> {
+    let link = label.strip_prefix("label `")?.strip_suffix('`')?;
+    link.split_once(" -> ")
 }
 
 /// A graph that no file states, with a name for each node and each group, so

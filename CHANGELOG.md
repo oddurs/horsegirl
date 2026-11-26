@@ -124,6 +124,10 @@ the project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Changed
 
+- Two link labels between the same two ranks no longer cover each other. A
+  label that would cover another moves along its upright line, or onto a
+  level line of its link, and the room between the two ranks grows when the
+  label needs it. A picture with no label does not change.
 - A label keeps its white space. The style rule for `.label` sets
   `white-space: pre`, so the drawn text has the width that the measure counts
   and `textLength` no longer stretches a label with leading, trailing or
