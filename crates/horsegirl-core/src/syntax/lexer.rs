@@ -74,11 +74,13 @@ fn token(source: &str, start: usize, first: char, line_start: bool) -> (TokenKin
     }
 }
 
-/// Whether a `;` is the last mark before the end of `before`, spaces and tabs
-/// aside. `;;` and `; ;` are not marks: removing one `;` would leave the other
+/// Whether a `;` is the last mark before the end of `before`, spaces aside. A
+/// space is any `is_space` character except a line feed. `;;` and `; ;` are not marks: removing one `;` would leave the other
 /// at the line end and change the name.
 fn follows_semi(before: &str) -> bool {
-    before.trim_end_matches([' ', '\t']).ends_with(';')
+    before
+        .trim_end_matches(|c| is_space(c) && c != '\n')
+        .ends_with(';')
 }
 
 /// The length of the arrow at the start of `rest`. `->` is the arrow. Mermaid

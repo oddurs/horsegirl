@@ -1133,6 +1133,11 @@ fn only_a_line_feed_ends_a_line() {
         let source = format!("A;{separator}B -> C\n");
         assert_eq!(read(&source).1, read("A; B -> C\n").1, "{separator:?}");
     }
+    // The same holds between two semicolons.
+    for separator in [" ", "\t", "\r", "\u{2028}", "\u{85}"] {
+        let source = format!("A -> B;{separator};\n");
+        assert_eq!(read(&source).1, read("A -> B; ;\n").1, "{separator:?}");
+    }
     // The same separators are spaces before the end of the line or the file.
     for separator in ["\r", "\r\r", "\u{2028}", "\u{85}"] {
         for tail in ["", "\n", "\r\n"] {
