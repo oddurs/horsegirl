@@ -12,12 +12,11 @@ named for gaits: Walk, Trot, Canter, Gallop.
 
 ## v0.1 — Walk
 
-`··········` 0% · 0 of 16 done · due 2027-01-31
+`··········` 0% · 0 of 15 done · due 2027-01-31
 
 An agent writes a horsegirl file, checks it, applies the fixes, and draws a flow diagram as SVG, from the command line or over MCP.
 
 - [ ] [`0115`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0115-reserve-the-horsegirl-name-on-crates-io-and-npm.md) Reserve the horsegirl name on crates.io and npm <sup>chore · p2 · release</sup>
-- [ ] [`0122`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0122-fewer-crossings-in-the-layered-layout-measured-against-a-reference.md) Fewer crossings in the layered layout, measured against a reference <sup>feature · p2 · layout</sup>
 - [ ] [`0123`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0123-draw-a-link-that-starts-or-ends-at-a-group.md) Draw a link that starts or ends at a group <sup>feature · p2 · layout</sup>
 - [ ] [`0124`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0124-reserve-room-for-link-labels-in-the-layered-layout.md) Reserve room for link labels in the layered layout <sup>feature · p2 · layout</sup>
 - [ ] [`BUG-134`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/BUG-134-every-text-that-needs-quotes-gets-them-in-one-step.md) Every text that needs quotes gets them in one step <sup>bug · p2 · language</sup>
@@ -35,7 +34,7 @@ An agent writes a horsegirl file, checks it, applies the fixes, and draws a flow
 
 ## later — Later
 
-`··········` 0% · 0 of 30 done
+`··········` 0% · 0 of 32 done
 
 Nothing on a date. Good ideas wait here until a release needs them.
 
@@ -69,6 +68,8 @@ Nothing on a date. Good ideas wait here until a release needs them.
 - [ ] [`0160`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0160-the-spike-21-prototype-leaves-the-tree-now-that-the-server-exists.md) The SPIKE-21 prototype leaves the tree now that the server exists <sup>chore · p2 · mcp</sup>
 - [ ] [`BUG-162`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/BUG-162-e0412-leaves-version-names-such-as-billing-v1-and-billing-v2-alone.md) E0412 leaves version names such as Billing v1 and Billing v2 alone <sup>bug · p2 · check</sup>
 - [ ] [`0165`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0165-corpus-convert-py-gives-two-mermaid-nodes-that-share-a-label-two-names.md) corpus/convert.py gives two Mermaid nodes that share a label two names <sup>chore · p2 · interop</sup>
+- [ ] [`0166`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0166-the-order-phase-weighs-a-pass-through-a-group-against-the-crossings-it-costs.md) The order phase weighs a pass through a group against the crossings it costs <sup>feature · p2 · layout</sup>
+- [ ] [`BUG-168`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/BUG-168-fewer-crossings-between-ranks-never-give-more-crossings-in-the-drawing.md) Fewer crossings between ranks never give more crossings in the drawing <sup>bug · p2 · layout</sup>
 
 ## v0.2 — Trot
 

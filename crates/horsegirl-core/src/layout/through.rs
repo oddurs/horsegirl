@@ -401,7 +401,9 @@ impl Search<'_> {
                     }
                 }
             }
-            Move::Transpose { rank, at } => transpose(&mut self.net.layers[rank], items, at),
+            Move::Transpose { rank, at } => {
+                transpose(&mut self.net.layers[rank], items, at);
+            }
         }
     }
 }
@@ -464,12 +466,13 @@ fn clear(layer: &mut Vec<usize>, items: &[Item], chain: &[usize], above: bool) {
 
 /// Exchanges the entry that ends before `at` and the entry that starts at
 /// `at`, when one of the two is an item. Two groups keep their order: every
-/// rank holds it.
-fn transpose(layer: &mut [usize], items: &[Item], at: usize) {
+/// rank holds it. Returns the first position of the two entries and the
+/// position after their last, or `None` when the rank keeps its order.
+pub(super) fn transpose(layer: &mut [usize], items: &[Item], at: usize) -> Option<(usize, usize)> {
     let (upper, lower) = (&items[layer[at - 1]].chain, &items[layer[at]].chain);
     let depth = shared(upper, lower);
     if upper.len() > depth && lower.len() > depth {
-        return;
+        return None;
     }
     let same = |j: usize, chain: &[usize]| {
         chain.len() > depth && items[j].chain.get(depth) == chain.get(depth)
@@ -483,4 +486,5 @@ fn transpose(layer: &mut [usize], items: &[Item], at: usize) {
         end += 1;
     }
     layer[start..end].rotate_left(at - start);
+    Some((start, end))
 }

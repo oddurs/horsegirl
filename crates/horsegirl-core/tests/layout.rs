@@ -383,18 +383,44 @@ fn no_path_crosses_the_box_of_a_thing_on_any_corpus_diagram() {
     assert_eq!(links, 255);
 }
 
-// How many points two links cross at, on each of the eleven pictures. The
-// order phase removes a pass through a group before it removes a crossing,
-// and that must not cost a crossing here: before it removed a pass,
-// `07-compiler` had 2 crossings and `10-platform` had 49. A number that
-// falls is a better picture: write the new number here.
-#[test]
-fn the_crossings_of_each_corpus_diagram_do_not_rise() {
-    let crossed: Vec<usize> = DIAGRAMS
+/// How many points two links cross at, on each of the eleven pictures.
+fn corpus_crossings() -> Vec<usize> {
+    DIAGRAMS
         .iter()
         .map(|(_, source)| crossings(&layout(&flow(source).graph, None)))
-        .collect();
-    assert_eq!(crossed, [0, 0, 0, 3, 0, 0, 4, 1, 23, 2, 18]);
+        .collect()
+}
+
+// The committed numbers. The order phase removes a pass through a group
+// before it removes a crossing, and that must not cost a crossing here:
+// before it removed a pass, `07-compiler` had 2 crossings and `10-platform`
+// had 49. Before the order phase exchanged neighbours, `03-order-states` had
+// 3 crossings, `08-module-deps` had 23 and `09-incident` had 2. A number
+// that falls is a better picture: write the new number here.
+#[test]
+fn the_crossings_of_each_corpus_diagram_do_not_rise() {
+    let crossed = corpus_crossings();
+    assert_eq!(crossed, [0, 0, 0, 1, 0, 0, 4, 1, 11, 0, 18]);
+    assert_eq!(crossed[1..].iter().sum::<usize>(), 35);
+}
+
+// The reference is the scores table of `spikes/layered-layout/README.md`.
+// On the ten diagrams of the spike, its prototype left the crossings of
+// `PROTOTYPE`, the ELK port left 36 in total, and dagre left 14 on
+// `08-module-deps`. These limits do not move when a committed number falls.
+#[test]
+fn the_spike_diagrams_cross_no_more_than_the_reference_allows() {
+    const PROTOTYPE: [usize; 10] = [1, 0, 1, 0, 0, 9, 1, 22, 2, 44];
+    let crossed = &corpus_crossings()[1..];
+    for ((name, _), (now, limit)) in DIAGRAMS[1..].iter().zip(crossed.iter().zip(PROTOTYPE)) {
+        assert!(
+            *now <= limit,
+            "{name}: {now} crossings, the prototype {limit}"
+        );
+    }
+    assert!(crossed[7] <= 14, "08-module-deps: {}", crossed[7]);
+    let total: usize = crossed.iter().sum();
+    assert!(total <= 36 * 3 / 2, "{total} crossings on the ten diagrams");
 }
 
 // The ten diagrams of the spike have no label, so each link gets one here.
@@ -798,6 +824,45 @@ fn no_generated_graph_has_a_fault() {
         let collisions = collisions(&flow, &picture, &[Kind::LinkThroughGroup, Kind::Labels]);
         assert!(collisions.is_empty(), "graph {round}: {collisions:#?}");
     }
+}
+
+// From the second review of the exchange of neighbours. The order phase
+// exchanged neighbours after each round, and the next round swept from the
+// exchanged ranks. Graph 2290 of this generator then drew 58 crossings, and
+// 28 before the exchange. The exchange now runs once, on the best order.
+#[test]
+fn the_exchange_of_neighbours_does_not_add_crossings_to_a_generated_graph() {
+    let mut next = sequence(1);
+    let mut graph = None;
+    for _ in 0..=2290 {
+        let groups: Vec<Group> = (0..next(6))
+            .map(|g| Group {
+                parent: (g > 0 && next(2) == 0).then(|| next(g)),
+            })
+            .collect();
+        let count = 1 + next(24);
+        let nodes: Vec<Node> = (0..count)
+            .map(|_| Node {
+                width: 40.0 + 10.0 * f64::from(u8::try_from(next(12)).unwrap()),
+                height: 36.0,
+                group: (!groups.is_empty() && next(3) > 0).then(|| next(groups.len())),
+            })
+            .collect();
+        let links: Vec<(usize, usize)> = (0..next(2 * count))
+            .map(|_| (next(count), next(count)))
+            .collect();
+        graph = Some(Graph {
+            nodes,
+            groups,
+            links,
+            labels: Vec::new(),
+        });
+    }
+    let graph = graph.unwrap();
+    let size = (graph.nodes.len(), graph.links.len(), graph.groups.len());
+    assert_eq!(size, (23, 37, 0));
+    let crossed = crossings(&layout(&graph, None));
+    assert!(crossed <= 28, "{crossed} crossings");
 }
 
 /// A graph that no file states, with a name for each node and each group, so
