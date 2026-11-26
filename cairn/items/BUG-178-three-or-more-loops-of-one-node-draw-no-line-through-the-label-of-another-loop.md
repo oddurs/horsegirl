@@ -7,19 +7,24 @@ status: backlog
 milestone: later
 created: 2026-11-26
 updated: 2026-11-26
-priority: p2
+priority: p3
 risk: low
 surface: none
 area: layout
+effort: s
 ---
 
-### Problem
+## Problem
 
 Since item 0169, the loops of a node stand in columns at the right side of its box, two in each column. From the third loop on, the level lines of a loop in an outer column pass through the labels of the loops in the nearer column. The overlap detector does not report this: both shapes belong to the same two ends, so `links_on_labels` skips them. The box has 18 px above the middle, which is too little for two rows of labels.
 
 A file cannot state two links from one thing to itself today, so only a graph built by another lens or a generator reaches this.
 
-### Done when
+## Acceptance criteria
 
-1. A node with three labelled loops draws no loop line through the label of another loop.
-2. The overlap detector reports a link that crosses the label of another link with the same two ends, and the corpus and generated tests pass with it.
+- [ ] A node with three labelled loops draws no loop line through the label of another loop.
+- [ ] The overlap detector reports a link that crosses the label of another link with the same two ends, and the corpus and generated tests pass with it.
+
+## 2026-11-26
+
+Triage: p3. No file can state two links from one thing to itself, so only a generated graph reaches this.

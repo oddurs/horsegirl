@@ -13,6 +13,7 @@ surface: svg
 area: layout
 related:
 - 170
+effort: m
 ---
 
 ## Problem

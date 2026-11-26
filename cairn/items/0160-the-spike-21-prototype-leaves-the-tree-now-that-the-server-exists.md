@@ -4,15 +4,16 @@ uid: 78a6dc66-bb5e-42c3-be6b-902d80120a6c
 title: The SPIKE-21 prototype leaves the tree now that the server exists
 type: chore
 status: backlog
-milestone: later
+milestone: v0.2
 created: 2026-11-25
-updated: 2026-11-25
+updated: 2026-11-26
 priority: p2
 surface: none
 area: mcp
 effort: s
 related:
 - 38
+risk: low
 ---
 
 ## Problem

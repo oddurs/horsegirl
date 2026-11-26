@@ -4,13 +4,14 @@ uid: c3c7aff8-46d1-4c83-afe2-15c7e875810a
 title: An arrow after a group says that a link cannot hold a group
 type: bug
 status: backlog
-milestone: later
+milestone: v0.2
 created: 2026-11-25
-updated: 2026-11-25
+updated: 2026-11-26
 priority: p2
 risk: low
 surface: diagnostics
 area: language
+effort: s
 ---
 
 ## Problem
