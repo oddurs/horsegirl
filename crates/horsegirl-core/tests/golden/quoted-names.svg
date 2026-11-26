@@ -17,8 +17,8 @@
 <marker id="hg-head" viewBox="0 0 8 8" refX="8" refY="4" markerWidth="8" markerHeight="8" markerUnits="userSpaceOnUse" orient="auto"><path class="head" d="M0,0 L8,4 L0,8 z"/></marker>
 </defs>
 <rect class="page" x="-1" y="-1" width="328.42" height="98"/>
-<polyline class="link" points="115.93,18 169.27,18 169.27,48 234.61,48" marker-end="url(#hg-head)"/>
-<polyline class="link" points="90.06,78 181.27,78 181.27,48 234.61,48" marker-end="url(#hg-head)"/>
+<path class="link" d="M115.93,18 L169.27,18 L169.27,22.18 M169.27,43.82 L169.27,48 L234.61,48" marker-end="url(#hg-head)"/>
+<path class="link" d="M90.06,78 L181.27,78 L181.27,73.82 M181.27,52.18 L181.27,48 L234.61,48" marker-end="url(#hg-head)"/>
 <rect class="thing" x="0" y="0" width="115.93" height="36" rx="4"/>
 <rect class="thing" x="25.87" y="60" width="64.19" height="36" rx="4"/>
 <rect class="thing" x="234.61" y="30" width="91.81" height="36" rx="4"/>

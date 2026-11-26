@@ -131,6 +131,10 @@ the project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Changed
 
+- A link line stops 3 px before the label of its own link and goes on after
+  it, so the line no longer runs through the text. The SVG backend draws a
+  link as a `<path>` in place of a `<polyline>`, with one `M` for each part
+  of the line. The label keeps its place and its colour.
 - Two link labels between the same two ranks no longer cover each other. A
   label that would cover another moves along its upright line, or onto a
   level line of its link, and the room between the two ranks grows when the
