@@ -3,12 +3,12 @@ id: 171
 uid: 6edaeea5-b8e5-4960-b2e6-b0600e75821f
 title: W0107 leaves alone a thing whose group has a link
 type: bug
-status: doing
+status: done
 milestone: v0.1
 assignee: Oddur Sigurdsson
-claimed: 2026-11-26
 created: 2026-11-26
 updated: 2026-11-26
+closed_at: 2026-11-26
 priority: p2
 risk: low
 surface: diagnostics
