@@ -3,12 +3,12 @@ id: 135
 uid: 6e374b40-4507-422e-8dbc-b7094a16e585
 title: Only a line feed, alone or after a carriage return, ends a line
 type: bug
-status: doing
+status: done
 milestone: v0.1
 assignee: Oddur Sigurdsson
-claimed: 2026-11-26
 created: 2026-11-25
 updated: 2026-11-26
+closed_at: 2026-11-26
 priority: p2
 risk: low
 surface: language
