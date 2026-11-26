@@ -380,6 +380,8 @@ fn the_reference_file_and_sound_groups_give_no_misplaced_part() {
         // The same group again, and a group that holds the thing deeper.
         "G { A }\nG { A, B }\nA -> B\n",
         "G { H { A } }\nG { A -> B }\n",
+        // The holder enters the group on a later line.
+        "H { A }\nG { A }\nG { H }\nA -> B\n",
         // A thing first named outside braces, then placed.
         "A -> B\nG { A }\n",
         // Facts after several names place nothing.

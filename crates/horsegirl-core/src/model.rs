@@ -166,6 +166,7 @@ impl Model {
 pub fn lower(tree: &Node<'_>) -> Model {
     let mut lowering = Lowering::default();
     lowering.lines(&tree.children, Scope::Top);
+    lowering.settle();
     lowering.model
 }
 
@@ -402,7 +403,8 @@ impl Lowering {
     /// Makes the first of `groups` the parent of `id`, or records why not. A
     /// thing has one parent: the first group whose braces hold it. A name in
     /// the braces of a group that holds the thing already, at any depth, says
-    /// nothing new and is not an error.
+    /// nothing new and is not an error. `settle` decides that against the
+    /// final parents.
     fn place(
         &mut self,
         id: ThingId,
@@ -438,6 +440,20 @@ impl Lowering {
             why,
             removable,
         });
+    }
+
+    /// Drops each `Held` that the final parents make sound. A later line can
+    /// place the holder inside the group of the braces, so a check at the
+    /// mention depends on line order. A parent never changes once set, so a
+    /// `Loop` stays true and needs no second look.
+    fn settle(&mut self) {
+        let misplaced = std::mem::take(&mut self.model.misplaced);
+        self.model.misplaced = misplaced
+            .into_iter()
+            .filter(|wrong| {
+                !matches!(wrong.why, Why::Held(_)) || !self.within(wrong.thing, wrong.group)
+            })
+            .collect();
     }
 
     /// Whether `inner` is `outer` or inside it, at any depth.
