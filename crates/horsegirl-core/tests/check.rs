@@ -154,6 +154,29 @@ fn a_group_needs_no_link_of_its_own_and_its_parts_do() {
 }
 
 #[test]
+fn a_thing_in_a_linked_group_is_not_alone_at_any_depth() {
+    for source in [
+        "API gateway -> Services\nServices { Orders, Payments }\n",
+        "Edge -> Cloud\nCloud { Services { Orders, Payments } }\n",
+        "Services { Orders, Payments }\nWeb app -x Services: never directly\n",
+    ] {
+        assert_eq!(codes(&check(source)), [""; 0], "{source}");
+    }
+}
+
+#[test]
+fn a_link_that_w0110_reports_does_not_reach_the_parts_of_its_group() {
+    let source = "Services -> Orders\nServices { Orders, Spare }\n";
+    let diagnostics = check(source);
+    assert_eq!(codes(&diagnostics), ["W0110", "W0107"]);
+    assert_eq!(only(source, &diagnostics, "W0107").1, "Spare");
+
+    let source = "Services -> Services\nServices { Orders, Spare }\n";
+    let diagnostics = check(source);
+    assert_eq!(codes(&diagnostics), ["W0110", "W0107", "W0107"]);
+}
+
+#[test]
 fn a_thing_that_a_rule_names_is_not_alone() {
     let source = "Web app -> API\nWeb app -x Postgres: never directly\n";
     assert_eq!(codes(&check(source)), [""; 0]);

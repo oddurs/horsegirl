@@ -161,13 +161,33 @@ fn siblings(a: &str, b: &str) -> bool {
     }
 }
 
-/// W0107: a thing that no link and no rule names. A group needs no link of
-/// its own, because its parts carry them. A typo is reported once, as E0412.
+/// W0107: a thing that no link and no rule names, and that no group around it
+/// at any depth is named by either: the picture draws such a thing inside a box
+/// that a link reaches. A group needs no link of its own, because its parts
+/// carry them. A typo is reported once, as E0412.
 fn orphans(model: &Model, typos: &[(ThingId, Diagnostic)]) -> Vec<Diagnostic> {
-    let named = |id: ThingId| {
-        let links = model.links.iter().map(|link| (link.from, link.to));
+    // A link that W0110 reports is out of the picture, so it does not reach
+    // the parts of a group. It still names the thing at its end.
+    let named_directly = |id: ThingId, around: bool| {
+        let links = model
+            .links
+            .iter()
+            .filter(|link| !(around && inward_ends(model, link.from, link.to).is_some()))
+            .map(|link| (link.from, link.to));
         let rules = model.rules.iter().map(|rule| (rule.from, rule.to));
         links.chain(rules).any(|(from, to)| from == id || to == id)
+    };
+    let named = |id: ThingId| {
+        let mut at = Some(id);
+        let mut around = false;
+        while let Some(thing) = at {
+            if named_directly(thing, around) {
+                return true;
+            }
+            around = true;
+            at = model.things[thing].parent;
+        }
+        false
     };
     (0..model.things.len())
         .filter(|&id| !named(id))
@@ -286,24 +306,29 @@ fn broken_rules(source: &str, model: &Model) -> Vec<Diagnostic> {
     found
 }
 
+/// The group and the part of a link that W0110 reports, if the link is one.
+fn inward_ends(model: &Model, from: ThingId, to: ThingId) -> Option<(ThingId, ThingId)> {
+    let holds = |group: ThingId, thing: ThingId| {
+        !model.parts(group).is_empty() && model.within(thing, group)
+    };
+    if holds(to, from) {
+        Some((to, from))
+    } else if holds(from, to) {
+        Some((from, to))
+    } else {
+        None
+    }
+}
+
 /// W0110: a link between a group and itself or a thing inside it. A picture
 /// draws a group as a box around its parts, so such a link would start and
 /// end in one box, and the flow lens leaves it out.
 fn inward(model: &Model) -> Vec<Diagnostic> {
-    let holds = |group: ThingId, thing: ThingId| {
-        !model.parts(group).is_empty() && model.within(thing, group)
-    };
     model
         .links
         .iter()
         .filter_map(|link| {
-            let (group, part) = if holds(link.to, link.from) {
-                (link.to, link.from)
-            } else if holds(link.from, link.to) {
-                (link.from, link.to)
-            } else {
-                return None;
-            };
+            let (group, part) = inward_ends(model, link.from, link.to)?;
             let name = |id: ThingId| &model.things[id].name;
             let joins = if group == part {
                 format!("`{}` to itself", name(group))

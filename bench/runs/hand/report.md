@@ -16,7 +16,7 @@ Counted on the first try. "Left" counts the replies that still have the code aft
 | --- | ---: | ---: | ---: | --- |
 | `N0101` | 2 | 3 | 0 | A line is written the way Mermaid writes it: `-->`, quotes that a name does not need, a space before the colon of a label, or a `;` at the end. The fix writes the canonical form. |
 | `E0004` | 2 | 2 | 0 | A name, a value or a label holds a character that only a text in double quotes can hold. The fix adds the quotes. A bare text can hold a double quote, but a text in double quotes cannot. So a text that holds a double quote and also needs quotes gets no fix, and the message says to remove the double quote or the character that needs the quotes. |
-| `W0107` | 1 | 2 | 1 | A thing has no link and no rule, so it stands alone in every picture. A group needs no link of its own. |
+| `W0107` | 1 | 2 | 1 | A thing has no link and no rule, so it stands alone in every picture. A link or a rule that names its group, at any depth, counts as its own. A link from a group to itself or to a part of it does not count, because `W0110` reports it and the picture leaves it out. A group needs no link of its own. |
 | `E0008` | 1 | 1 | 1 | A `show` line is not `show` and a lens, with `of`, `from` or `by` and a name after it. |
 | `E0009` | 1 | 1 | 1 | A fact stands outside braces, or a line mixes names and facts. |
 | `E0300` | 1 | 1 | 0 | A `show` line names a lens that does not exist. The message lists the lenses, and a lens one edit from a known lens gets a safe fix. |
