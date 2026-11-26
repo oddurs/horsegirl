@@ -3,12 +3,12 @@ id: 174
 uid: 26472292-ae7b-4a3b-abfa-7c1cf22dbb7a
 title: The arrow head of a link stays clear of its label
 type: bug
-status: doing
+status: done
 milestone: v0.1
 assignee: Oddur Sigurdsson
-claimed: 2026-11-26
 created: 2026-11-26
 updated: 2026-11-26
+closed_at: 2026-11-26
 priority: p2
 risk: low
 surface: svg
