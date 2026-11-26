@@ -7,7 +7,7 @@ status: done
 milestone: v0.1
 assignee: Oddur Sigurdsson
 created: 2026-11-25
-updated: 2026-11-25
+updated: 2026-11-26
 closed_at: 2026-11-25
 priority: p2
 risk: low
@@ -43,3 +43,7 @@ ADR-119 says that a name or a value that needs quotes and lacks them is correcte
 ## 2026-11-25
 
 Evidence. horsegirl check --json printed: 'Sensors: wind, B -> Hub' E0004 fix '"Sensors: wind"'; 'api { note: GET /users/{id}, list }' one E0004 fix '"GET /users/{id}, list"'; 'A -> GET /users/{id}' E0004 fix '"GET /users/{id}"' at columns 6-21; 'G{ A, B } -> C' E0001 at the arrow, fix null; 'Team@x{ A }' E0004 fix '"Team@x"' only. tests/syntax.rs asserts each fixed line parses with no diagnostic (a_name_or_a_value_that_needs_quotes_gets_them_from_the_fix, a_group_or_an_open_block_is_never_quoted_into_a_name), a_text_that_holds_a_double_quote_is_told_to_remove_it (message holds 'Remove each double quote', not 'Write the', no fix), braces_before_an_arrow_are_characters_only_around_one_word (A {x} -> B, GET /users/{id} -> B quoted; Services { Orders } -> Postgres and four others E0001 at the arrow). tests/fuzz.rs asserts no E0004 starts inside a fixed text; HORSEGIRL_FUZZ_ROUNDS=400000 cargo test --release --test fuzz printed 'test result: ok. 1 passed' in 700 s. docs/reference.md rule 1 and the doc comment of Parser::extent state the brace rule. scripts/task check: 314 tests run: 314 passed, exit 0.
+
+## 2026-11-26
+
+Fix round 1. The review returned no verdict, so the implementer probed the brace rule again. Team@x {A} and Team@x{A} got the fix '"Team@x {A}"', which lost the part A, although Team {A} is a group. Parser::in_link now limits one-word braces as characters to a line with an arrow in the same block. tests/syntax.rs a_group_or_an_open_block_is_never_quoted_into_a_name holds five such inputs, and each fixed line parses with no diagnostic. scripts/task check printed '314 tests run: 314 passed, 0 skipped', exit 0.
