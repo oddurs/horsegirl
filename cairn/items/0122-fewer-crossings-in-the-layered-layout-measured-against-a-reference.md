@@ -66,3 +66,7 @@ The order phase exchanges two neighbouring entries of a rank after each round of
 ## 2026-11-26
 
 Review round 3 fix: untangle now runs once on the best order, after the rounds. Without the fix the new test the_exchange_of_neighbours_does_not_add_crossings_to_a_generated_graph (seed 1, graph 2290) printed '58 crossings' and failed; with it, cargo test --test layout: 29 passed. Corpus crossings now [0, 0, 0, 1, 0, 0, 4, 1, 11, 0, 18], 35 on the ten spike diagrams. scripts/task check exited 0 after the rebase on origin/main 416ef4d.
+
+## 2026-11-26
+
+Review fix round 1: the PR body said the graphs that draw more crossings than main all have groups. That was false. A temporary test in tests/layout.rs drew the 18-node review graph (no group, no label): 'drawn 8' on origin/main, 'drawn 11' on this branch, 'drawn 8' on this branch with the untangle call turned off. The test was removed. Filed 0168 for graphs with no group; corrected the PR body. No code change.
