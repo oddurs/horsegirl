@@ -10,7 +10,7 @@ depends_on:
 - 24
 - 25
 created: 2026-11-25
-updated: 2026-11-25
+updated: 2026-11-26
 closed_at: 2026-11-25
 priority: p2
 risk: low
@@ -43,3 +43,7 @@ Evidence: cargo test -p horsegirl-core --test check (34 passed) includes a_thing
 ## 2026-11-25
 
 Fix round 1: E0420 fix is now suggested; fix_all leaves corpus 0197 and the E0412 chain case unchanged (test fix_leaves_a_thing_in_two_groups_for_the_writer). Shared message reads the final parent (test a_part_after_several_names_names_the_group_that_holds_it). Merged main; cargo run -p horsegirl --example corpus printed 181 of 239 (baseline 181). scripts/task check exited 0.
+
+## 2026-11-26
+
+Review round 1: E0420 Held now uses the final parents. 'H { A }\nG { A }\nG { H }\nA -> B' failed the_reference_file_and_sound_groups_give_no_misplaced_part before the fix (left: E0420 at 12..13) and passes after; horsegirl check on that file printed '0 errors, 0 warnings, 0 notes', exit 0. scripts/task check exit 0.
