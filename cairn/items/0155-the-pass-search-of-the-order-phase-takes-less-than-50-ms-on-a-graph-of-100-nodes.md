@@ -6,7 +6,7 @@ type: chore
 status: backlog
 milestone: later
 created: 2026-11-25
-updated: 2026-11-25
+updated: 2026-11-26
 priority: p2
 risk: low
 surface: none
@@ -64,3 +64,7 @@ Pull request 48, fix round 3, added the last resort of the proposal: keep_out st
 ## 2026-11-25
 
 The fourth review of pull request 48 measured small graphs: with up to 52 nodes in 8 groups and up to 3 links for each node, 16 of 800 searches stop at LIMIT. So the limit is not a guard for rare files only. The earlier note on item 146 gives 65 721 as the largest work of the generated tests; that number is for those tests only. The same review found that a move that changes no rank added nothing to the work: a line of 1600 nodes, each two in their own group, then 40 nodes in 8 groups with 60 links, took 3.6 s in horsegirl draw against 0.62 s on main. The search now counts each move before it runs (the groups and the items of the ranks that it copies). After that change the same file takes 0.69 s and the file with 400 nodes takes 0.085 s, release build, one run each. The count of 16 of 800 is from before that change, so more searches now stop at the limit. Measure it again with the tables of the body.
+
+## 2026-11-26
+
+From the reviews of #67 (item 0122), release build, random links, no group unless stated. layout time on main / with untangle in each round / with untangle once on the best order: 300 nodes 900 links 1.42 s / 5.15 s / 1.63 s; 600 nodes 1800 links 18.8 s / 52.4 s / 20.6 s; 400 nodes 1200 links 20 groups 1.97 s / 5.03 s / 1.74 s; 2000 nodes 2400 links 3.73 s / 7.71 s / 4.08 s; 100 nodes 390 links 10 groups 0.24 s / 0.54 s / 0.23 s. #67 ships the third column. untangle has no limit on its work: each exchange that stays removes a crossing, so it ends.

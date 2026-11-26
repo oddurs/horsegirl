@@ -9,7 +9,7 @@ assignee: Oddur Sigurdsson
 depends_on:
 - 32
 created: 2026-11-25
-updated: 2026-11-25
+updated: 2026-11-26
 closed_at: 2026-11-25
 priority: p2
 risk: low
@@ -62,3 +62,7 @@ What moved the numbers. The exchange of neighbours after each round of sweeps to
 ## Result
 
 The order phase exchanges two neighbouring entries of a rank after each round of sweeps where that leaves fewer crossings, and the route phase does the same for two neighbouring upright lines of a corridor. The ten spike diagrams draw with 37 crossings, against 51 before, 80 for the prototype and 36 for the ELK port. 08-module-deps draws with 11. Two tests in tests/layout.rs hold the number of each diagram and the limits of the reference. Two groups under one parent do not exchange by crossings, and a pass has no weight in crossings: item 0166.
+
+## 2026-11-26
+
+Review round 3 fix: untangle now runs once on the best order, after the rounds. Without the fix the new test the_exchange_of_neighbours_does_not_add_crossings_to_a_generated_graph (seed 1, graph 2290) printed '58 crossings' and failed; with it, cargo test --test layout: 29 passed. Corpus crossings now [0, 0, 0, 1, 0, 0, 4, 1, 11, 0, 18], 35 on the ten spike diagrams. scripts/task check exited 0 after the rebase on origin/main 416ef4d.
