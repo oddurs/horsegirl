@@ -4,10 +4,10 @@ uid: 61cd95bd-0d87-417c-9478-789f15a1a3d3
 title: Two links between the same two things in opposite directions are drawn apart
 type: bug
 status: backlog
-milestone: later
+milestone: v0.2
 created: 2026-11-25
-updated: 2026-11-25
-priority: p2
+updated: 2026-11-26
+priority: p1
 risk: low
 surface: none
 area: layout
@@ -25,3 +25,7 @@ related:
 - [ ] The overlap detector reports two links between the same two things that lie on each other, with a test in `crates/horsegirl-core/tests/overlap.rs`.
 - [ ] The layout draws `a -> b` and `b -> a` on two lines, and each label is on its own link.
 - [ ] The corpus tests in `crates/horsegirl-core/tests/layout.rs` pass with the new rule.
+
+## 2026-11-26
+
+Triage: v0.2 at p1. A request and its reply between two things is common in real flowcharts, and the flow lens is the lens users have.

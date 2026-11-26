@@ -11,6 +11,7 @@ priority: p2
 risk: low
 surface: svg
 area: layout
+effort: m
 ---
 
 ## Problem

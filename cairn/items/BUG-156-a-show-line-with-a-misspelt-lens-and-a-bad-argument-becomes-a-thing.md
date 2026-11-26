@@ -4,15 +4,16 @@ uid: b3ead60b-c485-4824-85aa-dbf5a06741ad
 title: A show line with a misspelt lens and a bad argument becomes a thing
 type: bug
 status: backlog
-milestone: later
+milestone: v0.2
 created: 2026-11-25
-updated: 2026-11-25
+updated: 2026-11-26
 priority: p2
 risk: low
 surface: none
 area: language
 related:
 - 136
+effort: s
 ---
 
 ## Problem

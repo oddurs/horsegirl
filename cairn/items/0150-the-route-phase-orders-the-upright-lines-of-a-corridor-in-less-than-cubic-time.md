@@ -4,9 +4,9 @@ uid: 9395b669-8c09-4249-ab28-b92a0c70c8a0
 title: The route phase orders the upright lines of a corridor in less than cubic time
 type: chore
 status: backlog
-milestone: later
+milestone: v0.2
 created: 2026-11-25
-updated: 2026-11-25
+updated: 2026-11-26
 priority: p2
 risk: low
 surface: none
@@ -28,3 +28,7 @@ related:
 ## 2026-11-25
 
 From item 0122: tracks in route.rs now has a second loop after the row is built. Two neighbouring trunks of the row exchange their places where that removes a crossing and no step ties them. One round reads each pair of neighbours once, and each round that changes the row removes one crossing or more, so the rounds are at most the crossings of the corridor. A faster tracks must keep that exchange: without it 03-order-states draws with 3 crossings and not 1.
+
+## 2026-11-26
+
+Triage: v0.2 at p2, with 0155: the playground needs the layout fast on large files.

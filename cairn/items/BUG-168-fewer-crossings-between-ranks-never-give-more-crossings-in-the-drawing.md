@@ -4,7 +4,7 @@ uid: 8fef6d5c-d55c-4ca8-ba13-4d87d17772f5
 title: Fewer crossings between ranks never give more crossings in the drawing
 type: bug
 status: backlog
-milestone: later
+milestone: v0.2
 created: 2026-11-26
 updated: 2026-11-26
 priority: p2

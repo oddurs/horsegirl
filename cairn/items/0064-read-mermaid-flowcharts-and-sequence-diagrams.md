@@ -9,7 +9,7 @@ depends_on:
 - 37
 - 55
 created: 2026-11-25
-updated: 2026-11-25
+updated: 2026-11-26
 priority: p0
 risk: high
 surface: cli
@@ -36,3 +36,7 @@ A new language with no importer starts with no users.
 ## 2026-11-25
 
 From item 0040: corpus/convert.py is a stand-in converter that writes corpus/horse/*.horse for the corpus count in CI. When 'horsegirl convert' exists, make the corpus count read its output and remove the stand-in.
+
+## 2026-11-26
+
+From 0165, dropped: two Mermaid nodes that share a label must stay two things after conversion. The stand-in corpus/convert.py merged them, which hid E0420 in 11 corpus files and cost two clean files (0031, 0207). Check the converted corpus for this case.

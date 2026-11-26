@@ -4,7 +4,7 @@ uid: 72e6d327-6f19-480f-a070-38d44b498f39
 title: The SVG of a wide labelled fan grows with the square of the fan
 type: bug
 status: backlog
-milestone: later
+milestone: v0.2
 created: 2026-11-26
 updated: 2026-11-26
 priority: p2
@@ -13,6 +13,7 @@ surface: svg
 area: render
 related:
 - 170
+effort: s
 ---
 
 ## Problem
@@ -27,3 +28,7 @@ Draw a part that two links share once, or cut a link only at the labels on the p
 
 - [ ] The SVG of a fan of 400 labelled links out of one thing and 400 into another is at most twice the size of the same fan with no label on a shared line.
 - [ ] No link line is drawn across the text of a link label, by the test of tests/svg.rs.
+
+## 2026-11-26
+
+Triage: v0.2 at p2: the playground redraws the SVG on every key press.

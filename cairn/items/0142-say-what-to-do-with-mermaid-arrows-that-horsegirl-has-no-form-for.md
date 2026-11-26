@@ -4,14 +4,16 @@ uid: 2ae301a9-5240-4d93-8b9d-b6aa9eda286e
 title: Say what to do with Mermaid arrows that horsegirl has no form for
 type: feature
 status: backlog
-milestone: later
+milestone: v0.2
 created: 2026-11-25
-updated: 2026-11-25
+updated: 2026-11-26
 priority: p2
 risk: low
 surface: diagnostics
 area: language
 effort: s
+related:
+- 64
 ---
 
 ### Problem

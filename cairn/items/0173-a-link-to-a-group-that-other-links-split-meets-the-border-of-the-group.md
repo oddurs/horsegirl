@@ -4,13 +4,14 @@ uid: a93d9d76-fe0b-42c1-801b-edfb76164d16
 title: A link to a group that other links split meets the border of the group
 type: feature
 status: backlog
-milestone: later
+milestone: v0.2
 created: 2026-11-26
 updated: 2026-11-26
 priority: p2
 risk: low
 surface: svg
 area: layout
+effort: m
 ---
 
 ## Problem

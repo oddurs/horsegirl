@@ -4,10 +4,10 @@ uid: 58847d0c-5e48-4d0f-a4b8-6e4829e89751
 title: The pass search of the order phase takes less than 50 ms on a graph of 100 nodes
 type: chore
 status: backlog
-milestone: later
+milestone: v0.2
 created: 2026-11-25
 updated: 2026-11-26
-priority: p2
+priority: p1
 risk: low
 surface: none
 area: layout
@@ -68,3 +68,7 @@ The fourth review of pull request 48 measured small graphs: with up to 52 nodes 
 ## 2026-11-26
 
 From the reviews of #67 (item 0122), release build, random links, no group unless stated. layout time on main / with untangle in each round / with untangle once on the best order: 300 nodes 900 links 1.42 s / 5.15 s / 1.63 s; 600 nodes 1800 links 18.8 s / 52.4 s / 20.6 s; 400 nodes 1200 links 20 groups 1.97 s / 5.03 s / 1.74 s; 2000 nodes 2400 links 3.73 s / 7.71 s / 4.08 s; 100 nodes 390 links 10 groups 0.24 s / 0.54 s / 0.23 s. #67 ships the third column. untangle has no limit on its work: each exchange that stays removes a crossing, so it ends.
+
+## 2026-11-26
+
+Triage: v0.2 at p1. The playground (0068) lays out on every key press, in WebAssembly.

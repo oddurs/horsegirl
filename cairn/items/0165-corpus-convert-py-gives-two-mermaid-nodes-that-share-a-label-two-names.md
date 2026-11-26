@@ -3,10 +3,10 @@ id: 165
 uid: 1af8dd74-63a0-4bd8-b4a6-da33180c3ea1
 title: corpus/convert.py gives two Mermaid nodes that share a label two names
 type: chore
-status: backlog
+status: dropped
 milestone: later
 created: 2026-11-25
-updated: 2026-11-25
+updated: 2026-11-26
 priority: p2
 risk: low
 surface: none
@@ -24,8 +24,12 @@ related:
 
 Follow the rule that item 121 proposes for `horsegirl convert`: the second node with a shared label gets its Mermaid id after the name. A node with the same name as its subgraph gets its id too. Regenerate `corpus/horse` and raise `BASELINE` in `crates/horsegirl/examples/corpus.rs` to the new count.
 
-## Acceptance criteria
+## Acceptance criteria, moved to item 0064
 
-- [ ] No file in `corpus/horse` gives E0420.
-- [ ] No two Mermaid nodes of one flowchart in `corpus/flowcharts` become one thing in `corpus/horse`.
-- [ ] `cargo run -p horsegirl --example corpus` counts at least 176 clean files, and `BASELINE` holds the new count.
+- No file in `corpus/horse` gives E0420.
+- No two Mermaid nodes of one flowchart in `corpus/flowcharts` become one thing in `corpus/horse`.
+- `cargo run -p horsegirl --example corpus` counts at least 176 clean files, and `BASELINE` holds the new count.
+
+## 2026-11-26
+
+Dropped: item 0064 replaces corpus/convert.py with horsegirl convert. The case is now a note on 0064.
