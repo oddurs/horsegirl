@@ -145,8 +145,14 @@ fn typos(source: &str, model: &Model) -> Vec<(ThingId, Diagnostic)> {
 /// a version (`Service A` and `Service B`, `Deploy #1` and `Deploy #2`,
 /// `Billing v1` and `Billing v2`), or that are both
 /// shorter than three characters, are a numbered or lettered series, not a typo.
+/// A name and the same name with a final `s` (`Agent` and `Agents`) are two
+/// things too: a fix that merged them would be a guess, and the corpus holds
+/// no plural that is a typo.
 fn siblings(a: &str, b: &str) -> bool {
     if a.chars().count() < 3 && b.chars().count() < 3 {
+        return true;
+    }
+    if a.strip_suffix('s') == Some(b) || b.strip_suffix('s') == Some(a) {
         return true;
     }
     let is_marker = |word: &str| {
