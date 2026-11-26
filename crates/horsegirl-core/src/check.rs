@@ -445,7 +445,13 @@ fn label_link(source: &str, link: &Node<'_>) -> Option<Diagnostic> {
         .rfind('\n')
         .map_or(0, |n| n + 1);
     let indent = &source[line_start..first_start(link)?];
-    let fix = indent.chars().all(|c| c == ' ' || c == '\t').then(|| Fix {
+    // A final `?` or a citation stays after the label. The edit would hand it
+    // to the second link, so a link that carries one gets no fix.
+    let marked = link.children.iter().any(|element| match element {
+        Element::Token(token) => token.kind == TokenKind::Guess,
+        Element::Node(inner) => inner.kind == NodeKind::Cite,
+    });
+    let fix = (!marked && indent.chars().all(|c| c == ' ' || c == '\t')).then(|| Fix {
         confidence: Confidence::Suggested,
         description: format!("Write the second link on its own line, as `{target} {tail}`."),
         edits: vec![Edit {

@@ -492,6 +492,19 @@ fn a_label_that_holds_a_second_link_gets_a_warning_that_splits_it() {
 }
 
 #[test]
+fn a_split_warning_for_a_marked_link_gives_no_fix() {
+    for source in [
+        "A -> B: pay -> C: ship ?\n",
+        "A -> B: pay -> C: ship @ docs/a.md:3\n",
+    ] {
+        let diagnostics = check(source);
+        let found: Vec<&Diagnostic> = diagnostics.iter().filter(|d| d.code == "W0109").collect();
+        assert_eq!(found.len(), 1, "{source:?}: {diagnostics:#?}");
+        assert_eq!(found[0].fix, None, "{source:?}");
+    }
+}
+
+#[test]
 fn a_label_with_an_arrow_and_no_colon_after_it_gives_no_warning() {
     for source in [
         "A -> B: calls -> returns\n",
