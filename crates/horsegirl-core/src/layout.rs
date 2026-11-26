@@ -222,7 +222,7 @@ fn lay_out(graph: &Graph) -> (Layout, usize) {
             stand_ins(set, &ranks)
         })
         .collect();
-    let loops = loops(graph);
+    let (loops, turns) = loops(graph);
     let mut net = build(graph, &chains, &forward, &forward_ends, &ranks, &loops);
     let work = order::order(&mut net, &graph.groups);
     let (centres, edges) = place::place(&net, &graph.groups, &chains);
@@ -236,7 +236,7 @@ fn lay_out(graph: &Graph) -> (Layout, usize) {
         (&nodes, &groups),
         &columns,
         &routes,
-        (&loops, &forward),
+        (&turns, &forward),
     );
     for link in 0..labels.len() {
         if let (Some(centre), Some(size)) = (labels[link], label(graph, link)) {
@@ -340,22 +340,58 @@ fn around_label(centre: Point, size: Size) -> Rect {
     }
 }
 
-/// The room that each node keeps free at each side for its links to itself.
+/// The place of a link from a node to itself at the right side of its box.
+#[derive(Clone, Copy, Debug)]
+struct Turn {
+    /// The distance from the box to the left edge of the column of the loop.
+    start: f64,
+    /// The width of the column.
+    width: f64,
+    /// The loop is under the middle of the box, not above it.
+    below: bool,
+    /// How far the loop reaches past the loops of the columns nearer the
+    /// box: 0 for the first column, towards 1 for the last.
+    spread: f64,
+}
+
+/// The room that each node keeps free at each side for its links to itself,
+/// and the place of each such link.
 ///
-/// The link is a loop at the right side of the box, and its label is centred
-/// on the upright line of the loop. The room is at both sides, so that the
-/// box stays in the middle of its rank.
-fn loops(graph: &Graph) -> Vec<f64> {
-    let mut rooms: Vec<f64> = vec![0.0; graph.nodes.len()];
+/// The loops of a node stand in columns at the right side of its box, two in
+/// each column: the first above the middle, where the links to other nodes
+/// leave, and the second its mirror under the middle. The label of a loop is
+/// centred on the upright line of the loop, so the column is as wide as its
+/// widest label. The room is at both sides, so that the box stays in the
+/// middle of its rank.
+fn loops(graph: &Graph) -> (Vec<f64>, Vec<Option<Turn>>) {
+    let mut of_node: Vec<Vec<usize>> = vec![Vec::new(); graph.nodes.len()];
     for (link, &ends) in graph.links.iter().enumerate() {
         if let (End::Node(from), End::Node(to)) = ends
             && from == to
         {
-            let text = label(graph, link).map_or(0.0, |size| size.width + 2.0 * LABEL_PAD);
-            rooms[from] = rooms[from].max(2.0 * BEND_GAP).max(text);
+            of_node[from].push(link);
         }
     }
-    rooms
+    let mut rooms = vec![0.0; graph.nodes.len()];
+    let mut turns = vec![None; graph.links.len()];
+    for (room, links) in rooms.iter_mut().zip(&of_node) {
+        let columns = links.len().div_ceil(2);
+        for (column, pair) in links.chunks(2).enumerate() {
+            let text =
+                |&link: &usize| label(graph, link).map_or(0.0, |size| size.width + 2.0 * LABEL_PAD);
+            let width = pair.iter().map(text).fold(2.0 * BEND_GAP, f64::max);
+            for (&link, below) in pair.iter().zip([false, true]) {
+                turns[link] = Some(Turn {
+                    start: *room,
+                    width,
+                    below,
+                    spread: real(column) / real(columns),
+                });
+            }
+            *room += width;
+        }
+    }
+    (rooms, turns)
 }
 
 /// The step of a link that holds its label: the middle step.
@@ -793,7 +829,7 @@ fn paths(
     (nodes, groups): (&[Rect], &[Option<Rect>]),
     columns: &Columns,
     routes: &Routes,
-    (loops, stand_ins): (&[f64], &[(usize, usize)]),
+    (turns, stand_ins): (&[Option<Turn>], &[(usize, usize)]),
 ) -> (Vec<Vec<Point>>, Vec<Option<Point>>) {
     // The left and the right side of the box of a node. A port has the
     // border of its group on the side where the group ends in its rank, and
@@ -819,7 +855,8 @@ fn paths(
     for (link, path) in net.paths.iter().enumerate() {
         let (Some(&first), Some(&last)) = (path.first(), path.last()) else {
             let node = stand_ins[link].0;
-            let (points, centre) = turn_back(&nodes[node], loops[node]);
+            let turn = turns[link].expect("a link with no path is a loop");
+            let (points, centre) = turn_back(&nodes[node], turn);
             paths.push(points);
             labels.push(label(graph, link).map(|_| centre));
             continue;
@@ -946,18 +983,29 @@ fn off_borders(
         .unwrap_or(centre.y)
 }
 
-/// A link from a node to itself: a loop at the right side of the box, above
-/// the middle, where the links to other nodes leave. Returns its points and
-/// the centre of its label.
-fn turn_back(node: &Rect, room: f64) -> (Vec<Point>, Point) {
+/// A link from a node to itself: a loop in its column at the right side of
+/// the box. Returns its points and the centre of its label.
+///
+/// The first loop is just above the middle of the box. A loop of a further
+/// column reaches higher and nearer the middle than the loops nearer the
+/// box, and stays inside the height of the box, so that no two loops lie on
+/// each other. A loop under the middle is the mirror of the loop above it.
+fn turn_back(node: &Rect, turn: Turn) -> (Vec<Point>, Point) {
     let right = node.x + node.width;
-    let out = right + room / 2.0;
+    let out = right + turn.start + turn.width / 2.0;
     let middle = node.y + node.height / 2.0;
-    let (top, bottom) = (middle - BEND_GAP, middle - BEND_GAP / 3.0);
-    let points = [(right, top), (out, top), (out, bottom), (right, bottom)];
+    let half = node.height / 2.0;
+    // The first loop is from BEND_GAP to BEND_GAP / 3 above the middle. The
+    // free height is from there to 1 px inside the box and to 1 px off the
+    // middle, where the links to other nodes leave.
+    let far = BEND_GAP + turn.spread * (half - 1.0 - BEND_GAP).max(0.0);
+    let near = BEND_GAP / 3.0 - turn.spread * (BEND_GAP / 3.0 - 1.0);
+    let side = if turn.below { 1.0 } else { -1.0 };
+    let (first, last) = (middle + side * far, middle + side * near);
+    let points = [(right, first), (out, first), (out, last), (right, last)];
     let centre = Point {
         x: out,
-        y: f64::midpoint(top, bottom),
+        y: f64::midpoint(first, last),
     };
     (points.map(|(x, y)| Point { x, y }).to_vec(), centre)
 }
