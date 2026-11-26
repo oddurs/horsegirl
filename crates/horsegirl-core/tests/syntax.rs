@@ -298,10 +298,19 @@ fn a_group_or_an_open_block_is_never_quoted_into_a_name() {
         assert_eq!(stray.fix, None, "{source}");
     }
     // From BUG-134: a brace with no space before it opens a group too.
-    let team = only("Team@x{ A }");
-    assert_eq!(team.code, "E0004");
-    assert_eq!(fixed("Team@x{ A }"), "\"Team@x\"{ A }");
-    assert_eq!(read("\"Team@x\"{ A }").1, [""; 0]);
+    // Braces that hold one word are a group too when no arrow is on the
+    // line, as in `Team {A}`.
+    for (source, repaired) in [
+        ("Team@x{ A }", "\"Team@x\"{ A }"),
+        ("Team@x{A}", "\"Team@x\"{A}"),
+        ("Team@x {A}", "\"Team@x\" {A}"),
+        ("A, Team@x {A}", "A, \"Team@x\" {A}"),
+        ("X {\n  Team@x {A}\n}", "X {\n  \"Team@x\" {A}\n}"),
+    ] {
+        assert_eq!(only(source).code, "E0004", "{source}");
+        assert_eq!(fixed(source), repaired, "{source}");
+        assert_eq!(read(repaired).1, [""; 0], "{repaired}");
+    }
     // A block cannot follow a link. The name still gets its quotes, and the
     // fix leaves the brace outside them for the next message.
     for (source, repaired) in [

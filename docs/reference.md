@@ -41,7 +41,9 @@ word and no space are characters of a name, as in `GET /users/{id}`. Such a
 name needs quotes, and the fix of `E0004` adds them:
 `A -> "GET /users/{id}"`. Any other braces are a group, as in
 `Services { Orders } -> Postgres` and `G{ A, B } -> C`, and `check` reports
-the arrow with `E0001`. Write the group on its own line.
+the arrow with `E0001`. Write the group on its own line. On a line with no
+arrow, all braces after a name are a group: `Team@x {A}` gets the quotes
+around `Team@x` only, as `Team {A}` is a group with one part.
 
 ### 2. An arrow is a link
 

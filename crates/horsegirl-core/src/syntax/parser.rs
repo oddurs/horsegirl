@@ -206,6 +206,44 @@ impl<'s> Parser<'s> {
         index
     }
 
+    /// Whether an arrow or `-x` is on the line of the token at `index`, in the
+    /// same block. In `A -> B {x}` it is, and in `X { A -> B } Team {x}` and
+    /// `A -> X { Team {x} }` the arrow is in another block than `{x}`.
+    fn in_link(&self, index: usize) -> bool {
+        let mut start = index;
+        while start > 0 && self.kind_at(start - 1) != Some(TokenKind::Newline) {
+            start -= 1;
+        }
+        let step = |depth: usize, kind: TokenKind| match kind {
+            TokenKind::Open => depth + 1,
+            TokenKind::Close => depth.saturating_sub(1),
+            _ => depth,
+        };
+        let depth = self.tokens[start..index]
+            .iter()
+            .fold(0, |depth, token| step(depth, token.kind));
+        let mut found = false;
+        let mut current = 0;
+        for (at, token) in self.tokens.iter().enumerate().skip(start) {
+            let kind = token.kind;
+            if kind == TokenKind::Newline {
+                break;
+            }
+            // The end of the block ends the statement.
+            let ends = current < depth;
+            if ends && at > index {
+                break;
+            }
+            if ends {
+                found = false;
+            } else if current == depth && matches!(kind, TokenKind::Arrow | TokenKind::Cross) {
+                found = true;
+            }
+            current = step(current, kind);
+        }
+        found
+    }
+
     /// The kind of the next token that is not a space.
     fn next(&self) -> Option<TokenKind> {
         self.kind_at(self.skip(self.pos))
@@ -1279,12 +1317,14 @@ impl<'s> Parser<'s> {
     /// a fact follows: in `note: install, list` the comma is in the value.
     ///
     /// A `{` is a character of the text only when it closes on its line. In
-    /// a name, the braces are characters only when they hold one word and no
-    /// space, as in `GET /users/{id}`. Any other braces are a group, as in
-    /// `Team@x{ A }` and `Services { Orders }`, and quotes would make one
-    /// thing of the group and lose its parts. A link cannot hold a group, so
-    /// `Services { Orders } -> Postgres` gets no quotes. A label ends before
-    /// a `{` that follows a space and holds a comma, a colon or an arrow.
+    /// a name, the braces are characters only when the name is in a link and
+    /// the braces hold one word and no space, as in `A -> GET /users/{id}`.
+    /// A link cannot hold a group, so such braces can be nothing else. Any
+    /// other braces are a group, as in `Team@x{A}`, `Team@x{ A }` and
+    /// `Services { Orders }`, and quotes would make one thing of the group
+    /// and lose its parts. So `Services { Orders } -> Postgres` gets no
+    /// quotes. A label ends before a `{` that follows a space and holds a
+    /// comma, a colon or an arrow.
     fn extent(&self, from: usize, text: Text) -> usize {
         let mut end = from;
         let mut index = from;
@@ -1312,6 +1352,7 @@ impl<'s> Parser<'s> {
                             Text::Name => {
                                 close != index + 2
                                     || self.kind_at(index + 1) != Some(TokenKind::Word)
+                                    || !self.in_link(index)
                             }
                             Text::Label => {
                                 spaced
