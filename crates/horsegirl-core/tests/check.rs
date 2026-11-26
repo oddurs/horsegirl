@@ -65,14 +65,14 @@ fn two_letters_swapped_are_one_edit() {
 #[test]
 fn the_fix_writes_the_name_as_the_file_writes_it() {
     // The known name holds a colon, so a bare replacement would not parse.
-    let source = "\"API: v2\" -> A\nB -> \"API: v2\"\nC -> \"API: v3\"\n";
+    let source = "\"API: users\" -> A\nB -> \"API: users\"\nC -> \"API: userz\"\n";
     let diagnostics = check(source);
     let (typo, spanned) = only(source, &diagnostics, "E0412");
-    assert_eq!(spanned, "\"API: v3\"");
+    assert_eq!(spanned, "\"API: userz\"");
     let fixed = typo.fix.as_ref().unwrap().apply(source);
     assert_eq!(
         fixed,
-        "\"API: v2\" -> A\nB -> \"API: v2\"\nC -> \"API: v2\"\n"
+        "\"API: users\" -> A\nB -> \"API: users\"\nC -> \"API: users\"\n"
     );
     assert_eq!(check(&fixed), []);
 }
@@ -115,6 +115,18 @@ fn sibling_names_are_not_typos() {
     ] {
         assert_eq!(codes(&check(source)), [""; 0], "{source}");
     }
+}
+
+#[test]
+fn version_names_are_not_typos() {
+    let source = "New API -> Billing v2\nOld API -> Billing v1\nBilling v2 -> Ledger\n";
+    assert_eq!(codes(&check(source)), [""; 0]);
+}
+
+#[test]
+fn a_misspelt_name_is_still_a_typo() {
+    let source = "A -> Billing\nBilling -> B\nC -> Biling\n";
+    assert_eq!(codes(&check(source)), ["E0412"]);
 }
 
 #[test]

@@ -141,8 +141,9 @@ fn typos(source: &str, model: &Model) -> Vec<(ThingId, Diagnostic)> {
     found
 }
 
-/// Two names that differ only in a final word that is a number or one letter
-/// (`Service A` and `Service B`, `Deploy #1` and `Deploy #2`), or that are both
+/// Two names that differ only in a final word that is a number, one letter or
+/// a version (`Service A` and `Service B`, `Deploy #1` and `Deploy #2`,
+/// `Billing v1` and `Billing v2`), or that are both
 /// shorter than three characters, are a numbered or lettered series, not a typo.
 fn siblings(a: &str, b: &str) -> bool {
     if a.chars().count() < 3 && b.chars().count() < 3 {
@@ -150,8 +151,9 @@ fn siblings(a: &str, b: &str) -> bool {
     }
     let is_marker = |word: &str| {
         let digits = word.strip_prefix('#').unwrap_or(word);
-        (!digits.is_empty() && digits.chars().all(|c| c.is_ascii_digit()))
-            || word.chars().count() == 1
+        let version = word.strip_prefix(['v', 'V']).unwrap_or("");
+        let is_number = |text: &str| !text.is_empty() && text.chars().all(|c| c.is_ascii_digit());
+        is_number(digits) || is_number(version) || word.chars().count() == 1
     };
     match (a.rsplit_once(' '), b.rsplit_once(' ')) {
         (Some((head_a, last_a)), Some((head_b, last_b))) => {
