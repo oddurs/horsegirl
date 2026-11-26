@@ -124,6 +124,24 @@ fn version_names_are_not_typos() {
 }
 
 #[test]
+fn a_plural_beside_its_singular_is_not_a_typo() {
+    // The corpus writes `Agents` beside two nodes called `Agent`: a group and
+    // its members, which the author meant as two things.
+    let source = "Agent -> Tool\nTool -> Agent\nAgents -> Tool\n";
+    assert_eq!(codes(&check(source)), [""; 0]);
+    let source = "Agents -> Tool\nTool -> Agents\nAgent -> Tool\n";
+    assert_eq!(codes(&check(source)), [""; 0]);
+}
+
+#[test]
+fn a_dropped_final_s_after_an_s_is_still_a_typo() {
+    for (long, short) in [("Address", "Addres"), ("Process", "Proces")] {
+        let source = format!("{long} -> X\nX -> {long}\nY -> {short}\n");
+        assert_eq!(codes(&check(&source)), ["E0412"], "{short} beside {long}");
+    }
+}
+
+#[test]
 fn a_misspelt_name_is_still_a_typo() {
     let source = "A -> Billing\nBilling -> B\nC -> Biling\n";
     assert_eq!(codes(&check(source)), ["E0412"]);
