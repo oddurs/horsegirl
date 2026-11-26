@@ -74,11 +74,13 @@ fn token(source: &str, start: usize, first: char, line_start: bool) -> (TokenKin
     }
 }
 
-/// Whether a `;` is the last mark before the end of `before`, spaces and tabs
-/// aside. `;;` and `; ;` are not marks: removing one `;` would leave the other
+/// Whether a `;` is the last mark before the end of `before`, spaces aside. A
+/// space is any `is_space` character except a line feed. `;;` and `; ;` are not marks: removing one `;` would leave the other
 /// at the line end and change the name.
 fn follows_semi(before: &str) -> bool {
-    before.trim_end_matches([' ', '\t']).ends_with(';')
+    before
+        .trim_end_matches(|c| is_space(c) && c != '\n')
+        .ends_with(';')
 }
 
 /// The length of the arrow at the start of `rest`. `->` is the arrow. Mermaid
@@ -88,10 +90,11 @@ fn arrow(rest: &str) -> Option<usize> {
     (dashes > 0 && rest[dashes..].starts_with('>')).then_some(dashes + 1)
 }
 
-/// Whether only spaces are left on the line, or a `}` closes the block.
+/// Whether only spaces are left on the line, or a `}` closes the block. A lone
+/// carriage return, U+2028 and U+0085 are spaces. The `\r` of `\r\n` is one too.
 fn ends_line(rest: &str) -> bool {
-    let rest = rest.trim_start_matches([' ', '\t']);
-    rest.is_empty() || rest.starts_with(['\n', '\r', '}'])
+    let rest = rest.trim_start_matches(|c| is_space(c) && c != '\n');
+    rest.is_empty() || rest.starts_with(['\n', '}'])
 }
 
 /// The length of the line break at the start of `rest`, if one is there.

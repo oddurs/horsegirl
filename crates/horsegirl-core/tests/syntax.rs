@@ -1115,3 +1115,34 @@ fn an_empty_link_label_says_to_write_it_or_drop_the_colon() {
     }
     assert_eq!(parse("A -> B: save").diagnostics, []);
 }
+
+/// Only `\n` and `\r\n` end a line. A lone `\r`, U+2028 and U+0085 are spaces.
+#[test]
+fn only_a_line_feed_ends_a_line() {
+    for separator in ["\r", "\u{2028}", "\u{85}"] {
+        let source = format!("A{separator}B -> C{separator}D -> E\n");
+        assert_eq!(
+            read(&source).1,
+            ["E0010"],
+            "{separator:?} must not end a line"
+        );
+    }
+    assert_eq!(read("A -> B\r\nB -> C\n").1, [] as [&str; 0]);
+    // A lone carriage return is a space, so a `;` before it does not end a line.
+    for separator in ["\r", "\u{2028}", "\u{85}"] {
+        let source = format!("A;{separator}B -> C\n");
+        assert_eq!(read(&source).1, read("A; B -> C\n").1, "{separator:?}");
+    }
+    // The same holds between two semicolons.
+    for separator in [" ", "\t", "\r", "\u{2028}", "\u{85}"] {
+        let source = format!("A -> B;{separator};\n");
+        assert_eq!(read(&source).1, read("A -> B; ;\n").1, "{separator:?}");
+    }
+    // The same separators are spaces before the end of the line or the file.
+    for separator in ["\r", "\r\r", "\u{2028}", "\u{85}"] {
+        for tail in ["", "\n", "\r\n"] {
+            let source = format!("A -> B;{separator}{tail}");
+            assert_eq!(read(&source).1, read("A -> B; \n").1, "{source:?}");
+        }
+    }
+}
