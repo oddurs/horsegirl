@@ -3,14 +3,14 @@ id: 124
 uid: b752ed2a-54bf-43c6-a533-4c7b1997adb6
 title: Reserve room for link labels in the layered layout
 type: feature
-status: doing
+status: done
 milestone: v0.1
 assignee: Oddur Sigurdsson
-claimed: 2026-11-26
 depends_on:
 - 32
 created: 2026-11-25
 updated: 2026-11-26
+closed_at: 2026-11-26
 priority: p2
 risk: low
 surface: svg
