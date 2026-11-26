@@ -30,7 +30,7 @@ pub const CATALOGUE: &[Code] = &[
     },
     Code {
         code: "E0004",
-        summary: "A name, a value or a label holds a character that only a text in double quotes can hold. The fix adds the quotes.",
+        summary: "A name, a value or a label holds a character that only a text in double quotes can hold. The fix adds the quotes. A bare text can hold a double quote, but a text in double quotes cannot. So a text that holds a double quote and also needs quotes gets no fix, and the message says to remove the double quote or the character that needs the quotes.",
     },
     Code {
         code: "E0005",

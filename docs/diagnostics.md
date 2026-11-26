@@ -86,7 +86,7 @@ code that the table does not hold. To regenerate it, run
 | `E0001` | error | A token stands where the line cannot hold it: an arrow after a block, a `@` that is not a citation, or a word after the end of a fact. |
 | `E0002` | error | A `{` never closes. |
 | `E0003` | error | A `}` closes nothing. |
-| `E0004` | error | A name, a value or a label holds a character that only a text in double quotes can hold. The fix adds the quotes. |
+| `E0004` | error | A name, a value or a label holds a character that only a text in double quotes can hold. The fix adds the quotes. A bare text can hold a double quote, but a text in double quotes cannot. So a text that holds a double quote and also needs quotes gets no fix, and the message says to remove the double quote or the character that needs the quotes. |
 | `E0005` | error | A double quote opens and does not close on its line. |
 | `E0006` | error | A name or a value is missing. At the end of a line, the span is empty. |
 | `E0007` | error | Braces nest deeper than the parser reads. |

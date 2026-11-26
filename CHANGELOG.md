@@ -147,6 +147,24 @@ the project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   Before, the parser accepted both with no diagnostic.
 - When two fixes of one parse overlap, the outer one keeps its fix and the
   inner one has none, so a tool can apply every fix of one run.
+- `E0004` corrects a text in one step in more places. `Sensors: wind, B -> Hub`
+  gets the quotes, as `A, Sensors: wind -> Hub` does. A value runs on past a
+  comma until a fact follows, so `note: GET /users/{id}, list` gets one fix
+  for the whole value. The name after an arrow gets the fix that the name
+  before one gets: `A -> GET /users/{id}`.
+- Braces in a name that needs quotes are characters of the name only when
+  they hold one word and no space, as in `{id}`, and an arrow is on the line.
+  Other braces are a group, so `G{ A, B } -> C` and
+  `Services { Orders } -> Postgres` give `E0001` at the arrow. The rule holds
+  for a name with a colon too: `a: b{c} -> D` gets `"a: b{c}" -> D`. On a line
+  with no arrow, all braces after a name are a group, so
+  `Team@x{ A }` and `Team@x {A}` get the quotes around `Team@x` only. Before,
+  the fix put such a group inside the quotes and lost its parts.
+- A bare name, value or label can hold a double quote, as in `x"y" -> A`.
+  A text in double quotes cannot hold one. So a text that holds a double
+  quote and also a character that needs quotes, as in `x"y"@z -> A` or
+  `say "hi" {x}`, gives `E0004` with no fix. The message says that a text in
+  double quotes cannot hold a double quote, and no longer says to add quotes.
 - `horsegirl_core::text::measure` gives the width and height of a label in
   pixels, in Arial metrics, from a table bundled in the core. It gives the same
   result on Linux, macOS and in WebAssembly. A character outside the table
