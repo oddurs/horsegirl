@@ -73,6 +73,10 @@ pub const CATALOGUE: &[Code] = &[
         summary: "A name is written once and is one edit from a name written more often, so it is likely a typo that makes a new thing. The safe fix writes the other name. When more than one such name is one edit away, the message names each and there is no fix. Two names are not a typo when they differ only in a final word that is a number or one letter (`Service A` and `Service B`), or when both are shorter than three characters.",
     },
     Code {
+        code: "E0420",
+        summary: "A name in braces is not placed in their group: the thing is in another group already, the group is the thing or inside it, or the braces follow several names. A thing is in one group. The suggested fix removes the name when the line names other things and says nothing else. It is never safe, because only the writer knows whether the two mentions mean one thing.",
+    },
+    Code {
         code: "E0500",
         summary: "A link breaks a `-x` rule in the same direction.",
     },

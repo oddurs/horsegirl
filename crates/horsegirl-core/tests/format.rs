@@ -24,6 +24,10 @@ fn model(source: &str) -> Model {
     for show in &mut model.shows {
         show.span = 0..0;
     }
+    for misplaced in &mut model.misplaced {
+        misplaced.span = 0..0;
+        misplaced.removable = misplaced.removable.as_ref().map(|_| 0..0);
+    }
     model
 }
 
