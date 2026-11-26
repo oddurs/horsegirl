@@ -24,7 +24,7 @@
 //! the groups that span the corridor. A place on a level line can be past
 //! the end of the corridor: the corridor then grows to hold the label.
 
-use std::collections::BTreeMap;
+use std::collections::{BTreeMap, BTreeSet};
 
 use super::{BEND_GAP, Kind, LABEL_CLEAR, Net, RANK_GAP, real};
 use crate::scene::Point;
@@ -173,14 +173,35 @@ impl Line {
     /// is half the width and half the height of the label, each with the
     /// room it keeps from a line.
     fn crosses(&self, centre: Point, reach: (f64, f64)) -> bool {
-        let (across, along, reach_across, reach_along) = if self.level {
-            (centre.y, centre.x, reach.1, reach.0)
-        } else {
-            (centre.x, centre.y, reach.0, reach.1)
+        #[cfg(test)]
+        tests::count_test();
+        let point = Line {
+            level: true,
+            at: centre.y,
+            low: centre.x,
+            high: centre.x,
         };
-        (self.at - across).abs() < reach_across
-            && self.low < along + reach_along
-            && along - reach_along < self.high
+        self.near(&point, reach)
+    }
+
+    /// The line comes nearer than `reach` to a label centred anywhere on
+    /// `path`.
+    fn near(&self, path: &Line, reach: (f64, f64)) -> bool {
+        let ((left, right), (top, bottom)) = self.extent();
+        let ((path_left, path_right), (path_top, path_bottom)) = path.extent();
+        left < path_right + reach.0
+            && path_left - reach.0 < right
+            && top < path_bottom + reach.1
+            && path_top - reach.1 < bottom
+    }
+
+    /// The range of the line across the corridor and down the page.
+    fn extent(&self) -> ((f64, f64), (f64, f64)) {
+        if self.level {
+            ((self.low, self.high), (self.at, self.at))
+        } else {
+            ((self.at, self.at), (self.low, self.high))
+        }
     }
 }
 
@@ -265,40 +286,38 @@ fn place_label(
     gap: f64,
 ) -> Point {
     let (from, into, track) = step;
-    let own = lines(step);
-    let others = apart(others, &own);
     let first = Point {
         x: track.unwrap_or(0.0),
         y: f64::midpoint(from, into),
     };
-    let clear = |at: &Point| {
-        placed.iter().all(|(other, other_size)| {
-            let wide = f64::midpoint(size.width, other_size.width) + LABEL_SPACE;
-            let high = f64::midpoint(size.height, other_size.height) + LABEL_SPACE;
-            (at.x - other.x).abs() >= wide || (at.y - other.y).abs() >= high
-        })
-    };
-    let (half_wide, half_high) = (
-        size.width / 2.0 + LINE_SPACE,
-        size.height / 2.0 + LINE_SPACE,
-    );
-    let crossed = |at: &Point| {
-        let crosses = |line: &&Line| line.crosses(*at, (half_wide, half_high));
-        others.iter().filter(crosses).count()
-    };
+    // Every place that the label can take is on its own path, so a line that
+    // stays out of reach of the path can never cross the label. Most lines of
+    // a busy corridor are of that kind, and each one would add places to try
+    // and work to each place.
+    let own = lines(step);
+    let mut path = own.clone();
+    path.push(Line {
+        level: true,
+        at: first.y,
+        low: first.x,
+        high: first.x,
+    });
+    let reach = Obstacles::reach(size);
+    let others: Vec<Line> = apart(others, &own)
+        .into_iter()
+        .filter(|line| path.iter().any(|part| line.near(part, reach)))
+        .collect();
+    let obstacles = Obstacles::new(size, placed, &others);
     let half = size.height / 2.0;
     let within = |bands: &[(f64, f64)], at: &Point| {
         let mut bands = bands.iter();
         bands.any(|&(top, bottom)| top - half < at.y && at.y < bottom + half)
     };
-    let worse = |at: &Point| {
-        (
-            within(&bands.borders, at),
-            within(&bands.others, at),
-            crossed(at),
-        )
-    };
-    if clear(&first) && worse(&first) == (false, false, 0) {
+    let in_bands = |at: &Point| (within(&bands.borders, at), within(&bands.others, at));
+    if obstacles.clear(&first)
+        && in_bands(&first) == (false, false)
+        && obstacles.crossed(&first, 1) == 0
+    {
         return first;
     }
     let mut spots = vec![first];
@@ -335,22 +354,142 @@ fn place_label(
             });
         }
     }
-    let cost = |at: &Point| {
-        let grows = 2.0 * (at.x.abs() + size.width / 2.0 + LABEL_PAD) - gap;
-        let far = (at.x - first.x).abs() + (at.y - first.y).abs();
-        (worse(at), grows.max(0.0), far)
-    };
-    spots
+    // The ends of many lines clamp to one corner of the path. A spot after
+    // the first at the same place has the same cost, so it can never win.
+    let mut seen = BTreeSet::new();
+    spots.retain(|at| seen.insert((at.x.to_bits(), at.y.to_bits())));
+    let ranked = spots
         .into_iter()
-        .filter(clear)
-        .min_by(|a, b| {
-            let ((worse_a, grow_a, far_a), (worse_b, grow_b, far_b)) = (cost(a), cost(b));
-            worse_a
-                .cmp(&worse_b)
-                .then(grow_a.total_cmp(&grow_b))
-                .then(far_a.total_cmp(&far_b))
+        .map(|at| {
+            let grows = 2.0 * (at.x.abs() + size.width / 2.0 + LABEL_PAD) - gap;
+            let far = (at.x - first.x).abs() + (at.y - first.y).abs();
+            (at, (in_bands(&at), grows.max(0.0), far))
         })
-        .expect("a place right of every label covers none")
+        .collect();
+    choose(ranked, &obstacles)
+}
+
+/// The bands that a spot is in, how much it widens the corridor and how far
+/// it is from the first choice.
+type Rank = ((bool, bool), f64, f64);
+
+/// The best of `spots`: the clear spot of the least [`Rank`] whose bands no
+/// line crosses, or else the one of those bands that the fewest lines cross.
+///
+/// Each spot is sorted by its rank first, which leaves out the count of the
+/// lines that cross it: that count is the dear one to find. The first clear
+/// spot that no line crosses is then the best of its bands, and only when
+/// every spot of those bands is crossed must the lines of each be counted.
+fn choose(mut spots: Vec<(Point, Rank)>, obstacles: &Obstacles) -> Point {
+    spots.sort_by(
+        |(_, (bands_a, grow_a, far_a)), (_, (bands_b, grow_b, far_b))| {
+            bands_a
+                .cmp(bands_b)
+                .then(grow_a.total_cmp(grow_b))
+                .then(far_a.total_cmp(far_b))
+        },
+    );
+    let mut open = spots.into_iter().filter(|(at, _)| obstacles.clear(at));
+    let (best, (bands_of_best, _, _)) = open
+        .next()
+        .expect("a place right of every label covers none");
+    let mut crossed = Vec::new();
+    let same_bands = open.take_while(|(_, (bands, _, _))| *bands == bands_of_best);
+    for at in std::iter::once(best).chain(same_bands.map(|(at, _)| at)) {
+        if obstacles.crossed(&at, 1) == 0 {
+            return at;
+        }
+        crossed.push(at);
+    }
+    let mut best = crossed[0];
+    let mut fewest = obstacles.crossed(&best, usize::MAX);
+    for &at in &crossed[1..] {
+        let count = obstacles.crossed(&at, fewest);
+        if count < fewest {
+            (best, fewest) = (at, count);
+        }
+    }
+    best
+}
+
+/// The placed labels and the lines that a label of one size can meet, each
+/// sorted so that a place is tested only against those near it. Each window
+/// is a pixel wider than the reach, so rounding cannot leave out a label or
+/// a line in reach.
+struct Obstacles<'a> {
+    size: Size,
+    /// The placed labels by height.
+    labels: Vec<&'a (Point, Size)>,
+    /// How far from a place in height a placed label can cover it.
+    window: f64,
+    /// The level lines by height.
+    level: Vec<Line>,
+    /// The upright lines by distance across.
+    upright: Vec<Line>,
+}
+
+impl<'a> Obstacles<'a> {
+    fn new(size: Size, placed: &'a [(Point, Size)], lines: &[Line]) -> Self {
+        let mut labels: Vec<&(Point, Size)> = placed.iter().collect();
+        labels.sort_by(|(a, _), (b, _)| a.y.total_cmp(&b.y));
+        let tallest = placed.iter().map(|(_, s)| s.height).fold(0.0, f64::max);
+        let (mut level, mut upright): (Vec<Line>, Vec<Line>) =
+            lines.iter().partition(|line| line.level);
+        level.sort_by(|a, b| a.at.total_cmp(&b.at));
+        upright.sort_by(|a, b| a.at.total_cmp(&b.at));
+        Self {
+            size,
+            labels,
+            window: f64::midpoint(size.height, tallest) + LABEL_SPACE + 1.0,
+            level,
+            upright,
+        }
+    }
+
+    /// Half the width and half the height of a label of `size`, each with
+    /// the room that it keeps from a line.
+    fn reach(size: Size) -> (f64, f64) {
+        (
+            size.width / 2.0 + LINE_SPACE,
+            size.height / 2.0 + LINE_SPACE,
+        )
+    }
+
+    /// A label at `at` covers none of the placed labels.
+    fn clear(&self, at: &Point) -> bool {
+        let start = self
+            .labels
+            .partition_point(|(other, _)| other.y <= at.y - self.window);
+        let near = self.labels[start..]
+            .iter()
+            .take_while(|(other, _)| other.y < at.y + self.window);
+        near.into_iter().all(|(other, other_size)| {
+            #[cfg(test)]
+            tests::count_test();
+            let wide = f64::midpoint(self.size.width, other_size.width) + LABEL_SPACE;
+            let high = f64::midpoint(self.size.height, other_size.height) + LABEL_SPACE;
+            (at.x - other.x).abs() >= wide || (at.y - other.y).abs() >= high
+        })
+    }
+
+    /// The count of the lines that cross a label at `at`, up to `limit`.
+    fn crossed(&self, at: &Point, limit: usize) -> usize {
+        let reach = Self::reach(self.size);
+        near(&self.level, at.y, reach.1)
+            .chain(near(&self.upright, at.x, reach.0))
+            .filter(|line| line.crosses(*at, reach))
+            .take(limit)
+            .count()
+    }
+}
+
+/// The lines of `lines`, in the order of `at`, whose `at` is within `reach`
+/// of `at`, and maybe a few more.
+fn near(lines: &[Line], at: f64, reach: f64) -> impl Iterator<Item = &Line> {
+    let start = lines.partition_point(|line| line.at <= at - reach - 1.0);
+    lines[start..]
+        .iter()
+        .take_while(move |line| line.at < at + reach + 1.0)
 }
 
 /// The heights where a label of `size` stands just above or under a placed
@@ -590,4 +729,55 @@ fn tracks(trunks: &[Trunk], into: &[f64], free: &[bool]) -> Vec<usize> {
             .unwrap_or(0);
     }
     track
+}
+
+#[cfg(test)]
+mod tests {
+    use std::cell::Cell;
+    use std::fmt::Write as _;
+
+    use crate::lens::{self, FLOW};
+    use crate::model::lower;
+    use crate::scene::Role;
+    use crate::syntax::parse;
+    use crate::text::Style;
+
+    thread_local! {
+        /// How often a place of a label was tested against a line or against
+        /// a placed label.
+        static TESTS: Cell<usize> = const { Cell::new(0) };
+    }
+
+    pub(super) fn count_test() {
+        TESTS.with(|tests| tests.set(tests.get() + 1));
+    }
+
+    /// The tests to place the labels of a fan of `count` labelled links out
+    /// of one thing and `count` labelled links into another, drawn as
+    /// `horsegirl draw` draws it.
+    fn tests_for_fan(count: usize) -> usize {
+        let mut source = String::new();
+        for i in 0..count {
+            writeln!(source, "hub -> t{i}: label {i}\nt{i} -> sink: back {i}")
+                .expect("a String takes any write");
+        }
+        let model = lower(&parse(&source).tree);
+        TESTS.with(|tests| tests.set(0));
+        let scene = lens::draw(&model, &FLOW, Style { size: 14.0 });
+        let labels = scene.shapes.iter();
+        let labels = labels.filter(|s| s.role == Role::Label && s.of.len() == 2);
+        assert_eq!(labels.count(), 2 * count);
+        TESTS.with(Cell::get)
+    }
+
+    // In a fan, each label has the lines and the labels of the whole fan
+    // near its path. Each place that it tried was once tested against each
+    // of them, so the work grew with the cube of the fan: 838 million tests
+    // for a fan of 200. The test counts that work, not a clock, so a slow
+    // runner cannot fail it.
+    #[test]
+    fn a_wide_labelled_fan_places_its_labels_in_little_work() {
+        let tests = tests_for_fan(200);
+        assert!(tests < 3 * 200 * 200, "a fan of 200 took {tests} tests");
+    }
 }

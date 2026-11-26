@@ -10,8 +10,10 @@
 //! by meaning. The document holds no script and loads nothing: the style is
 //! inline and the arrow head is a marker in the same document.
 
+use std::collections::BTreeMap;
 use std::fmt::Write as _;
 
+use crate::overlap::{self, Meet};
 use crate::scene::{Point, Rect, Role, Scene, Shape, number};
 use crate::text::{self, Style};
 use crate::theme;
@@ -103,8 +105,9 @@ pub fn draw(scene: &Scene, title: &str) -> String {
     };
     let owners = owners(scene);
     let colour = scene.colour.as_deref();
+    let by_ends = overlap::parts_by_ends(scene.shapes.iter().filter(|s| s.role == Role::Link));
     for shape in &scene.shapes {
-        out.push_str(&element(scene, shape, style, colour, &owners));
+        out.push_str(&element(scene, shape, style, (colour, &owners), &by_ends));
     }
     out.push_str("</svg>\n");
     out
@@ -114,8 +117,8 @@ fn element(
     scene: &Scene,
     shape: &Shape,
     style: Style,
-    colour: Option<&str>,
-    owners: &[&str],
+    (colour, owners): (Option<&str>, &[&str]),
+    by_ends: &BTreeMap<&[String], Vec<(Point, Point)>>,
 ) -> String {
     let class = class(shape, colour, owners);
     let r = shape.rect;
@@ -135,12 +138,14 @@ fn element(
         // So does a label on a line that this link shares with the link of
         // the label, such as the line that two links from one thing leave
         // on: that line stops at the label in both links, or it would pass
-        // through the text.
+        // through the text. The overlap detector decides with the same
+        // function, so any other line through a label is a collision.
         Role::Link => {
+            let along = |label: &Shape| overlap::meet(shape, label, by_ends) == Meet::Along;
             let holes: Vec<Rect> = scene
                 .shapes
                 .iter()
-                .filter(|s| s.role == Role::Label && (s.of == shape.of || shares(scene, shape, s)))
+                .filter(|s| s.role == Role::Label && (s.of == shape.of || along(s)))
                 .map(|s| pad(s.rect))
                 .collect();
             let mut d = String::new();
@@ -188,43 +193,6 @@ fn element(
             )
         }
     }
-}
-
-/// Every part of `link` that comes near `label` lies on the link that the
-/// label names.
-fn shares(scene: &Scene, link: &Shape, label: &Shape) -> bool {
-    let hole = pad(label.rect);
-    let parts = |points: &[Point]| -> Vec<(Point, Point)> {
-        points.windows(2).map(|pair| (pair[0], pair[1])).collect()
-    };
-    let own: Vec<(Point, Point)> = scene
-        .shapes
-        .iter()
-        .filter(|s| s.role == Role::Link && s.of == label.of)
-        .flat_map(|s| parts(&s.points))
-        .collect();
-    let near: Vec<(Point, Point)> = parts(&link.points)
-        .into_iter()
-        .filter_map(|(a, b)| {
-            let (t0, t1) = inside(a, b, hole)?;
-            let at = |t: f64| Point {
-                x: a.x + (b.x - a.x) * t,
-                y: a.y + (b.y - a.y) * t,
-            };
-            Some((at(t0), at(t1)))
-        })
-        .collect();
-    // Two links that share a line have the same numbers on it, and each part
-    // is level or upright, so a point on a part is exactly on it.
-    let on = |p: Point, (c, d): (Point, Point)| {
-        let within = |v: f64, low: f64, high: f64| low.min(high) <= v && v <= low.max(high);
-        let cross = (d.x - c.x) * (p.y - c.y) - (d.y - c.y) * (p.x - c.x);
-        cross == 0.0 && within(p.x, c.x, d.x) && within(p.y, c.y, d.y)
-    };
-    !near.is_empty()
-        && near
-            .iter()
-            .all(|&(p, q)| own.iter().any(|&part| on(p, part) && on(q, part)))
 }
 
 fn pad(r: Rect) -> Rect {
