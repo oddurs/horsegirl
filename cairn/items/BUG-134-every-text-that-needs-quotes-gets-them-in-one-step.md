@@ -51,3 +51,7 @@ Fix round 1. The review returned no verdict, so the implementer probed the brace
 ## 2026-11-26
 
 Fix round 2: the review gave no verdict. A probe found that 'a: b{c} -> D' got the fix '"a: b"{c} -> D', which does not parse, because the colon path in the parser did not use the brace rule. Both paths now share name_braces. The fix is '"a: b{c}" -> D'. Test braces_before_an_arrow_are_characters_only_around_one_word failed before the change and passes after it; scripts/task check exited 0.
+
+## 2026-11-26
+
+Fix round 3: the review returned no verdict, so no finding was open. HORSEGIRL_FUZZ_ROUNDS=150000 cargo test --release -p horsegirl-core --test fuzz no_input printed 'test result: ok. 1 passed' in 271 s. A hand probe of 15 inputs with horsegirl fix and then horsegirl check, among them 'A -> GET /users/{id}/{name}', 'A -> B, C@d {e}', 'a: b{c}, d -> E' and 'A@b{c} -> D', left no E0004 and no new error in any fixed line. scripts/task check exited 0.
