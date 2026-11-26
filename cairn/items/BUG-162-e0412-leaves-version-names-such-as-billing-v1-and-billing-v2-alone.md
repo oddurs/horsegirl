@@ -3,8 +3,10 @@ id: 162
 uid: 5dfc0bd2-aa69-48e1-86ac-1d56e8c117e8
 title: E0412 leaves version names such as Billing v1 and Billing v2 alone
 type: bug
-status: backlog
+status: doing
 milestone: v0.1
+assignee: Oddur Sigurdsson
+claimed: 2026-11-26
 created: 2026-11-25
 updated: 2026-11-26
 priority: p1
