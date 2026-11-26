@@ -1,4 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" class="horsegirl" role="img" width="1195.66" height="172" viewBox="-1 -1 1195.66 172" font-size="14">
+<svg xmlns="http://www.w3.org/2000/svg" class="horsegirl" role="img" width="1225.66" height="202" viewBox="-16 -16 1225.66 202" font-size="14">
 <title>checkout</title>
 <desc>9 things, 1 group and 9 links.</desc>
 <style>
@@ -16,7 +16,7 @@
 <defs>
 <marker id="hg-head" viewBox="0 0 8 8" refX="8" refY="4" markerWidth="8" markerHeight="8" markerUnits="userSpaceOnUse" orient="auto"><path class="head" d="M0,0 L8,4 L0,8 z"/></marker>
 </defs>
-<rect class="page" x="-1" y="-1" width="1195.66" height="172"/>
+<rect class="page" x="-16" y="-16" width="1225.66" height="202"/>
 <rect class="group" x="432.59" y="18" width="442.43" height="92" rx="4"/>
 <path class="link" d="M90.14,18 L158.33,18 L158.33,37.18 M158.33,58.82 L158.33,78 L220.17,78" marker-end="url(#hg-head)"/>
 <path class="link" d="M96.49,78 L220.17,78" marker-end="url(#hg-head)"/>

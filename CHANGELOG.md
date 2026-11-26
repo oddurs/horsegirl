@@ -5,6 +5,14 @@ the project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+### Changed
+
+- The SVG keeps a margin of 16 px on each side. Its view box starts at
+  `-16 -16` and grows by 32 in each direction, so no border touches the edge
+  of the picture. The page rectangle covers the margin. The value is
+  `theme::MARGIN`, and `svg::draw_with_margin` takes another size. The
+  margin was 1 px before. `docs/theme.md` states it.
+
 ### Added
 
 - The flow lens draws a link that starts or ends at a group, as in

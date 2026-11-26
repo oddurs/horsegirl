@@ -12,13 +12,12 @@ named for gaits: Walk, Trot, Canter, Gallop.
 
 ## v0.1 — Walk
 
-`··········` 0% · 0 of 8 done · due 2027-01-31
+`··········` 0% · 0 of 7 done · due 2027-01-31
 
 An agent writes a horsegirl file, checks it, applies the fixes, and draws a flow diagram as SVG, from the command line or over MCP.
 
 - [ ] [`0153`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0153-e0412-leaves-a-plural-beside-its-singular-alone.md) E0412 leaves a plural beside its singular alone <sup>chore · p1 · check</sup>
 - [ ] [`BUG-162`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/BUG-162-e0412-leaves-version-names-such-as-billing-v1-and-billing-v2-alone.md) E0412 leaves version names such as Billing v1 and Billing v2 alone <sup>bug · p1 · check</sup>
-- [ ] [`BUG-179`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/BUG-179-a-drawing-keeps-a-margin-round-every-box.md) A drawing keeps a margin round every box <sup>bug · p2 · render</sup>
 - [ ] [`0052`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0052-a-daily-report-of-what-the-backlog-needs-from-a-person.md) A daily report of what the backlog needs from a person <sup>feature · p2 · workflow</sup>
 - [ ] [`0054`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0054-cut-a-release-with-one-command.md) Cut a release with one command <sup>chore · p1 · workflow</sup>
 - [ ] [`0042`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0042-release-binaries-with-checksums-and-an-install-script.md) Release binaries with checksums and an install script <sup>chore · p0 · release</sup>
@@ -27,7 +26,7 @@ An agent writes a horsegirl file, checks it, applies the fixes, and draws a flow
 
 ## later — Later
 
-`··········` 0% · 0 of 24 done
+`··········` 0% · 0 of 25 done
 
 Nothing on a date. Good ideas wait here until a release needs them.
 
@@ -55,6 +54,7 @@ Nothing on a date. Good ideas wait here until a release needs them.
 - [ ] [`BUG-175`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/BUG-175-a-written-against-the-last-word-of-a-label-marks-a-guess-or-says-why-not.md) A ? written against the last word of a label marks a guess, or says why not <sup>bug · p2 · check</sup>
 - [ ] [`BUG-176`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/BUG-176-a-label-has-a-place-that-no-line-crosses-when-two-lines-run-beside-its-path.md) A label has a place that no line crosses when two lines run beside its path <sup>bug · p2 · layout</sup>
 - [ ] [`BUG-178`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/BUG-178-three-or-more-loops-of-one-node-draw-no-line-through-the-label-of-another-loop.md) Three or more loops of one node draw no line through the label of another loop <sup>bug · p3 · layout</sup>
+- [ ] [`0181`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0181-a-host-sets-the-margin-of-a-drawing.md) A host sets the margin of a drawing <sup>feature · p2 · cli</sup>
 
 ## v0.2 — Trot
 

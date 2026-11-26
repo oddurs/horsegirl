@@ -1,4 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" class="horsegirl" role="img" width="233.03" height="38" viewBox="-1 -1 233.03 38" font-size="14">
+<svg xmlns="http://www.w3.org/2000/svg" class="horsegirl" role="img" width="263.03" height="68" viewBox="-16 -16 263.03 68" font-size="14">
 <title>link-against-a-rule</title>
 <desc>2 things, 0 groups and 1 link.</desc>
 <style>
@@ -16,7 +16,7 @@
 <defs>
 <marker id="hg-head" viewBox="0 0 8 8" refX="8" refY="4" markerWidth="8" markerHeight="8" markerUnits="userSpaceOnUse" orient="auto"><path class="head" d="M0,0 L8,4 L0,8 z"/></marker>
 </defs>
-<rect class="page" x="-1" y="-1" width="233.03" height="38"/>
+<rect class="page" x="-16" y="-16" width="263.03" height="68"/>
 <path class="link" d="M83.78,18 L147.78,18" marker-end="url(#hg-head)"/>
 <rect class="thing" x="0" y="0" width="83.78" height="36" rx="4"/>
 <rect class="thing" x="147.78" y="0" width="83.25" height="36" rx="4"/>
