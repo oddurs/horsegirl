@@ -1128,4 +1128,9 @@ fn only_a_line_feed_ends_a_line() {
         );
     }
     assert_eq!(read("A -> B\r\nB -> C\n").1, [] as [&str; 0]);
+    // A lone carriage return is a space, so a `;` before it does not end a line.
+    for separator in ["\r", "\u{2028}", "\u{85}"] {
+        let source = format!("A;{separator}B -> C\n");
+        assert_eq!(read(&source).1, read("A; B -> C\n").1, "{separator:?}");
+    }
 }

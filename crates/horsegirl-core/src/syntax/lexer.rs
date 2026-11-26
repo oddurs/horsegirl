@@ -91,7 +91,7 @@ fn arrow(rest: &str) -> Option<usize> {
 /// Whether only spaces are left on the line, or a `}` closes the block.
 fn ends_line(rest: &str) -> bool {
     let rest = rest.trim_start_matches([' ', '\t']);
-    rest.is_empty() || rest.starts_with(['\n', '\r', '}'])
+    rest.is_empty() || rest.starts_with(['\n', '}']) || rest.starts_with("\r\n")
 }
 
 /// The length of the line break at the start of `rest`, if one is there.
