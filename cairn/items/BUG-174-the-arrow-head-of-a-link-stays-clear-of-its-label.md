@@ -30,3 +30,7 @@ Make the room between a label and the end of a link that holds the arrow head at
 - [ ] On every golden picture and on `examples/checkout.horse`, no arrow head overlaps the box of a link label.
 - [ ] A test in `crates/horsegirl-core/tests/layout.rs` or `tests/svg.rs` holds the case.
 - [ ] A link with no label keeps the gap it has today.
+
+## 2026-11-26
+
+From BUG-170: in examples/checkout.horse the label charge now stands at the right end of its corridor, right of the trunk of API gateway -> Payments, 6 px (LABEL_PAD) from Payments. The 8 px arrow head now reaches into the 3 px gap before the text.

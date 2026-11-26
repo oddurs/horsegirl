@@ -28,7 +28,7 @@ mod through;
 
 use crate::scene::{Point, Rect};
 use crate::text::Size;
-use route::{LABEL_PAD, Routes};
+use route::{Bands, LABEL_PAD, Routes};
 
 /// The least distance between two boxes of one rank.
 pub const NODE_GAP: f64 = 24.0;
@@ -120,7 +120,9 @@ pub struct Layout {
     /// of a node there. It lies across no border of a group when its upright
     /// line has a height that is clear of every border. It covers no other
     /// label between the same two ranks, unless it moved off a border and
-    /// every height off the borders covers one.
+    /// every height off the borders covers one. No line of another link
+    /// between the same two ranks crosses it where its path has such a
+    /// place, but a line that it shares with another link can run under it.
     pub labels: Vec<Option<Point>>,
 }
 
@@ -224,7 +226,8 @@ fn lay_out(graph: &Graph) -> (Layout, usize) {
     let mut net = build(graph, &chains, &forward, &forward_ends, &ranks, &loops);
     let work = order::order(&mut net, &graph.groups);
     let (centres, edges) = place::place(&net, &graph.groups, &chains);
-    let routes = route::route(&net, &centres, &label_sizes(graph, &net));
+    let keep_out = label_bands(graph, &net, &chains, &edges);
+    let routes = route::route(&net, &centres, &label_sizes(graph, &net), &keep_out);
     let columns = columns(&net, &graph.groups, &chains, &routes.gaps);
     let (nodes, groups) = boxes(&net, &centres, &edges, &columns, &loops);
     let (paths, mut labels) = paths(
@@ -237,18 +240,7 @@ fn lay_out(graph: &Graph) -> (Layout, usize) {
     );
     for link in 0..labels.len() {
         if let (Some(centre), Some(size)) = (labels[link], label(graph, link)) {
-            let group_of = |end: End| match end {
-                End::Node(node) => graph.nodes[node].group,
-                End::Group(group) => Some(group),
-            };
-            let (from, to) = graph.links[link];
-            let ends = [group_of(from), group_of(to)];
-            let around: Vec<usize> = ends
-                .iter()
-                .flatten()
-                .flat_map(|&g| &chains[g])
-                .copied()
-                .collect();
+            let around = around_link(graph, &chains, link);
             let other: Vec<Rect> = groups
                 .iter()
                 .enumerate()
@@ -381,6 +373,55 @@ fn label_sizes(graph: &Graph, net: &Net) -> Vec<Option<Size>> {
         }
     }
     sizes
+}
+
+/// The groups that hold an end of `link`, at any depth.
+fn around_link(graph: &Graph, chains: &[Vec<usize>], link: usize) -> Vec<usize> {
+    let group_of = |end: End| match end {
+        End::Node(node) => graph.nodes[node].group,
+        End::Group(group) => Some(group),
+    };
+    let (from, to) = graph.links[link];
+    [group_of(from), group_of(to)]
+        .iter()
+        .flatten()
+        .flat_map(|&g| &chains[g])
+        .copied()
+        .collect()
+}
+
+/// For each step that holds a label, the heights that the label keeps out
+/// of. A group spans the corridor after a rank when it has that rank and the
+/// next one, and only such a group has a border or a box in the corridor.
+fn label_bands(
+    graph: &Graph,
+    net: &Net,
+    chains: &[Vec<usize>],
+    edges: &[(f64, f64)],
+) -> Vec<Bands> {
+    let mut bands = vec![Bands::default(); net.steps.len()];
+    for link in (0..graph.links.len()).filter(|&link| label(graph, link).is_some()) {
+        let Some(step) = label_step(net, link) else {
+            continue;
+        };
+        let rank = net.items[net.steps[step].0].rank;
+        let around = around_link(graph, chains, link);
+        let spanning = net
+            .spans
+            .iter()
+            .enumerate()
+            .filter(|&(_, span)| span.is_some_and(|(low, high)| low <= rank && rank < high));
+        for (g, _) in spanning {
+            let (top, bottom) = edges[g];
+            bands[step]
+                .borders
+                .extend([(top, top + GROUP_TITLE), (bottom, bottom)]);
+            if !around.contains(&g) {
+                bands[step].others.push((top, bottom));
+            }
+        }
+    }
+    bands
 }
 
 /// A count as a number to average. A rank holds far fewer than 2^52 items,

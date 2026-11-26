@@ -10,8 +10,10 @@
 //! by meaning. The document holds no script and loads nothing: the style is
 //! inline and the arrow head is a marker in the same document.
 
+use std::collections::BTreeMap;
 use std::fmt::Write as _;
 
+use crate::overlap::{self, Meet};
 use crate::scene::{Point, Rect, Role, Scene, Shape, number};
 use crate::text::{self, Style};
 use crate::theme;
@@ -103,8 +105,9 @@ pub fn draw(scene: &Scene, title: &str) -> String {
     };
     let owners = owners(scene);
     let colour = scene.colour.as_deref();
+    let by_ends = overlap::parts_by_ends(scene.shapes.iter().filter(|s| s.role == Role::Link));
     for shape in &scene.shapes {
-        out.push_str(&element(scene, shape, style, colour, &owners));
+        out.push_str(&element(scene, shape, style, (colour, &owners), &by_ends));
     }
     out.push_str("</svg>\n");
     out
@@ -114,8 +117,8 @@ fn element(
     scene: &Scene,
     shape: &Shape,
     style: Style,
-    colour: Option<&str>,
-    owners: &[&str],
+    (colour, owners): (Option<&str>, &[&str]),
+    by_ends: &BTreeMap<&[String], Vec<(Point, Point)>>,
 ) -> String {
     let class = class(shape, colour, owners);
     let r = shape.rect;
@@ -132,11 +135,17 @@ fn element(
         // group that it sits on. So the line stops at the label instead, and
         // the label stays where the layout put it. A label of another link
         // between the same two things cuts the line too: both name the pair.
+        // So does a label on a line that this link shares with the link of
+        // the label, such as the line that two links from one thing leave
+        // on: that line stops at the label in both links, or it would pass
+        // through the text. The overlap detector decides with the same
+        // function, so any other line through a label is a collision.
         Role::Link => {
+            let along = |label: &Shape| overlap::meet(shape, label, by_ends) == Meet::Along;
             let holes: Vec<Rect> = scene
                 .shapes
                 .iter()
-                .filter(|s| s.role == Role::Label && s.of == shape.of)
+                .filter(|s| s.role == Role::Label && (s.of == shape.of || along(s)))
                 .map(|s| pad(s.rect))
                 .collect();
             let mut d = String::new();
@@ -233,7 +242,9 @@ fn cut(points: &[Point], holes: &[Rect]) -> Vec<Vec<Point>> {
 }
 
 /// The part of the segment from `a` to `b` inside `r`, as the range of `t`
-/// in `a + (b - a) * t`. `None` when the segment misses `r`.
+/// in `a + (b - a) * t`. `None` when the segment misses `r` or runs along
+/// its border: the layout keeps a line of another link that far from a
+/// label, and that line stays whole.
 fn inside(a: Point, b: Point, r: Rect) -> Option<(f64, f64)> {
     let (dx, dy) = (b.x - a.x, b.y - a.y);
     let (mut t0, mut t1) = (0.0_f64, 1.0_f64);
@@ -244,7 +255,7 @@ fn inside(a: Point, b: Point, r: Rect) -> Option<(f64, f64)> {
         (dy, r.y + r.height - a.y),
     ] {
         if p.abs() < f64::EPSILON {
-            if q < 0.0 {
+            if q <= 0.0 {
                 return None;
             }
         } else if p < 0.0 {

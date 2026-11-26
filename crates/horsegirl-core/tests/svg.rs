@@ -213,11 +213,38 @@ fn an_empty_label_has_no_text_length() {
 }
 
 // The layout puts a link label on its own line. Drawn through the text, the
-// line reads as a strike-through (BUG-152).
+// line reads as a strike-through (BUG-152). A line of another link must not
+// pass through a label either: `API gateway -> Payments` arrives on the line
+// that holds `charge`, and it stops at the label too (BUG-170).
 #[test]
-fn no_link_line_is_drawn_across_the_text_of_its_own_label() {
-    let scene = scene(CHECKOUT);
-    let svg = draw(&scene, "checkout");
+fn no_link_line_is_drawn_across_the_text_of_a_link_label() {
+    assert_eq!(drawn_across_labels(&scene(CHECKOUT), 7), []);
+}
+
+// Each of these links shares a line with the link of a label, and the shared
+// line ends close to the label. The backend once drew the rest of the line
+// through the text, and the overlap detector saw no collision: the two used
+// different rules for a line that two links share (BUG-170). The pictures
+// are at the font size of `horsegirl draw`, where the fault showed.
+#[test]
+fn a_shared_line_that_ends_near_a_label_is_not_drawn_across_it() {
+    let scene = |source: &str| lens::draw(&model(source), &FLOW, Style { size: 14.0 });
+    let turns_near = "G0 {\n  n3, n2\n}\nG1 {\n  n0, n5\n}\n\
+        n5 -> n3: send it\nn1 -> n3: x\nn3 -> n0: x\nn2 -> n3: go\n\
+        n0 -> n1: a much longer label here\nn0 -> n2: go\n";
+    assert_eq!(drawn_across_labels(&scene(turns_near), 6), []);
+    let back = "G0 {\n}\nG1 {\n  ftrgjbz\n}\nwnpkzxr -> wnpkzxr: x\n\
+        ftrgjbz -> qzwdqkv: retry later\nqzwdqkv -> xbrnkcj: ok then\n\
+        ftrgjbz -> xbrnkcj: ok then\nxbrnkcj -> ftrgjbz: retry later\n";
+    assert_eq!(drawn_across_labels(&scene(back), 5), []);
+}
+
+/// Each link and the text of each label of two names that the drawn line of
+/// the link crosses, in a scene with `count` such labels. Every drawn path
+/// also starts and ends where its link does: a cut keeps both ends, so the
+/// arrow head stays on the box.
+fn drawn_across_labels(scene: &Scene, count: usize) -> Vec<(Vec<String>, String)> {
+    let svg = draw(scene, "across");
     let paths: Vec<Vec<Vec<(f64, f64)>>> = svg
         .lines()
         .filter(|l| l.starts_with("<path class=\"link"))
@@ -229,9 +256,14 @@ fn no_link_line_is_drawn_across_the_text_of_its_own_label() {
         .filter(|s| s.role == Role::Link)
         .collect();
     assert_eq!(paths.len(), links.len());
-    let mut labels = 0;
+    let labels: Vec<_> = scene
+        .shapes
+        .iter()
+        .filter(|s| s.role == Role::Label && s.of.len() == 2)
+        .collect();
+    assert_eq!(labels.len(), count);
+    let mut found = Vec::new();
     for (link, path) in links.iter().zip(&paths) {
-        // The cut keeps both ends, so the arrow head stays on the box.
         let first = link.points[0];
         let last = link.points[link.points.len() - 1];
         assert_eq!(
@@ -246,30 +278,21 @@ fn no_link_line_is_drawn_across_the_text_of_its_own_label() {
             "{:?}",
             link.of
         );
-        let own = scene
-            .shapes
-            .iter()
-            .filter(|s| s.role == Role::Label && s.of == link.of);
-        for label in own {
-            labels += 1;
+        for label in &labels {
             let r = label.rect;
-            for run in path {
-                for pair in run.windows(2) {
-                    let ((ax, ay), (bx, by)) = (pair[0], pair[1]);
-                    let across = ax.min(bx) < r.x + r.width
-                        && ax.max(bx) > r.x
-                        && ay.min(by) < r.y + r.height
-                        && ay.max(by) > r.y;
-                    assert!(
-                        !across,
-                        "link {:?} crosses its label {:?}",
-                        link.of, label.text
-                    );
-                }
+            let across = path.iter().flat_map(|run| run.windows(2)).any(|pair| {
+                let ((ax, ay), (bx, by)) = (pair[0], pair[1]);
+                ax.min(bx) < r.x + r.width
+                    && ax.max(bx) > r.x
+                    && ay.min(by) < r.y + r.height
+                    && ay.max(by) > r.y
+            });
+            if across {
+                found.push((link.of.clone(), label.text.clone()));
             }
         }
     }
-    assert_eq!(labels, 7);
+    found
 }
 
 /// The runs of points of a link path as the backend writes it: `M` starts a

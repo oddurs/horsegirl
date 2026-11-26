@@ -4,6 +4,8 @@
 //! scene, as a backend does, and reports each pair of shapes that collide.
 //! It knows no layout, so it holds every lens and every solver to one rule.
 
+use std::collections::BTreeMap;
+
 use crate::scene::{Point, Rect, Role, Scene, Shape};
 
 /// Two shapes collide when they share more than this many pixels. A path
@@ -35,6 +37,10 @@ pub enum Kind {
     LabelOffLink,
     /// Two labels overlap.
     Labels,
+    /// A link crosses the label of another link. A part of the link that
+    /// lies on the link of the label is no collision: two links from one
+    /// thing share the line that leaves it.
+    LinkOnLabel,
 }
 
 /// One collision in a scene.
@@ -58,7 +64,7 @@ impl Overlap {
         let [first, second] = self.shapes.map(name);
         match self.kind {
             Kind::Boxes => format!("{first} overlaps {second}"),
-            Kind::LinkOnThing => format!("{first} crosses {second}"),
+            Kind::LinkOnThing | Kind::LinkOnLabel => format!("{first} crosses {second}"),
             Kind::LinkThroughGroup => format!("{first} passes through {second}"),
             Kind::LinkOnGroup => format!("{first} crosses the border of {second} too often"),
             Kind::Links => format!("{first} lies on {second}"),
@@ -167,7 +173,91 @@ pub fn overlaps(scene: &Scene) -> Vec<Overlap> {
             }
         }
     }
+    for (i, j) in links_on_labels(&links, &labels) {
+        report(Kind::LinkOnLabel, i, j);
+    }
     found
+}
+
+/// Each link and label of another link that the link crosses, as two
+/// indices in [`Scene::shapes`].
+fn links_on_labels(links: &[(usize, &Shape)], labels: &[(usize, &Shape)]) -> Vec<(usize, usize)> {
+    let by_ends = parts_by_ends(links.iter().map(|&(_, link)| link));
+    let mut found = Vec::new();
+    for &(i, link) in links {
+        for &(j, label) in labels.iter().filter(|(_, label)| label.of.len() == 2) {
+            if label.of != link.of && meet(link, label, &by_ends) == Meet::Across {
+                found.push((i, j));
+            }
+        }
+    }
+    found
+}
+
+/// How a link meets the label of another link.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub(crate) enum Meet {
+    /// No part of the link is inside the box of the label.
+    Apart,
+    /// Each part of the link inside the box lies on the link that the label
+    /// names. Two links from one thing share the line that leaves it, and a
+    /// label on that line is on both links. That is no collision, and the
+    /// SVG backend stops the line of both links at the label.
+    Along,
+    /// A part of the link inside the box does not lie on the link that the
+    /// label names.
+    Across,
+}
+
+/// How `link` meets the box of `label`. `by_ends` holds the parts of the
+/// links of the scene, from [`parts_by_ends`]. The detector and the SVG
+/// backend both decide with this one function, so a line that the backend
+/// draws through the text of a label is always a collision.
+pub(crate) fn meet(
+    link: &Shape,
+    label: &Shape,
+    by_ends: &BTreeMap<&[String], Vec<(Point, Point)>>,
+) -> Meet {
+    let mut meet = Meet::Apart;
+    let mut own: Option<&[(Point, Point)]> = None;
+    for (a, b) in parts(&link.points) {
+        let Some((first, last)) = inside(a, b, &label.rect) else {
+            continue;
+        };
+        // Most links miss most labels, so the link of the label is looked up
+        // only for a link that enters the box.
+        let own = *own.get_or_insert_with(|| {
+            by_ends
+                .get(label.of.as_slice())
+                .map_or(&[][..], Vec::as_slice)
+        });
+        let at = |t: f64| Point {
+            x: a.x + t * (b.x - a.x),
+            y: a.y + t * (b.y - a.y),
+        };
+        let (p, q) = (at(first), at(last));
+        let on =
+            |&(c, d): &(Point, Point)| distance(p, c, d) <= SLACK && distance(q, c, d) <= SLACK;
+        if !own.iter().any(on) {
+            return Meet::Across;
+        }
+        meet = Meet::Along;
+    }
+    meet
+}
+
+/// The parts of the links between each two ends, by the names of the ends.
+pub(crate) fn parts_by_ends<'a>(
+    links: impl Iterator<Item = &'a Shape>,
+) -> BTreeMap<&'a [String], Vec<(Point, Point)>> {
+    let mut by_ends: BTreeMap<&[String], Vec<(Point, Point)>> = BTreeMap::new();
+    for link in links {
+        by_ends
+            .entry(link.of.as_slice())
+            .or_default()
+            .extend(parts(&link.points));
+    }
+    by_ends
 }
 
 /// Two boxes share room on both axes.

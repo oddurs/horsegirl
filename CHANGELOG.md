@@ -139,6 +139,13 @@ the project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - `W0107` no longer warns about a thing inside a group that a link or a rule
   names, at any depth. The picture draws such a thing inside a box that the
   link reaches. A thing in a group that nothing names still gives `W0107`. A link that `W0110` reports does not reach the parts of its group.
+- No line of a link passes through the label of another link. The layout
+  puts a label where no line of another link between the same two ranks
+  comes within 3 px of it, and out of the name band and the borders of the
+  groups there. A label can stand on a line that its link shares with
+  another link, such as the line that two links from one thing leave on, and
+  the SVG backend then stops both lines at the label. The overlap detector
+  reports a link across the label of another link as `LinkOnLabel`.
 - A link line stops 3 px before the label of its own link and goes on after
   it, so the line no longer runs through the text. The SVG backend draws a
   link as a `<path>` in place of a `<polyline>`, with one `M` for each part

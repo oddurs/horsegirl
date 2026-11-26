@@ -12,13 +12,12 @@ named for gaits: Walk, Trot, Canter, Gallop.
 
 ## v0.1 — Walk
 
-`··········` 0% · 0 of 9 done · due 2027-01-31
+`··········` 0% · 0 of 8 done · due 2027-01-31
 
 An agent writes a horsegirl file, checks it, applies the fixes, and draws a flow diagram as SVG, from the command line or over MCP.
 
 - [ ] [`0115`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0115-reserve-the-horsegirl-name-on-crates-io-and-npm.md) Reserve the horsegirl name on crates.io and npm <sup>chore · p2 · release</sup>
 - [ ] [`BUG-169`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/BUG-169-two-links-from-one-thing-to-itself-draw-two-loops-and-two-labels-apart.md) Two links from one thing to itself draw two loops and two labels apart <sup>bug · p2 · layout</sup>
-- [ ] [`BUG-170`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/BUG-170-no-link-line-passes-through-the-label-of-another-link.md) No link line passes through the label of another link <sup>bug · p2 · layout</sup>
 - [ ] [`BUG-174`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/BUG-174-the-arrow-head-of-a-link-stays-clear-of-its-label.md) The arrow head of a link stays clear of its label <sup>bug · p2 · layout</sup>
 - [ ] [`0052`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0052-a-daily-report-of-what-the-backlog-needs-from-a-person.md) A daily report of what the backlog needs from a person <sup>feature · p2 · workflow</sup>
 - [ ] [`0054`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0054-cut-a-release-with-one-command.md) Cut a release with one command <sup>chore · p1 · workflow</sup>
@@ -28,7 +27,7 @@ An agent writes a horsegirl file, checks it, applies the fixes, and draws a flow
 
 ## later — Later
 
-`··········` 0% · 0 of 36 done
+`··········` 0% · 0 of 38 done
 
 Nothing on a date. Good ideas wait here until a release needs them.
 
@@ -68,6 +67,8 @@ Nothing on a date. Good ideas wait here until a release needs them.
 - [ ] [`BUG-172`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/BUG-172-two-labels-of-one-corridor-do-not-cover-each-other-on-any-generated-graph.md) Two labels of one corridor do not cover each other on any generated graph <sup>bug · p2 · layout</sup>
 - [ ] [`0173`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0173-a-link-to-a-group-that-other-links-split-meets-the-border-of-the-group.md) A link to a group that other links split meets the border of the group <sup>feature · p2 · layout</sup>
 - [ ] [`BUG-175`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/BUG-175-a-written-against-the-last-word-of-a-label-marks-a-guess-or-says-why-not.md) A ? written against the last word of a label marks a guess, or says why not <sup>bug · p2 · check</sup>
+- [ ] [`BUG-176`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/BUG-176-a-label-has-a-place-that-no-line-crosses-when-two-lines-run-beside-its-path.md) A label has a place that no line crosses when two lines run beside its path <sup>bug · p2 · layout</sup>
+- [ ] [`BUG-177`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/BUG-177-the-svg-of-a-wide-labelled-fan-grows-with-the-square-of-the-fan.md) The SVG of a wide labelled fan grows with the square of the fan <sup>bug · p2 · render</sup>
 
 ## v0.2 — Trot
 
