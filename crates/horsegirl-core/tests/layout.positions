@@ -1,31 +1,31 @@
 == checkout
 rank 0  Web app  x 6.35400390625 y 0 w 83.78125 h 36
 rank 0  Mobile app  x 0 y 60 w 96.4892578125 h 36
-rank 1  API gateway  x 210.1669921875 y 60 w 106.599609375 h 36
-rank 3  Payments  x 612.986328125 y 60 w 90.248046875 h 36
-rank 3  Postgres  x 616.486328125 y 134 w 83.248046875 h 36
-rank 2  Orders  x 426.5869140625 y 60 w 70.7861328125 h 36
-rank 4  Notify  x 767.234375 y 60 w 63.7861328125 h 36
-rank 5  Events  x 909.0205078125 y 60 w 70.7998046875 h 36
-rank 6  Email provider  x 1043.8203125 y 60 w 117.4755859375 h 36
-group  Services  x 412.5869140625 y 18 w 432.43359375 h 92
-path  Web app -> API gateway  90.13525390625,18 153.328125,18 153.328125,78 210.1669921875,78
-label  Web app -> API gateway  153.328125,48
-path  Mobile app -> API gateway  96.4892578125,78 210.1669921875,78
-bends  API gateway -> Payments  461.97998046875,48
-path  API gateway -> Payments  316.7666015625,78 364.6767578125,78 364.6767578125,48 561.1796875,48 561.1796875,78 612.986328125,78
-path  API gateway -> Orders  316.7666015625,78 426.5869140625,78
-label  API gateway -> Orders  387.1318359375,78
-path  Orders -> Payments  497.373046875,78 612.986328125,78
-label  Orders -> Payments  585.5830078125,78
-path  Orders -> Postgres  497.373046875,78 549.1796875,78 549.1796875,152 616.486328125,152
-label  Orders -> Postgres  549.1796875,120.8203125
-path  Payments -> Notify  703.234375,78 767.234375,78
-label  Payments -> Notify  735.234375,78
-path  Notify -> Events  831.0205078125,78 909.0205078125,78
-label  Notify -> Events  877.0205078125,78
-path  Events -> Email provider  979.8203125,78 1043.8203125,78
-label  Events -> Email provider  1011.8203125,78
+rank 1  API gateway  x 220.1669921875 y 60 w 106.599609375 h 36
+rank 3  Payments  x 642.986328125 y 60 w 90.248046875 h 36
+rank 3  Postgres  x 646.486328125 y 134 w 83.248046875 h 36
+rank 2  Orders  x 446.5869140625 y 60 w 70.7861328125 h 36
+rank 4  Notify  x 797.234375 y 60 w 63.7861328125 h 36
+rank 5  Events  x 941.3857421875 y 60 w 70.7998046875 h 36
+rank 6  Email provider  x 1076.185546875 y 60 w 117.4755859375 h 36
+group  Services  x 432.5869140625 y 18 w 442.43359375 h 92
+path  Web app -> API gateway  90.13525390625,18 158.328125,18 158.328125,78 220.1669921875,78
+label  Web app -> API gateway  158.328125,48
+path  Mobile app -> API gateway  96.4892578125,78 220.1669921875,78
+bends  API gateway -> Payments  481.97998046875,48
+path  API gateway -> Payments  326.7666015625,78 379.6767578125,78 379.6767578125,48 586.1796875,48 586.1796875,78 642.986328125,78
+path  API gateway -> Orders  326.7666015625,78 446.5869140625,78
+label  API gateway -> Orders  402.1318359375,78
+path  Orders -> Payments  517.373046875,78 642.986328125,78
+label  Orders -> Payments  610.5830078125,78
+path  Orders -> Postgres  517.373046875,78 574.1796875,78 574.1796875,152 646.486328125,152
+label  Orders -> Postgres  574.1796875,120.8203125
+path  Payments -> Notify  733.234375,78 797.234375,78
+label  Payments -> Notify  765.234375,78
+path  Notify -> Events  861.0205078125,78 941.3857421875,78
+label  Notify -> Events  908.203125,78
+path  Events -> Email provider  1012.185546875,78 1076.185546875,78
+label  Events -> Email provider  1044.185546875,78
 == 01-checkout
 rank 0  Web app  x 6.35400390625 y 0 w 83.78125 h 36
 rank 0  Mobile app  x 0 y 60 w 96.4892578125 h 36

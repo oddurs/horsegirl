@@ -14,15 +14,12 @@ use std::collections::BTreeMap;
 use std::fmt::Write as _;
 
 use crate::overlap::{self, Meet};
-use crate::scene::{Point, Rect, Role, Scene, Shape, number};
+use crate::scene::{HEAD_LENGTH, LABEL_CUT, Point, Rect, Role, Scene, Shape, number};
 use crate::text::{self, Style};
 use crate::theme;
 
 /// The room around the scene, so a stroke on its edge is not cut in half.
 const MARGIN: f64 = 1.0;
-
-/// The room between a link label and the line that stops at it.
-const LABEL_PAD: f64 = 3.0;
 
 /// The style of every picture. Each rule is scoped to the `horsegirl` class,
 /// so a page that holds the SVG inline keeps its own `.label` and `.link`.
@@ -85,11 +82,14 @@ pub fn draw(scene: &Scene, title: &str) -> String {
     writeln!(out, "<title>{}</title>", escape(title)).expect("a String takes any write");
     writeln!(out, "<desc>{}</desc>", describe(scene)).expect("a String takes any write");
     writeln!(out, "<style>\n{}</style>", style()).expect("a String takes any write");
-    out.push_str(
-        "<defs>\n<marker id=\"hg-head\" viewBox=\"0 0 8 8\" refX=\"8\" refY=\"4\" \
-         markerWidth=\"8\" markerHeight=\"8\" markerUnits=\"userSpaceOnUse\" orient=\"auto\">\
-         <path class=\"head\" d=\"M0,0 L8,4 L0,8 z\"/></marker>\n</defs>\n",
-    );
+    let (n, half) = (number(HEAD_LENGTH), number(HEAD_LENGTH / 2.0));
+    writeln!(
+        out,
+        "<defs>\n<marker id=\"hg-head\" viewBox=\"0 0 {n} {n}\" refX=\"{n}\" refY=\"{half}\" \
+         markerWidth=\"{n}\" markerHeight=\"{n}\" markerUnits=\"userSpaceOnUse\" orient=\"auto\">\
+         <path class=\"head\" d=\"M0,0 L{n},{half} L0,{n} z\"/></marker>\n</defs>"
+    )
+    .expect("a String takes any write");
     // The page colour is drawn, not assumed: link strokes and labels sit
     // outside every box, and on a host page of the other mode they would
     // vanish.
@@ -197,10 +197,10 @@ fn element(
 
 fn pad(r: Rect) -> Rect {
     Rect {
-        x: r.x - LABEL_PAD,
-        y: r.y - LABEL_PAD,
-        width: r.width + 2.0 * LABEL_PAD,
-        height: r.height + 2.0 * LABEL_PAD,
+        x: r.x - LABEL_CUT,
+        y: r.y - LABEL_CUT,
+        width: r.width + 2.0 * LABEL_CUT,
+        height: r.height + 2.0 * LABEL_CUT,
     }
 }
 

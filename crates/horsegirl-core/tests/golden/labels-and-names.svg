@@ -1,4 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" class="horsegirl" role="img" width="690.58" height="38" viewBox="-1 -1 690.58 38" font-size="14">
+<svg xmlns="http://www.w3.org/2000/svg" class="horsegirl" role="img" width="710.58" height="38" viewBox="-1 -1 710.58 38" font-size="14">
 <title>labels-and-names</title>
 <desc>4 things, 0 groups and 3 links.</desc>
 <style>
@@ -16,18 +16,18 @@
 <defs>
 <marker id="hg-head" viewBox="0 0 8 8" refX="8" refY="4" markerWidth="8" markerHeight="8" markerUnits="userSpaceOnUse" orient="auto"><path class="head" d="M0,0 L8,4 L0,8 z"/></marker>
 </defs>
-<rect class="page" x="-1" y="-1" width="690.58" height="38"/>
-<path class="link" d="M83.78,18 L86.78,18 M292.14,18 L295.14,18" marker-end="url(#hg-head)"/>
-<path class="link" d="M401.74,18 L465.74,18" marker-end="url(#hg-head)"/>
-<path class="link" d="M538.08,18 L541.08,18 M614.79,18 L617.79,18" marker-end="url(#hg-head)"/>
+<rect class="page" x="-1" y="-1" width="710.58" height="38"/>
+<path class="link" d="M83.78,18 L91.78,18 M297.14,18 L305.14,18" marker-end="url(#hg-head)"/>
+<path class="link" d="M411.74,18 L475.74,18" marker-end="url(#hg-head)"/>
+<path class="link" d="M548.08,18 L556.08,18 M629.79,18 L637.79,18" marker-end="url(#hg-head)"/>
 <rect class="thing" x="0" y="0" width="83.78" height="36" rx="4"/>
-<rect class="thing" x="295.14" y="0" width="106.6" height="36" rx="4"/>
-<rect class="thing" x="465.74" y="0" width="72.34" height="36" rx="4"/>
-<rect class="thing" x="617.79" y="0" width="70.79" height="36" rx="4"/>
+<rect class="thing" x="305.14" y="0" width="106.6" height="36" rx="4"/>
+<rect class="thing" x="475.74" y="0" width="72.34" height="36" rx="4"/>
+<rect class="thing" x="637.79" y="0" width="70.79" height="36" rx="4"/>
 <text class="label" x="41.89" y="22.85" text-anchor="middle" textLength="55.78" lengthAdjust="spacingAndGlyphs">Web app</text>
-<text class="label" x="348.44" y="22.85" text-anchor="middle" textLength="78.6" lengthAdjust="spacingAndGlyphs">API gateway</text>
-<text class="label" x="501.91" y="22.85" text-anchor="middle" textLength="44.34" lengthAdjust="spacingAndGlyphs">Dash-x</text>
-<text class="label" x="653.19" y="22.85" text-anchor="middle" textLength="42.79" lengthAdjust="spacingAndGlyphs">Orders</text>
-<text class="label" x="189.46" y="22.85" text-anchor="middle" textLength="199.36" lengthAdjust="spacingAndGlyphs">POST /checkout, then 200 -&gt; ok</text>
-<text class="label" x="577.94" y="22.85" text-anchor="middle" textLength="67.71" lengthAdjust="spacingAndGlyphs">returns {id}</text>
+<text class="label" x="358.44" y="22.85" text-anchor="middle" textLength="78.6" lengthAdjust="spacingAndGlyphs">API gateway</text>
+<text class="label" x="511.91" y="22.85" text-anchor="middle" textLength="44.34" lengthAdjust="spacingAndGlyphs">Dash-x</text>
+<text class="label" x="673.19" y="22.85" text-anchor="middle" textLength="42.79" lengthAdjust="spacingAndGlyphs">Orders</text>
+<text class="label" x="194.46" y="22.85" text-anchor="middle" textLength="199.36" lengthAdjust="spacingAndGlyphs">POST /checkout, then 200 -&gt; ok</text>
+<text class="label" x="592.94" y="22.85" text-anchor="middle" textLength="67.71" lengthAdjust="spacingAndGlyphs">returns {id}</text>
 </svg>

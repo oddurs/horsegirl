@@ -27,13 +27,14 @@
 use std::collections::{BTreeMap, BTreeSet};
 
 use super::{BEND_GAP, Kind, LABEL_CLEAR, Net, RANK_GAP, real};
-use crate::scene::Point;
+use crate::scene::{HEAD_LENGTH, LABEL_CUT, Point};
 use crate::text::Size;
 
 /// Two level lines closer than this read as one line.
 const CLOSE: f64 = 4.0;
-/// The room between a label and each end of its corridor.
-pub(super) const LABEL_PAD: f64 = 6.0;
+/// The room between a label and each end of its corridor: the arrow head
+/// that ends there, and the cut of the line before the label.
+pub(super) const LABEL_PAD: f64 = HEAD_LENGTH + LABEL_CUT;
 /// The least room between two labels of one corridor.
 const LABEL_SPACE: f64 = 4.0;
 /// The least room between a label and a line of another link. The SVG
