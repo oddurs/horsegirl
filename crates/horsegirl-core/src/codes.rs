@@ -104,6 +104,10 @@ pub const CATALOGUE: &[Code] = &[
         code: "W0109",
         summary: "A label holds an arrow, a name and a colon, as in `A -> B: pay -> C: ship`. The parser reads one link with a long label, and the writer likely meant two links. The suggested fix writes the second link on its own line. A label with an arrow and no colon after it, and a label in double quotes, give no warning.",
     },
+    Code {
+        code: "W0110",
+        summary: "A link joins a group to itself or to a thing inside it, at any depth. A picture draws a group as a box around its parts, so the flow lens leaves the link out. A link between a group and a thing outside it is drawn, and meets the border of the group box.",
+    },
 ];
 
 /// The catalogue as a Markdown table, as `docs/diagnostics.md` holds it.

@@ -28,8 +28,9 @@ use horsegirl_core::text::Style;
 /// picture with none. Raise the number when a change draws more files clean.
 /// It fell from 184 to 181 when E0420 began to refuse a thing written into
 /// two groups: those files drew clean only because the model dropped the
-/// second group with no word.
-const BASELINE: usize = 181;
+/// second group with no word. It rose to 224 when the flow lens drew a
+/// link that starts or ends at a group.
+const BASELINE: usize = 224;
 
 /// The style of `horsegirl draw`, so that the count is of the pictures that
 /// the command line draws.
@@ -183,8 +184,9 @@ mod tests {
 
     #[test]
     fn a_picture_that_leaves_out_a_link_is_not_clean() {
-        // The flow lens does not yet draw a link that ends at a group.
-        let picture = picture("A -> B\nA -> G\nG { C, D }\n");
+        // The flow lens leaves out a link from a group to a thing inside
+        // it, as `W0110` says.
+        let picture = picture("A -> B\nC -> G\nG { C, D }\n");
         assert_eq!(picture.left_out, 1);
         assert!(!picture.is_clean());
     }

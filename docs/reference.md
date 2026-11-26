@@ -107,7 +107,9 @@ Payments -> Notify
 show flow
 ```
 
-A link that starts or ends at a group is not drawn yet.
+A link can start or end at a group, as in `Web app -> Services`. The picture
+draws it to the border of the group box. A link between a group and a thing
+inside it gives the warning `W0110`, and the picture leaves it out.
 
 ### Stories
 
@@ -288,6 +290,7 @@ from it.
 | `W0107` | Link the thing, or remove it. |
 | `W0108` | Write the whole name in double quotes, as in `"GET /users/{id}"`. |
 | `W0109` | Write the second link on its own line, or write the label in double quotes. The suggested fix writes the two lines. |
+| `W0110` | Link a thing outside the group to the group, or link two things inside it. The picture leaves the link out. |
 
 These files each show one mistake:
 

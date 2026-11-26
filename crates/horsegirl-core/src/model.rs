@@ -134,6 +134,22 @@ impl Model {
             .collect()
     }
 
+    /// `thing` is `group`, or `group` holds it at any depth.
+    #[must_use]
+    pub fn within(&self, thing: ThingId, group: ThingId) -> bool {
+        let mut at = Some(thing);
+        // The model places no group inside itself, so the walk ends. The
+        // limit keeps it finite for a model built by hand.
+        for _ in 0..=self.things.len() {
+            match at {
+                Some(id) if id == group => return true,
+                Some(id) => at = self.things[id].parent,
+                None => return false,
+            }
+        }
+        false
+    }
+
     /// The things that hold at least one thing, in order of first mention.
     #[must_use]
     pub fn groups(&self) -> Vec<ThingId> {

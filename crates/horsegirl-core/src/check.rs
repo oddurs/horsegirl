@@ -3,7 +3,7 @@
 //! A thing exists from its first mention, so a typo makes a new thing with no
 //! error from the parser. The checks read the model and report a typo, a thing
 //! with no link, a part that the model leaves out of a group, a link that
-//! breaks a `-x` rule, a guess, an unknown lens and a lens whose facts the
+//! breaks a `-x` rule, a link between a group and what it holds, a guess, an unknown lens and a lens whose facts the
 //! file does not state.
 
 use crate::diagnostic::{Confidence, Diagnostic, Edit, Fix, Fixed, LineIndex, apply_safe};
@@ -36,6 +36,7 @@ pub fn of_model(source: &str, model: &Model) -> Vec<Diagnostic> {
     diagnostics.extend(typos.into_iter().map(|(_, diagnostic)| diagnostic));
     diagnostics.extend(misplaced(model));
     diagnostics.extend(broken_rules(source, model));
+    diagnostics.extend(inward(model));
     diagnostics.extend(guesses(model));
     diagnostics.extend(lenses(model));
     diagnostics.extend(needs(model));
@@ -283,6 +284,46 @@ fn broken_rules(source: &str, model: &Model) -> Vec<Diagnostic> {
         }
     }
     found
+}
+
+/// W0110: a link between a group and itself or a thing inside it. A picture
+/// draws a group as a box around its parts, so such a link would start and
+/// end in one box, and the flow lens leaves it out.
+fn inward(model: &Model) -> Vec<Diagnostic> {
+    let holds = |group: ThingId, thing: ThingId| {
+        !model.parts(group).is_empty() && model.within(thing, group)
+    };
+    model
+        .links
+        .iter()
+        .filter_map(|link| {
+            let (group, part) = if holds(link.to, link.from) {
+                (link.to, link.from)
+            } else if holds(link.from, link.to) {
+                (link.from, link.to)
+            } else {
+                return None;
+            };
+            let name = |id: ThingId| &model.things[id].name;
+            let joins = if group == part {
+                format!("`{}` to itself", name(group))
+            } else {
+                format!("`{}` to `{}`, which it holds", name(group), name(part))
+            };
+            Some(Diagnostic {
+                code: "W0110",
+                span: link.span.clone(),
+                message: format!(
+                    "`{} -> {}` links the group {joins}, so the picture leaves the link out. Link a thing outside `{}` to `{}`, or link two things inside it.",
+                    name(link.from),
+                    name(link.to),
+                    name(group),
+                    name(group),
+                ),
+                fix: None,
+            })
+        })
+        .collect()
 }
 
 /// W0108: a name that ends in `/` followed by braces that hold one bare name,
