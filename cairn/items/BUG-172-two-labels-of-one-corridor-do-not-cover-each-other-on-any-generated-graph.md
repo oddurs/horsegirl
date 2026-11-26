@@ -22,3 +22,7 @@ area: layout
 - [ ] Graph 2573 of seed 7 and graph 1087 of seed 3 draw with no `Labels` collision.
 - [ ] A test holds both graphs.
 - [ ] The two generated tests run 3000 rounds with no `Labels` collision, or the test states the round count that the time budget allows.
+
+## 2026-11-26
+
+From BUG-170 at commit a6f7faf: with the route phase reading group borders and lines, graph 2573 of seed 7 and graph 1087 of seed 3 give no Labels collision. A probe over 3000 rounds of each generator found no Labels collision. A test that holds both graphs is still to write.
