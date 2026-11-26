@@ -24,3 +24,7 @@ related:
 
 - [ ] `tracks` gives the same tracks as today on the eleven diagrams of `crates/horsegirl-core/tests/layout.rs`: `layout.positions` does not change.
 - [ ] Two ranks of 1600 boxes with two links from each box take less than 1 s in a release build.
+
+## 2026-11-25
+
+From item 0122: tracks in route.rs now has a second loop after the row is built. Two neighbouring trunks of the row exchange their places where that removes a crossing and no step ties them. One round reads each pair of neighbours once, and each round that changes the row removes one crossing or more, so the rounds are at most the crossings of the corridor. A faster tracks must keep that exchange: without it 03-order-states draws with 3 crossings and not 1.

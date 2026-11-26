@@ -1,0 +1,11 @@
+Seams between teams
+
+`Checkout` calls `Inventory` and `Fraud`. The team `Shop` owns `Checkout`, the
+team `Supply` owns `Inventory`, and the team `Risk` owns `Fraud`. Use the key
+`owner`. Show the seams by owner.
+---
+Checkout -> Inventory, Fraud
+Checkout { owner: Shop }
+Inventory { owner: Supply }
+Fraud { owner: Risk }
+show seams by owner

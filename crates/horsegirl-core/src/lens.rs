@@ -8,7 +8,7 @@
 
 use std::fmt;
 
-use crate::layout::{self, Graph, Group, Layout, Node};
+use crate::layout::{self, End, Graph, Group, Layout, Node};
 use crate::model::{Model, ThingId};
 use crate::scene::{self, Placement, Scene};
 use crate::text::{self, Style};
@@ -160,7 +160,9 @@ pub struct Bound {
 ///
 /// A thing that holds something is a group when the lens binds `inside` to
 /// `group`; every other thing is a box as wide as its name. A link that starts
-/// or ends at a group is left out: item 0123 draws it.
+/// or ends at a group meets the border of the group box. A link between a
+/// group and itself or a thing inside it is left out, and the check reports
+/// it as `W0110`.
 ///
 /// # Panics
 ///
@@ -182,11 +184,21 @@ pub fn bind(model: &Model, lens: &Lens, style: Style) -> Bound {
         .collect();
     let node_of = |thing: ThingId| nodes.iter().position(|&n| n == thing);
     let parent = |thing: ThingId| model.things[thing].parent.and_then(group_of);
-    let links: Vec<(usize, (usize, usize))> = model
+    let end = |thing: ThingId| match group_of(thing) {
+        Some(group) => End::Group(group),
+        None => End::Node(node_of(thing).expect("a thing that is no group is a node")),
+    };
+    let links: Vec<(usize, (End, End))> = model
         .links
         .iter()
         .enumerate()
-        .filter_map(|(id, link)| Some(id).zip(node_of(link.from).zip(node_of(link.to))))
+        .filter(|(_, link)| {
+            let holds = |group: ThingId, thing: ThingId| {
+                group_of(group).is_some() && model.within(thing, group)
+            };
+            !holds(link.from, link.to) && !holds(link.to, link.from)
+        })
+        .map(|(id, link)| (id, (end(link.from), end(link.to))))
         .collect();
     let label = |&(id, _): &(usize, _)| {
         let labels = &model.links[id].labels;
@@ -205,6 +217,7 @@ pub fn bind(model: &Model, lens: &Lens, style: Style) -> Bound {
             .iter()
             .map(|&thing| Group {
                 parent: parent(thing),
+                width: text::measure(&model.things[thing].name, style).width,
             })
             .collect(),
         labels: links.iter().map(label).collect(),

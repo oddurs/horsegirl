@@ -1,0 +1,11 @@
+Offline sync
+
+The `Phone app` writes to a `Local database`, with the label `write`. When
+online, the `Sync engine` reads the `Local database` with the label `read`, and
+sends changes to the `Sync API` with the label `push`. The `Sync API` saves
+them in the `Cloud database`, with the label `save`.
+---
+Phone app -> Local database: write
+Sync engine -> Local database: read
+Sync engine -> Sync API: push
+Sync API -> Cloud database: save

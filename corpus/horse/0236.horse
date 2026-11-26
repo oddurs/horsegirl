@@ -17,11 +17,11 @@ AI Detectors -> Threat Detected: DDoS
 AI Detectors -> Threat Detected: Brute Force
 AI Detectors -> Threat Detected: C2 Beacon
 AI Detectors -> Threat Detected: DNS Tunnel
-Threat Detected -> Score >= Threshold?
-Score >= Threshold? -> Permanent Block: >= 0.95
-Score >= Threshold? -> Temporary Block: >= 0.7
-Score >= Threshold? -> Rate Limit: >= 0.5
-Score >= Threshold? -> Alert Only: >= 0.3
+Threat Detected -> "Score >= Threshold?"
+"Score >= Threshold?" -> Permanent Block: >= 0.95
+"Score >= Threshold?" -> Temporary Block: >= 0.7
+"Score >= Threshold?" -> Rate Limit: >= 0.5
+"Score >= Threshold?" -> Alert Only: >= 0.3
 Permanent Block -> pf Table Update
 Temporary Block -> pf Table Update
 Rate Limit -> pf Table Update

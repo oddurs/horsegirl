@@ -1,0 +1,7 @@
+Logs from three services
+
+`Orders`, `Payments` and `Shipping` each send logs to the `Log collector`,
+with the label `logs`. The `Log collector` writes to `Search`.
+---
+Orders, Payments, Shipping -> Log collector: logs
+Log collector -> Search

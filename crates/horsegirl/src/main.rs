@@ -2,8 +2,8 @@ use std::io::Read;
 use std::path::{Path, PathBuf};
 use std::process::ExitCode;
 
-use horsegirl_core::check::check;
-use horsegirl_core::diagnostic::{Diagnostic, Fixed, LineIndex, Severity, apply_safe};
+use horsegirl_core::check::{check, fix_all};
+use horsegirl_core::diagnostic::{Diagnostic, LineIndex, Severity};
 use horsegirl_core::model::lower;
 use horsegirl_core::syntax::parse;
 use horsegirl_core::text::Style;
@@ -300,29 +300,6 @@ fn check_command(options: &Options) -> ExitCode {
     exit(&diagnostics)
 }
 
-/// The most passes of `check` and `apply_safe` that `fix` makes. Each pass
-/// that applies a fix removes a diagnostic, so a real file stops long before.
-const FIX_PASSES: usize = 16;
-
-/// `source` with every safe fix made. One fix can reveal another: a fix that
-/// overlaps an earlier one is left out of a pass, so `fix` checks again until a
-/// pass applies none.
-fn fix_all(source: &str) -> Fixed {
-    let mut fixed = Fixed {
-        text: source.to_owned(),
-        applied: 0,
-    };
-    for _ in 0..FIX_PASSES {
-        let pass = apply_safe(&fixed.text, &check(&fixed.text));
-        if pass.applied == 0 {
-            break;
-        }
-        fixed.text = pass.text;
-        fixed.applied += pass.applied;
-    }
-    fixed
-}
-
 fn fix(options: &Options) -> ExitCode {
     let input = &options.input;
     let fixed = fix_all(&input.source);
@@ -386,9 +363,9 @@ fn fmt(options: &Options) -> ExitCode {
 /// The SVG of `source`, a file with no error, drawn through the lens of its
 /// first `show` line, or through flow when it has none.
 ///
-/// The error says that the lens is one this version does not draw, and what
-/// to write instead.
-fn picture(source: &str, title: &str) -> Result<String, String> {
+/// The error is E0302: the lens is one this version does not draw. Its message
+/// says what to write instead.
+fn picture(source: &str, title: &str) -> Result<String, Diagnostic> {
     let model = lower(&parse(source).tree);
     let name = model
         .shows
@@ -397,11 +374,19 @@ fn picture(source: &str, title: &str) -> Result<String, String> {
     // The checks accept every lens of the language card; this version draws
     // fewer, so a file can be clean and still name a lens with no solver.
     let Some(lens) = lens::find(name) else {
+        // The span is the lens name on the first `show` line, which is the
+        // only line that `name` can come from here.
+        let span = model.shows.first().map_or(0..0, |show| show.span.clone());
         let drawn: Vec<&str> = lens::DRAWN.iter().map(|lens| lens.name).collect();
-        return Err(format!(
-            "`show {name}` names a lens that this version does not draw. It draws: {}. Change the first `show` line to one of those.",
-            drawn.join(", ")
-        ));
+        return Err(Diagnostic {
+            code: "E0302",
+            span,
+            message: format!(
+                "`show {name}` names a lens that this version does not draw. It draws: {}. Change the first `show` line to one of those.",
+                drawn.join(", ")
+            ),
+            fix: None,
+        });
     };
     Ok(svg::draw(&lens::draw(&model, lens, STYLE), title))
 }
@@ -429,8 +414,8 @@ fn draw(options: &Options) -> ExitCode {
     );
     let picture = match picture(&input.source, &title) {
         Ok(picture) => picture,
-        Err(message) => {
-            eprintln!("horsegirl draw: {message}");
+        Err(diagnostic) => {
+            eprint!("{}", report(input, &[diagnostic], options.json));
             return ExitCode::FAILURE;
         }
     };

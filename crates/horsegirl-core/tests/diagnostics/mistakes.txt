@@ -1,8 +1,9 @@
-error[E0001]: A line holds one arrow, and this `->` is a second one. Write each link on its own line. A name that holds `->` is written in double quotes.
+error[E0010]: A line holds one arrow, and this `->` is a second one. Write each link on its own line. A name that holds `->` is written in double quotes.
  --> mistakes.horse:1:18
   |
 1 | Café -> Payments -> Ledger
   |                  ^^
+  = safe fix: Write each link on its own line.
 
 error[E0004]: `API@v2` holds a character that a bare name cannot hold. Write the name in double quotes. A citation is a space, `@`, a path and a line number at the end of the line, as in ` @ src/app.ts:17`.
  --> mistakes.horse:2:12
@@ -17,18 +18,18 @@ error[E0006]: A name is missing at the end of the line. Write the name there.
 3 | A ->
   |     ^
 
-error[E0004]: `A { B @ x }` holds a character that a bare name cannot hold. Write the name in double quotes. A citation is a space, `@`, a path and a line number at the end of the line, as in ` @ src/app.ts:17`.
- --> mistakes.horse:4:1
-  |
-4 | A { B @ x } -> C
-  | ^^^^^^^^^^^
-  = safe fix: Write the name in double quotes.
-
 error[E0004]: `B @ x` holds a character that a bare name cannot hold. Write the name in double quotes. A citation is a space, `@`, a path and a line number at the end of the line, as in ` @ src/app.ts:17`.
  --> mistakes.horse:4:5
   |
 4 | A { B @ x } -> C
   |     ^^^^^
+  = safe fix: Write the name in double quotes.
+
+error[E0001]: Cannot read `->` here. Write one fact on a line: a name, a link with `->`, or a name with braces.
+ --> mistakes.horse:4:13
+  |
+4 | A { B @ x } -> C
+  |             ^^
 
 error[E0009]: A fact goes inside braces after a name, as in `Payments { owner: Commerce }`. A name that holds `:` is written in double quotes.
  --> mistakes.horse:5:2

@@ -24,6 +24,10 @@ fn model(source: &str) -> Model {
     for show in &mut model.shows {
         show.span = 0..0;
     }
+    for misplaced in &mut model.misplaced {
+        misplaced.span = 0..0;
+        misplaced.removable = misplaced.removable.as_ref().map(|_| 0..0);
+    }
     model
 }
 
@@ -107,7 +111,7 @@ fn the_layout_settles_on_one_form() {
         ("A { k: x\"y ?, a: b }\n", "A { k: x\"y ?, a: b }\n"),
         ("A -> B   ?   @   src/a.ts:17", "A -> B ? @ src/a.ts:17\n"),
         ("A ? ", "A ?\n"),
-        ("A -> B  :", "A -> B:\n"),
+        ("A -> B  : save", "A -> B: save\n"),
         ("A -> B:  x  \"a   b\"  y", "A -> B: x \"a   b\" y\n"),
         ("story s {\nA -> B\n}", "story s {\n  A -> B\n}\n"),
         ("show   sequence   of   s", "show sequence of s\n"),
@@ -137,6 +141,8 @@ fn quotes_stay_only_where_a_name_needs_them() {
         ("\"story x\" -> B", "\"story x\" -> B\n"),
         ("A -> \"-x\"", "A -> \"-x\"\n"),
         ("A -> \"B ?\"", "A -> \"B ?\"\n"),
+        // BUG-161: a bare `B?` at the end of a link gives W0111.
+        ("A -> \"B?\"", "A -> \"B?\"\n"),
         ("A -x \"B\"", "A -x B\n"),
         (
             "A { owner: X ?, kind: y }",

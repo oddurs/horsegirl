@@ -68,27 +68,3 @@
   flex-direction: column;
   gap: var(--s1);
 }
-
-.diagram rect {
-  fill: var(--d-c0);
-  stroke: var(--d-ink);
-  stroke-width: var(--d-sw);
-}
-.diagram path {
-  fill: none;
-  stroke: var(--d-ink);
-  stroke-width: var(--d-sw);
-}
-.diagram text {
-  font-family: var(--d-font);
-  font-size: 13px;
-  fill: var(--d-ink);
-  text-anchor: middle;
-}
-.diagram .hot {
-  fill: var(--d-accent);
-  stroke: var(--d-accent);
-}
-.diagram .hotText {
-  fill: var(--d-accent-ink);
-}

@@ -335,6 +335,8 @@ fn bare(text: &str) -> bool {
         && !text.contains("->")
         // `#` starts a comment at the start of a line.
         && !text.starts_with('#')
+        // A bare name that ends in `?` at the end of a line gives W0111.
+        && !text.ends_with('?')
         && !words.iter().any(|word| word.is_empty() || ["-x", "?"].contains(word))
         // `show` and `story` start a line of their own.
         && !["show", "story"].contains(&words[0])

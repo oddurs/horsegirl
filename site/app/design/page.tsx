@@ -6,6 +6,7 @@ import { Figure } from "../../components/Figure";
 import { Section } from "../../components/Section";
 import { SegmentedControl } from "../../components/SegmentedControl";
 import { Table } from "../../components/Table";
+import { binaryPath, draw, root } from "../../lib/gallery.ts";
 import styles from "./design.module.css";
 
 export const metadata: Metadata = {
@@ -15,6 +16,8 @@ export const metadata: Metadata = {
 
 // The build runs in site/, and the reference file lives at the repository root.
 const checkout = readFileSync(join(process.cwd(), "..", "examples", "checkout.horse"), "utf8");
+
+const drawn = draw(binaryPath(), join(root, "examples", "checkout.horse"));
 
 const page = ["ground", "surface", "ink", "muted", "line", "accent", "accent-ink"];
 const meaning = ["turf", "saddle", "t-pink", "t-green", "t-ochre", "t-neutral"];
@@ -122,44 +125,9 @@ export default function Design() {
           options={lenses.map(({ lens }) => ({ value: lens, label: lens }))}
         />
         <CodeBlock file="checkout.horse">{checkout}</CodeBlock>
-        <Figure caption="Drawn by hand to show the diagram tokens. horsegirl did not draw it.">
-          <svg
-            viewBox="0 0 520 90"
-            width="520"
-            height="90"
-            role="img"
-            aria-label="Web app links to API gateway, which links to Payments"
-          >
-            <defs>
-              <marker
-                id="arrow"
-                viewBox="0 0 10 10"
-                refX="9"
-                refY="5"
-                markerWidth="7"
-                markerHeight="7"
-                orient="auto"
-              >
-                <path d="M0 0L10 5L0 10z" fill="var(--d-ink)" />
-              </marker>
-            </defs>
-            <g className={styles.diagram}>
-              <rect x="10" y="25" width="120" height="40" rx="6" />
-              <rect x="200" y="25" width="120" height="40" rx="6" className={styles.hot} />
-              <rect x="390" y="25" width="120" height="40" rx="6" />
-              <path d="M130 45H198" markerEnd="url(#arrow)" />
-              <path d="M320 45H388" markerEnd="url(#arrow)" />
-              <text x="70" y="50">
-                Web app
-              </text>
-              <text x="260" y="50" className={styles.hotText}>
-                API gateway
-              </text>
-              <text x="450" y="50">
-                Payments
-              </text>
-            </g>
-          </svg>
+        <Figure caption={`Drawn by ${drawn.command}, when this site was built.`}>
+          {/* biome-ignore lint/security/noDangerouslySetInnerHtml: the SVG is the output of our own program, drawn from a file of this repository. */}
+          <div dangerouslySetInnerHTML={{ __html: drawn.svg }} />
         </Figure>
         <Table caption="Four lenses and the dials they bind">
           <thead>

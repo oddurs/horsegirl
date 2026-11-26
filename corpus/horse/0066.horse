@@ -28,9 +28,9 @@ Modules 10-12 -> Reference existing security/: yes
 Modules 10-12 -> Flag uncovered areas: no
 Reference existing security/ -> "Ask: initialize git repo?"
 Flag uncovered areas -> "Ask: initialize git repo?"
-"Ask: initialize git repo?" -> git available?
-git available? -> git init + initial commit: yes
-git available? -> Skip git initialization: no
+"Ask: initialize git repo?" -> "git available?"
+"git available?" -> git init + initial commit: yes
+"git available?" -> Skip git initialization: no
 git init + initial commit -> Generate GRADUATION_REPORT.md
 Skip git initialization -> Generate GRADUATION_REPORT.md
 Generate GRADUATION_REPORT.md -> 🎓 Graduation complete
@@ -41,5 +41,5 @@ Pre-checks { skip_graduation, 🎓 Offer graduation workflow, Bootcamper, "Ask: 
 "Step 2: Production Configs" { Generate .env.production, Generate .env.example, Generate docker-compose.yml, "Ask: which CI/CD platform?", Generate CI/CD pipeline file, Generate .gitignore }
 "Step 3: Production README" { Generate production/README.md, Present README for review }
 "Step 4: Migration Checklist" { Generate MIGRATION_CHECKLIST.md, Modules 10-12, Reference existing security/, Flag uncovered areas }
-"Step 5: Git Init (Optional)" { "Ask: initialize git repo?", git available?, git init + initial commit, Skip git initialization }
+"Step 5: Git Init (Optional)" { "Ask: initialize git repo?", "git available?", git init + initial commit, Skip git initialization }
 Graduation Report { Generate GRADUATION_REPORT.md }

@@ -15,7 +15,8 @@
 use std::fmt::Write as _;
 
 use horsegirl_core::layout::{
-    GROUP_TITLE, Graph, Group, LABEL_CLEAR, Layout, NODE_GAP, Node, RANK_GAP, layout,
+    End, GROUP_PAD, GROUP_TITLE, Graph, Group, LABEL_CLEAR, Layout, NODE_GAP, Node, RANK_GAP,
+    layout,
 };
 use horsegirl_core::lens;
 use horsegirl_core::model::{Link, Model, Thing, lower};
@@ -116,11 +117,15 @@ fn collisions(flow: &Flow, picture: &Layout, allowed: &[Kind]) -> Vec<String> {
     counted.map(|overlap| overlap.describe(&scene)).collect()
 }
 
-/// How many links pass through a group that holds neither of their ends.
-fn through_groups(flow: &Flow, picture: &Layout) -> usize {
-    let found = overlaps(&scene(flow, picture));
-    let kinds = found.iter().map(|overlap| overlap.kind);
-    kinds.filter(|&kind| kind == Kind::LinkThroughGroup).count()
+/// Each link that passes through a group that holds neither of its ends, in
+/// words.
+fn through_groups(flow: &Flow, picture: &Layout) -> Vec<String> {
+    let scene = scene(flow, picture);
+    let found = overlaps(&scene);
+    let through = found
+        .iter()
+        .filter(|overlap| overlap.kind == Kind::LinkThroughGroup);
+    through.map(|overlap| overlap.describe(&scene)).collect()
 }
 
 /// How many labels share room with a group that holds neither end of their
@@ -136,8 +141,8 @@ fn labels_in_other_groups(graph: &Graph, picture: &Layout) -> usize {
             height: size.height,
         };
         let (from, to) = graph.links[link];
-        let mut own = around(graph, graph.nodes[from].group);
-        own.extend(around(graph, graph.nodes[to].group));
+        let mut own = around(graph, group_of(graph, from));
+        own.extend(around(graph, group_of(graph, to)));
         let groups = picture.groups.iter().enumerate();
         let mut other = groups.filter_map(|(g, group)| group.filter(|_| !own.contains(&g)));
         other.any(|group| room(&group, &label) < 0.0)
@@ -174,6 +179,20 @@ fn holds(outer: &Rect, inner: &Rect) -> bool {
         && outer.y <= inner.y
         && inner.x + inner.width <= outer.x + outer.width
         && inner.y + inner.height <= outer.y + outer.height
+}
+
+/// The group that holds a node, or the group that is the end.
+fn group_of(graph: &Graph, end: End) -> Option<usize> {
+    match end {
+        End::Node(node) => graph.nodes[node].group,
+        End::Group(group) => Some(group),
+    }
+}
+
+/// Links between nodes, as the graph holds them.
+fn between_nodes(links: impl IntoIterator<Item = (usize, usize)>) -> Vec<(End, End)> {
+    let links = links.into_iter();
+    links.map(|(a, b)| (End::Node(a), End::Node(b))).collect()
 }
 
 /// The groups around a group, with the group.
@@ -244,7 +263,17 @@ fn faults(graph: &Graph, picture: &Layout) -> Vec<String> {
     if !picture.nodes.is_empty() && (x, y) != (0.0, 0.0) {
         faults.push(format!("the top left corner is at {x}, {y}"));
     }
-    for (&(from, to), bends) in graph.links.iter().zip(&picture.bends) {
+    let name = |end: End| match end {
+        End::Node(node) => node.to_string(),
+        End::Group(group) => format!("g{group}"),
+    };
+    // A link to a group ends at the border of the group box. Its rank is a
+    // rank of the group, so only a link between nodes has a known count of
+    // bends.
+    for (&ends, bends) in graph.links.iter().zip(&picture.bends) {
+        let (End::Node(from), End::Node(to)) = ends else {
+            continue;
+        };
         let (low, high) = (picture.ranks[from], picture.ranks[to]);
         if from != to && low == high {
             faults.push(format!("link {from} -> {to} stays in rank {low}"));
@@ -253,7 +282,8 @@ fn faults(graph: &Graph, picture: &Layout) -> Vec<String> {
             faults.push(format!("link {from} -> {to} has {} bends", bends.len()));
         }
     }
-    for (link, &(from, to)) in graph.links.iter().enumerate() {
+    for (link, &(from_end, to_end)) in graph.links.iter().enumerate() {
+        let (from, to) = (name(from_end), name(to_end));
         let path = &picture.paths[link];
         let (Some(start), Some(end)) = (path.first(), path.last()) else {
             faults.push(format!("link {from} -> {to} has no path"));
@@ -265,7 +295,7 @@ fn faults(graph: &Graph, picture: &Layout) -> Vec<String> {
         {
             faults.push(format!("link {from} -> {to} has a slanted part: {path:?}"));
         }
-        if !on_border(start, &picture.nodes[from]) || !on_border(end, &picture.nodes[to]) {
+        if !joins(graph, picture, (from_end, to_end), (start, end)) {
             faults.push(format!(
                 "link {from} -> {to} does not join its boxes: {path:?}"
             ));
@@ -276,6 +306,34 @@ fn faults(graph: &Graph, picture: &Layout) -> Vec<String> {
         }
     }
     faults
+}
+
+/// Both ends of a path are on the boxes of the two ends of its link.
+///
+/// A group with nodes on both sides of the other end has no rank where the
+/// link can meet its border, so the link may end inside the group box.
+fn joins(graph: &Graph, picture: &Layout, ends: (End, End), points: (&Point, &Point)) -> bool {
+    let rect = |end: End| match end {
+        End::Node(node) => picture.nodes[node],
+        End::Group(group) => picture.groups[group].unwrap(),
+    };
+    let held = |end: End| -> Vec<usize> {
+        let inside = |node: &usize| match end {
+            End::Node(n) => *node == n,
+            End::Group(g) => around(graph, graph.nodes[*node].group).contains(&g),
+        };
+        (0..graph.nodes.len()).filter(inside).collect()
+    };
+    let span = |end: End| {
+        let ranks = held(end).into_iter().map(|node| picture.ranks[node]);
+        ranks.fold((usize::MAX, 0), |(low, high), r| (low.min(r), high.max(r)))
+    };
+    let ((a_low, a_high), (b_low, b_high)) = (span(ends.0), span(ends.1));
+    let apart = a_high < b_low || b_high < a_low;
+    let meets = |point: &Point, end: End| {
+        on_border(point, &rect(end)) || !apart && within(point, &rect(end))
+    };
+    meets(points.0, ends.0) && meets(points.1, ends.1)
 }
 
 /// A point is on the left or the right side of a box.
@@ -294,7 +352,10 @@ fn the_reference_flow_places_nine_things_in_ranks_that_follow_the_links() {
     let picture = layout(&flow.graph, None);
     assert_eq!(picture.nodes.len(), 9);
     assert_eq!(flow.graph.links.len(), 9);
-    for &(from, to) in &flow.graph.links {
+    for &ends in &flow.graph.links {
+        let (End::Node(from), End::Node(to)) = ends else {
+            panic!("the reference file links no group");
+        };
         let (a, b) = (&flow.nodes[from], &flow.nodes[to]);
         assert!(picture.ranks[from] < picture.ranks[to], "{a} -> {b}");
         let (a_box, b_box) = (&picture.nodes[from], &picture.nodes[to]);
@@ -324,6 +385,86 @@ fn the_reference_flow_places_nine_things_in_ranks_that_follow_the_links() {
 }
 
 #[test]
+fn a_group_box_is_as_wide_as_its_name_plus_the_pad_on_each_side() {
+    let name = "A group name of thirty letters";
+    assert_eq!(name.len(), 30);
+    let width = measure(name, STYLE).width;
+    let graph = Graph {
+        nodes: vec![Node {
+            width: 50.0,
+            height: 36.0,
+            group: Some(0),
+        }],
+        groups: vec![Group {
+            parent: None,
+            width,
+        }],
+        ..Graph::default()
+    };
+    let picture = layout(&graph, None);
+    let group = picture.groups[0].unwrap();
+    assert!(
+        group.width >= width + 2.0 * GROUP_PAD,
+        "the box is {} wide, the name {width}",
+        group.width
+    );
+    assert!(holds(&group, &picture.nodes[0]));
+}
+
+#[test]
+fn a_group_whose_name_fits_keeps_its_position() {
+    let graph = |width: f64| Graph {
+        nodes: vec![
+            Node {
+                width: 120.0,
+                height: 36.0,
+                group: Some(0),
+            },
+            Node {
+                width: 120.0,
+                height: 36.0,
+                group: None,
+            },
+        ],
+        groups: vec![Group {
+            parent: None,
+            width,
+        }],
+        links: between_nodes([(0, 1)]),
+        ..Graph::default()
+    };
+    let without = layout(&graph(0.0), None);
+    let with = layout(&graph(60.0), None);
+    assert_eq!(without, with);
+}
+
+#[test]
+fn a_wide_name_of_an_inner_group_widens_the_group_around_it() {
+    let graph = Graph {
+        nodes: vec![Node {
+            width: 50.0,
+            height: 36.0,
+            group: Some(1),
+        }],
+        groups: vec![
+            Group {
+                parent: None,
+                width: 10.0,
+            },
+            Group {
+                parent: Some(0),
+                width: 300.0,
+            },
+        ],
+        ..Graph::default()
+    };
+    let picture = layout(&graph, None);
+    let (outer, inner) = (picture.groups[0].unwrap(), picture.groups[1].unwrap());
+    assert!(inner.width >= 300.0 + 2.0 * GROUP_PAD);
+    assert!(holds(&outer, &inner));
+}
+
+#[test]
 fn no_two_boxes_are_closer_than_the_node_gap_on_any_corpus_diagram() {
     let mut things = 0;
     for (name, source) in DIAGRAMS {
@@ -337,51 +478,279 @@ fn no_two_boxes_are_closer_than_the_node_gap_on_any_corpus_diagram() {
 }
 
 // The overlap detector reads each of the eleven pictures as a backend does.
-// This test holds the box of each thing only. A path does cross the box of a
-// group, 18 times on two diagrams: the order phase puts a link on one side
-// of a group in one rank and on the other side in the next, and the path
-// then passes through the group. The backlog item "No link passes through a
-// group that holds neither of its ends" has that work, and the counts here
-// fall with it.
+// No path crosses the box of a thing. Two paths pass through a group that
+// holds neither of their ends, both on `10-platform`, and no order of the
+// ranks has fewer.
+//
+// `Shopping` and `Fulfilment` are both inside `Services`, and both have
+// ranks 3, 4 and 5. `Stores` is outside `Services`, so it is on one side of
+// both. Each of the two has a link to `Stores` between two of those ranks.
+// The one that is further from `Stores` then reaches it through the other. A
+// path turns between two ranks only, so it cannot go round. With `Shopping`
+// nearer, the two links of `Fulfilment` below pass. With `Fulfilment`
+// nearer, five links of `Shopping` would pass: `Cart -> Cache`, both links
+// from `Catalog` and one from `Pricing` to `Stores`, and
+// `Search -> Search index`.
 #[test]
 fn no_path_crosses_the_box_of_a_thing_on_any_corpus_diagram() {
     let mut links = 0;
-    let mut through = Vec::new();
     for (name, source) in DIAGRAMS {
         let flow = flow(source);
         links += flow.graph.links.len();
         let picture = layout(&flow.graph, None);
         let collisions = collisions(&flow, &picture, &[Kind::LinkThroughGroup]);
         assert!(collisions.is_empty(), "{name}: {collisions:#?}");
-        through.push(through_groups(&flow, &picture));
+        let through = through_groups(&flow, &picture);
+        if name == "10-platform" {
+            assert_eq!(
+                through,
+                [
+                    "link `Orders -> Order database` passes through group `Shopping`",
+                    "link `Inventory -> Inventory database` passes through group `Shopping`",
+                ]
+            );
+            let rank = |thing: &str| rank_of(&flow, &picture, thing);
+            assert_eq!((rank("Orders"), rank("Order database")), (3, 4));
+            assert_eq!((rank("Inventory"), rank("Inventory database")), (4, 5));
+            assert_eq!((rank("Cart"), rank("Cache")), (4, 5));
+        } else {
+            assert!(through.is_empty(), "{name}: {through:#?}");
+        }
     }
     assert_eq!(links, 255);
-    assert_eq!(through, [0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 17]);
+}
+
+/// How many points two links cross at, on each of the eleven pictures.
+fn corpus_crossings() -> Vec<usize> {
+    DIAGRAMS
+        .iter()
+        .map(|(_, source)| crossings(&layout(&flow(source).graph, None)))
+        .collect()
+}
+
+// The committed numbers. The order phase removes a pass through a group
+// before it removes a crossing, and that must not cost a crossing here:
+// before it removed a pass, `07-compiler` had 2 crossings and `10-platform`
+// had 49. Before the order phase exchanged neighbours, `03-order-states` had
+// 3 crossings, `08-module-deps` had 23 and `09-incident` had 2. A number
+// that falls is a better picture: write the new number here.
+#[test]
+fn the_crossings_of_each_corpus_diagram_do_not_rise() {
+    let crossed = corpus_crossings();
+    assert_eq!(crossed, [0, 0, 0, 1, 0, 0, 4, 1, 11, 0, 18]);
+    assert_eq!(crossed[1..].iter().sum::<usize>(), 35);
+}
+
+// The reference is the scores table of `spikes/layered-layout/README.md`.
+// On the ten diagrams of the spike, its prototype left the crossings of
+// `PROTOTYPE`, the ELK port left 36 in total, and dagre left 14 on
+// `08-module-deps`. These limits do not move when a committed number falls.
+#[test]
+fn the_spike_diagrams_cross_no_more_than_the_reference_allows() {
+    const PROTOTYPE: [usize; 10] = [1, 0, 1, 0, 0, 9, 1, 22, 2, 44];
+    let crossed = &corpus_crossings()[1..];
+    for ((name, _), (now, limit)) in DIAGRAMS[1..].iter().zip(crossed.iter().zip(PROTOTYPE)) {
+        assert!(
+            *now <= limit,
+            "{name}: {now} crossings, the prototype {limit}"
+        );
+    }
+    assert!(crossed[7] <= 14, "08-module-deps: {}", crossed[7]);
+    let total: usize = crossed.iter().sum();
+    assert!(total <= 36 * 3 / 2, "{total} crossings on the ten diagrams");
 }
 
 // The ten diagrams of the spike have no label, so each link gets one here.
-// Two labels can still cover each other: item 0124 gives each label its own
-// room. A box is the box of a thing or of a group: no label lies on the box
-// of a thing or across the border of a group. A label can still be inside a
-// group that holds neither end of its link, when the link passes through
-// that group: 4 labels on one diagram. The count falls with the work on those
-// links.
+// A box is the box of a thing or of a group: no label lies on the box of a
+// thing, across the border of a group or on another label, and no label is
+// inside a group that holds neither end of its link. The two links of `10-platform` that
+// pass through `Shopping` have their labels outside it.
 #[test]
 fn each_link_label_sits_on_its_path_and_overlaps_no_box() {
     let mut labels = 0;
-    let mut inside = Vec::new();
     for (name, source) in DIAGRAMS {
         let flow = labelled(source);
         let picture = layout(&flow.graph, None);
         labels += picture.labels.iter().flatten().count();
         let faults = faults(&flow.graph, &picture);
         assert!(faults.is_empty(), "{name}: {faults:#?}");
-        let collisions = collisions(&flow, &picture, &[Kind::LinkThroughGroup, Kind::Labels]);
+        let collisions = collisions(&flow, &picture, &[Kind::LinkThroughGroup]);
         assert!(collisions.is_empty(), "{name}: {collisions:#?}");
-        inside.push(labels_in_other_groups(&flow.graph, &picture));
+        assert_eq!(labels_in_other_groups(&flow.graph, &picture), 0, "{name}");
     }
     assert_eq!(labels, 255);
-    assert_eq!(inside, [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4]);
+}
+
+// `n3 -> n0` is beside `g0`, which has the ranks of both ends. The sweeps put
+// `n3` above `g0` and `n0` below it, and the path went through the box of
+// `g0`. A file gives its things in another order, which the sweeps sort
+// well, so this graph is not from a file.
+#[test]
+fn a_link_beside_a_group_stays_on_one_side_of_it() {
+    let node = |group: Option<usize>| Node {
+        width: 50.0,
+        height: 36.0,
+        group,
+    };
+    let graph = Graph {
+        nodes: vec![node(None), node(Some(0)), node(Some(0)), node(None)],
+        groups: vec![Group {
+            parent: None,
+            width: 0.0,
+        }],
+        links: between_nodes([(3, 0), (0, 1)]),
+        labels: Vec::new(),
+    };
+    let picture = layout(&graph, None);
+    assert_eq!(picture.ranks, [1, 2, 0, 0]);
+    let flow = named(graph, vec![None; 2]);
+    let collisions = collisions(&flow, &picture, &[]);
+    assert!(collisions.is_empty(), "{collisions:#?}");
+}
+
+// From the review of the pass search. `n4 -> n3` went through `g0`. To put
+// that one link on one side of `g0` pushes `n1 -> n3` or `n4 -> n0` through
+// it, so the search kept the pass. Every link beside the group must change
+// its side at once.
+#[test]
+fn every_link_beside_a_group_takes_one_side_of_it() {
+    let node = |group: Option<usize>| Node {
+        width: 50.0,
+        height: 36.0,
+        group,
+    };
+    let groups = [None, None, Some(0), None, None, Some(0)];
+    let graph = Graph {
+        nodes: groups.map(node).to_vec(),
+        groups: vec![Group {
+            parent: None,
+            width: 0.0,
+        }],
+        links: between_nodes([(1, 3), (4, 3), (4, 5), (4, 0)]),
+        labels: Vec::new(),
+    };
+    let picture = layout(&graph, None);
+    let flow = named(graph, vec![None; 4]);
+    let collisions = collisions(&flow, &picture, &[]);
+    assert!(collisions.is_empty(), "{collisions:#?}");
+}
+
+// With one group an order with no pass exists: every item outside the group
+// is above it in every rank. So no generated graph with one group has a link
+// through the group.
+#[test]
+fn no_link_passes_through_the_only_group_of_a_generated_graph() {
+    let mut next = sequence(3);
+    for round in 0..500 {
+        let count = 2 + next(30);
+        let nodes: Vec<Node> = (0..count)
+            .map(|_| Node {
+                width: 50.0,
+                height: 36.0,
+                group: (next(2) == 0).then_some(0),
+            })
+            .collect();
+        let links = between_nodes((0..next(2 * count)).map(|_| (next(count), next(count))));
+        let graph = Graph {
+            nodes,
+            groups: vec![Group {
+                parent: None,
+                width: 0.0,
+            }],
+            labels: Vec::new(),
+            links,
+        };
+        let picture = layout(&graph, None);
+        let texts = vec![None; graph.links.len()];
+        let through = through_groups(&named(graph.clone(), texts), &picture);
+        assert!(
+            through.is_empty(),
+            "graph {round}: {through:#?}\n{graph:#?}"
+        );
+    }
+}
+
+// From the second review of the pass search. `n0 -> n5` went through `Inner`.
+// To put the items of `Outer` on one side of `Inner` pushes `n5 -> n6`
+// through it, and to put `n0 -> n5` on one side pushes `n0 -> n2` through
+// it. The items beside `Outer` must change their side in the same move.
+#[test]
+fn every_link_beside_a_group_inside_a_group_takes_one_side_of_it() {
+    let source = "n0 -> n5\nn2 -> n4\nn5 -> n6\nn2 -> n1\nn0 -> n2\n\
+                  Outer {\n  n1, n5\n  Inner {\n    n3, n4\n  }\n}\n";
+    let flow = flow(source);
+    let picture = layout(&flow.graph, None);
+    let collisions = collisions(&flow, &picture, &[]);
+    assert!(collisions.is_empty(), "{collisions:#?}");
+}
+
+// With a chain of groups, each inside the one before, an order with no pass
+// exists: in every rank, every item that is beside a group of the chain is
+// above that group.
+fn no_link_passes_through_a_chain_of_groups(seed: u32, depth: usize, most: usize, rounds: usize) {
+    let mut next = sequence(seed);
+    for round in 0..rounds {
+        let count = 2 + next(most);
+        let nodes: Vec<Node> = (0..count)
+            .map(|_| Node {
+                width: 50.0,
+                height: 36.0,
+                group: next(depth + 1).checked_sub(1),
+            })
+            .collect();
+        let links = between_nodes((0..next(2 * count)).map(|_| (next(count), next(count))));
+        let graph = Graph {
+            nodes,
+            groups: (0..depth)
+                .map(|g| Group {
+                    parent: g.checked_sub(1),
+                    width: 0.0,
+                })
+                .collect(),
+            labels: Vec::new(),
+            links,
+        };
+        let picture = layout(&graph, None);
+        let texts = vec![None; graph.links.len()];
+        let through = through_groups(&named(graph.clone(), texts), &picture);
+        assert!(
+            through.is_empty(),
+            "graph {round}: {through:#?}\n{graph:#?}"
+        );
+    }
+}
+
+#[test]
+fn no_link_passes_through_a_group_inside_a_group_of_a_generated_graph() {
+    no_link_passes_through_a_chain_of_groups(25, 2, 12, 1000);
+}
+
+// From the third review of the pass search. Graph 70 of this sequence kept
+// `n14 -> n16` through the outer group. The outer group has ranks that the
+// inner group does not have, and the items beside the outer group kept their
+// side in those ranks.
+#[test]
+fn no_link_passes_through_a_group_inside_a_group_of_a_large_generated_graph() {
+    no_link_passes_through_a_chain_of_groups(6, 2, 25, 400);
+}
+
+#[test]
+fn no_link_passes_through_a_chain_of_three_or_four_groups_of_a_generated_graph() {
+    no_link_passes_through_a_chain_of_groups(11, 3, 25, 400);
+    no_link_passes_through_a_chain_of_groups(12, 4, 25, 400);
+}
+
+// `Middle` has the ranks of both ends of `a -> c`. The sweeps put `Middle`
+// between `From` and `To`, and the path went through the box of `Middle`.
+// Each thing is in a group, so only another order of the groups keeps the
+// path out.
+#[test]
+fn no_group_stands_between_two_groups_that_a_link_joins() {
+    let source = "a -> d\na -> c\nTo {\n  c\n}\nFrom {\n  a\n}\nMiddle {\n  b, d\n}\n";
+    let flow = flow(source);
+    let picture = layout(&flow.graph, None);
+    let collisions = collisions(&flow, &picture, &[]);
+    assert!(collisions.is_empty(), "{collisions:#?}");
 }
 
 // The smallest input from the review of this phase. The upright line of
@@ -451,7 +820,11 @@ fn a_long_link_into_a_group_enters_the_group_at_its_side() {
     let flow = flow("x -> a, c\na -> b\nb -> c\nG {\n  c\n  Inner {\n    a, b\n  }\n}\n");
     let picture = layout(&flow.graph, None);
     let group = picture.groups[flow.groups.iter().position(|g| g == "G").unwrap()].unwrap();
-    let link = flow.graph.links.iter().position(|&ends| ends == (0, 2));
+    let link = flow
+        .graph
+        .links
+        .iter()
+        .position(|&ends| ends == (End::Node(0), End::Node(2)));
     let bends = &picture.bends[link.unwrap()];
     assert_eq!(bends.len(), 2);
     for bend in bends {
@@ -476,6 +849,35 @@ fn a_label_wider_than_the_rank_gap_widens_the_gap() {
     assert!(collisions.is_empty(), "{collisions:#?}");
 }
 
+// `a -> c` passes the rank of `b`, and its label is on its first step, in
+// the corridor of `a -> b`. Both labels were in the middle of the trunk that
+// leaves `a`, and they covered each other.
+#[test]
+fn two_labels_of_one_corridor_do_not_cover_each_other() {
+    let flow = flow("a -> b: to b\nb -> c\na -> c: to c\n");
+    let picture = layout(&flow.graph, None);
+    assert_eq!(picture.labels.iter().flatten().count(), 2);
+    let faults = faults(&flow.graph, &picture);
+    assert!(faults.is_empty(), "{faults:#?}");
+    let collisions = collisions(&flow, &picture, &[]);
+    assert!(collisions.is_empty(), "{collisions:#?}");
+}
+
+// The room for labels must not change a picture that has no label.
+#[test]
+fn a_link_without_a_label_keeps_the_rank_gap() {
+    for source in ["a -> b\nb -> c\na -> c\n", "a -> b: to b\nb -> c\n"] {
+        let flow = flow(source);
+        let picture = layout(&flow.graph, None);
+        let [_, b, c] = [picture.nodes[0], picture.nodes[1], picture.nodes[2]];
+        assert_eq!(c.x - (b.x + b.width), RANK_GAP, "{source:?}");
+    }
+    let flow = flow("a -> b\nb -> c\na -> c\n");
+    let picture = layout(&flow.graph, None);
+    let [a, b] = [picture.nodes[0], picture.nodes[1]];
+    assert_eq!(b.x - (a.x + a.width), RANK_GAP);
+}
+
 // The smallest input from the review of SPIKE-18. The prototype put the
 // marker of `G` between `e` and `a` in one rank, and the two boxes touched.
 #[test]
@@ -487,20 +889,94 @@ fn two_things_of_a_group_in_one_rank_keep_the_node_gap() {
     assert!(faults.is_empty(), "{faults:#?}");
 }
 
-// 300 graphs from a fixed sequence of numbers, with loops, nested groups and
+/// A fixed sequence of numbers for a generated graph. Each call gives a
+/// number below its argument.
+fn sequence(seed: u32) -> impl FnMut(usize) -> usize {
+    let mut state = seed;
+    move |below| {
+        state = state.wrapping_mul(1_664_525).wrapping_add(1_013_904_223);
+        (state >> 16) as usize % below
+    }
+}
+
+// From the third review of the pass search. A net of 100 nodes in 10 groups
+// with 390 links has hundreds of passes that no order removes. The search
+// took 40 times as long as every other phase together. The search now stops
+// at a limit on its work. The limit is a count, so the picture is the same
+// on every run. A test in `src/layout.rs` shows that the search stops.
+#[test]
+fn a_dense_graph_has_no_fault_when_the_pass_search_stops() {
+    let mut next = sequence(9);
+    let nodes: Vec<Node> = (0..100)
+        .map(|i| Node {
+            width: 50.0,
+            height: 36.0,
+            group: Some(i % 10),
+        })
+        .collect();
+    let graph = Graph {
+        nodes,
+        groups: vec![
+            Group {
+                parent: None,
+                width: 0.0
+            };
+            10
+        ],
+        labels: Vec::new(),
+        links: between_nodes((0..390).map(|_| (next(100), next(100)))),
+    };
+    let picture = layout(&graph, None);
+    let faults = faults(&graph, &picture);
+    assert!(faults.is_empty(), "{faults:#?}");
+}
+
+// From the fourth review of the pass search. A line of 400 nodes, each two
+// in their own group, then 40 nodes in 8 groups with 60 links. One round
+// tries another place for each of 208 groups, and most of those moves change
+// no rank. The limit did not count such a move, so the search did 5 times
+// the work of every other phase. A debug build now stops the test when the
+// search tries a move that the limit does not count.
+#[test]
+fn a_move_that_changes_no_rank_counts_toward_the_limit() {
+    let mut next = sequence(1);
+    let line = 400;
+    let nodes: Vec<Node> = (0..line + 40)
+        .map(|i| Node {
+            width: 50.0,
+            height: 36.0,
+            group: Some(if i < line { i / 2 } else { line / 2 + i % 8 }),
+        })
+        .collect();
+    let mut links: Vec<(usize, usize)> = (0..line).map(|i| (i, i + 1)).collect();
+    links.extend((0..60).map(|_| (line + next(40), line + next(40))));
+    let graph = Graph {
+        nodes,
+        groups: vec![
+            Group {
+                parent: None,
+                width: 0.0
+            };
+            line / 2 + 8
+        ],
+        labels: Vec::new(),
+        links: between_nodes(links),
+    };
+    let picture = layout(&graph, None);
+    let faults = faults(&graph, &picture);
+    assert!(faults.is_empty(), "{faults:#?}");
+}
+
 // links from a node to itself. The diagrams above cannot reach every order
 // of groups, and a wrong order would stop the place phase.
 #[test]
 fn no_generated_graph_has_a_fault() {
-    let mut state: u32 = 7;
-    let mut next = |below: usize| {
-        state = state.wrapping_mul(1_664_525).wrapping_add(1_013_904_223);
-        (state >> 16) as usize % below
-    };
+    let mut next = sequence(7);
     for round in 0..300 {
         let groups: Vec<Group> = (0..next(6))
             .map(|g| Group {
                 parent: (g > 0 && next(2) == 0).then(|| next(g)),
+                width: 40.0 * f64::from(u8::try_from(next(8)).unwrap()),
             })
             .collect();
         let count = 1 + next(24);
@@ -511,9 +987,7 @@ fn no_generated_graph_has_a_fault() {
                 group: (!groups.is_empty() && next(3) > 0).then(|| next(groups.len())),
             })
             .collect();
-        let links: Vec<(usize, usize)> = (0..next(2 * count))
-            .map(|_| (next(count), next(count)))
-            .collect();
+        let links = between_nodes((0..next(2 * count)).map(|_| (next(count), next(count))));
         let texts: Vec<Option<String>> = (0..links.len())
             .map(|_| (next(3) == 0).then(|| "word ".repeat(1 + next(4))))
             .collect();
@@ -531,11 +1005,68 @@ fn no_generated_graph_has_a_fault() {
         assert!(faults.is_empty(), "graph {round}: {faults:#?}\n{graph:#?}");
         assert_eq!(picture, layout(&graph, None), "graph {round}");
         // A generated graph has groups that no order keeps every link out
-        // of, and its labels are many for its size.
+        // of. Two links from a node to itself draw one loop with one place
+        // for both labels: item 0169 has that.
         let flow = named(graph, texts);
-        let collisions = collisions(&flow, &picture, &[Kind::LinkThroughGroup, Kind::Labels]);
+        let mut collisions = collisions(&flow, &picture, &[Kind::LinkThroughGroup]);
+        collisions.retain(|found| !two_loops_of_one_node(found));
         assert!(collisions.is_empty(), "graph {round}: {collisions:#?}");
     }
+}
+
+// From the second review of the exchange of neighbours. The order phase
+// exchanged neighbours after each round, and the next round swept from the
+// exchanged ranks. Graph 2290 of this generator then drew 58 crossings, and
+// 28 before the exchange. The exchange now runs once, on the best order.
+#[test]
+fn the_exchange_of_neighbours_does_not_add_crossings_to_a_generated_graph() {
+    let mut next = sequence(1);
+    let mut graph = None;
+    for _ in 0..=2290 {
+        let groups: Vec<Group> = (0..next(6))
+            .map(|g| Group {
+                parent: (g > 0 && next(2) == 0).then(|| next(g)),
+                width: 0.0,
+            })
+            .collect();
+        let count = 1 + next(24);
+        let nodes: Vec<Node> = (0..count)
+            .map(|_| Node {
+                width: 40.0 + 10.0 * f64::from(u8::try_from(next(12)).unwrap()),
+                height: 36.0,
+                group: (!groups.is_empty() && next(3) > 0).then(|| next(groups.len())),
+            })
+            .collect();
+        let links = between_nodes((0..next(2 * count)).map(|_| (next(count), next(count))));
+        graph = Some(Graph {
+            nodes,
+            groups,
+            links,
+            labels: Vec::new(),
+        });
+    }
+    let graph = graph.unwrap();
+    let size = (graph.nodes.len(), graph.links.len(), graph.groups.len());
+    assert_eq!(size, (23, 37, 0));
+    let crossed = crossings(&layout(&graph, None));
+    assert!(crossed <= 28, "{crossed} crossings");
+}
+
+/// A collision of the labels of two links from one node to itself.
+fn two_loops_of_one_node(found: &str) -> bool {
+    let Some((first, second)) = found.split_once(" covers ") else {
+        return false;
+    };
+    match (link_names(first), link_names(second)) {
+        (Some((a, b)), Some((c, d))) => a == b && b == c && c == d,
+        _ => false,
+    }
+}
+
+/// The names of the two ends of a label as the overlap detector names it.
+fn link_names(label: &str) -> Option<(&str, &str)> {
+    let link = label.strip_prefix("label `")?.strip_suffix('`')?;
+    link.split_once(" -> ")
 }
 
 /// A graph that no file states, with a name for each node and each group, so
@@ -558,13 +1089,17 @@ fn named(graph: Graph, texts: Vec<Option<String>>) -> Flow {
         .iter()
         .zip(&graph.groups)
         .map(|(g, group)| thing(g, group.parent));
+    let thing_of = |end: End| match end {
+        End::Node(node) => node,
+        End::Group(group) => count + group,
+    };
     let links = graph
         .links
         .iter()
         .zip(texts)
         .map(|(&(from, to), text)| Link {
-            from,
-            to,
+            from: thing_of(from),
+            to: thing_of(to),
             labels: text.into_iter().collect(),
             span: 0..0,
             guess: false,
@@ -601,8 +1136,12 @@ fn positions(name: &str, flow: &Flow, picture: &Layout) -> String {
         let points: Vec<String> = points.iter().map(|p| format!("{},{}", p.x, p.y)).collect();
         points.join(" ")
     };
+    let name = |end: End| match end {
+        End::Node(node) => &flow.nodes[node],
+        End::Group(group) => &flow.groups[group],
+    };
     for (link, &(from, to)) in flow.graph.links.iter().enumerate() {
-        let (from, to) = (&flow.nodes[from], &flow.nodes[to]);
+        let (from, to) = (name(from), name(to));
         if !picture.bends[link].is_empty() {
             let bends = points(&picture.bends[link]);
             writeln!(text, "bends  {from} -> {to}  {bends}").unwrap();
@@ -675,8 +1214,17 @@ fn a_group_that_holds_no_node_has_no_box() {
     };
     let graph = Graph {
         nodes: vec![node],
-        groups: vec![Group { parent: Some(1) }, Group { parent: None }],
-        links: vec![(0, 0)],
+        groups: vec![
+            Group {
+                parent: Some(1),
+                width: 0.0,
+            },
+            Group {
+                parent: None,
+                width: 0.0,
+            },
+        ],
+        links: between_nodes([(0, 0)]),
         labels: Vec::new(),
     };
     let picture = layout(&graph, None);
@@ -685,4 +1233,181 @@ fn a_group_that_holds_no_node_has_no_box() {
     assert_eq!((group.x, group.y), (0.0, 0.0));
     assert!(holds(&group, &picture.nodes[0]));
     assert_eq!(picture.bends, [[]]);
+}
+
+/// How many points two links cross at: a level part of one path and an
+/// upright part of another, each strictly inside the other.
+fn crossings(picture: &Layout) -> usize {
+    let parts = |path: &[Point]| -> Vec<(Point, Point)> {
+        path.windows(2).map(|pair| (pair[0], pair[1])).collect()
+    };
+    let within = |x: f64, a: f64, b: f64| a.min(b) < x && x < a.max(b);
+    let cross = |level: &(Point, Point), upright: &(Point, Point)| {
+        level.0.y - level.1.y == 0.0
+            && upright.0.x - upright.1.x == 0.0
+            && within(upright.0.x, level.0.x, level.1.x)
+            && within(level.0.y, upright.0.y, upright.1.y)
+    };
+    let paths: Vec<Vec<(Point, Point)>> = picture.paths.iter().map(|path| parts(path)).collect();
+    let mut count = 0;
+    for (index, a) in paths.iter().enumerate() {
+        for b in &paths[index + 1..] {
+            for p in a {
+                for q in b {
+                    count += usize::from(cross(p, q) || cross(q, p));
+                }
+            }
+        }
+    }
+    count
+}
+
+/// The box of a group of a flow, by name.
+fn group_box(flow: &Flow, picture: &Layout, name: &str) -> Rect {
+    let group = flow.groups.iter().position(|g| g == name).unwrap();
+    picture.groups[group].unwrap()
+}
+
+/// A point is strictly inside a box.
+fn within(point: &Point, r: &Rect) -> bool {
+    r.x < point.x && point.x < r.x + r.width && r.y < point.y && point.y < r.y + r.height
+}
+
+#[test]
+fn a_link_to_a_group_ends_at_the_border_of_the_group_box() {
+    let flow = flow("A -> G\nG {\n  B, C\n}\nB -> C\n");
+    let picture = layout(&flow.graph, None);
+    assert_eq!(flow.graph.links[0], (End::Node(0), End::Group(0)));
+    let group = group_box(&flow, &picture, "G");
+    let path = &picture.paths[0];
+    let end = path.last().unwrap();
+    assert_eq!(end.x, group.x, "{path:?}");
+    assert!(
+        group.y < end.y && end.y < group.y + group.height,
+        "{path:?}"
+    );
+    assert!(path.iter().all(|point| !within(point, &group)), "{path:?}");
+    // The group ranks as one unit after the thing that links to it.
+    let a = rank_of(&flow, &picture, "A");
+    assert!(a < rank_of(&flow, &picture, "B") && a < rank_of(&flow, &picture, "C"));
+    let faults = faults(&flow.graph, &picture);
+    assert!(faults.is_empty(), "{faults:#?}");
+    let collisions = collisions(&flow, &picture, &[]);
+    assert!(collisions.is_empty(), "{collisions:#?}");
+}
+
+#[test]
+fn a_link_from_a_group_starts_at_the_border_of_the_group_box() {
+    let flow = flow("G -> A\nG {\n  B, C\n}\nB -> C\n");
+    let picture = layout(&flow.graph, None);
+    assert_eq!(flow.graph.links[0], (End::Group(0), End::Node(0)));
+    let group = group_box(&flow, &picture, "G");
+    let path = &picture.paths[0];
+    let start = path.first().unwrap();
+    assert_eq!(start.x, group.x + group.width, "{path:?}");
+    assert!(
+        group.y < start.y && start.y < group.y + group.height,
+        "{path:?}"
+    );
+    assert!(path.iter().all(|point| !within(point, &group)), "{path:?}");
+    let a = rank_of(&flow, &picture, "A");
+    assert!(a > rank_of(&flow, &picture, "B") && a > rank_of(&flow, &picture, "C"));
+    let faults = faults(&flow.graph, &picture);
+    assert!(faults.is_empty(), "{faults:#?}");
+    let collisions = collisions(&flow, &picture, &[]);
+    assert!(collisions.is_empty(), "{collisions:#?}");
+}
+
+// `Web -> Services` closes a loop through `Orders -> Web`, so the link turns
+// and starts at the right side of `Services`. A link between two groups and
+// a link to a group inside a group meet only the borders of their ends.
+#[test]
+fn links_between_groups_and_into_inner_groups_cross_no_box() {
+    let source = "Gateway -> Services\nServices -> Stores\nGateway -> Inner\n\
+                  Inner -> Postgres\nOrders -> Web\nWeb -> Services\n\
+                  Services {\n  Orders\n  Inner {\n    Payments, Refunds\n  }\n}\n\
+                  Stores {\n  Postgres, Redis\n}\n";
+    let flow = flow(source);
+    assert_eq!(flow.graph.links.len(), 6);
+    let picture = layout(&flow.graph, None);
+    let faults = faults(&flow.graph, &picture);
+    assert!(faults.is_empty(), "{faults:#?}");
+    let collisions = collisions(&flow, &picture, &[]);
+    assert!(collisions.is_empty(), "{collisions:#?}");
+}
+
+// Graphs that link groups as well as nodes. A link never joins a group to
+// itself or to what it holds: the flow lens leaves such a link out.
+#[test]
+fn no_generated_graph_with_links_to_groups_has_a_fault() {
+    let mut next = sequence(3);
+    for round in 0..300 {
+        let groups: Vec<Group> = (0..=next(5))
+            .map(|g| Group {
+                parent: (g > 0 && next(2) == 0).then(|| next(g)),
+                width: 0.0,
+            })
+            .collect();
+        let count = groups.len() + 1 + next(20);
+        let mut nodes: Vec<Node> = (0..count)
+            .map(|_| Node {
+                width: 40.0 + 10.0 * f64::from(u8::try_from(next(12)).unwrap()),
+                height: 36.0,
+                group: (next(3) > 0).then(|| next(groups.len())),
+            })
+            .collect();
+        // Each group holds a node, so each group has a box.
+        for (g, node) in nodes.iter_mut().take(groups.len()).enumerate() {
+            node.group = Some(g);
+        }
+        let link_count = next(2 * count);
+        let mut end = || {
+            if next(3) == 0 {
+                End::Group(next(groups.len()))
+            } else {
+                End::Node(next(count))
+            }
+        };
+        let links: Vec<(End, End)> = (0..link_count).map(|_| (end(), end())).collect();
+        let graph = Graph {
+            nodes,
+            groups,
+            links,
+            labels: Vec::new(),
+        };
+        let chains: Vec<Vec<usize>> = (0..graph.groups.len())
+            .map(|g| around(&graph, Some(g)))
+            .collect();
+        let holds = |group: End, other: End| match (group, other) {
+            (End::Group(g), End::Node(n)) => around(&graph, graph.nodes[n].group).contains(&g),
+            (End::Group(g), End::Group(h)) => chains[h].contains(&g),
+            (End::Node(_), _) => false,
+        };
+        let links = graph.links.iter().copied();
+        let links: Vec<(End, End)> = links
+            .filter(|&(a, b)| !holds(a, b) && !holds(b, a))
+            .collect();
+        let texts: Vec<Option<String>> = (0..links.len())
+            .map(|_| (next(3) == 0).then(|| "word ".repeat(1 + next(4))))
+            .collect();
+        let labels = texts
+            .iter()
+            .map(|text| text.as_ref().map(|text| measure(text, STYLE)))
+            .collect();
+        let graph = Graph {
+            links,
+            labels,
+            ..graph
+        };
+        let picture = layout(&graph, None);
+        let faults = faults(&graph, &picture);
+        assert!(faults.is_empty(), "graph {round}: {faults:#?}\n{graph:#?}");
+        assert_eq!(picture, layout(&graph, None), "graph {round}");
+        // A generated graph has groups that no order keeps every link out
+        // of, as in `no_generated_graph_has_a_fault`.
+        let flow = named(graph, texts);
+        let mut collisions = collisions(&flow, &picture, &[Kind::LinkThroughGroup]);
+        collisions.retain(|found| !two_loops_of_one_node(found));
+        assert!(collisions.is_empty(), "graph {round}: {collisions:#?}");
+    }
 }

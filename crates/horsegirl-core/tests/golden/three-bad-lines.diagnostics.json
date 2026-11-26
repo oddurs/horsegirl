@@ -18,12 +18,21 @@
     "fix": null
   },
   {
-    "code": "E0001",
+    "code": "E0010",
     "line": 6,
     "column": 20,
     "span": [140, 142],
     "text": "->",
     "message": "A line holds one arrow, and this `->` is a second one. Write each link on its own line. A name that holds `->` is written in double quotes.",
-    "fix": null
+    "fix": {
+      "confidence": "safe",
+      "description": "Write each link on its own line.",
+      "edits": [
+        {
+          "span": [121, 149],
+          "text": "Payments -> Notify\nNotify -> Events"
+        }
+      ]
+    }
   }
 ]

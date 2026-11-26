@@ -4,7 +4,7 @@
 //! Each case states the file, the codes it gives and, where a check carries a
 //! fix, the file after the fix.
 
-use horsegirl_core::check::{LENSES, check, of_model};
+use horsegirl_core::check::{LENSES, check, fix_all, of_model};
 use horsegirl_core::diagnostic::{Confidence, Diagnostic};
 use horsegirl_core::model::lower;
 use horsegirl_core::syntax::parse;
@@ -209,6 +209,106 @@ fn a_firm_statement_of_a_link_is_not_a_guess() {
     assert_eq!(codes(&check(source)), [""; 0]);
 }
 
+// BUG-161: `Archive?` read as a firm link to a thing named `Archive?`.
+#[test]
+fn a_question_mark_against_the_last_name_gets_a_fix_that_makes_a_guess() {
+    let source = "Scheduler -> Report job\nReport job -> Archive?\n";
+    let diagnostics = check(source);
+    assert_eq!(codes(&diagnostics), ["W0111"]);
+    let (warning, spanned) = only(source, &diagnostics, "W0111");
+    assert_eq!(spanned, "Archive?");
+    assert!(
+        warning.message.contains("`Archive ?`"),
+        "{}",
+        warning.message
+    );
+    assert!(
+        warning.message.contains("`\"Archive?\"`"),
+        "{}",
+        warning.message
+    );
+    let fix = warning.fix.as_ref().expect("W0111 carries a fix");
+    assert_eq!(fix.confidence, Confidence::Safe);
+    let fixed = fix_all(source).text;
+    assert_eq!(fixed, "Scheduler -> Report job\nReport job -> Archive ?\n");
+    assert_eq!(codes(&check(&fixed)), ["N0200"]);
+    let model = lower(&parse(&fixed).tree);
+    assert!(model.links[1].guess);
+    assert_eq!(model.things[model.links[1].to].name, "Archive");
+}
+
+#[test]
+fn a_glued_question_mark_on_a_rule_a_list_or_a_citation_line_gets_the_fix() {
+    let cases = [
+        ("A -x B?\n", "A -x B ?\n"),
+        ("A -> B, Web app?\n", "A -> B, Web app ?\n"),
+        ("A -> B? @ src/a.rs:3\n", "A -> B ? @ src/a.rs:3\n"),
+        ("G {\n  A -> B?\n}\n", "G {\n  A -> B ?\n}\n"),
+        ("A -> B?;\n", "A -> B ?\n"),
+    ];
+    for (source, expected) in cases {
+        assert!(codes(&check(source)).contains(&"W0111"), "{source:?}");
+        assert_eq!(fix_all(source).text, expected, "{source:?}");
+    }
+}
+
+#[test]
+fn a_name_that_ends_in_a_question_mark_in_quotes_stays_a_name() {
+    let source = "A -> \"Archive?\"\n";
+    assert_eq!(codes(&check(source)), [""; 0]);
+    assert_eq!(fix_all(source).text, source);
+    let model = lower(&parse(source).tree);
+    assert!(!model.links[0].guess);
+    assert_eq!(model.things[model.links[0].to].name, "Archive?");
+}
+
+// BUG-161, review: the fix made a firm link to a name that the file writes
+// with its `?` elsewhere into a guess to a new thing.
+#[test]
+fn a_name_that_the_file_writes_with_its_question_mark_elsewhere_gives_no_warning() {
+    for source in [
+        "Start -> Ok?\nOk? -> Yes\nOk? -> No\n",
+        "A -> \"B?\"\nC -> B?\n",
+        "C -> B?\nA -> \"B?\"\n",
+        "Ok?\nStart -> Ok?\n",
+        "G { Ok? }\nStart -> Ok?\n",
+    ] {
+        assert!(
+            !codes(&check(source)).contains(&"W0111"),
+            "{source:?}: {:#?}",
+            check(source)
+        );
+        assert_eq!(fix_all(source).text, source, "{source:?}");
+    }
+}
+
+#[test]
+fn a_name_glued_to_its_question_mark_on_two_links_still_gets_the_fix() {
+    let source = "A -> Archive?\nB -> Archive?\n";
+    assert_eq!(codes(&check(source)), ["W0111", "W0111"]);
+    assert_eq!(fix_all(source).text, "A -> Archive ?\nB -> Archive ?\n");
+}
+
+#[test]
+fn a_question_mark_that_does_not_end_a_link_gives_no_warning() {
+    for source in [
+        "Valid? -> Yes\n",
+        "A -> B: ready?\n",
+        "A -> B ?\n",
+        "A -> B? ?\n",
+        "Ready?\nA -> Ready?, B -> C\n",
+        "A { note: why? }\nA -> B\n",
+        "G { A, B? }\nA -> B\n",
+        "A -> ?\n",
+    ] {
+        assert!(
+            !codes(&check(source)).contains(&"W0111"),
+            "{source:?}: {:#?}",
+            check(source)
+        );
+    }
+}
+
 #[test]
 fn an_unknown_lens_is_an_error_that_lists_the_lenses() {
     let source = "A -> B\nshow bubbles\n";
@@ -267,7 +367,7 @@ fn every_lens_is_on_the_language_card() {
 #[test]
 fn parse_and_check_diagnostics_come_sorted_by_place() {
     let source = "show bubbles\nA -> B -> C\nLonely\n";
-    assert_eq!(codes(&check(source)), ["E0300", "E0001", "W0107"]);
+    assert_eq!(codes(&check(source)), ["E0300", "E0010", "W0107"]);
 }
 
 #[test]
@@ -311,4 +411,242 @@ fn a_group_with_a_name_that_does_not_end_in_a_slash_gives_no_path_warning() {
             check(source)
         );
     }
+}
+
+/// The E0420 errors of a file, each with the text that its span covers.
+fn misplaced(source: &str) -> Vec<(Diagnostic, &str)> {
+    check(source)
+        .into_iter()
+        .filter(|d| d.code == "E0420")
+        .map(|d| {
+            let spanned = &source[d.span.clone()];
+            (d, spanned)
+        })
+        .collect()
+}
+
+#[test]
+fn a_thing_in_a_second_group_is_an_error_that_names_the_first() {
+    let source = "G { A }\nH { A }\nA -> B\n";
+    let found = misplaced(source);
+    assert_eq!(found.len(), 1, "{found:#?}");
+    let (error, spanned) = &found[0];
+    assert_eq!(spanned, &"A");
+    assert_eq!(error.span.start, "G { A }\nH { ".len());
+    assert!(error.message.contains("`G`"), "{}", error.message);
+    // Removing the only part would turn `H` from a group into a thing.
+    assert_eq!(error.fix, None);
+}
+
+#[test]
+fn a_group_placed_inside_itself_is_an_error() {
+    let source = "A { B }\nB { A }\nA -> C\n";
+    let found = misplaced(source);
+    assert_eq!(found.len(), 1, "{found:#?}");
+    let (error, spanned) = &found[0];
+    assert_eq!(spanned, &"A");
+    assert_eq!(error.span.start, "A { B }\nB { ".len());
+    assert!(error.message.contains("hold itself"), "{}", error.message);
+
+    let found = misplaced("A { A }\nA -> B\n");
+    assert_eq!(found.len(), 1, "{found:#?}");
+    assert!(
+        found[0].0.message.contains("hold itself"),
+        "{}",
+        found[0].0.message
+    );
+}
+
+#[test]
+fn a_part_in_the_braces_after_several_names_is_an_error() {
+    let source = "A, B { C }\nC -> D\n";
+    let found = misplaced(source);
+    assert_eq!(found.len(), 1, "{found:#?}");
+    let (error, spanned) = &found[0];
+    assert_eq!(spanned, &"C");
+    assert!(
+        error.message.contains("a part belongs to one group"),
+        "{}",
+        error.message
+    );
+    assert!(error.message.contains("`A` and `B`"), "{}", error.message);
+    assert_eq!(error.fix, None);
+}
+
+#[test]
+fn the_reference_file_and_sound_groups_give_no_misplaced_part() {
+    assert_eq!(misplaced(CHECKOUT), []);
+    for source in [
+        // The same group again, and a group that holds the thing deeper.
+        "G { A }\nG { A, B }\nA -> B\n",
+        "G { H { A } }\nG { A -> B }\n",
+        // The holder enters the group on a later line.
+        "H { A }\nG { A }\nG { H }\nA -> B\n",
+        // A thing first named outside braces, then placed.
+        "A -> B\nG { A }\n",
+        // Facts after several names place nothing.
+        "A, B { owner: X }\nA -> B\n",
+        // A story places nothing.
+        "G { A }\nstory S {\n  A -> B\n}\n",
+    ] {
+        assert_eq!(misplaced(source), [], "{source:?}");
+    }
+}
+
+#[test]
+fn a_held_name_among_others_gets_a_suggested_fix_that_removes_it() {
+    let source = "G { A }\nH { A, B }\nA -> B\n";
+    let found = misplaced(source);
+    assert_eq!(found.len(), 1, "{found:#?}");
+    let fix = found[0].0.fix.as_ref().expect("the name can be removed");
+    assert_eq!(fix.confidence, Confidence::Suggested);
+    assert_eq!(fix.apply(source), "G { A }\nH { B }\nA -> B\n");
+    assert_eq!(misplaced(&fix.apply(source)), []);
+
+    let source = "G { A }\nH { B, A }\nA -> B\n";
+    let fix = misplaced(source)[0]
+        .0
+        .fix
+        .clone()
+        .expect("the last name too");
+    assert_eq!(fix.apply(source), "G { A }\nH { B }\nA -> B\n");
+}
+
+#[test]
+fn two_held_names_side_by_side_get_fixes_that_do_not_overlap() {
+    let source = "G { A, B }\nH { A, B, C }\nA -> B\nB -> C\n";
+    let found = misplaced(source);
+    assert_eq!(found.len(), 2, "{found:#?}");
+    let fixes: Vec<_> = found.iter().filter_map(|(e, _)| e.fix.as_ref()).collect();
+    assert_eq!(fixes.len(), 2, "{found:#?}");
+    assert!(fixes[0].span().end <= fixes[1].span().start, "{fixes:#?}");
+}
+
+/// Only the writer knows whether a second mention in braces means the same
+/// thing, so `fix` never removes one. A safe fix here once removed the second
+/// `Server` with no word left, and once left a name written once that E0412
+/// then rewrote, so two things became one.
+#[test]
+fn fix_leaves_a_thing_in_two_groups_for_the_writer() {
+    for source in [
+        "Server -> sync application\nServer -> async application\n\
+         WSGI { Server, sync application }\n\
+         ASGI { Server, async application }\n",
+        "G { Cart }\nH { Cart, B }\nCarts -> B\nCarts -> G\n",
+    ] {
+        assert_eq!(misplaced(source).len(), 1, "{source:?}");
+        let fixed = fix_all(source);
+        assert_eq!(fixed.text, source);
+        assert_eq!(fixed.applied, 0);
+        assert_eq!(misplaced(&fixed.text).len(), 1, "{source:?}");
+    }
+}
+
+#[test]
+fn a_part_after_several_names_names_the_group_that_holds_it() {
+    let message = |source: &str| {
+        let found = misplaced(source);
+        assert_eq!(found.len(), 1, "{source:?}: {found:#?}");
+        found[0].0.message.clone()
+    };
+    // Earlier braces hold `C`, so these braces leave it in `G`.
+    let held = message("G { C }\nA, B { C }\nC -> D\n");
+    assert!(held.contains("so `C` is in `G`."), "{held}");
+    assert!(!held.contains("`A` only"), "{held}");
+    // `A` cannot be inside itself, so no group holds it.
+    let nowhere = message("A, B { A }\nA -> D\n");
+    assert!(nowhere.contains("so `A` is in no group."), "{nowhere}");
+    // The first group holds a new part.
+    let first = message("A, B { C }\nC -> D\n");
+    assert!(first.contains("so `C` is in `A` only."), "{first}");
+}
+
+#[test]
+fn a_held_name_in_a_link_inside_braces_has_no_fix() {
+    let source = "G { A }\nH { A -> B }\n";
+    let found = misplaced(source);
+    assert_eq!(found.len(), 1, "{found:#?}");
+    assert_eq!(found[0].0.fix, None);
+}
+
+#[test]
+fn a_label_that_holds_a_second_link_gets_a_warning_that_splits_it() {
+    let source = "A -> B: pay -> C: ship\n";
+    let diagnostics = check(source);
+    let found: Vec<&Diagnostic> = diagnostics.iter().filter(|d| d.code == "W0109").collect();
+    assert_eq!(found.len(), 1, "{diagnostics:#?}");
+    assert_eq!(&source[found[0].span.clone()], "-> C: ship");
+    let fix = found[0].fix.as_ref().expect("the warning carries a fix");
+    assert_eq!(fix.confidence, Confidence::Suggested);
+    let repaired = fix.apply(source);
+    assert_eq!(repaired, "A -> B: pay\nB -> C: ship\n");
+    assert_eq!(codes(&check(&repaired)), Vec::<&str>::new());
+    // The second link keeps the indent of the first.
+    let nested = "G {\n  A -> B: pay -> C: ship\n}\n";
+    let fix = check(nested)
+        .into_iter()
+        .find(|d| d.code == "W0109")
+        .and_then(|d| d.fix)
+        .expect("the nested warning carries a fix");
+    assert_eq!(fix.apply(nested), "G {\n  A -> B: pay\n  B -> C: ship\n}\n");
+}
+
+#[test]
+fn a_split_warning_for_a_marked_link_gives_no_fix() {
+    for source in [
+        "A -> B: pay -> C: ship ?\n",
+        "A -> B: pay -> C: ship @ docs/a.md:3\n",
+    ] {
+        let diagnostics = check(source);
+        let found: Vec<&Diagnostic> = diagnostics.iter().filter(|d| d.code == "W0109").collect();
+        assert_eq!(found.len(), 1, "{source:?}: {diagnostics:#?}");
+        assert_eq!(found[0].fix, None, "{source:?}");
+    }
+}
+
+#[test]
+fn a_label_with_an_arrow_and_no_colon_after_it_gives_no_warning() {
+    for source in [
+        "A -> B: calls -> returns\n",
+        "A -> B: \"pay -> C: ship\"\n",
+        "A -> B: \"x\" -> C\n",
+        "A -> B: pay: ship\n",
+    ] {
+        assert!(
+            !codes(&check(source)).contains(&"W0109"),
+            "{source:?}: {:#?}",
+            check(source)
+        );
+    }
+}
+
+#[test]
+fn a_link_between_a_group_and_what_it_holds_is_a_warning() {
+    let source = "Services {\n  Orders\n  Inner {\n    Payments\n  }\n}\n\
+                  Orders -> Services\nServices -> Payments\nServices -> Services\n\
+                  Web -> Services\nOrders -> Payments\nInner -> Orders\n";
+    let diagnostics = check(source);
+    assert_eq!(codes(&diagnostics), ["W0110", "W0110", "W0110"]);
+    let spans: Vec<&str> = diagnostics
+        .iter()
+        .map(|d| &source[d.span.clone()])
+        .collect();
+    assert_eq!(
+        spans,
+        [
+            "Orders -> Services",
+            "Services -> Payments",
+            "Services -> Services"
+        ]
+    );
+    assert_eq!(
+        diagnostics[0].message,
+        "`Orders -> Services` links the group `Services` to `Orders`, which it holds, so the picture leaves the link out. Link a thing outside `Services` to `Services`, or link two things inside it."
+    );
+    assert_eq!(diagnostics[0].fix, None);
+    assert!(
+        diagnostics[2]
+            .message
+            .contains("the group `Services` to itself")
+    );
 }

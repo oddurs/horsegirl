@@ -1,0 +1,12 @@
+The checkout story
+
+Write a story called `checkout`: the `Web app` sends `POST /checkout` to the
+`API`, the `API` makes the order in `Orders` with the label `create`, then
+`Orders` asks `Payments` with the label `charge`. Show it as a sequence.
+---
+story checkout {
+  Web app -> API: POST /checkout
+  API -> Orders: create
+  Orders -> Payments: charge
+}
+show sequence of checkout

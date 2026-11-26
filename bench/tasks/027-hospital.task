@@ -1,0 +1,11 @@
+A hospital admission
+
+The `Front desk` registers the patient in the `Patient record`, with the label
+`register`. A `Nurse` reads the `Patient record` with the label `read`, and
+asks the `Lab` for tests with the label `order tests`. The `Lab` writes to the
+`Patient record`, with the label `results`.
+---
+Front desk -> Patient record: register
+Nurse -> Patient record: read
+Nurse -> Lab: order tests
+Lab -> Patient record: results

@@ -1,0 +1,12 @@
+```
+Services {
+  Orders, Payments { owner: Commerce }
+  Notify { owner: Growth }
+}
+Web app, Mobile app -> API gateway
+API gateway -> Orders
+Orders -> Payments
+Payments -> Notify
+Orders -> Postgres: save
+show flow
+```

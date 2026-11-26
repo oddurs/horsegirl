@@ -1,0 +1,6 @@
+Two apps and one cache
+
+A `Web app` and a `Mobile app` both read from the `Cache`. Write it as one line
+that fans out.
+---
+Web app, Mobile app -> Cache

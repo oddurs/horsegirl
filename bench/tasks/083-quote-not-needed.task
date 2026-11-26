@@ -1,0 +1,7 @@
+No quotes needed
+
+`Cart service` calls `Price engine`, which calls `Tax rules`. None of these
+names holds a reserved character.
+---
+Cart service -> Price engine
+Price engine -> Tax rules

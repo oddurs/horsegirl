@@ -1,0 +1,27 @@
+File
+  Comment "# A label runs to the end of the line."
+  Link
+    Names
+      Name "Web app"
+    Arrow "->"
+    Names
+      Name "API gateway"
+    Colon ":"
+    Label "POST /checkout, then 200 -> ok"
+  Link
+    Names
+      Name "API gateway"
+    Arrow "->"
+    Names
+      Name "Dash-x"
+  Link
+    Names
+      Name "Dash-x"
+    Arrow "->"
+    Names
+      Name "Orders"
+    Colon ":"
+    Label "\"returns {id}\""
+  Show
+    Keyword "show"
+    Lens "flow"

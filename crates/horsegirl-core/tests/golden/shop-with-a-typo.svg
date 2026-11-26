@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" class="horsegirl" role="img" width="579.15" height="158" viewBox="-1 -1 579.15 158" font-size="14">
+<title>shop-with-a-typo</title>
+<desc>7 things, 0 groups and 6 links.</desc>
+<style>
+.horsegirl{color-scheme:var(--hg-scheme,light dark);font-family:var(--hg-font,Arial,"Liberation Sans",Helvetica,sans-serif)}
+.horsegirl .page{fill:var(--hg-paper,light-dark(#FFFFFF,#15171B))}
+.horsegirl .group{fill:var(--hg-c0,light-dark(#F3F4F6,#23272E));stroke:var(--hg-line,light-dark(#D8DCE2,#343941))}
+.horsegirl .thing{fill:var(--hg-paper,light-dark(#FFFFFF,#15171B));stroke:var(--hg-muted,light-dark(#667080,#9AA4B2))}
+.horsegirl .link{fill:none;stroke:var(--hg-ink,light-dark(#1F2328,#E6E8EB))}
+.horsegirl .head{fill:var(--hg-accent,light-dark(#2F5FD0,#7AA2FF))}
+.horsegirl .label{fill:var(--hg-ink,light-dark(#1F2328,#E6E8EB));white-space:pre}
+.horsegirl .thing.slot-1{fill:var(--hg-c1,light-dark(#E1EAFB,#1D2B47));stroke:var(--hg-accent,light-dark(#2F5FD0,#7AA2FF))}
+.horsegirl .thing.slot-2{fill:var(--hg-c2,light-dark(#E0F2E8,#17322A));stroke:var(--hg-s2,light-dark(#1F7A55,#5FCB9B))}
+.horsegirl .thing.slot-3{fill:var(--hg-c3,light-dark(#FAEFD6,#3A2F17));stroke:var(--hg-s3,light-dark(#A8621B,#E3A75C))}
+</style>
+<defs>
+<marker id="hg-head" viewBox="0 0 8 8" refX="8" refY="4" markerWidth="8" markerHeight="8" markerUnits="userSpaceOnUse" orient="auto"><path class="head" d="M0,0 L8,4 L0,8 z"/></marker>
+</defs>
+<rect class="page" x="-1" y="-1" width="579.15" height="158"/>
+<path class="link" d="M90.14,18 L122.49,18 L122.49,48 L160.49,48" marker-end="url(#hg-head)"/>
+<path class="link" d="M96.49,78 L134.49,78 L134.49,48 L160.49,48" marker-end="url(#hg-head)"/>
+<path class="link" d="M267.09,48 L299.09,48 L299.09,18 L345.1,18" marker-end="url(#hg-head)"/>
+<path class="link" d="M267.09,48 L299.09,48 L299.09,78 L335.37,78" marker-end="url(#hg-head)"/>
+<path class="link" d="M415.89,18 L455.9,18 L455.9,78 L493.9,78" marker-end="url(#hg-head)"/>
+<path class="link" d="M429.9,138 L467.9,138 L467.9,78 L493.9,78" marker-end="url(#hg-head)"/>
+<rect class="thing" x="6.35" y="0" width="83.78" height="36" rx="4"/>
+<rect class="thing" x="0" y="60" width="96.49" height="36" rx="4"/>
+<rect class="thing" x="160.49" y="30" width="106.6" height="36" rx="4"/>
+<rect class="thing" x="345.1" y="0" width="70.79" height="36" rx="4"/>
+<rect class="thing" x="335.37" y="60" width="90.25" height="36" rx="4"/>
+<rect class="thing" x="493.9" y="60" width="83.25" height="36" rx="4"/>
+<rect class="thing" x="331.09" y="120" width="98.81" height="36" rx="4"/>
+<text class="label" x="48.24" y="22.85" text-anchor="middle" textLength="55.78" lengthAdjust="spacingAndGlyphs">Web app</text>
+<text class="label" x="48.24" y="82.85" text-anchor="middle" textLength="68.49" lengthAdjust="spacingAndGlyphs">Mobile app</text>
+<text class="label" x="213.79" y="52.85" text-anchor="middle" textLength="78.6" lengthAdjust="spacingAndGlyphs">API gateway</text>
+<text class="label" x="380.5" y="22.85" text-anchor="middle" textLength="42.79" lengthAdjust="spacingAndGlyphs">Orders</text>
+<text class="label" x="380.5" y="82.85" text-anchor="middle" textLength="62.25" lengthAdjust="spacingAndGlyphs">Payments</text>
+<text class="label" x="535.53" y="82.85" text-anchor="middle" textLength="55.25" lengthAdjust="spacingAndGlyphs">Postgres</text>
+<text class="label" x="380.5" y="142.85" text-anchor="middle" textLength="70.81" lengthAdjust="spacingAndGlyphs">API gatway</text>
+</svg>

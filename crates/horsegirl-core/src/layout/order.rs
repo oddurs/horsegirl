@@ -1,21 +1,27 @@
 //! The order phase: sort each rank so that few links cross.
 //!
 //! Each rank is sorted by the mean position of the neighbours of each item
-//! in the rank beside it, forward and back, and the order with the fewest
-//! crossings is kept.
+//! in the rank beside it, forward and back. The order with the fewest
+//! crossings is kept. Two neighbours of a rank in that order then exchange
+//! their places where that removes a crossing.
 //!
 //! Two rules keep a group in one piece. In each rank, the items of a group
 //! are next to each other. The groups under one parent have one order, and
 //! every rank holds it. So one group is above another in every rank that
 //! they share, and their boxes need no repair.
+//!
+//! A second part then keeps each link out of the groups that hold neither of
+//! its ends: see [`super::through`].
 
 use std::collections::BTreeMap;
 
+use super::through::{keep_out, transpose};
 use super::{Group, Item, Net, real};
 
 const ROUNDS: usize = 24;
 
-pub(super) fn order(net: &mut Net, groups: &[Group]) {
+/// The result is the work of the pass search.
+pub(super) fn order(net: &mut Net, groups: &[Group]) -> usize {
     let count = net.items.len();
     let mut before = vec![Vec::new(); count];
     let mut after = vec![Vec::new(); count];
@@ -45,6 +51,7 @@ pub(super) fn order(net: &mut Net, groups: &[Group]) {
         arrange(layer, &value, &net.items, groups, &keys);
     }
     let mut best = net.layers.clone();
+    let mut best_keys = keys.clone();
     let mut fewest = crossings(&net.layers, &net.steps, count);
     let last = net.layers.len().saturating_sub(1);
     for _ in 0..ROUNDS {
@@ -75,13 +82,71 @@ pub(super) fn order(net: &mut Net, groups: &[Group]) {
         if now < fewest {
             fewest = now;
             best.clone_from(&net.layers);
+            best_keys.clone_from(&keys);
         }
     }
     net.layers = best;
+    // Once, on the best order only. A round that sweeps from untangled ranks
+    // takes another path, and the best of those can have more crossings than
+    // the best of plain sweeps.
+    untangle(net, &before, &after);
+    keep_out(net, groups, &best_keys)
+}
+
+/// Exchanges two neighbouring entries of a rank where that leaves fewer
+/// crossings, until no exchange does. An entry is an item, or every item of
+/// one group, so the links of a group count as one unit. A sweep gives each
+/// entry the mean place of its neighbours, and two entries with many shared
+/// neighbours can stand the wrong way round after it.
+///
+/// Each exchange that stays removes a crossing, so the loop ends.
+fn untangle(net: &mut Net, before: &[Vec<usize>], after: &[Vec<usize>]) {
+    let mut at = positions(&net.layers, net.items.len());
+    // The crossings among the steps of the items of one part of a rank.
+    // An exchange changes no other crossing: every other step keeps its
+    // place, and the two entries keep the positions between them.
+    let cost = |part: &[usize], at: &[f64]| {
+        let below: Vec<(f64, f64)> = part
+            .iter()
+            .flat_map(|&i| before[i].iter().map(move |&j| (at[j], at[i])))
+            .collect();
+        let above: Vec<(f64, f64)> = part
+            .iter()
+            .flat_map(|&i| after[i].iter().map(move |&j| (at[i], at[j])))
+            .collect();
+        crossed(&below) + crossed(&above)
+    };
+    let mut improved = true;
+    while improved {
+        improved = false;
+        for layer in &mut net.layers {
+            for index in 1..layer.len() {
+                let Some((start, end)) = transpose(layer, &net.items, index) else {
+                    continue;
+                };
+                // The positions are still the ones before the exchange.
+                let was = cost(&layer[start..end], &at);
+                renumber(&mut at, layer, start, end);
+                if cost(&layer[start..end], &at) < was {
+                    improved = true;
+                } else {
+                    layer[start..end].rotate_right(index - start);
+                    renumber(&mut at, layer, start, end);
+                }
+            }
+        }
+    }
+}
+
+/// Writes the positions of one part of a rank.
+fn renumber(at: &mut [f64], layer: &[usize], start: usize, end: usize) {
+    for (index, &i) in layer.iter().enumerate().take(end).skip(start) {
+        at[i] = real(index);
+    }
 }
 
 /// The index of each item in its rank.
-fn positions(layers: &[Vec<usize>], count: usize) -> Vec<f64> {
+pub(super) fn positions(layers: &[Vec<usize>], count: usize) -> Vec<f64> {
     let mut at = vec![0.0; count];
     for layer in layers {
         for (index, &i) in layer.iter().enumerate() {
@@ -113,7 +178,13 @@ fn group_keys(net: &Net, groups: usize) -> Vec<f64> {
 /// A group sorts as one entry with the mean of the values of its items. The
 /// groups under one parent then exchange their values, so that they stand in
 /// the order of their keys and a node between two groups keeps its place.
-fn arrange(layer: &mut [usize], value: &[f64], items: &[Item], groups: &[Group], keys: &[f64]) {
+pub(super) fn arrange(
+    layer: &mut [usize],
+    value: &[f64],
+    items: &[Item],
+    groups: &[Group],
+    keys: &[f64],
+) {
     // An entry is a group, by its index, or an item, by its index after the
     // groups. The second number of an entry settles equal values.
     let first_item = groups.len();
@@ -172,15 +243,42 @@ fn crossings(layers: &[Vec<usize>], steps: &[(usize, usize)], count: usize) -> u
     for &(a, b) in steps {
         by_rank[rank_of[a]].push((at[a], at[b]));
     }
-    let mut crossed = 0;
-    for gap in &by_rank {
-        for (index, p) in gap.iter().enumerate() {
-            for q in &gap[index + 1..] {
-                if (p.0 - q.0) * (p.1 - q.1) < 0.0 {
-                    crossed += 1;
-                }
-            }
+    by_rank.iter().map(|gap| crossed(gap)).sum()
+}
+
+/// How many pairs cross among the steps between two ranks. A step is the
+/// position of its item in each of the two ranks. Two steps that share an
+/// item do not cross.
+pub(super) fn crossed(gap: &[(f64, f64)]) -> usize {
+    let mut steps = gap.to_vec();
+    steps.sort_by(|p, q| p.0.total_cmp(&q.0).then(p.1.total_cmp(&q.1)));
+    let mut ends: Vec<f64> = steps.iter().map(|step| step.1).collect();
+    inversions(&mut ends)
+}
+
+/// Sorts the values and returns how many pairs were in the wrong order. A
+/// merge sort counts them in fewer steps than a look at every pair.
+fn inversions(values: &mut [f64]) -> usize {
+    if values.len() < 2 {
+        return 0;
+    }
+    let (left, right) = values.split_at_mut(values.len() / 2);
+    let mut count = inversions(left) + inversions(right);
+    let mut merged = Vec::with_capacity(left.len() + right.len());
+    let (mut i, mut j) = (0, 0);
+    while i < left.len() && j < right.len() {
+        if right[j] < left[i] {
+            // Every value that is left in the first half is larger.
+            count += left.len() - i;
+            merged.push(right[j]);
+            j += 1;
+        } else {
+            merged.push(left[i]);
+            i += 1;
         }
     }
-    crossed
+    merged.extend_from_slice(&left[i..]);
+    merged.extend_from_slice(&right[j..]);
+    values.copy_from_slice(&merged);
+    count
 }

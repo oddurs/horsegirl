@@ -1,0 +1,7 @@
+A cited rule
+
+The `Frontend` calls the `API`. The `Frontend` must never call the `Database`,
+and the rule is written down at line 3 of `docs/rules.md`.
+---
+Frontend -> API
+Frontend -x Database @ docs/rules.md:3

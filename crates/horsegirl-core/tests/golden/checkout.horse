@@ -1,0 +1,23 @@
+Web app, Mobile app -> API gateway
+API gateway -> Payments
+Web app, Mobile app -x Postgres: never directly
+
+Services {
+  Orders, Payments { owner: Commerce }
+  Notify { owner: Growth }
+}
+API gateway, Postgres, Events { owner: Platform }
+Web app, Mobile app { owner: Apps }
+Email provider { owner: External }
+
+story checkout {
+  Web app -> API gateway: POST /checkout
+  API gateway -> Orders: create
+  Orders -> Payments: charge
+  Orders -> Postgres: save
+  Payments -> Notify: paid
+  Notify -> Events: publish
+  Events -> Email provider: send
+}
+
+show flow

@@ -1,0 +1,8 @@
+Four services
+
+A group called `Services` holds `Users`, `Orders`, `Stock` and `Billing`. The
+`Gateway` calls `Users` and `Orders`. `Orders` calls `Stock` and `Billing`.
+---
+Services { Users, Orders, Stock, Billing }
+Gateway -> Users, Orders
+Orders -> Stock, Billing

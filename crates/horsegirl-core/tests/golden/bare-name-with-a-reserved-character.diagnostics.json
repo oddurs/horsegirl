@@ -1,0 +1,20 @@
+[
+  {
+    "code": "E0004",
+    "line": 1,
+    "column": 12,
+    "span": [11, 17],
+    "text": "API@v2",
+    "message": "`API@v2` holds a character that a bare name cannot hold. Write the name in double quotes. A citation is a space, `@`, a path and a line number at the end of the line, as in ` @ src/app.ts:17`.",
+    "fix": {
+      "confidence": "safe",
+      "description": "Write the name in double quotes.",
+      "edits": [
+        {
+          "span": [11, 17],
+          "text": "\"API@v2\""
+        }
+      ]
+    }
+  }
+]

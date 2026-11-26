@@ -1,0 +1,13 @@
+A chat app
+
+A `Client` holds a connection to the `Chat server`, with the label `connect`.
+The `Chat server` stores each message in `Messages`, with the label `store`.
+The `Chat server` passes each message to `Presence` with the label `fan out`,
+and `Presence` gives it to every other `Client` with the label `deliver`. Draw
+it as a flow.
+---
+Client -> Chat server: connect
+Chat server -> Messages: store
+Chat server -> Presence: fan out
+Presence -> Client: deliver
+show flow

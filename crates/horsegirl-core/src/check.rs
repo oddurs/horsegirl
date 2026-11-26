@@ -2,13 +2,14 @@
 //!
 //! A thing exists from its first mention, so a typo makes a new thing with no
 //! error from the parser. The checks read the model and report a typo, a thing
-//! with no link, a link that breaks a `-x` rule, a guess, an unknown lens and
-//! a lens whose facts the file does not state.
+//! with no link, a part that the model leaves out of a group, a link that
+//! breaks a `-x` rule, a link between a group and what it holds, a guess, an unknown lens and a lens whose facts the
+//! file does not state.
 
-use crate::diagnostic::{Confidence, Diagnostic, Edit, Fix, LineIndex};
+use crate::diagnostic::{Confidence, Diagnostic, Edit, Fix, Fixed, LineIndex, apply_safe};
 use crate::lens::Need;
-use crate::model::{Model, Thing, ThingId, lower};
-use crate::syntax::{Element, Node, NodeKind, parse};
+use crate::model::{Model, Thing, ThingId, Why, lower};
+use crate::syntax::{Element, Node, NodeKind, TokenKind, parse};
 
 /// Every lens that a `show` line can pick, as the language card lists them.
 pub const LENSES: &[&str] = &["flow", "sequence", "lanes", "matrix", "rings", "seams"];
@@ -21,6 +22,7 @@ pub fn check(source: &str) -> Vec<Diagnostic> {
     let mut diagnostics = parse.diagnostics;
     diagnostics.extend(of_model(source, &lower(&parse.tree)));
     diagnostics.extend(paths(&parse.tree));
+    diagnostics.extend(label_links(source, &parse.tree));
     sort(&mut diagnostics);
     diagnostics
 }
@@ -32,12 +34,39 @@ pub fn of_model(source: &str, model: &Model) -> Vec<Diagnostic> {
     let typos = typos(source, model);
     let mut diagnostics = orphans(model, &typos);
     diagnostics.extend(typos.into_iter().map(|(_, diagnostic)| diagnostic));
+    diagnostics.extend(misplaced(model));
     diagnostics.extend(broken_rules(source, model));
+    diagnostics.extend(inward(model));
     diagnostics.extend(guesses(model));
     diagnostics.extend(lenses(model));
     diagnostics.extend(needs(model));
     sort(&mut diagnostics);
     diagnostics
+}
+
+/// The most passes of `check` and `apply_safe` that `fix` makes. Each pass
+/// that applies a fix removes a diagnostic, so a real file stops long before.
+const FIX_PASSES: usize = 16;
+
+/// `source` with every safe fix made, as `horsegirl fix` makes them.
+///
+/// One fix can reveal another: a fix that overlaps an earlier one is left out
+/// of a pass, so this checks again until a pass applies none.
+#[must_use]
+pub fn fix_all(source: &str) -> Fixed {
+    let mut fixed = Fixed {
+        text: source.to_owned(),
+        applied: 0,
+    };
+    for _ in 0..FIX_PASSES {
+        let pass = apply_safe(&fixed.text, &check(&fixed.text));
+        if pass.applied == 0 {
+            break;
+        }
+        fixed.text = pass.text;
+        fixed.applied += pass.applied;
+    }
+    fixed
 }
 
 fn sort(diagnostics: &mut [Diagnostic]) {
@@ -159,6 +188,75 @@ fn orphans(model: &Model, typos: &[(ThingId, Diagnostic)]) -> Vec<Diagnostic> {
         .collect()
 }
 
+/// E0420: a name in braces that the model does not place in their group: a
+/// thing in a second group, a group inside itself, or a part in the braces
+/// after several names. The fix removes the name where the line only names
+/// things. It is suggested and never safe: the error is the only sign that
+/// the writer meant two things or one, and removing a name can leave another
+/// name written once, which E0412 then reads as a typo. Two such names next
+/// to each other on one line would remove the same comma, so the second keeps
+/// no fix.
+fn misplaced(model: &Model) -> Vec<Diagnostic> {
+    let name = |id: ThingId| &model.things[id].name;
+    let mut removed_to = 0;
+    let mut found = Vec::new();
+    for misplaced in &model.misplaced {
+        let thing = name(misplaced.thing);
+        let group = name(misplaced.group);
+        let message = match &misplaced.why {
+            Why::Held(holder) => format!(
+                "`{thing}` is in the group `{}` already, and a thing is in one group, so the braces of `{group}` do not place it. Remove `{thing}` from one of the two groups. To link `{thing}` from inside `{group}`, write the link outside the braces.",
+                name(*holder)
+            ),
+            Why::Loop if misplaced.thing == misplaced.group => format!(
+                "`{thing}` is in its own braces, and a group would hold itself. Remove `{thing}` from these braces."
+            ),
+            Why::Loop => format!(
+                "`{group}` is inside `{thing}`, so placing `{thing}` in `{group}` would make the group `{thing}` hold itself. Remove `{thing}` from the braces of `{group}`."
+            ),
+            Why::Shared(groups) => {
+                let groups: Vec<String> =
+                    groups.iter().map(|&g| format!("`{}`", name(g))).collect();
+                // The parent at the end of lowering, so that the message
+                // states where the thing is and not where these braces aimed.
+                let placed = match model.things[misplaced.thing].parent {
+                    Some(parent) if parent == misplaced.group => {
+                        format!("`{thing}` is in `{group}` only")
+                    }
+                    Some(parent) => format!("`{thing}` is in `{}`", name(parent)),
+                    None => format!("`{thing}` is in no group"),
+                };
+                format!(
+                    "`{thing}` is in the braces after {}, and a part belongs to one group, so {placed}. Write the part in the braces after one name. Braces after several names hold facts only.",
+                    groups.join(" and ")
+                )
+            }
+        };
+        let fix = misplaced
+            .removable
+            .clone()
+            .filter(|span| span.start >= removed_to)
+            .map(|span| {
+                removed_to = span.end;
+                Fix {
+                    confidence: Confidence::Suggested,
+                    description: format!("Remove `{thing}` from the braces of `{group}`."),
+                    edits: vec![Edit {
+                        span,
+                        text: String::new(),
+                    }],
+                }
+            });
+        found.push(Diagnostic {
+            code: "E0420",
+            span: misplaced.span.clone(),
+            message,
+            fix,
+        });
+    }
+    found
+}
+
 /// E0500: a link that a `-x` rule forbids, in the same direction.
 fn broken_rules(source: &str, model: &Model) -> Vec<Diagnostic> {
     let lines = LineIndex::new(source);
@@ -186,6 +284,46 @@ fn broken_rules(source: &str, model: &Model) -> Vec<Diagnostic> {
         }
     }
     found
+}
+
+/// W0110: a link between a group and itself or a thing inside it. A picture
+/// draws a group as a box around its parts, so such a link would start and
+/// end in one box, and the flow lens leaves it out.
+fn inward(model: &Model) -> Vec<Diagnostic> {
+    let holds = |group: ThingId, thing: ThingId| {
+        !model.parts(group).is_empty() && model.within(thing, group)
+    };
+    model
+        .links
+        .iter()
+        .filter_map(|link| {
+            let (group, part) = if holds(link.to, link.from) {
+                (link.to, link.from)
+            } else if holds(link.from, link.to) {
+                (link.from, link.to)
+            } else {
+                return None;
+            };
+            let name = |id: ThingId| &model.things[id].name;
+            let joins = if group == part {
+                format!("`{}` to itself", name(group))
+            } else {
+                format!("`{}` to `{}`, which it holds", name(group), name(part))
+            };
+            Some(Diagnostic {
+                code: "W0110",
+                span: link.span.clone(),
+                message: format!(
+                    "`{} -> {}` links the group {joins}, so the picture leaves the link out. Link a thing outside `{}` to `{}`, or link two things inside it.",
+                    name(link.from),
+                    name(link.to),
+                    name(group),
+                    name(group),
+                ),
+                fix: None,
+            })
+        })
+        .collect()
 }
 
 /// W0108: a name that ends in `/` followed by braces that hold one bare name,
@@ -269,6 +407,106 @@ fn path(things: &Node<'_>) -> Option<Diagnostic> {
                 text: format!("\"{text}\""),
             }],
         }),
+    })
+}
+
+/// W0109: a label that holds an arrow, a name and a colon, as in
+/// `A -> B: pay -> C: ship`. The parser keeps the whole text as one label, so
+/// the file passes and draws one link where the writer meant two. A label
+/// with an arrow and no colon after it, as in `calls -> returns`, is common
+/// and stays as it is. The fix is only suggested: it cannot know that the
+/// writer meant a chain. This reads the tree, because the label is one node.
+fn label_links(source: &str, tree: &Node<'_>) -> Vec<Diagnostic> {
+    let mut found = Vec::new();
+    label_link_lines(source, tree, &mut found);
+    found
+}
+
+fn label_link_lines(source: &str, node: &Node<'_>, found: &mut Vec<Diagnostic>) {
+    if node.kind == NodeKind::Link
+        && let Some(diagnostic) = label_link(source, node)
+    {
+        found.push(diagnostic);
+    }
+    for inner in node.children.iter().filter_map(|element| match element {
+        Element::Node(inner) => Some(inner),
+        Element::Token(_) => None,
+    }) {
+        label_link_lines(source, inner, found);
+    }
+}
+
+fn label_link(source: &str, link: &Node<'_>) -> Option<Diagnostic> {
+    let label = child_of(link, NodeKind::Label)?;
+    let tokens: Vec<_> = label
+        .children
+        .iter()
+        .filter_map(|element| match element {
+            Element::Token(token) => Some(token),
+            Element::Node(_) => None,
+        })
+        .collect();
+    // An arrow, then names, then a colon. A quoted label is one token, so a
+    // quoted `-> C: x` never matches.
+    let is_name = |kind: TokenKind| {
+        matches!(
+            kind,
+            TokenKind::Word | TokenKind::Quoted | TokenKind::Comma | TokenKind::Space
+        )
+    };
+    let arrow = (0..tokens.len()).find(|&index| {
+        if tokens[index].kind != TokenKind::Arrow {
+            return false;
+        }
+        let after = &tokens[index + 1..];
+        let names = after.iter().take_while(|t| is_name(t.kind)).count();
+        after[..names]
+            .iter()
+            .any(|t| matches!(t.kind, TokenKind::Word | TokenKind::Quoted))
+            && after.get(names).map(|t| t.kind) == Some(TokenKind::Colon)
+    })?;
+    let arrow_start = tokens[arrow].start;
+    let end = tokens.last().map(|t| t.span().end)?;
+    let span = arrow_start..end;
+    let tail = &source[span.clone()];
+    let first = tokens.first()?.start;
+    let before = source[first..arrow_start].trim_end();
+    let first_label = first..first + before.len();
+    let target = link
+        .children
+        .iter()
+        .filter_map(|element| match element {
+            Element::Node(names) if names.kind == NodeKind::Names => Some(names),
+            _ => None,
+        })
+        .nth(1)?;
+    let target = target.to_string();
+    let target = target.trim();
+    let line_start = source[..first_start(link)?]
+        .rfind('\n')
+        .map_or(0, |n| n + 1);
+    let indent = &source[line_start..first_start(link)?];
+    // A final `?` or a citation stays after the label. The edit would hand it
+    // to the second link, so a link that carries one gets no fix.
+    let marked = link.children.iter().any(|element| match element {
+        Element::Token(token) => token.kind == TokenKind::Guess,
+        Element::Node(inner) => inner.kind == NodeKind::Cite,
+    });
+    let fix = (!marked && indent.chars().all(|c| c == ' ' || c == '\t')).then(|| Fix {
+        confidence: Confidence::Suggested,
+        description: format!("Write the second link on its own line, as `{target} {tail}`."),
+        edits: vec![Edit {
+            span: first_label.end..end,
+            text: format!("\n{indent}{target} {tail}"),
+        }],
+    });
+    Some(Diagnostic {
+        code: "W0109",
+        span,
+        message: format!(
+            "The label holds `{tail}`, which reads as a second link. A label keeps arrows and colons as text, so this is one link with a long label. If you mean two links, write each on its own line, the second as `{target} {tail}`. If you mean one label, write it in double quotes."
+        ),
+        fix,
     })
 }
 

@@ -1,0 +1,32 @@
+File
+  Link
+    Names
+      Name "Web app"
+      Comma ","
+      Name "Mobile app"
+    Arrow "->"
+    Names
+      Name "API gateway"
+  Link
+    Names
+      Name "API gateway"
+    Arrow "->"
+    Names
+      Name "Orders"
+      Comma ","
+      Name "Payments"
+  Link
+    Names
+      Name "Orders"
+    Arrow "->"
+    Names
+      Name "Postgres"
+  Link
+    Names
+      Name "API gatway"
+    Arrow "->"
+    Names
+      Name "Postgres"
+  Show
+    Keyword "show"
+    Lens "flow"

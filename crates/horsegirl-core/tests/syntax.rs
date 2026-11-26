@@ -1,6 +1,6 @@
 //! The parser against the reference file, the corpus and bad input.
 
-use horsegirl_core::syntax::{Diagnostic, Element, Fix, Node, NodeKind, parse};
+use horsegirl_core::syntax::{Confidence, Diagnostic, Element, Fix, Node, NodeKind, parse};
 
 const CHECKOUT: &str = include_str!("../../../examples/checkout.horse");
 const CHECKOUT_TREE: &str = include_str!("checkout.tree");
@@ -119,7 +119,7 @@ show flow
         .map(|d| (d.code, source[..d.span.start].matches('\n').count() + 1))
         .collect();
     // Each diagnostic is paired with its line, counted from 1.
-    assert_eq!(found, [("E0009", 2), ("E0006", 4), ("E0001", 6)]);
+    assert_eq!(found, [("E0009", 2), ("E0006", 4), ("E0010", 6)]);
     assert_eq!(
         kinds(&parse.tree),
         [
@@ -234,6 +234,26 @@ fn a_name_or_a_value_that_needs_quotes_gets_them_from_the_fix() {
         ("A {x} @y -> B", "\"A {x} @y\" -> B"),
         // A quote that touches `-x` would be a character of that word.
         ("A -x@pixi/react", "A -x \"@pixi/react\""),
+        // From BUG-134. A name ends at a comma, and an arrow after the comma
+        // still makes the colon a character of the name.
+        ("Sensors: wind, B -> Hub", "\"Sensors: wind\", B -> Hub"),
+        // A value runs on past a comma until a fact follows, so one fix
+        // quotes all of it.
+        (
+            "api { note: GET /users/{id}, list }",
+            "api { note: \"GET /users/{id}, list\" }",
+        ),
+        (
+            "A { note: install, list {x} }",
+            "A { note: \"install, list {x}\" }",
+        ),
+        (
+            "A { note: install, list {x}, owner: X }",
+            "A { note: \"install, list {x}\", owner: X }",
+        ),
+        // The name after an arrow gets the same fix as the name before one.
+        ("A -> GET /users/{id}", "A -> \"GET /users/{id}\""),
+        ("A -x GET /users/{id}", "A -x \"GET /users/{id}\""),
     ] {
         assert_eq!(only(source).code, "E0004", "{source}");
         assert_eq!(fixed(source), repaired);
@@ -268,6 +288,7 @@ fn a_name_or_a_value_that_needs_quotes_gets_them_from_the_fix() {
 fn a_group_or_an_open_block_is_never_quoted_into_a_name() {
     for source in [
         "Services { Orders, Payments } -> Postgres: save",
+        "G{ A, B } -> C",
         "A -> B: x {\n}",
         "A -> B: x { a, b }",
         "A {\n  note: b {\n  }\n}",
@@ -275,6 +296,20 @@ fn a_group_or_an_open_block_is_never_quoted_into_a_name() {
         let stray = only(source);
         assert_eq!(stray.code, "E0001", "{source}");
         assert_eq!(stray.fix, None, "{source}");
+    }
+    // From BUG-134: a brace with no space before it opens a group too.
+    // Braces that hold one word are a group too when no arrow is on the
+    // line, as in `Team {A}`.
+    for (source, repaired) in [
+        ("Team@x{ A }", "\"Team@x\"{ A }"),
+        ("Team@x{A}", "\"Team@x\"{A}"),
+        ("Team@x {A}", "\"Team@x\" {A}"),
+        ("A, Team@x {A}", "A, \"Team@x\" {A}"),
+        ("X {\n  Team@x {A}\n}", "X {\n  \"Team@x\" {A}\n}"),
+    ] {
+        assert_eq!(only(source).code, "E0004", "{source}");
+        assert_eq!(fixed(source), repaired, "{source}");
+        assert_eq!(read(repaired).1, [""; 0], "{repaired}");
     }
     // A block cannot follow a link. The name still gets its quotes, and the
     // fix leaves the brace outside them for the next message.
@@ -284,6 +319,122 @@ fn a_group_or_an_open_block_is_never_quoted_into_a_name() {
     ] {
         assert_eq!(fixed(source), repaired);
         assert_eq!(only(repaired).code, "E0001");
+    }
+}
+
+// From BUG-140: after an arrow, a colon starts the label. The fix for a
+// target quotes the name and leaves the label outside. A name that holds a
+// colon is written in quotes, and then it has no fix.
+#[test]
+fn a_quote_fix_for_a_target_leaves_the_label_outside() {
+    for (source, repaired) in [
+        ("A -> B@x: pay", "A -> \"B@x\": pay"),
+        ("A@b -> C: pay", "\"A@b\" -> C: pay"),
+        ("A -x C@y: no", "A -x \"C@y\": no"),
+    ] {
+        assert_eq!(only(source).code, "E0004", "{source}");
+        assert_eq!(fixed(source), repaired, "{source}");
+        assert_eq!(read(repaired).1, [""; 0], "{repaired}");
+    }
+    // A quoted name holds a colon with no fix.
+    assert_eq!(read("A -> \"B: x\": pay").1, [""; 0]);
+}
+
+// Before or after an arrow, braces that hold one word and no space are
+// characters of the name. Any other braces are a group, and a link cannot
+// hold a group, so the arrow is the mistake and quotes are not the fix.
+#[test]
+fn braces_before_an_arrow_are_characters_only_around_one_word() {
+    for (source, repaired) in [
+        ("A {x} -> B", "\"A {x}\" -> B"),
+        ("G{x} -> B", "\"G{x}\" -> B"),
+        ("GET /users/{id} -> B", "\"GET /users/{id}\" -> B"),
+        // A colon in the name takes another path through the parser. The
+        // braces stay inside the quotes there too.
+        ("a: b{c} -> D", "\"a: b{c}\" -> D"),
+        ("x, a: b{c} -> D", "x, \"a: b{c}\" -> D"),
+    ] {
+        assert_eq!(fixed(source), repaired, "{source}");
+        assert_eq!(read(repaired).1, [""; 0], "{repaired}");
+    }
+    // Braces after the comma belong to the next name, which gets its own fix
+    // on the next run.
+    assert_eq!(fixed("a: b, c{d} -> E"), "\"a: b\", c{d} -> E");
+    for source in [
+        "Services { Orders } -> Postgres",
+        "Services {Orders, Payments} -> Postgres",
+        "Services { Orders, Payments } -> Postgres",
+        "G{ A } -> C",
+        "G {} -> C",
+    ] {
+        let error = only(source);
+        assert_eq!((error.code, error.fix), ("E0001", None), "{source}");
+        assert_eq!(&source[error.span], "->", "{source}");
+    }
+}
+
+// A text in double quotes cannot hold a double quote, so the message says to
+// remove it and does not say to add quotes.
+#[test]
+fn a_text_that_holds_a_double_quote_is_told_to_remove_it() {
+    for (source, text) in [
+        ("A { note: a \"b\" c }", "a \"b\" c"),
+        ("A { note: x, \"y\" }", "x, \"y\""),
+        ("A \"b\" -> C", "A \"b\""),
+        ("A -> B \"c\"", "B \"c\""),
+        ("A -> B: say \"hi\" {x}", "say \"hi\" {x}"),
+    ] {
+        let error = only(source);
+        assert_eq!(error.code, "E0004", "{source}");
+        assert_eq!(&source[error.span.clone()], text, "{source}");
+        assert!(
+            error.message.contains("Remove each double quote"),
+            "{}",
+            error.message
+        );
+        assert!(!error.message.contains("Write the"), "{}", error.message);
+        assert_eq!(error.fix, None, "{source}");
+    }
+}
+
+// A bare text holds a double quote. Only a character that needs quotes beside
+// one is a mistake, and every kind of text gets the one message that says
+// why: a text in double quotes cannot hold a double quote.
+#[test]
+fn a_bare_text_holds_a_double_quote() {
+    for source in [
+        "A -> B: x \"y\"",
+        "A -> C: \"p\" q",
+        "A -x B: say \"hi\"",
+        "x\"y\" -> A",
+        "A -> x\"y\"",
+        "A, x\"y\" -> B",
+        "A { note: x\"y\" }",
+    ] {
+        let (_, codes) = read(source);
+        assert_eq!(codes, [""; 0], "{source}");
+    }
+    for source in [
+        "A -> D: say \"hi\" {x}",
+        "A -> D: say \"hi\" @x",
+        "x\"y\"@z -> A",
+        "A -> x\"y\" {z}",
+        "A { note: x\"y\", z }",
+    ] {
+        let error = only(source);
+        assert_eq!((error.code, error.fix), ("E0004", None), "{source}");
+        assert!(
+            error
+                .message
+                .contains("a text in double quotes cannot hold a double quote"),
+            "{}",
+            error.message
+        );
+        assert!(
+            !error.message.contains("cannot hold one"),
+            "{}",
+            error.message
+        );
     }
 }
 
@@ -494,7 +645,7 @@ fn a_show_line_with_a_mistake_in_its_argument_is_still_a_show_line() {
 #[test]
 fn each_mistake_has_its_own_code() {
     for (source, code) in [
-        ("A -> B -> C", "E0001"),
+        ("A -> B -> C", "E0010"),
         ("A {\n  B\n", "E0002"),
         ("A }", "E0003"),
         ("A -> \"B", "E0005"),
@@ -502,6 +653,8 @@ fn each_mistake_has_its_own_code() {
         ("A, -> B", "E0006"),
         ("A ->", "E0006"),
         ("A { owner: }", "E0006"),
+        ("A -> B:", "E0006"),
+        ("A -> B: ?", "E0006"),
         ("A { B, owner: X }", "E0009"),
     ] {
         assert_eq!(only(source).code, code, "{source}");
@@ -523,6 +676,107 @@ fn braces_that_nest_too_deep_are_an_error_and_not_a_crash() {
     let parse = parse(&source);
     assert_eq!(parse.tree.to_string(), source);
     assert!(parse.diagnostics.iter().any(|d| d.code == "E0007"));
+}
+
+#[test]
+fn a_bad_line_with_an_open_brace_keeps_the_lines_after_it() {
+    for (source, code) in [
+        ("A -> B: uses {braces\nC -> D\nshow flow\n", "E0001"),
+        ("A@b -> C: uses {braces\nC -> D\nshow flow\n", "E0004"),
+    ] {
+        let parse = parse(source);
+        assert_eq!(parse.tree.to_string(), source);
+        assert_eq!(
+            kinds(&parse.tree),
+            [NodeKind::Error, NodeKind::Link, NodeKind::Show],
+            "{source:?}"
+        );
+        let codes: Vec<_> = parse.diagnostics.iter().map(|d| d.code).collect();
+        assert_eq!(codes, [code], "{source:?}");
+    }
+}
+
+#[test]
+fn a_bad_line_keeps_a_block_whose_brace_ends_the_line() {
+    let source = "A -> B: x {\n  C -> D\n}\nE -> F\n";
+    let parse = parse(source);
+    assert_eq!(kinds(&parse.tree), [NodeKind::Error, NodeKind::Link]);
+    let codes: Vec<_> = parse.diagnostics.iter().map(|d| d.code).collect();
+    assert_eq!(codes, ["E0001"]);
+}
+
+#[test]
+fn a_name_that_needs_quotes_keeps_its_group_across_lines() {
+    for (source, code) in [
+        ("G@x { A\nB\n}\nafter\n", "E0004"),
+        ("Team: x { A\nB\n}\nafter\n", "E0004"),
+        ("G@x, H { A\nB\n}\nafter\n", "E0004"),
+        ("G@x{ A\nB\n}\nafter\n", "E0004"),
+        ("{ A\nB\n}\nafter\n", "E0006"),
+    ] {
+        let parse = parse(source);
+        assert_eq!(parse.tree.to_string(), source);
+        assert_eq!(
+            kinds(&parse.tree),
+            [NodeKind::Error, NodeKind::Things],
+            "{source:?}"
+        );
+        let codes: Vec<_> = parse.diagnostics.iter().map(|d| d.code).collect();
+        assert_eq!(codes, [code], "{source:?}");
+    }
+}
+
+#[test]
+fn a_brace_after_a_label_is_a_stray_mark_even_with_a_part_after_it() {
+    // A label cannot open a group, so the `{` opens no block, and the `}`
+    // that the author meant for it closes nothing.
+    let source = "A -> B: x { C\nD\n}\nafter\n";
+    let parse = parse(source);
+    assert_eq!(parse.tree.to_string(), source);
+    assert_eq!(
+        kinds(&parse.tree),
+        [
+            NodeKind::Error,
+            NodeKind::Things,
+            NodeKind::Error,
+            NodeKind::Things
+        ]
+    );
+    let codes: Vec<_> = parse.diagnostics.iter().map(|d| d.code).collect();
+    assert_eq!(codes, ["E0001", "E0003"]);
+}
+
+#[test]
+fn braces_past_the_depth_limit_stay_paired() {
+    let lines = format!("{}{}after\n", "G {\n".repeat(70), "}\n".repeat(70));
+    let one_line = format!("{}{}\nafter\n", "G { ".repeat(70), "} ".repeat(70));
+    let part_after = format!("{}{}after\n", "G { A\n".repeat(70), "}\n".repeat(70));
+    for source in [lines, one_line, part_after] {
+        let parse = parse(&source);
+        assert_eq!(parse.tree.to_string(), source);
+        let codes: Vec<_> = parse.diagnostics.iter().map(|d| d.code).collect();
+        assert_eq!(codes, ["E0007"], "{source:?}");
+        assert_eq!(
+            kinds(&parse.tree),
+            [NodeKind::Things, NodeKind::Things],
+            "{source:?}"
+        );
+    }
+}
+
+#[test]
+fn a_block_past_the_depth_limit_that_never_closes_is_reported() {
+    let source = format!("{}H {{\n", "G {\n".repeat(64));
+    let codes: Vec<_> = parse(&source).diagnostics.iter().map(|d| d.code).collect();
+    assert_eq!(codes.iter().filter(|&&code| code == "E0007").count(), 1);
+    assert_eq!(codes.iter().filter(|&&code| code == "E0002").count(), 65);
+}
+
+#[test]
+fn a_story_line_that_fails_after_its_block_gives_no_story_note() {
+    let source = "story s {} x\nA -> B\n";
+    let codes: Vec<_> = parse(source).diagnostics.iter().map(|d| d.code).collect();
+    assert_eq!(codes, ["E0001"]);
 }
 
 /// Asserts that `source` has no diagnostic.
@@ -693,7 +947,138 @@ fn a_semicolon_inside_a_line_is_a_character_of_the_name() {
 fn a_line_with_a_mistake_gets_the_mistake_and_no_note() {
     let diagnostics = parse("\"A\" --> B -> C;\n").diagnostics;
     assert_eq!(diagnostics.len(), 1, "{diagnostics:?}");
-    assert_eq!(diagnostics[0].code, "E0001");
+    assert_eq!(diagnostics[0].code, "E0010");
+}
+
+// An agent that knows Mermaid or D2 writes a chain. The fix writes one link
+// on each line, with the indent of the chain.
+#[test]
+fn a_chain_of_arrows_gets_a_safe_fix_that_splits_it() {
+    let chain = only("A -> B -> C\n");
+    assert_eq!(chain.code, "E0010");
+    let fix = chain.fix.as_ref().expect("the diagnostic carries a fix");
+    assert_eq!(fix.confidence, Confidence::Safe);
+    for (source, repaired) in [
+        ("A -> B -> C\n", "A -> B\nB -> C\n"),
+        ("A -> B -> C -> D", "A -> B\nB -> C\nC -> D"),
+        ("A, B -> C -> D, E\n", "A, B -> C\nC -> D, E\n"),
+        (
+            "Web app -x \"API: v2\" -> DB\n",
+            "Web app -x \"API: v2\"\n\"API: v2\" -> DB\n",
+        ),
+        ("G {\n  A -> B -> C\n}\n", "G {\n  A -> B\n  B -> C\n}\n"),
+        ("A -> show flow -> C\n", "A -> show flow\nshow flow -> C\n"),
+        ("A -> story S -> C\n", "A -> story S\nstory S -> C\n"),
+    ] {
+        assert_eq!(fixed(source), repaired, "{source}");
+        assert_eq!(parse(repaired).diagnostics, [], "{repaired}");
+        assert_eq!(
+            links(&parse(repaired).tree),
+            chain_links(source),
+            "{source}"
+        );
+    }
+}
+
+/// The name lists of each link and each rule in the tree under `node`.
+fn links(node: &Node<'_>) -> Vec<Vec<String>> {
+    let mut found = Vec::new();
+    if matches!(node.kind, NodeKind::Link | NodeKind::Rule) {
+        let names = node.children.iter().filter_map(|child| match child {
+            Element::Node(names) if names.kind == NodeKind::Names => {
+                Some(names.to_string().trim().to_owned())
+            }
+            _ => None,
+        });
+        found.push(names.collect());
+    }
+    for child in &node.children {
+        if let Element::Node(child) = child {
+            found.extend(links(child));
+        }
+    }
+    found
+}
+
+/// The name lists of each link that the one chain in `source` means.
+fn chain_links(source: &str) -> Vec<Vec<String>> {
+    let line = source
+        .lines()
+        .find(|line| line.contains(" -"))
+        .unwrap_or("");
+    let lists: Vec<String> = line
+        .trim()
+        .split(" -> ")
+        .flat_map(|part| part.split(" -x "))
+        .map(|list| list.trim().to_owned())
+        .collect();
+    lists.windows(2).map(<[String]>::to_vec).collect()
+}
+
+// A name list in the middle of a chain moves to the start of one line and the
+// end of another. A list that reads differently there gets no fix.
+#[test]
+fn a_chain_whose_middle_name_reads_differently_gets_no_fix() {
+    for source in [
+        "A -> #ops -> C\n",
+        "A -> B ? -> C\n",
+        "A -> B; -> C\n",
+        "A -> show flow of S -> C\n",
+        "A -> show rings from T -> C\n",
+        "A -> show seams by owner -> C\n",
+        "G {\n  A -> show flow of S -> C\n}\n",
+    ] {
+        let diagnostics = parse(source).diagnostics;
+        assert_eq!(diagnostics[0].code, "E0010", "{source}");
+        assert_eq!(diagnostics[0].fix, None, "{source}");
+    }
+}
+
+// The parser cannot know which link a label, a guess mark or a citation is
+// for. The fix gives it to each link, and an agent decides.
+#[test]
+fn a_chain_with_a_label_gets_a_suggested_fix() {
+    for (source, repaired) in [
+        ("A -> B -> C: label\n", "A -> B: label\nB -> C: label\n"),
+        ("A -> B -> C ?\n", "A -> B ?\nB -> C ?\n"),
+        (
+            "A -> B -> C @ a.rs:3\n",
+            "A -> B @ a.rs:3\nB -> C @ a.rs:3\n",
+        ),
+    ] {
+        let chain = only(source);
+        assert_eq!(chain.code, "E0010", "{source}");
+        let fix = chain.fix.expect("the diagnostic carries a fix");
+        assert_eq!(fix.confidence, Confidence::Suggested, "{source}");
+        let repaired_text = fix.apply(source);
+        assert_eq!(repaired_text, repaired, "{source}");
+        assert_eq!(parse(&repaired_text).diagnostics, [], "{repaired_text}");
+    }
+}
+
+#[test]
+fn a_chain_that_the_fix_cannot_split_gets_the_message_only() {
+    for source in [
+        "G { A -> B -> C }",
+        "A -> B -> C { D }",
+        "A -> B -> -> C",
+        &format!("A -> B -> {}", "C".repeat(300)),
+    ] {
+        let diagnostics = parse(source).diagnostics;
+        assert_eq!(diagnostics[0].code, "E0010", "{source}");
+        assert_eq!(diagnostics[0].fix, None, "{source}");
+    }
+}
+
+#[test]
+fn a_name_in_quotes_that_holds_an_arrow_is_not_a_chain() {
+    for source in [
+        "\"A -> B\" -> C\n",
+        "A -> \"B -> C\"\n",
+        "\"A -x B\" -x \"C -> D\"\n",
+    ] {
+        assert_eq!(parse(source).diagnostics, [], "{source}");
+    }
 }
 
 #[test]
@@ -731,5 +1116,51 @@ fn an_unclosed_quote_in_a_citation_is_an_error() {
         assert_eq!(codes, ["E0005"], "{source:?}");
         assert_eq!(parse.tree.to_string(), source);
         assert!(!format!("{:?}", parse.tree).contains("Cite"), "{source:?}");
+    }
+}
+
+#[test]
+fn an_empty_link_label_says_to_write_it_or_drop_the_colon() {
+    for source in ["A -> B:", "A -> B: ?"] {
+        let found = only(source);
+        assert_eq!(found.code, "E0006", "{source}");
+        assert!(found.message.contains("label"), "{}", found.message);
+        assert!(
+            found.message.contains("remove the colon"),
+            "{}",
+            found.message
+        );
+    }
+    assert_eq!(parse("A -> B: save").diagnostics, []);
+}
+
+/// Only `\n` and `\r\n` end a line. A lone `\r`, U+2028 and U+0085 are spaces.
+#[test]
+fn only_a_line_feed_ends_a_line() {
+    for separator in ["\r", "\u{2028}", "\u{85}"] {
+        let source = format!("A{separator}B -> C{separator}D -> E\n");
+        assert_eq!(
+            read(&source).1,
+            ["E0010"],
+            "{separator:?} must not end a line"
+        );
+    }
+    assert_eq!(read("A -> B\r\nB -> C\n").1, [] as [&str; 0]);
+    // A lone carriage return is a space, so a `;` before it does not end a line.
+    for separator in ["\r", "\u{2028}", "\u{85}"] {
+        let source = format!("A;{separator}B -> C\n");
+        assert_eq!(read(&source).1, read("A; B -> C\n").1, "{separator:?}");
+    }
+    // The same holds between two semicolons.
+    for separator in [" ", "\t", "\r", "\u{2028}", "\u{85}"] {
+        let source = format!("A -> B;{separator};\n");
+        assert_eq!(read(&source).1, read("A -> B; ;\n").1, "{separator:?}");
+    }
+    // The same separators are spaces before the end of the line or the file.
+    for separator in ["\r", "\r\r", "\u{2028}", "\u{85}"] {
+        for tail in ["", "\n", "\r\n"] {
+            let source = format!("A -> B;{separator}{tail}");
+            assert_eq!(read(&source).1, read("A -> B; \n").1, "{source:?}");
+        }
     }
 }

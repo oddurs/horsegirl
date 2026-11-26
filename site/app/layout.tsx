@@ -12,6 +12,7 @@ export const metadata: Metadata = {
 
 const nav = [
   { href: "/docs/", label: "Docs" },
+  { href: "/gallery/", label: "Gallery" },
   { href: "/design/", label: "Design" },
   { href: "https://github.com/oddurs/horsegirl", label: "GitHub" },
 ];

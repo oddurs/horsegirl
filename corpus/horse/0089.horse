@@ -6,6 +6,6 @@ Input System -> Physics and Collision
 Physics and Collision -> Combat System
 Combat System -> Scoring System
 Scoring System -> HUD and News
-HUD and News -> Health <= 0?
-Health <= 0? -> Scroll World: No
-Health <= 0? -> Level End → Score Scene: Yes
+HUD and News -> "Health <= 0?"
+"Health <= 0?" -> Scroll World: No
+"Health <= 0?" -> Level End → Score Scene: Yes

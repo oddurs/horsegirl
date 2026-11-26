@@ -228,6 +228,75 @@ fn every_case_gives_its_expected_tree_diagnostics_and_picture() {
     );
 }
 
+/// The text of each fenced `horsegirl` block of a Markdown page.
+fn examples(page: &str) -> Vec<String> {
+    let mut found = Vec::new();
+    let mut open: Option<String> = None;
+    for line in page.lines() {
+        match (&mut open, line) {
+            (None, "```horsegirl") => open = Some(String::new()),
+            (Some(_), "```") => found.extend(open.take()),
+            (Some(block), line) => {
+                block.push_str(line);
+                block.push('\n');
+            }
+            (None, _) => {}
+        }
+    }
+    found
+}
+
+/// The source of every golden case.
+fn case_sources() -> Vec<String> {
+    let mut sources: Vec<String> = fs::read_dir(CASES)
+        .unwrap()
+        .map(|entry| entry.unwrap().path())
+        .filter(|path| path.extension().is_some_and(|e| e == "horse"))
+        .map(|path| fs::read_to_string(path).unwrap())
+        .collect();
+    sources.sort();
+    sources
+}
+
+#[test]
+fn every_example_in_the_guides_is_a_golden_case() {
+    let cases = case_sources();
+    for page in ["quickstart.md", "reference.md"] {
+        let path = Path::new(env!("CARGO_MANIFEST_DIR"))
+            .join("../../docs")
+            .join(page);
+        let found = examples(&fs::read_to_string(&path).unwrap());
+        assert!(!found.is_empty(), "docs/{page} holds no horsegirl example");
+        for example in found {
+            assert!(
+                cases.contains(&example),
+                "docs/{page} holds an example that is no golden case. Add it to \
+                 crates/horsegirl-core/tests/golden as a .horse file:\n{example}"
+            );
+        }
+    }
+}
+
+#[test]
+fn the_reference_names_every_diagnostic_code() {
+    let path = Path::new(env!("CARGO_MANIFEST_DIR")).join("../../docs/reference.md");
+    let page = fs::read_to_string(path).unwrap();
+    for entry in horsegirl_core::codes::CATALOGUE {
+        assert!(
+            page.contains(&format!("| `{}` |", entry.code)),
+            "docs/reference.md has no row for {}",
+            entry.code
+        );
+    }
+}
+
+#[test]
+fn an_example_is_the_text_of_its_fenced_block() {
+    let page =
+        "text\n```horsegirl\nA -> B\nshow flow\n```\n```text\nx\n```\n```horsegirl\nC\n```\n";
+    assert_eq!(examples(page), ["A -> B\nshow flow\n", "C\n"]);
+}
+
 #[test]
 fn a_json_string_escapes_quotes_backslashes_and_control_characters() {
     assert_eq!(

@@ -1,0 +1,16 @@
+File
+  Link
+    Names
+      Name "Web app"
+    Arrow "->"
+    Names
+      Name "Postgres"
+  Rule
+    Names
+      Name "Web app"
+    Cross "-x"
+    Names
+      Name "Postgres"
+  Show
+    Keyword "show"
+    Lens "flow"

@@ -1,13 +1,13 @@
 # Converted from corpus/flowcharts/0187.mmd by corpus/convert.py.
-Wake up -> Is it before 10am?
-Is it before 10am? -> Make coffee: Yes
-Is it before 10am? -> Stare into the void: No
-Make coffee -> Feeling productive?
-Stare into the void -> Feeling productive?
-Feeling productive? -> Start coding: Yes
-Feeling productive? -> Binge cat videos: No
-Start coding -> Did it compile?
-Did it compile? -> Deploy to production 🚀: Yes
-Did it compile? -> Blame it on the intern: No
+Wake up -> "Is it before 10am?"
+"Is it before 10am?" -> Make coffee: Yes
+"Is it before 10am?" -> Stare into the void: No
+Make coffee -> "Feeling productive?"
+Stare into the void -> "Feeling productive?"
+"Feeling productive?" -> Start coding: Yes
+"Feeling productive?" -> Binge cat videos: No
+Start coding -> "Did it compile?"
+"Did it compile?" -> Deploy to production 🚀: Yes
+"Did it compile?" -> Blame it on the intern: No
 Binge cat videos -> Blame it on the intern
 Blame it on the intern -> Take a break. Try again later.

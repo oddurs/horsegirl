@@ -1,0 +1,18 @@
+A data platform
+
+The group `Ingest` holds `Collector` and `Kafka`. The group `Serve` holds
+`Query API` and `Cache`. The `Collector` writes to `Kafka`, with the label
+`write`. `Spark` reads `Kafka` with the label `read`, and writes to the
+`Warehouse` with the label `write`. The `Query API` reads the `Warehouse` and
+the `Cache`, with the label `read`. We guess that `Spark` also writes to the
+`Cache`, with the label `write`. The team `Data` owns `Spark` and the
+`Warehouse`, with the key `owner`.
+---
+Ingest { Collector, Kafka }
+Serve { Query API, Cache }
+Collector -> Kafka: write
+Spark -> Kafka: read
+Spark -> Warehouse: write
+Query API -> Warehouse, Cache: read
+Spark -> Cache: write ?
+Spark, Warehouse { owner: Data }
