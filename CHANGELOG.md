@@ -7,6 +7,13 @@ the project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Added
 
+- The flow lens draws a link that starts or ends at a group, as in
+  `API gateway -> Services`. The link meets the border of the group box and
+  enters no box inside it, and the group ranks as one unit for the link.
+  `horsegirl_core::layout::Graph` names each end of a link as an `End`: a
+  node or a group.
+- `W0110`: a link between a group and itself or a thing inside it. The flow
+  lens leaves such a link out.
 - `horsegirl mcp` serves the tools `spec`, `check`, `fix` and `draw` over MCP
   on standard input and standard output. Each tool takes the whole text of a
   file. `check`, `fix` and `draw` return `structuredContent` with an

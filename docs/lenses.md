@@ -45,4 +45,35 @@ show flow
 
 The flow lens orders things by their links. A file with `show flow` and no link
 gives the error `E0301`, because there is nothing to order. A `-x` rule is not
-a link. A link that starts or ends at a group is not drawn yet.
+a link.
+
+### A link to a group
+
+A link can start or end at a group:
+
+```horsegirl
+API gateway -> Services
+Services -> Postgres
+Services {
+  Orders, Payments
+}
+show flow
+```
+
+The flow lens draws `API gateway -> Services` to the left border of the box of
+`Services`, and `Services -> Postgres` from its right border. Such a link
+enters no box inside the group. The lens ranks the group as one unit for the
+link: each thing in `Services` stands to the right of `API gateway`, and to the
+left of `Postgres`.
+
+Other links can put things of a group on both sides of the other end of the
+link. With `Orders -> Audit` and `Audit -> Payments`, `Orders` stands left of
+`Audit` and `Payments` right of it. `Services` then has no border that faces
+`Audit`, so `Audit -> Services` ends at a point inside the group box, outside
+every box that the group holds.
+
+A link between a group and a thing inside it, at any depth, or between a group
+and itself, is not drawn. The file states that a box links to its own
+contents, and the picture has no line for it. The check gives the warning
+`W0110` for each such link, so the writer can link a thing outside the group
+or two things inside it.

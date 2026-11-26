@@ -216,3 +216,36 @@ fn the_layered_solver_shows_every_dial_of_flow_and_refuses_x_by_group() {
     assert_eq!(WRONG.unshown(), Some(WRONG.dials[0]));
     assert_eq!(WRONG.unshown().unwrap().to_string(), "x: group");
 }
+
+// `B -> G` joins a group to a thing inside it, which `W0110` reports, so the
+// flow lens leaves it out. Every other link with a group at an end is drawn
+// and meets the border of the group box.
+#[test]
+fn a_link_to_or_from_a_group_meets_its_border_and_draws_with_no_overlap() {
+    let source = "A -> G: calls\nG -> D\nG {\n  B, C\n}\nB -> C\nB -> G\nshow flow\n";
+    let model = model(source);
+    let bound = lens::bind(&model, &FLOW, STYLE);
+    assert_eq!(bound.links, [0, 1, 2]);
+    let scene = lens::draw(&model, &FLOW, STYLE);
+    assert_eq!(collisions(&scene), Vec::<String>::new());
+    assert_eq!(names(&scene, Role::Link), ["A -> G", "G -> D", "B -> C"]);
+    let shape = |role: Role, of: &[&str]| {
+        let found = scene.shapes.iter().find(|s| s.role == role && s.of == of);
+        found.unwrap()
+    };
+    let group = shape(Role::Group, &["G"]).rect;
+    let into = shape(Role::Link, &["A", "G"])
+        .points
+        .last()
+        .copied()
+        .unwrap();
+    let out = shape(Role::Link, &["G", "D"])
+        .points
+        .first()
+        .copied()
+        .unwrap();
+    assert_eq!(into.x, group.x);
+    assert_eq!(out.x, group.x + group.width);
+    let codes: Vec<&str> = check(source).iter().map(|d| d.code).collect();
+    assert_eq!(codes, ["W0110"]);
+}

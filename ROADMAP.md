@@ -17,13 +17,13 @@ named for gaits: Walk, Trot, Canter, Gallop.
 An agent writes a horsegirl file, checks it, applies the fixes, and draws a flow diagram as SVG, from the command line or over MCP.
 
 - [ ] [`0115`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0115-reserve-the-horsegirl-name-on-crates-io-and-npm.md) Reserve the horsegirl name on crates.io and npm <sup>chore · p2 · release</sup>
-- [ ] [`0123`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0123-draw-a-link-that-starts-or-ends-at-a-group.md) Draw a link that starts or ends at a group <sup>feature · p2 · layout</sup>
 - [ ] [`BUG-135`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/BUG-135-only-a-line-feed-alone-or-after-a-carriage-return-ends-a-line.md) Only a line feed, alone or after a carriage return, ends a line <sup>bug · p2 · language</sup>
 - [ ] [`BUG-140`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/BUG-140-a-quote-fix-for-a-link-target-keeps-the-label-outside-the-quotes.md) A quote fix for a link target keeps the label outside the quotes <sup>bug · p2 · language</sup>
 - [ ] [`BUG-152`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/BUG-152-a-link-label-stays-legible-where-it-sits-on-its-own-line.md) A link label stays legible where it sits on its own line <sup>bug · p2 · render</sup>
 - [ ] [`BUG-161`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/BUG-161-a-written-against-the-name-marks-a-guess-or-says-why-not.md) A ? written against the name marks a guess, or says why not <sup>bug · p2 · language</sup>
 - [ ] [`BUG-169`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/BUG-169-two-links-from-one-thing-to-itself-draw-two-loops-and-two-labels-apart.md) Two links from one thing to itself draw two loops and two labels apart <sup>bug · p2 · layout</sup>
 - [ ] [`BUG-170`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/BUG-170-no-link-line-passes-through-the-label-of-another-link.md) No link line passes through the label of another link <sup>bug · p2 · layout</sup>
+- [ ] [`BUG-171`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/BUG-171-w0107-leaves-alone-a-thing-whose-group-has-a-link.md) W0107 leaves alone a thing whose group has a link <sup>bug · p2 · check</sup>
 - [ ] [`0052`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0052-a-daily-report-of-what-the-backlog-needs-from-a-person.md) A daily report of what the backlog needs from a person <sup>feature · p2 · workflow</sup>
 - [ ] [`0054`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0054-cut-a-release-with-one-command.md) Cut a release with one command <sup>chore · p1 · workflow</sup>
 - [ ] [`0042`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0042-release-binaries-with-checksums-and-an-install-script.md) Release binaries with checksums and an install script <sup>chore · p0 · release</sup>
@@ -32,7 +32,7 @@ An agent writes a horsegirl file, checks it, applies the fixes, and draws a flow
 
 ## later — Later
 
-`··········` 0% · 0 of 33 done
+`··········` 0% · 0 of 35 done
 
 Nothing on a date. Good ideas wait here until a release needs them.
 
@@ -69,6 +69,8 @@ Nothing on a date. Good ideas wait here until a release needs them.
 - [ ] [`0166`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0166-the-order-phase-weighs-a-pass-through-a-group-against-the-crossings-it-costs.md) The order phase weighs a pass through a group against the crossings it costs <sup>feature · p2 · layout</sup>
 - [ ] [`BUG-167`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/BUG-167-an-arrow-after-a-group-says-that-a-link-cannot-hold-a-group.md) An arrow after a group says that a link cannot hold a group <sup>bug · p2 · language</sup>
 - [ ] [`BUG-168`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/BUG-168-fewer-crossings-between-ranks-never-give-more-crossings-in-the-drawing.md) Fewer crossings between ranks never give more crossings in the drawing <sup>bug · p2 · layout</sup>
+- [ ] [`BUG-172`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/BUG-172-two-labels-of-one-corridor-do-not-cover-each-other-on-any-generated-graph.md) Two labels of one corridor do not cover each other on any generated graph <sup>bug · p2 · layout</sup>
+- [ ] [`0173`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0173-a-link-to-a-group-that-other-links-split-meets-the-border-of-the-group.md) A link to a group that other links split meets the border of the group <sup>feature · p2 · layout</sup>
 
 ## v0.2 — Trot
 

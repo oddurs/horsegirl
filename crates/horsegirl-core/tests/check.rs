@@ -519,3 +519,34 @@ fn a_label_with_an_arrow_and_no_colon_after_it_gives_no_warning() {
         );
     }
 }
+
+#[test]
+fn a_link_between_a_group_and_what_it_holds_is_a_warning() {
+    let source = "Services {\n  Orders\n  Inner {\n    Payments\n  }\n}\n\
+                  Orders -> Services\nServices -> Payments\nServices -> Services\n\
+                  Web -> Services\nOrders -> Payments\nInner -> Orders\n";
+    let diagnostics = check(source);
+    assert_eq!(codes(&diagnostics), ["W0110", "W0110", "W0110"]);
+    let spans: Vec<&str> = diagnostics
+        .iter()
+        .map(|d| &source[d.span.clone()])
+        .collect();
+    assert_eq!(
+        spans,
+        [
+            "Orders -> Services",
+            "Services -> Payments",
+            "Services -> Services"
+        ]
+    );
+    assert_eq!(
+        diagnostics[0].message,
+        "`Orders -> Services` links the group `Services` to `Orders`, which it holds, so the picture leaves the link out. Link a thing outside `Services` to `Services`, or link two things inside it."
+    );
+    assert_eq!(diagnostics[0].fix, None);
+    assert!(
+        diagnostics[2]
+            .message
+            .contains("the group `Services` to itself")
+    );
+}
