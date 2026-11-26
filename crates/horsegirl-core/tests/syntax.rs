@@ -331,10 +331,17 @@ fn braces_before_an_arrow_are_characters_only_around_one_word() {
         ("A {x} -> B", "\"A {x}\" -> B"),
         ("G{x} -> B", "\"G{x}\" -> B"),
         ("GET /users/{id} -> B", "\"GET /users/{id}\" -> B"),
+        // A colon in the name takes another path through the parser. The
+        // braces stay inside the quotes there too.
+        ("a: b{c} -> D", "\"a: b{c}\" -> D"),
+        ("x, a: b{c} -> D", "x, \"a: b{c}\" -> D"),
     ] {
         assert_eq!(fixed(source), repaired, "{source}");
         assert_eq!(read(repaired).1, [""; 0], "{repaired}");
     }
+    // Braces after the comma belong to the next name, which gets its own fix
+    // on the next run.
+    assert_eq!(fixed("a: b, c{d} -> E"), "\"a: b\", c{d} -> E");
     for source in [
         "Services { Orders } -> Postgres",
         "Services {Orders, Payments} -> Postgres",

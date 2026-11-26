@@ -47,3 +47,7 @@ Evidence. horsegirl check --json printed: 'Sensors: wind, B -> Hub' E0004 fix '"
 ## 2026-11-26
 
 Fix round 1. The review returned no verdict, so the implementer probed the brace rule again. Team@x {A} and Team@x{A} got the fix '"Team@x {A}"', which lost the part A, although Team {A} is a group. Parser::in_link now limits one-word braces as characters to a line with an arrow in the same block. tests/syntax.rs a_group_or_an_open_block_is_never_quoted_into_a_name holds five such inputs, and each fixed line parses with no diagnostic. scripts/task check printed '314 tests run: 314 passed, 0 skipped', exit 0.
+
+## 2026-11-26
+
+Fix round 2: the review gave no verdict. A probe found that 'a: b{c} -> D' got the fix '"a: b"{c} -> D', which does not parse, because the colon path in the parser did not use the brace rule. Both paths now share name_braces. The fix is '"a: b{c}" -> D'. Test braces_before_an_arrow_are_characters_only_around_one_word failed before the change and passes after it; scripts/task check exited 0.

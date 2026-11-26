@@ -639,6 +639,14 @@ impl<'s> Parser<'s> {
                 Some(TokenKind::Arrow | TokenKind::Cross) => {
                     return self.needs_quotes(start..end, Text::Name);
                 }
+                // `a: b{c} -> D`: the braces are characters of the name, so
+                // the quotes go around them too.
+                Some(TokenKind::Open) if let Some(close) = self.name_braces(index) => {
+                    if !named {
+                        end = self.span_at(close).end;
+                    }
+                    index = close;
+                }
                 Some(TokenKind::Open) => {
                     // `story s: x {` is a story whose name needs quotes. The
                     // keyword stays outside them.
@@ -1310,6 +1318,16 @@ impl<'s> Parser<'s> {
         wrap(into, from, NodeKind::Block);
     }
 
+    /// The `}` of the braces that open at `index`, when those braces are
+    /// characters of a name: they hold one word and an arrow is on the line.
+    fn name_braces(&self, index: usize) -> Option<usize> {
+        let close = self.closes[index]?;
+        (close == index + 2
+            && self.kind_at(index + 1) == Some(TokenKind::Word)
+            && self.in_link(index))
+        .then_some(close)
+    }
+
     /// The index after the last token of the text that starts at token
     /// `from`. The text ends at the end of the line, at the `}` that closes
     /// the block around it, or at the guess mark and the citation that end the
@@ -1349,11 +1367,7 @@ impl<'s> Parser<'s> {
                             index > from && self.kind_at(index - 1) == Some(TokenKind::Space);
                         let block = match text {
                             Text::Value => false,
-                            Text::Name => {
-                                close != index + 2
-                                    || self.kind_at(index + 1) != Some(TokenKind::Word)
-                                    || !self.in_link(index)
-                            }
+                            Text::Name => self.name_braces(index).is_none(),
                             Text::Label => {
                                 spaced
                                     && self.tokens[index..close].iter().any(|token| {

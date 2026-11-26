@@ -155,7 +155,9 @@ the project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - Braces in a name that needs quotes are characters of the name only when
   they hold one word and no space, as in `{id}`, and an arrow is on the line.
   Other braces are a group, so `G{ A, B } -> C` and
-  `Services { Orders } -> Postgres` give `E0001` at the arrow. On a line with no arrow, all braces after a name are a group, so
+  `Services { Orders } -> Postgres` give `E0001` at the arrow. The rule holds
+  for a name with a colon too: `a: b{c} -> D` gets `"a: b{c}" -> D`. On a line
+  with no arrow, all braces after a name are a group, so
   `Team@x{ A }` and `Team@x {A}` get the quotes around `Team@x` only. Before,
   the fix put such a group inside the quotes and lost its parts.
 - A bare text that holds a double quote gives `E0004` with no fix and a
