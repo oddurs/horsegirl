@@ -98,7 +98,9 @@ pub struct Layout {
     /// The centre of the label of each link that has one. It is on the path
     /// of the link, and a label of the size in the [`Graph`] overlaps no box
     /// of a node there. It lies across no border of a group when its upright
-    /// line has a height that is clear of every border.
+    /// line has a height that is clear of every border. It covers no other
+    /// label between the same two ranks, unless it moved off a border and
+    /// every height off the borders covers one.
     pub labels: Vec<Option<Point>>,
 }
 
@@ -171,12 +173,12 @@ fn lay_out(graph: &Graph) -> (Layout, usize) {
     let mut net = build(graph, &chains, &forward, &ranks, &loops);
     let work = order::order(&mut net, &graph.groups);
     let (centres, edges) = place::place(&net, &graph.groups, &chains);
-    let routes = route::route(&net, &centres, &label_widths(graph, &net));
+    let routes = route::route(&net, &centres, &label_sizes(graph, &net));
     let columns = columns(&net, &graph.groups, &chains, &routes.gaps);
     let (nodes, groups) = boxes(&net, &centres, &edges, &columns, &loops);
     let (paths, mut labels) = paths(graph, &net, &nodes, &columns, &routes, &loops);
-    for (link, centre) in labels.iter_mut().enumerate() {
-        if let (Some(centre), Some(size)) = (centre.as_mut(), label(graph, link)) {
+    for link in 0..labels.len() {
+        if let (Some(centre), Some(size)) = (labels[link], label(graph, link)) {
             let (from, to) = graph.links[link];
             let ends = [graph.nodes[from].group, graph.nodes[to].group];
             let around: Vec<usize> = ends
@@ -191,7 +193,12 @@ fn lay_out(graph: &Graph) -> (Layout, usize) {
                 .filter(|(g, _)| !around.contains(g))
                 .filter_map(|(_, group)| *group)
                 .collect();
-            centre.y = off_borders(*centre, size, &paths[link], &groups, &other);
+            let others: Vec<Rect> = (0..labels.len())
+                .filter(|&other| other != link)
+                .filter_map(|other| Some(around_label(labels[other]?, label(graph, other)?)))
+                .collect();
+            let y = off_borders(centre, size, &paths[link], &groups, &other, &others);
+            labels[link] = Some(Point { x: centre.x, y });
         }
     }
     let bends = bends(&net, &centres, &columns);
@@ -217,6 +224,16 @@ fn label(graph: &Graph, link: usize) -> Option<Size> {
     graph.labels.get(link).copied().flatten()
 }
 
+/// The box of a label of `size` centred at `centre`.
+fn around_label(centre: Point, size: Size) -> Rect {
+    Rect {
+        x: centre.x - size.width / 2.0,
+        y: centre.y - size.height / 2.0,
+        width: size.width,
+        height: size.height,
+    }
+}
+
 /// The room that each node keeps free at each side for its links to itself.
 ///
 /// The link is a loop at the right side of the box, and its label is centred
@@ -239,15 +256,15 @@ fn label_step(net: &Net, link: usize) -> Option<usize> {
     Some(net.first_steps[link] + (steps - 1) / 2)
 }
 
-/// For each step, the width of the label that sits on it, or 0.
-fn label_widths(graph: &Graph, net: &Net) -> Vec<f64> {
-    let mut widths = vec![0.0; net.steps.len()];
+/// For each step, the size of the label that sits on it.
+fn label_sizes(graph: &Graph, net: &Net) -> Vec<Option<Size>> {
+    let mut sizes = vec![None; net.steps.len()];
     for link in 0..graph.links.len() {
-        if let (Some(size), Some(step)) = (label(graph, link), label_step(net, link)) {
-            widths[step] = size.width;
+        if let Some(step) = label_step(net, link) {
+            sizes[step] = label(graph, link);
         }
     }
-    widths
+    sizes
 }
 
 /// A count as a number to average. A rank holds far fewer than 2^52 items,
@@ -601,17 +618,14 @@ fn paths(
             y: routes.into[start + path.len() - 2],
         });
         paths.push(points);
-        // A label sits on the upright line of its step, which only its link
-        // and the links from the same item use. A step with no upright line
-        // has its label in the middle of the corridor.
-        let centre = label_step(net, link).map(|step| {
+        let centre = label_step(net, link).and_then(|step| {
             let rank = net.items[net.steps[step].0].rank;
-            Point {
-                x: middle(rank) + routes.track[step].unwrap_or(0.0),
-                y: f64::midpoint(routes.from[step], routes.into[step]),
-            }
+            routes.labels[step].map(|at| Point {
+                x: middle(rank) + at.x,
+                y: at.y,
+            })
         });
-        labels.push(centre.filter(|_| label(graph, link).is_some()));
+        labels.push(centre);
     }
     (paths, labels)
 }
@@ -629,13 +643,18 @@ fn paths(
 /// `other` has the groups that hold neither end of the link. A height
 /// outside all of them comes before a nearer height inside one: a label
 /// inside such a group reads as a label of that group, and the overlap
-/// detector does not see it there.
+/// detector does not see it there. `labels` has the boxes of the other
+/// labels. The route phase put the label where it covers none of them. A
+/// height that covers none of them comes before every other height, but a
+/// label across a border is worse than a label on a label, so the label
+/// still moves when each height off the borders covers one.
 fn off_borders(
     centre: Point,
     size: Size,
     path: &[Point],
     groups: &[Option<Rect>],
     other: &[Rect],
+    labels: &[Rect],
 ) -> f64 {
     let half = size.width / 2.0;
     let beside =
@@ -654,6 +673,11 @@ fn off_borders(
             [(group.y, group.y + GROUP_TITLE), (bottom, bottom)]
         })
         .collect();
+    let labels: Vec<(f64, f64)> = labels
+        .iter()
+        .filter(beside)
+        .map(|label| (label.y, label.y + label.height))
+        .collect();
     let half = size.height / 2.0;
     let across = |y: f64| {
         let mut borders = borders.iter();
@@ -662,6 +686,10 @@ fn off_borders(
     if !across(centre.y) {
         return centre.y;
     }
+    let covers = |y: f64| {
+        let mut labels = labels.iter();
+        labels.any(|&(top, bottom)| top - half < y && y < bottom + half)
+    };
     // The upright line that holds the label.
     let line = path.windows(2).find_map(|pair| {
         let (top, bottom) = (pair[0].y.min(pair[1].y), pair[0].y.max(pair[1].y));
@@ -678,11 +706,13 @@ fn off_borders(
     };
     borders
         .iter()
+        .chain(&labels)
         .flat_map(|&(top, bottom)| [top - reach, bottom + reach])
         .filter(|&y| top <= y && y <= bottom && !across(y))
         .min_by(|a, b| {
             let far = (a - centre.y).abs().total_cmp(&(b - centre.y).abs());
-            inside(*a).cmp(&inside(*b)).then(far)
+            let worse = |y: f64| (covers(y), inside(y));
+            worse(*a).cmp(&worse(*b)).then(far)
         })
         .unwrap_or(centre.y)
 }
