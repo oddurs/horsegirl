@@ -29,5 +29,9 @@ State the rule in the language reference (item 43): only `\n` and `\r\n` end a l
 
 ## Acceptance criteria
 
-- [ ] A test holds what the parser does with a lone `\r`, U+2028 and U+0085.
-- [ ] The language reference states which characters end a line.
+- [x] A test holds what the parser does with a lone `\r`, U+2028 and U+0085.
+- [x] The language reference states which characters end a line.
+
+## 2026-11-26
+
+Ran: cargo test -p horsegirl-core --test syntax only_a_line printed 1 passed (lone CR, U+2028, U+0085 each give E0010, not a line end; CRLF parses clean). scripts/task check passed. docs/reference.md states the rule; spec.txt is unchanged, so no decision item.
