@@ -45,3 +45,7 @@ Chose the diagnostic, not a grammar change: the card stays as it is. W0111 is a 
 ## 2026-11-26
 
 Evidence for 2: test a_name_that_ends_in_a_question_mark_in_quotes_stays_a_name passes: A -> "Archive?" gives no diagnostic, fix_all leaves it, and the model has the name Archive? with guess false. format test keeps "B?" quoted. Evidence for 3: horsegirl-bench score bench/runs/hand now shows '| 054 | One link is a guess | valid | valid | 5/5 | W0111 |  |' (was 3/5 with thing Archive missing); totals 10 of 100 with every expected fact. scripts/task check exits 0.
+
+## 2026-11-26
+
+Review round 1: W0111 now drops when the file writes the same name with its ? where the ? cannot be a guess (Ok? -> Yes, "B?", a declaration). A pass after the parse in syntax/parser.rs (keep_glued_guesses) does this. New test a_name_that_the_file_writes_with_its_question_mark_elsewhere_gives_no_warning failed before the change (45 passed, 1 failed) and passes after (46 passed). horsegirl check and fix on 'Start -> Ok?\nOk? -> Yes\nOk? -> No' and 'A -> "B?"\nC -> B?' print 0 warnings and leave each file unchanged. scripts/task check exit 0, 350 tests passed. Criteria 1-3 stay true: A -> B? alone still gets W0111 with its safe fix.

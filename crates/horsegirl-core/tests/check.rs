@@ -262,6 +262,33 @@ fn a_name_that_ends_in_a_question_mark_in_quotes_stays_a_name() {
     assert_eq!(model.things[model.links[0].to].name, "Archive?");
 }
 
+// BUG-161, review: the fix made a firm link to a name that the file writes
+// with its `?` elsewhere into a guess to a new thing.
+#[test]
+fn a_name_that_the_file_writes_with_its_question_mark_elsewhere_gives_no_warning() {
+    for source in [
+        "Start -> Ok?\nOk? -> Yes\nOk? -> No\n",
+        "A -> \"B?\"\nC -> B?\n",
+        "C -> B?\nA -> \"B?\"\n",
+        "Ok?\nStart -> Ok?\n",
+        "G { Ok? }\nStart -> Ok?\n",
+    ] {
+        assert!(
+            !codes(&check(source)).contains(&"W0111"),
+            "{source:?}: {:#?}",
+            check(source)
+        );
+        assert_eq!(fix_all(source).text, source, "{source:?}");
+    }
+}
+
+#[test]
+fn a_name_glued_to_its_question_mark_on_two_links_still_gets_the_fix() {
+    let source = "A -> Archive?\nB -> Archive?\n";
+    assert_eq!(codes(&check(source)), ["W0111", "W0111"]);
+    assert_eq!(fix_all(source).text, "A -> Archive ?\nB -> Archive ?\n");
+}
+
 #[test]
 fn a_question_mark_that_does_not_end_a_link_gives_no_warning() {
     for source in [

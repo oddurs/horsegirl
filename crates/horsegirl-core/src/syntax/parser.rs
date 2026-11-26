@@ -54,6 +54,7 @@ pub(super) fn parse(source: &str) -> Parse<'_> {
         parser.bump(&mut children);
         wrap(&mut children, from, NodeKind::Error);
     }
+    keep_glued_guesses(&children, &mut parser.diagnostics);
     // An unclosed brace is reported at the end of the file. Sorting puts it
     // back where the brace is.
     parser.diagnostics.sort_by_key(|d| (d.span.start, d.code));
@@ -64,6 +65,73 @@ pub(super) fn parse(source: &str) -> Parse<'_> {
             children,
         },
         diagnostics: parser.diagnostics,
+    }
+}
+
+/// Drops each W0111 whose name the file also writes, with its `?`, where the
+/// `?` cannot be a guess mark: `Ok? -> Yes`, or `"Ok?"`. That file uses the
+/// name with its `?`, and the fix would turn a firm link to the thing into a
+/// guess to a new thing. One line cannot see this, so the pass runs on the
+/// whole tree.
+fn keep_glued_guesses(children: &Children<'_>, diagnostics: &mut Vec<Diagnostic>) {
+    let glued: Vec<Range<usize>> = diagnostics
+        .iter()
+        .filter(|d| d.code == "W0111")
+        .map(|d| d.span.clone())
+        .collect();
+    if glued.is_empty() {
+        return;
+    }
+    let mut names = Vec::new();
+    thing_names(children, false, &mut names);
+    let firm: Vec<&str> = names
+        .iter()
+        .filter(|(span, _)| !glued.contains(span))
+        .map(|(_, text)| text.as_str())
+        .collect();
+    diagnostics.retain(|d| {
+        d.code != "W0111"
+            || !names
+                .iter()
+                .any(|(span, text)| *span == d.span && firm.contains(&text.as_str()))
+    });
+}
+
+/// The span and the text of each name of a thing, as the model reads it: the
+/// text inside quotes, or the words with one space between them.
+fn thing_names(children: &Children<'_>, in_names: bool, into: &mut Vec<(Range<usize>, String)>) {
+    for child in children {
+        let Element::Node(node) = child else {
+            continue;
+        };
+        if in_names && node.kind == NodeKind::Name {
+            let tokens: Vec<&Token<'_>> = node
+                .children
+                .iter()
+                .filter_map(|element| match element {
+                    Element::Token(token) => Some(token),
+                    Element::Node(_) => None,
+                })
+                .collect();
+            let (Some(first), Some(last)) = (tokens.first(), tokens.last()) else {
+                continue;
+            };
+            let text = match tokens.as_slice() {
+                [token] if token.kind == TokenKind::Quoted => {
+                    token.text[1..token.text.len() - 1].to_owned()
+                }
+                _ => tokens
+                    .iter()
+                    .map(|token| match token.kind {
+                        TokenKind::Space => " ",
+                        _ => token.text,
+                    })
+                    .collect(),
+            };
+            into.push((first.start..last.span().end, text));
+        } else {
+            thing_names(&node.children, node.kind == NodeKind::Names, into);
+        }
     }
 }
 

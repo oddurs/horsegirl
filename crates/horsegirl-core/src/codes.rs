@@ -110,7 +110,7 @@ pub const CATALOGUE: &[Code] = &[
     },
     Code {
         code: "W0111",
-        summary: "A bare name ends the line and ends in `?` with no space, as in `A -> Archive?`. Only a `?` on its own marks a guess, so the line states a firm link to a thing named `Archive?`. The safe fix adds the space and makes the link a guess. A name that must end in `?` is written in double quotes, as in `\"Archive?\"`.",
+        summary: "A bare name ends the line and ends in `?` with no space, as in `A -> Archive?`. Only a `?` on its own marks a guess, so the line states a firm link to a thing named `Archive?`. The safe fix adds the space and makes the link a guess. A name that must end in `?` is written in double quotes, as in `\"Archive?\"`. When the file writes the same name with its `?` where the `?` cannot be a guess, as in `Archive? -> Store` or `\"Archive?\"`, the name is a name and there is no warning.",
     },
 ];
 

@@ -86,7 +86,8 @@ in `?` in every statement that states it is a guess, and `check` gives the note
 Write a space before the `?`. `A -> Cache?` is a firm link to a thing named
 `Cache?`, and `check` gives the warning `W0111` with a safe fix that adds the
 space. A name that must end in `?` is written in double quotes, as in
-`"Cache?"`.
+`"Cache?"`. When the file writes `Cache?` where the `?` cannot be a guess, as
+in `Cache? -> Store` or `"Cache?"`, the name is a name and there is no warning.
 
 ```horsegirl
 Web app -> API gateway: POST /checkout
