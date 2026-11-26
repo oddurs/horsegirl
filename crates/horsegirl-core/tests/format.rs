@@ -141,6 +141,8 @@ fn quotes_stay_only_where_a_name_needs_them() {
         ("\"story x\" -> B", "\"story x\" -> B\n"),
         ("A -> \"-x\"", "A -> \"-x\"\n"),
         ("A -> \"B ?\"", "A -> \"B ?\"\n"),
+        // BUG-161: a bare `B?` at the end of a link gives W0111.
+        ("A -> \"B?\"", "A -> \"B?\"\n"),
         ("A -x \"B\"", "A -x B\n"),
         (
             "A { owner: X ?, kind: y }",

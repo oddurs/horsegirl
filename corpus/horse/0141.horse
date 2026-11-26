@@ -2,6 +2,6 @@
 A -> Decision
 Decision -> Done: Yes
 Decision -> Step 1: No
-Step 1 -> Again?
-Again? -> Done: Yes
-Again? -> Stop: No
+Step 1 -> "Again?"
+"Again?" -> Done: Yes
+"Again?" -> Stop: No

@@ -1,8 +1,8 @@
 # Converted from corpus/flowcharts/0134.mmd by corpus/convert.py.
 Start -> generate_random_solution(rng)
-generate_random_solution(rng) -> Initial solution provided?
-Initial solution provided? -> "preprocess_solution(solution, score)": Yes (caller provided)
-Initial solution provided? -> "preprocess_solution(solution, score)": No (not provided)
+generate_random_solution(rng) -> "Initial solution provided?"
+"Initial solution provided?" -> "preprocess_solution(solution, score)": Yes (caller provided)
+"Initial solution provided?" -> "preprocess_solution(solution, score)": No (not provided)
 "preprocess_solution(solution, score)" -> "Optimizer: optimize(...)"
 "Optimizer: optimize(...)" -> handler.update(ctx) each iteration
 handler.update(ctx) each iteration -> generator.generate_trials(...) once; keep best

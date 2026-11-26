@@ -90,10 +90,15 @@ class Chart(measure.Chart):
         super().statement()
 
 
-def quoted(text):
-    """A name or a label, in quotes when a bare one cannot hold it (ADR-119)."""
+def quoted(text, label=False):
+    """A name or a label, in quotes when a bare one cannot hold it (ADR-119).
+
+    A bare name that ends in `?` at the end of a link gives W0111, whose fix
+    makes the `?` a guess mark. A decision node is no guess, so the quotes
+    keep the `?` in the name."""
     text = text.replace('"', "'")
-    return f'"{text}"' if measure.causes(text) else text
+    needs = measure.causes(text) or (not label and text.endswith("?"))
+    return f'"{text}"' if needs else text
 
 
 def convert(source):
@@ -110,7 +115,7 @@ def convert(source):
     for a, b, raw in chart.edges:
         label = measure.plain(raw) if raw is not None else ""
         line = f"{quoted(names[a])} -> {quoted(names[b])}"
-        lines.append(f"{line}: {quoted(label)}" if label else line)
+        lines.append(f"{line}: {quoted(label, label=True)}" if label else line)
         linked.update((a, b))
     held = set(chart.parent)
     for nid in chart.order:

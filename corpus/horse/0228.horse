@@ -1,5 +1,5 @@
 # Converted from corpus/flowcharts/0228.mmd by corpus/convert.py.
 🚀 Start -> ⚙️ Process Data
-⚙️ Process Data -> ⚡ Cache Hit?
-⚡ Cache Hit? -> 💾 Query Database: No
-⚡ Cache Hit? -> 💨 Return Cached: Yes
+⚙️ Process Data -> "⚡ Cache Hit?"
+"⚡ Cache Hit?" -> 💾 Query Database: No
+"⚡ Cache Hit?" -> 💨 Return Cached: Yes

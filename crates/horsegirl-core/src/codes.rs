@@ -108,6 +108,10 @@ pub const CATALOGUE: &[Code] = &[
         code: "W0110",
         summary: "A link joins a group to itself or to a thing inside it, at any depth. A picture draws a group as a box around its parts, so the flow lens leaves the link out. A link between a group and a thing outside it is drawn, and meets the border of the group box.",
     },
+    Code {
+        code: "W0111",
+        summary: "A bare name ends the line and ends in `?` with no space, as in `A -> Archive?`. Only a `?` on its own marks a guess, so the line states a firm link to a thing named `Archive?`. The safe fix adds the space and makes the link a guess. A name that must end in `?` is written in double quotes, as in `\"Archive?\"`.",
+    },
 ];
 
 /// The catalogue as a Markdown table, as `docs/diagnostics.md` holds it.

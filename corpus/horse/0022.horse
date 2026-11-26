@@ -1,17 +1,17 @@
 # Converted from corpus/flowcharts/0022.mmd by corpus/convert.py.
 visit a page -> page access
 page access -> "show": public
-page access -> signed in?: guest
-signed in? -> "show": no
-signed in? -> go to destination: yes
-page access -> blocked?: student / admin / onboarding
-blocked? -> /auth/blocked: yes
-blocked? -> signed in?: no
-signed in? -> /auth/login?redirect=…: no
-signed in? -> email verified?: yes
-email verified? -> /auth/verify-email: no
-email verified? -> onboarded?: yes
-onboarded? -> /onboarding/1: no
-onboarded? -> role matches page?: yes
-role matches page? -> role home: no
-role matches page? -> "show": yes
+page access -> "signed in?": guest
+"signed in?" -> "show": no
+"signed in?" -> go to destination: yes
+page access -> "blocked?": student / admin / onboarding
+"blocked?" -> /auth/blocked: yes
+"blocked?" -> "signed in?": no
+"signed in?" -> /auth/login?redirect=…: no
+"signed in?" -> "email verified?": yes
+"email verified?" -> /auth/verify-email: no
+"email verified?" -> "onboarded?": yes
+"onboarded?" -> /onboarding/1: no
+"onboarded?" -> "role matches page?": yes
+"role matches page?" -> role home: no
+"role matches page?" -> "show": yes

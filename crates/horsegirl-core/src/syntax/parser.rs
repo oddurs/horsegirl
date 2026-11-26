@@ -35,6 +35,7 @@ pub(super) fn parse(source: &str) -> Parse<'_> {
         last: None,
         habits: Vec::new(),
         story: None,
+        glued: Vec::new(),
         diagnostics: Vec::new(),
     };
     let mut children = Vec::new();
@@ -186,6 +187,9 @@ struct Parser<'s> {
     habits: Vec<Edit>,
     /// The W0010 note of the story line that is being read.
     story: Option<Diagnostic>,
+    /// The W0111 warnings of the current fact. A line that fails to read
+    /// states nothing, so they are kept only when it reads.
+    glued: Vec<Diagnostic>,
     diagnostics: Vec<Diagnostic>,
 }
 
@@ -324,6 +328,7 @@ impl<'s> Parser<'s> {
         self.last = None;
         let start = self.pos;
         let outer = std::mem::take(&mut self.habits);
+        let outer_glued = std::mem::take(&mut self.glued);
         let mut habits = None;
         let fact = self.fact(depth, &mut children);
         // Taken before the recovery below reads lines of its own.
@@ -367,8 +372,13 @@ impl<'s> Parser<'s> {
             }
         };
         let edits = std::mem::replace(&mut self.habits, outer);
+        let glued = std::mem::replace(&mut self.glued, outer_glued);
         // A line that failed to read states nothing, so it has no canonical form.
         if let Some(kind) = habits {
+            // Only a link or a rule can be a guess.
+            if matches!(kind, NodeKind::Link | NodeKind::Rule) {
+                self.diagnostics.extend(glued);
+            }
             self.note_habits(start, kind, edits);
         }
         into.push(Element::Node(Node { kind, children }));
@@ -568,12 +578,55 @@ impl<'s> Parser<'s> {
                     self.spaces(into);
                     self.bump(into);
                 }
+                if kind == NodeKind::Name {
+                    self.glued_guess(start);
+                }
             }
             _ => return false,
         }
         self.last = Some((start, text));
         wrap(into, from, kind);
         true
+    }
+
+    /// W0111: a bare name that ends a link or a rule and ends in `?`, as in
+    /// `A -> Archive?`. The card says a final `?` marks a guess, but only a `?`
+    /// on its own is the mark, so the line states a firm link to `Archive?`.
+    /// The writer almost always means the guess, so the safe fix adds the
+    /// space. A name that must end in `?` is written in double quotes.
+    fn glued_guess(&mut self, start: usize) {
+        let last = self.pos - 1;
+        let word = self.tokens[last];
+        if word.text.len() < 2
+            || !word.text.ends_with('?')
+            || !self.ends_fact(self.pos)
+            || self.is_guess(self.skip(self.pos))
+        {
+            return;
+        }
+        let name = &self.source[self.span_at(start).start..word.span().end];
+        let bare = &name[..name.len() - 1];
+        let at = word.span().end - 1;
+        self.glued.push(Diagnostic {
+            fix: Some(Fix {
+                confidence: Confidence::Safe,
+                description: format!("Write `{} ?` to mark a guess.", quote(bare)),
+                edits: vec![Edit {
+                    span: at..at,
+                    text: " ".to_owned(),
+                }],
+            }),
+            ..diagnostic(
+                "W0111",
+                self.span_at(start).start..word.span().end,
+                format!(
+                    "`{}` ends in `?` with no space before it, so it is a name and not a guess. To mark a guess, write `{} ?`. To keep the `?` in the name, write `\"{}\"`.",
+                    quote(name),
+                    quote(bare),
+                    quote(name)
+                ),
+            )
+        });
     }
 
     /// Checks a list that holds a fact. The list ends its line, and it holds
@@ -1564,7 +1617,10 @@ fn bare_is_safe(text: &str) -> bool {
             && !matches!(word, "?" | "-x")
             && !word.contains("->")
     });
+    // A bare name that ends in `?` at the end of a line gives W0111, whose fix
+    // makes the `?` a guess mark. The quotes keep the `?` in the name.
     plain
+        && !text.ends_with('?')
         && !text.starts_with('#')
         && !text.starts_with("show")
         && !text.starts_with("story")
