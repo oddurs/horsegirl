@@ -15,6 +15,10 @@ each one in full.
 A file is a list of lines. Order does not matter outside a story. A line that
 starts with `#` is a comment.
 
+Only a line feed (`\n`) or a carriage return and a line feed (`\r\n`) ends a
+line. A lone carriage return, U+2028 and U+0085 do not end a line. The reader
+treats each as a space, so text on both sides stays on one line.
+
 ### 1. A name is a thing
 
 A name is a bare run of words. Spaces are fine: `Web app` is one name. A thing
