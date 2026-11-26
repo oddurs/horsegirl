@@ -20,8 +20,8 @@ jobs:
   check:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/cache@v4
+      - uses: actions/checkout@v7
+      - uses: actions/cache@v6
         with:
           path: |
             ~/.cargo/registry
@@ -49,12 +49,12 @@ jobs:
       # The site verbs in scripts/task need the pinned Node and pnpm.
       - name: Install pnpm
         if: hashFiles('site/package.json') != ''
-        uses: pnpm/action-setup@v4
+        uses: pnpm/action-setup@v6
         with:
           package_json_file: site/package.json
       - name: Install Node
         if: hashFiles('site/package.json') != ''
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v7
         with:
           node-version-file: site/.node-version
           cache: pnpm
@@ -72,7 +72,7 @@ jobs:
       # and the deploy job publishes the one from a push to main.
       - name: Upload the site
         if: hashFiles('site/out/index.html') != ''
-        uses: actions/upload-pages-artifact@v3
+        uses: actions/upload-pages-artifact@v5
         with:
           path: site/out
 
@@ -81,8 +81,8 @@ jobs:
   core-macos:
     runs-on: macos-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/cache@v4
+      - uses: actions/checkout@v7
+      - uses: actions/cache@v6
         with:
           path: |
             ~/.cargo/registry
@@ -95,7 +95,7 @@ jobs:
           rustup show active-toolchain || rustup toolchain install
           rustup target add wasm32-wasip1
       - name: Install Node
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v7
         with:
           node-version-file: site/.node-version
       - run: scripts/task test:core
@@ -118,13 +118,13 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - id: deployment
-        uses: actions/deploy-pages@v4
+        uses: actions/deploy-pages@v5
 
   # The job always runs, so `required` never sees it as skipped on a push.
   pr-title:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - name: Check the title and the body
         if: github.event_name == 'pull_request'
         env:
