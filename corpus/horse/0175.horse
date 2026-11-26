@@ -1,7 +1,7 @@
 # Converted from corpus/flowcharts/0175.mmd by corpus/convert.py.
-assemble -> enabled?
-enabled? -> disabled: no
-enabled? -> append one section: yes
+assemble -> "enabled?"
+"enabled?" -> disabled: no
+"enabled?" -> append one section: yes
 time -> append one section
 counter -> append one section
 manifest -> append one section

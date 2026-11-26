@@ -3,10 +3,12 @@ id: 161
 uid: 15975225-8b07-4d53-b401-bda5a35117f6
 title: A ? written against the name marks a guess, or says why not
 type: bug
-status: backlog
+status: done
 milestone: v0.1
+assignee: Oddur Sigurdsson
 created: 2026-11-25
-updated: 2026-11-25
+updated: 2026-11-26
+closed_at: 2026-11-26
 priority: p2
 risk: low
 surface: diagnostics
@@ -32,6 +34,18 @@ give a diagnostic with a safe fix that adds the space.
 
 ## Acceptance criteria
 
-- [ ] `A -> B?` is a guess, or gives a diagnostic whose safe fix makes it one.
-- [ ] `"B?"` in quotes is still a name that ends in `?`.
-- [ ] The benchmark report for the hand-written run no longer shows `thing Archive` missing for task 054.
+- [x] `A -> B?` is a guess, or gives a diagnostic whose safe fix makes it one.
+- [x] `"B?"` in quotes is still a name that ends in `?`.
+- [x] The benchmark report for the hand-written run no longer shows `thing Archive` missing for task 054.
+
+## 2026-11-26
+
+Chose the diagnostic, not a grammar change: the card stays as it is. W0111 is a warning on a bare name that ends a link or a rule and ends in ?, with a safe fix that adds the space. Quotes stay on a name that ends in ? (parser habit, fmt, corpus/convert.py), so a decision node such as "Trivial?" never becomes a guess. Evidence for 1: horsegirl check on 'Report job -> Archive?' prints warning[W0111] with 'safe fix: Write `Archive ?` to mark a guess.'; test a_question_mark_against_the_last_name_gets_a_fix_that_makes_a_guess passes and fails without the change.
+
+## 2026-11-26
+
+Evidence for 2: test a_name_that_ends_in_a_question_mark_in_quotes_stays_a_name passes: A -> "Archive?" gives no diagnostic, fix_all leaves it, and the model has the name Archive? with guess false. format test keeps "B?" quoted. Evidence for 3: horsegirl-bench score bench/runs/hand now shows '| 054 | One link is a guess | valid | valid | 5/5 | W0111 |  |' (was 3/5 with thing Archive missing); totals 10 of 100 with every expected fact. scripts/task check exits 0.
+
+## 2026-11-26
+
+Review round 1: W0111 now drops when the file writes the same name with its ? where the ? cannot be a guess (Ok? -> Yes, "B?", a declaration). A pass after the parse in syntax/parser.rs (keep_glued_guesses) does this. New test a_name_that_the_file_writes_with_its_question_mark_elsewhere_gives_no_warning failed before the change (45 passed, 1 failed) and passes after (46 passed). horsegirl check and fix on 'Start -> Ok?\nOk? -> Yes\nOk? -> No' and 'A -> "B?"\nC -> B?' print 0 warnings and leave each file unchanged. scripts/task check exit 0, 350 tests passed. Criteria 1-3 stay true: A -> B? alone still gets W0111 with its safe fix.

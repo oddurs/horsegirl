@@ -6,7 +6,7 @@
 | --- | ---: |
 | Valid on the first try | 7 of 100 |
 | Valid after one `fix` | 11 of 100 |
-| Valid after one `fix`, with every expected fact | 9 of 100 |
+| Valid after one `fix`, with every expected fact | 10 of 100 |
 
 ## The diagnostics that replies hit most often
 
@@ -22,6 +22,8 @@ Counted on the first try. "Left" counts the replies that still have the code aft
 | `E0300` | 1 | 1 | 0 | A `show` line names a lens that does not exist. The message lists the lenses, and a lens one edit from a known lens gets a safe fix. |
 | `E0412` | 1 | 1 | 0 | A name is written once and is one edit from a name written more often, so it is likely a typo that makes a new thing. The safe fix writes the other name. When more than one such name is one edit away, the message names each and there is no fix. Two names are not a typo when they differ only in a final word that is a number or one letter (`Service A` and `Service B`), or when both are shorter than three characters. |
 | `W0010` | 1 | 1 | 1 | A story is parsed, and this version does not order its links. |
+| `W0111` | 1 | 1 | 0 | A bare name ends the line and ends in `?` with no space, as in `A -> Archive?`. Only a `?` on its own marks a guess, so the line states a firm link to a thing named `Archive?`. The safe fix adds the space and makes the link a guess. A name that must end in `?` is written in double quotes, as in `"Archive?"`. When the file writes the same name with its `?` where the `?` cannot be a guess, as in `Archive? -> Store` or `"Archive?"`, the name is a name and there is no warning. |
+| `N0200` | 0 | 0 | 1 | A link or a rule ends in `?` in every statement, so it is a guess. |
 
 ## Each task
 
@@ -82,7 +84,7 @@ Counted on the first try. "Left" counts the replies that still have the code aft
 | 051 | No direct database access | no reply | no reply | | | |
 | 052 | A rule with a reason | no reply | no reply | | | |
 | 053 | Two apps, one rule | no reply | no reply | | | |
-| 054 | One link is a guess | valid | valid | 3/5 |  | `thing Archive` |
+| 054 | One link is a guess | valid | valid | 5/5 | W0111 |  |
 | 055 | A guessed link with a label | no reply | no reply | | | |
 | 056 | A guess and a rule | no reply | no reply | | | |
 | 057 | Legacy calls | no reply | no reply | | | |

@@ -1,8 +1,8 @@
 # Converted from corpus/flowcharts/0100.mmd by corpus/convert.py.
 User Message -> classifyIntent
-classifyIntent -> Intent Classified?
-Intent Classified? -> buildExecutionPlan: Yes
-Intent Classified? -> Default to greeting intent: "No, fallback"
+classifyIntent -> "Intent Classified?"
+"Intent Classified?" -> buildExecutionPlan: Yes
+"Intent Classified?" -> Default to greeting intent: "No, fallback"
 Default to greeting intent -> buildExecutionPlan
 buildExecutionPlan -> Budget Check
 Budget Check -> optimizePlanForBudget: Over budget

@@ -12,12 +12,11 @@ named for gaits: Walk, Trot, Canter, Gallop.
 
 ## v0.1 — Walk
 
-`··········` 0% · 0 of 11 done · due 2027-01-31
+`··········` 0% · 0 of 10 done · due 2027-01-31
 
 An agent writes a horsegirl file, checks it, applies the fixes, and draws a flow diagram as SVG, from the command line or over MCP.
 
 - [ ] [`0115`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0115-reserve-the-horsegirl-name-on-crates-io-and-npm.md) Reserve the horsegirl name on crates.io and npm <sup>chore · p2 · release</sup>
-- [ ] [`BUG-161`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/BUG-161-a-written-against-the-name-marks-a-guess-or-says-why-not.md) A ? written against the name marks a guess, or says why not <sup>bug · p2 · language</sup>
 - [ ] [`BUG-169`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/BUG-169-two-links-from-one-thing-to-itself-draw-two-loops-and-two-labels-apart.md) Two links from one thing to itself draw two loops and two labels apart <sup>bug · p2 · layout</sup>
 - [ ] [`BUG-170`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/BUG-170-no-link-line-passes-through-the-label-of-another-link.md) No link line passes through the label of another link <sup>bug · p2 · layout</sup>
 - [ ] [`BUG-171`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/BUG-171-w0107-leaves-alone-a-thing-whose-group-has-a-link.md) W0107 leaves alone a thing whose group has a link <sup>bug · p2 · check</sup>
@@ -30,7 +29,7 @@ An agent writes a horsegirl file, checks it, applies the fixes, and draws a flow
 
 ## later — Later
 
-`··········` 0% · 0 of 35 done
+`··········` 0% · 0 of 36 done
 
 Nothing on a date. Good ideas wait here until a release needs them.
 
@@ -69,6 +68,7 @@ Nothing on a date. Good ideas wait here until a release needs them.
 - [ ] [`BUG-168`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/BUG-168-fewer-crossings-between-ranks-never-give-more-crossings-in-the-drawing.md) Fewer crossings between ranks never give more crossings in the drawing <sup>bug · p2 · layout</sup>
 - [ ] [`BUG-172`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/BUG-172-two-labels-of-one-corridor-do-not-cover-each-other-on-any-generated-graph.md) Two labels of one corridor do not cover each other on any generated graph <sup>bug · p2 · layout</sup>
 - [ ] [`0173`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0173-a-link-to-a-group-that-other-links-split-meets-the-border-of-the-group.md) A link to a group that other links split meets the border of the group <sup>feature · p2 · layout</sup>
+- [ ] [`BUG-175`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/BUG-175-a-written-against-the-last-word-of-a-label-marks-a-guess-or-says-why-not.md) A ? written against the last word of a label marks a guess, or says why not <sup>bug · p2 · check</sup>
 
 ## v0.2 — Trot
 

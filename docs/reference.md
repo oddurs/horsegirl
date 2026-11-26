@@ -83,6 +83,12 @@ A `?` is a guess only as the final whole word of a statement. A link that ends
 in `?` in every statement that states it is a guess, and `check` gives the note
 `N0200` so that you confirm it against the system.
 
+Write a space before the `?`. `A -> Cache?` is a firm link to a thing named
+`Cache?`, and `check` gives the warning `W0111` with a safe fix that adds the
+space. A name that must end in `?` is written in double quotes, as in
+`"Cache?"`. When the file writes `Cache?` where the `?` cannot be a guess, as
+in `Cache? -> Store` or `"Cache?"`, the name is a name and there is no warning.
+
 ```horsegirl
 Web app -> API gateway: POST /checkout
 Web app -x Postgres: never directly
@@ -295,6 +301,7 @@ from it.
 | `W0108` | Write the whole name in double quotes, as in `"GET /users/{id}"`. |
 | `W0109` | Write the second link on its own line, or write the label in double quotes. The suggested fix writes the two lines. |
 | `W0110` | Link a thing outside the group to the group, or link two things inside it. The picture leaves the link out. |
+| `W0111` | Write a space before the `?` to mark a guess, or write the name in double quotes to keep the `?` in it. The fix adds the space. |
 
 These files each show one mistake:
 

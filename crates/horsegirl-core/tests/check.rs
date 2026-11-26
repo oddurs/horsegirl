@@ -209,6 +209,106 @@ fn a_firm_statement_of_a_link_is_not_a_guess() {
     assert_eq!(codes(&check(source)), [""; 0]);
 }
 
+// BUG-161: `Archive?` read as a firm link to a thing named `Archive?`.
+#[test]
+fn a_question_mark_against_the_last_name_gets_a_fix_that_makes_a_guess() {
+    let source = "Scheduler -> Report job\nReport job -> Archive?\n";
+    let diagnostics = check(source);
+    assert_eq!(codes(&diagnostics), ["W0111"]);
+    let (warning, spanned) = only(source, &diagnostics, "W0111");
+    assert_eq!(spanned, "Archive?");
+    assert!(
+        warning.message.contains("`Archive ?`"),
+        "{}",
+        warning.message
+    );
+    assert!(
+        warning.message.contains("`\"Archive?\"`"),
+        "{}",
+        warning.message
+    );
+    let fix = warning.fix.as_ref().expect("W0111 carries a fix");
+    assert_eq!(fix.confidence, Confidence::Safe);
+    let fixed = fix_all(source).text;
+    assert_eq!(fixed, "Scheduler -> Report job\nReport job -> Archive ?\n");
+    assert_eq!(codes(&check(&fixed)), ["N0200"]);
+    let model = lower(&parse(&fixed).tree);
+    assert!(model.links[1].guess);
+    assert_eq!(model.things[model.links[1].to].name, "Archive");
+}
+
+#[test]
+fn a_glued_question_mark_on_a_rule_a_list_or_a_citation_line_gets_the_fix() {
+    let cases = [
+        ("A -x B?\n", "A -x B ?\n"),
+        ("A -> B, Web app?\n", "A -> B, Web app ?\n"),
+        ("A -> B? @ src/a.rs:3\n", "A -> B ? @ src/a.rs:3\n"),
+        ("G {\n  A -> B?\n}\n", "G {\n  A -> B ?\n}\n"),
+        ("A -> B?;\n", "A -> B ?\n"),
+    ];
+    for (source, expected) in cases {
+        assert!(codes(&check(source)).contains(&"W0111"), "{source:?}");
+        assert_eq!(fix_all(source).text, expected, "{source:?}");
+    }
+}
+
+#[test]
+fn a_name_that_ends_in_a_question_mark_in_quotes_stays_a_name() {
+    let source = "A -> \"Archive?\"\n";
+    assert_eq!(codes(&check(source)), [""; 0]);
+    assert_eq!(fix_all(source).text, source);
+    let model = lower(&parse(source).tree);
+    assert!(!model.links[0].guess);
+    assert_eq!(model.things[model.links[0].to].name, "Archive?");
+}
+
+// BUG-161, review: the fix made a firm link to a name that the file writes
+// with its `?` elsewhere into a guess to a new thing.
+#[test]
+fn a_name_that_the_file_writes_with_its_question_mark_elsewhere_gives_no_warning() {
+    for source in [
+        "Start -> Ok?\nOk? -> Yes\nOk? -> No\n",
+        "A -> \"B?\"\nC -> B?\n",
+        "C -> B?\nA -> \"B?\"\n",
+        "Ok?\nStart -> Ok?\n",
+        "G { Ok? }\nStart -> Ok?\n",
+    ] {
+        assert!(
+            !codes(&check(source)).contains(&"W0111"),
+            "{source:?}: {:#?}",
+            check(source)
+        );
+        assert_eq!(fix_all(source).text, source, "{source:?}");
+    }
+}
+
+#[test]
+fn a_name_glued_to_its_question_mark_on_two_links_still_gets_the_fix() {
+    let source = "A -> Archive?\nB -> Archive?\n";
+    assert_eq!(codes(&check(source)), ["W0111", "W0111"]);
+    assert_eq!(fix_all(source).text, "A -> Archive ?\nB -> Archive ?\n");
+}
+
+#[test]
+fn a_question_mark_that_does_not_end_a_link_gives_no_warning() {
+    for source in [
+        "Valid? -> Yes\n",
+        "A -> B: ready?\n",
+        "A -> B ?\n",
+        "A -> B? ?\n",
+        "Ready?\nA -> Ready?, B -> C\n",
+        "A { note: why? }\nA -> B\n",
+        "G { A, B? }\nA -> B\n",
+        "A -> ?\n",
+    ] {
+        assert!(
+            !codes(&check(source)).contains(&"W0111"),
+            "{source:?}: {:#?}",
+            check(source)
+        );
+    }
+}
+
 #[test]
 fn an_unknown_lens_is_an_error_that_lists_the_lenses() {
     let source = "A -> B\nshow bubbles\n";

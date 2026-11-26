@@ -1,11 +1,11 @@
 # Converted from corpus/flowcharts/0221.mmd by corpus/convert.py.
-Start -> Nachricht ausgewählt?
-Nachricht ausgewählt? -> Nachricht zitieren: Ja
-Nachricht ausgewählt? -> Nachricht auswählen: Nein
-Nachricht auswählen -> Nachricht ausgewählt?
-Nachricht zitieren -> Antwort verfassen?
-Antwort verfassen? -> Antwort schreiben: Ja
-Antwort verfassen? -> Zitieren abschließen: Nein
+Start -> "Nachricht ausgewählt?"
+"Nachricht ausgewählt?" -> Nachricht zitieren: Ja
+"Nachricht ausgewählt?" -> Nachricht auswählen: Nein
+Nachricht auswählen -> "Nachricht ausgewählt?"
+Nachricht zitieren -> "Antwort verfassen?"
+"Antwort verfassen?" -> Antwort schreiben: Ja
+"Antwort verfassen?" -> Zitieren abschließen: Nein
 Antwort schreiben -> Zitieren abschließen
 Zitieren abschließen -> Nachricht senden
 Nachricht senden -> Ende

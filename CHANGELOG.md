@@ -14,6 +14,11 @@ the project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   node or a group.
 - `W0110`: a link between a group and itself or a thing inside it. The flow
   lens leaves such a link out.
+- `W0111`: a link or a rule that ends in a bare name with a `?` against it, as
+  in `A -> Archive?`. The line states a firm link to `Archive?`. The safe fix
+  adds the space and makes the link a guess. A name that the file also writes
+  with its `?` elsewhere, as in `Archive? -> Store`, gives no warning. `fmt`
+  and `corpus/convert.py` keep the quotes on a name that ends in `?`.
 - `horsegirl mcp` serves the tools `spec`, `check`, `fix` and `draw` over MCP
   on standard input and standard output. Each tool takes the whole text of a
   file. `check`, `fix` and `draw` return `structuredContent` with an

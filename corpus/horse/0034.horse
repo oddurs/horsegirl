@@ -9,4 +9,4 @@ MeasurementGroup -> MeasurementData: contains
 Measurement { AbstractMeasurementSetting, LocalUnitaryMeasurementSetting, ComputationalBasisMeasurementSetting, MeasurementData, MeasurementProbability, MeasurementGroup }
 ClassicalShadows { AbstractShadow, DenseShadow, FactorizedShadow }
 QuantumInformation { get_fidelity, get_trace_moment, get_selfXEB }
-Estimators { jackknife, bootstrap? }
+Estimators { jackknife, "bootstrap?" }

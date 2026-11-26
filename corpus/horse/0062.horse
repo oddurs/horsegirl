@@ -1,8 +1,8 @@
 # Converted from corpus/flowcharts/0062.mmd by corpus/convert.py.
-Draft -> Right?
-Right? -> Change the file: no
+Draft -> "Right?"
+"Right?" -> Change the file: no
 Change the file -> Draft
-Right? -> Ratify: yes
+"Right?" -> Ratify: yes
 Ratify -> Record
 Record -> Final build
 Final build -> Approve
