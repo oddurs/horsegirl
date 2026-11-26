@@ -1,4 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" class="horsegirl" role="img" width="579.15" height="158" viewBox="-1 -1 579.15 158" font-size="14">
+<svg xmlns="http://www.w3.org/2000/svg" class="horsegirl" role="img" width="609.15" height="188" viewBox="-16 -16 609.15 188" font-size="14">
 <title>shop-with-a-typo</title>
 <desc>7 things, 0 groups and 6 links.</desc>
 <style>
@@ -16,7 +16,7 @@
 <defs>
 <marker id="hg-head" viewBox="0 0 8 8" refX="8" refY="4" markerWidth="8" markerHeight="8" markerUnits="userSpaceOnUse" orient="auto"><path class="head" d="M0,0 L8,4 L0,8 z"/></marker>
 </defs>
-<rect class="page" x="-1" y="-1" width="579.15" height="158"/>
+<rect class="page" x="-16" y="-16" width="609.15" height="188"/>
 <path class="link" d="M90.14,18 L122.49,18 L122.49,48 L160.49,48" marker-end="url(#hg-head)"/>
 <path class="link" d="M96.49,78 L134.49,78 L134.49,48 L160.49,48" marker-end="url(#hg-head)"/>
 <path class="link" d="M267.09,48 L299.09,48 L299.09,18 L345.1,18" marker-end="url(#hg-head)"/>

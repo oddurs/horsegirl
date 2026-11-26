@@ -1,4 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" class="horsegirl" role="img" width="338.42" height="98" viewBox="-1 -1 338.42 98" font-size="14">
+<svg xmlns="http://www.w3.org/2000/svg" class="horsegirl" role="img" width="368.42" height="128" viewBox="-16 -16 368.42 128" font-size="14">
 <title>quoted-names</title>
 <desc>3 things, 0 groups and 2 links.</desc>
 <style>
@@ -16,7 +16,7 @@
 <defs>
 <marker id="hg-head" viewBox="0 0 8 8" refX="8" refY="4" markerWidth="8" markerHeight="8" markerUnits="userSpaceOnUse" orient="auto"><path class="head" d="M0,0 L8,4 L0,8 z"/></marker>
 </defs>
-<rect class="page" x="-1" y="-1" width="338.42" height="98"/>
+<rect class="page" x="-16" y="-16" width="368.42" height="128"/>
 <path class="link" d="M115.93,18 L174.27,18 L174.27,22.18 M174.27,43.82 L174.27,48 L244.61,48" marker-end="url(#hg-head)"/>
 <path class="link" d="M90.06,78 L186.27,78 L186.27,73.82 M186.27,52.18 L186.27,48 L244.61,48" marker-end="url(#hg-head)"/>
 <rect class="thing" x="0" y="0" width="115.93" height="36" rx="4"/>

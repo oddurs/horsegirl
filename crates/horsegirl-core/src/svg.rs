@@ -18,9 +18,6 @@ use crate::scene::{HEAD_LENGTH, LABEL_CUT, Point, Rect, Role, Scene, Shape, numb
 use crate::text::{self, Style};
 use crate::theme;
 
-/// The room around the scene, so a stroke on its edge is not cut in half.
-const MARGIN: f64 = 1.0;
-
 /// The style of every picture. Each rule is scoped to the `horsegirl` class,
 /// so a page that holds the SVG inline keeps its own `.label` and `.link`.
 ///
@@ -67,16 +64,23 @@ fn style() -> String {
 ///
 /// `title` names the picture: the document's `title` holds it, and a screen
 /// reader reads it as the name of the image. The `desc` counts what the
-/// picture shows.
+/// picture shows. The picture keeps `theme::MARGIN` clear on each side.
 #[must_use]
 pub fn draw(scene: &Scene, title: &str) -> String {
-    let width = number(scene.width + 2.0 * MARGIN);
-    let height = number(scene.height + 2.0 * MARGIN);
+    draw_with_margin(scene, title, theme::MARGIN)
+}
+
+/// Draws `scene` as `draw` does, with `margin` pixels clear on each side. A
+/// host that shows the SVG with no padding of its own sets the room here.
+#[must_use]
+pub fn draw_with_margin(scene: &Scene, title: &str, margin: f64) -> String {
+    let width = number(scene.width + 2.0 * margin);
+    let height = number(scene.height + 2.0 * margin);
     let mut out = format!(
         "<svg xmlns=\"http://www.w3.org/2000/svg\" class=\"horsegirl\" role=\"img\" \
          width=\"{width}\" height=\"{height}\" viewBox=\"{} {} {width} {height}\" font-size=\"{}\">\n",
-        number(-MARGIN),
-        number(-MARGIN),
+        number(-margin),
+        number(-margin),
         number(scene.font_size),
     );
     writeln!(out, "<title>{}</title>", escape(title)).expect("a String takes any write");
@@ -96,8 +100,8 @@ pub fn draw(scene: &Scene, title: &str) -> String {
     writeln!(
         out,
         "<rect class=\"page\" x=\"{}\" y=\"{}\" width=\"{width}\" height=\"{height}\"/>",
-        number(-MARGIN),
-        number(-MARGIN),
+        number(-margin),
+        number(-margin),
     )
     .expect("a String takes any write");
     let style = Style {

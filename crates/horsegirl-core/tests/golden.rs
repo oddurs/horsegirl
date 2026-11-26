@@ -27,6 +27,7 @@ use std::path::{Path, PathBuf};
 
 use horsegirl_core::lens::{self, FLOW};
 use horsegirl_core::model::lower;
+use horsegirl_core::scene::Rect;
 use horsegirl_core::svg;
 use horsegirl_core::syntax::{Diagnostic, parse};
 use horsegirl_core::text::Style;
@@ -318,4 +319,64 @@ fn the_first_difference_names_the_line_and_both_texts() {
     assert_eq!(report, "line 2\n    expected: b\n    actual:   c");
     let report = first_difference("a\n", "a\nb\n");
     assert!(report.contains("(end of file)"), "{report}");
+}
+
+/// The view box of an SVG document as `(x, y, width, height)`.
+fn view_box(svg: &str) -> [f64; 4] {
+    let at = svg.find("viewBox=\"").expect("the document has a view box") + 9;
+    let end = at + svg[at..].find('"').unwrap();
+    let mut numbers = svg[at..end].split(' ').map(|n| n.parse::<f64>().unwrap());
+    std::array::from_fn(|_| numbers.next().unwrap())
+}
+
+#[test]
+fn every_golden_picture_keeps_the_margin_clear_inside_its_view_box() {
+    use horsegirl_core::scene::{HEAD_LENGTH, Role};
+    use horsegirl_core::theme::MARGIN;
+
+    // The SVG writes each number with two decimals, so the view box can lose
+    // half of 0.01 against the shapes.
+    const ROUNDING: f64 = 0.01;
+    let mut drawn = 0;
+    for entry in fs::read_dir(CASES).unwrap() {
+        let path = entry.unwrap().path();
+        if path.extension().is_none_or(|e| e != "horse") {
+            continue;
+        }
+        let source = fs::read_to_string(&path).unwrap();
+        let parse = parse(&source);
+        if parse.diagnostics.iter().any(|d| d.code.starts_with('E')) {
+            continue;
+        }
+        let scene = lens::draw(&lower(&parse.tree), &FLOW, STYLE);
+        let [x, y, w, h] = view_box(&svg::draw(&scene, "case"));
+        for shape in &scene.shapes {
+            // A head is as wide as it is long, so the end of a link claims
+            // half a head length on each side, whatever the direction.
+            let mut reach = vec![shape.rect];
+            if shape.role == Role::Link {
+                reach.extend(shape.points.iter().last().map(|p| Rect {
+                    x: p.x - HEAD_LENGTH / 2.0,
+                    y: p.y - HEAD_LENGTH / 2.0,
+                    width: HEAD_LENGTH,
+                    height: HEAD_LENGTH,
+                }));
+            }
+            for r in reach {
+                let name = format!("{} {:?} {:?}", path.display(), shape.role, shape.of);
+                assert!(r.x - x >= MARGIN - ROUNDING, "{name}: left");
+                assert!(r.y - y >= MARGIN - ROUNDING, "{name}: top");
+                assert!(
+                    x + w - (r.x + r.width) >= MARGIN - ROUNDING,
+                    "{name}: right"
+                );
+                assert!(
+                    y + h - (r.y + r.height) >= MARGIN - ROUNDING,
+                    "{name}: bottom"
+                );
+            }
+        }
+        drawn += 1;
+    }
+    assert!(drawn > 0, "no golden case draws");
 }

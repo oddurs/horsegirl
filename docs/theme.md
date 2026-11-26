@@ -39,6 +39,15 @@ A label keeps its white space. The rule `.horsegirl .label` sets
 `white-space: pre`, so a leading, trailing or repeated space is drawn, and the
 measured width and the drawn width agree.
 
+## The margin
+
+The picture keeps 16 px clear on each side: no box, line, arrow head or label
+lies nearer than that to the edge of the view box. The page rectangle covers
+the margin, so it has the colour of `--hg-paper`. A CSS variable cannot move a
+view box, so the margin is a constant of the core, `theme::MARGIN`, and not a
+`--hg-` variable. A host that draws with the library passes another size to
+`svg::draw_with_margin`.
+
 ## The palette and the `owner` fact
 
 The palette follows the fact that the lens binds to `colour`. The flow lens

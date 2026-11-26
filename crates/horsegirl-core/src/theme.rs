@@ -22,6 +22,11 @@ pub struct Token {
 /// theme that names another face keeps every position.
 pub const FONT: &str = "Arial,\"Liberation Sans\",Helvetica,sans-serif";
 
+/// The room, in pixels, between the edge of the picture and the nearest box,
+/// line, arrow head or label. A host that draws with `svg::draw_with_margin`
+/// sets another value.
+pub const MARGIN: f64 = 16.0;
+
 /// The twelve tokens, in the order the documentation lists them.
 pub const TOKENS: [Token; 12] = [
     Token {

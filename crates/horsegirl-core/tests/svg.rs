@@ -445,7 +445,7 @@ fn text(text: &str) -> Result<(), String> {
 fn the_picture_draws_its_own_paper_before_any_shape() {
     let svg = checkout();
     let page = svg
-        .find("<rect class=\"page\" x=\"-1\" y=\"-1\"")
+        .find("<rect class=\"page\" x=\"-16\" y=\"-16\"")
         .expect("a page rect");
     assert!(page < svg.find("class=\"thing").expect("a thing"));
     assert!(svg.contains(".horsegirl .page{fill:var(--hg-paper,"));
