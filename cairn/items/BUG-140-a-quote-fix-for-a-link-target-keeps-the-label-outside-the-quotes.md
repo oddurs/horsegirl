@@ -3,10 +3,12 @@ id: 140
 uid: 8ed7f1cd-0b92-47f2-9811-f8c5efd7734d
 title: A quote fix for a link target keeps the label outside the quotes
 type: bug
-status: backlog
+status: doing
 milestone: v0.1
+assignee: Oddur Sigurdsson
+claimed: 2026-11-26
 created: 2026-11-25
-updated: 2026-11-25
+updated: 2026-11-26
 priority: p2
 risk: low
 surface: diagnostics
