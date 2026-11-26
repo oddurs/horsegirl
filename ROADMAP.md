@@ -12,12 +12,11 @@ named for gaits: Walk, Trot, Canter, Gallop.
 
 ## v0.1 — Walk
 
-`··········` 0% · 0 of 12 done · due 2027-01-31
+`··········` 0% · 0 of 11 done · due 2027-01-31
 
 An agent writes a horsegirl file, checks it, applies the fixes, and draws a flow diagram as SVG, from the command line or over MCP.
 
 - [ ] [`0115`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0115-reserve-the-horsegirl-name-on-crates-io-and-npm.md) Reserve the horsegirl name on crates.io and npm <sup>chore · p2 · release</sup>
-- [ ] [`BUG-140`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/BUG-140-a-quote-fix-for-a-link-target-keeps-the-label-outside-the-quotes.md) A quote fix for a link target keeps the label outside the quotes <sup>bug · p2 · language</sup>
 - [ ] [`BUG-161`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/BUG-161-a-written-against-the-name-marks-a-guess-or-says-why-not.md) A ? written against the name marks a guess, or says why not <sup>bug · p2 · language</sup>
 - [ ] [`BUG-169`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/BUG-169-two-links-from-one-thing-to-itself-draw-two-loops-and-two-labels-apart.md) Two links from one thing to itself draw two loops and two labels apart <sup>bug · p2 · layout</sup>
 - [ ] [`BUG-170`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/BUG-170-no-link-line-passes-through-the-label-of-another-link.md) No link line passes through the label of another link <sup>bug · p2 · layout</sup>

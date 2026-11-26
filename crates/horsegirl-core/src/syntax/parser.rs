@@ -1360,6 +1360,10 @@ impl<'s> Parser<'s> {
                     Text::Label => false,
                 },
                 TokenKind::Arrow | TokenKind::Cross => text == Text::Name,
+                // After an arrow, a colon starts the label, so it is not a
+                // character of the target name. Before an arrow it is, as in
+                // `a: b{c} -> D`.
+                TokenKind::Colon => text == Text::Name && self.after_arrow(from),
                 TokenKind::Open => match self.closes[index] {
                     None => true,
                     Some(close) => {
@@ -1399,6 +1403,16 @@ impl<'s> Parser<'s> {
             }
             index += 1;
         }
+    }
+
+    /// Whether an arrow comes before token `from` on its line, in the same
+    /// braces.
+    fn after_arrow(&self, from: usize) -> bool {
+        self.tokens[..from]
+            .iter()
+            .rev()
+            .take_while(|token| !matches!(token.kind, TokenKind::Newline | TokenKind::Open))
+            .any(|token| matches!(token.kind, TokenKind::Arrow | TokenKind::Cross))
     }
 
     /// Says that a fact is written in a habit of Mermaid, and what the canonical

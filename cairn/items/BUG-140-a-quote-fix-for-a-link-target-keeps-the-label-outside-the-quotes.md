@@ -3,10 +3,12 @@ id: 140
 uid: 8ed7f1cd-0b92-47f2-9811-f8c5efd7734d
 title: A quote fix for a link target keeps the label outside the quotes
 type: bug
-status: backlog
+status: done
 milestone: v0.1
+assignee: Oddur Sigurdsson
 created: 2026-11-25
-updated: 2026-11-25
+updated: 2026-11-26
+closed_at: 2026-11-26
 priority: p2
 risk: low
 surface: diagnostics
@@ -23,5 +25,9 @@ The cause is `Parser::extent` for a name: after an arrow, the scan of the target
 
 ## Acceptance criteria
 
-- [ ] `A -> B@x: pay` gives E0004 whose fix gives `A -> "B@x": pay`, and the fixed line parses as a link with the label `pay`.
-- [ ] A test holds a name with `:` inside it on the target side, such as `A -> "B: x"`, and states which form gets which fix.
+- [x] `A -> B@x: pay` gives E0004 whose fix gives `A -> "B@x": pay`, and the fixed line parses as a link with the label `pay`.
+- [x] A test holds a name with `:` inside it on the target side, such as `A -> "B: x"`, and states which form gets which fix.
+
+## 2026-11-26
+
+Watched pass: scripts/task check exits 0. New test a_quote_fix_for_a_target_leaves_the_label_outside holds A -> B@x: pay -> A -> "B@x": pay (E0004, safe fix, the fixed line reads with no diagnostic), A -x C@y: no, the unchanged source side, and A -> "B: x": pay with no diagnostic.

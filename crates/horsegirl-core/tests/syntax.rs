@@ -322,6 +322,24 @@ fn a_group_or_an_open_block_is_never_quoted_into_a_name() {
     }
 }
 
+// From BUG-140: after an arrow, a colon starts the label. The fix for a
+// target quotes the name and leaves the label outside. A name that holds a
+// colon is written in quotes, and then it has no fix.
+#[test]
+fn a_quote_fix_for_a_target_leaves_the_label_outside() {
+    for (source, repaired) in [
+        ("A -> B@x: pay", "A -> \"B@x\": pay"),
+        ("A@b -> C: pay", "\"A@b\" -> C: pay"),
+        ("A -x C@y: no", "A -x \"C@y\": no"),
+    ] {
+        assert_eq!(only(source).code, "E0004", "{source}");
+        assert_eq!(fixed(source), repaired, "{source}");
+        assert_eq!(read(repaired).1, [""; 0], "{repaired}");
+    }
+    // A quoted name holds a colon with no fix.
+    assert_eq!(read("A -> \"B: x\": pay").1, [""; 0]);
+}
+
 // Before or after an arrow, braces that hold one word and no space are
 // characters of the name. Any other braces are a group, and a link cannot
 // hold a group, so the arrow is the mistake and quotes are not the fix.
