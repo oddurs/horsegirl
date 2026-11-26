@@ -355,8 +355,8 @@ fn braces_before_an_arrow_are_characters_only_around_one_word() {
     }
 }
 
-// No text can hold a double quote, so the message says to remove it and
-// does not say to add quotes.
+// A text in double quotes cannot hold a double quote, so the message says to
+// remove it and does not say to add quotes.
 #[test]
 fn a_text_that_holds_a_double_quote_is_told_to_remove_it() {
     for (source, text) in [
@@ -376,6 +376,33 @@ fn a_text_that_holds_a_double_quote_is_told_to_remove_it() {
         );
         assert!(!error.message.contains("Write the"), "{}", error.message);
         assert_eq!(error.fix, None, "{source}");
+    }
+}
+
+// A bare label holds a double quote. Only a `{`, a `}` or a `@` beside one
+// is a mistake, and the message must not say that no label can hold one.
+#[test]
+fn a_bare_label_holds_a_double_quote() {
+    for source in ["A -> B: x \"y\"", "A -> C: \"p\" q", "A -x B: say \"hi\""] {
+        let (tree, codes) = read(source);
+        assert_eq!(codes, [""; 0], "{source}");
+        assert!(tree.contains("Label"), "{source}: {tree}");
+    }
+    for source in ["A -> D: say \"hi\" {x}", "A -> D: say \"hi\" @x"] {
+        let error = only(source);
+        assert_eq!((error.code, error.fix), ("E0004", None), "{source}");
+        assert!(
+            error
+                .message
+                .contains("a label in double quotes cannot hold a double quote"),
+            "{}",
+            error.message
+        );
+        assert!(
+            !error.message.contains("cannot hold one"),
+            "{}",
+            error.message
+        );
     }
 }
 

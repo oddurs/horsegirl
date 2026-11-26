@@ -1457,8 +1457,19 @@ impl<'s> Parser<'s> {
     fn needs_quotes(&self, span: Range<usize>, text: Text) -> Diagnostic {
         let what = text.word();
         let text = &self.source[span.clone()];
-        // No text can hold a double quote, with quotes or without, so advice
-        // to add quotes would ask for a form the language does not have.
+        // A text in double quotes cannot hold a double quote, so advice to add
+        // quotes would ask for a form the language does not have. A bare label
+        // holds one, so only the reserved character makes it a mistake.
+        if text.contains('"') && what == "label" {
+            return diagnostic(
+                "E0004",
+                span,
+                format!(
+                    "`{}` holds `{{`, `}}` or `@`, so the label needs double quotes, and a label in double quotes cannot hold a double quote. Remove each double quote from the label, or remove the character that needs the quotes, and run check again.",
+                    quote(text)
+                ),
+            );
+        }
         if text.contains('"') {
             return diagnostic(
                 "E0004",

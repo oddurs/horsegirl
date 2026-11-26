@@ -8,7 +8,7 @@ milestone: v0.1
 assignee: Oddur Sigurdsson
 created: 2026-11-25
 updated: 2026-11-26
-closed_at: 2026-11-25
+closed_at: 2026-11-26
 priority: p2
 risk: low
 surface: diagnostics
@@ -34,7 +34,7 @@ ADR-119 says that a name or a value that needs quotes and lacks them is correcte
 
 - [x] `Sensors: wind, B -> Hub` gives E0004 with a fix, and the fixed line parses with no diagnostic.
 - [x] `api { note: GET /users/{id}, list }` gives one E0004 whose fix is `"GET /users/{id}, list"`, and the fixed line parses with no diagnostic.
-- [x] A text that holds a double quote gives a message that says to remove the double quote, and no message that says to add quotes.
+- [x] A text that holds a double quote and gives E0004 gets a message that says to remove the double quote, and no message that says to add quotes. A bare label that holds a double quote and no `{`, `}` or `@` gives no diagnostic.
 - [x] The fuzz test asserts that a fixed source has no E0004 at the place of the fix.
 - [x] `A -> GET /users/{id}` gives E0004 whose fix is `A -> "GET /users/{id}"`, and the fixed line parses with no diagnostic.
 - [x] `G{ A, B } -> C` and `Team@x{ A }` get no fix that puts a group inside quotes, and a test states this.
@@ -55,3 +55,7 @@ Fix round 2: the review gave no verdict. A probe found that 'a: b{c} -> D' got t
 ## 2026-11-26
 
 Fix round 3: the review returned no verdict, so no finding was open. HORSEGIRL_FUZZ_ROUNDS=150000 cargo test --release -p horsegirl-core --test fuzz no_input printed 'test result: ok. 1 passed' in 271 s. A hand probe of 15 inputs with horsegirl fix and then horsegirl check, among them 'A -> GET /users/{id}/{name}', 'A -> B, C@d {e}', 'a: b{c}, d -> E' and 'A@b{c} -> D', left no E0004 and no new error in any fixed line. scripts/task check exited 0.
+
+## 2026-11-26
+
+Fix round (review of PR #72): a bare label holds a double quote, so the E0004 label message no longer says that a label cannot hold one. horsegirl check printed: 'A -> B: x "y"' and 'A -> C: "p" q' 0 errors; 'A -> D: say "hi" {x}' E0004 'holds `{`, `}` or `@`, so the label needs double quotes, and a label in double quotes cannot hold a double quote. Remove each double quote...'; 'A { note: a "b" c }' and 'x "y" -> B' E0004 'Remove each double quote', no fix. Criterion 3 reworded to state the label case. cargo test --test syntax double_quote: 2 passed (a_bare_label_holds_a_double_quote, a_text_that_holds_a_double_quote_is_told_to_remove_it). scripts/task check: 315 tests run: 315 passed, exit 0.
