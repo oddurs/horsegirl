@@ -52,6 +52,10 @@ the project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - `W0108`: a name that ends in `/` followed by braces that hold one bare name,
   as in `GET /users/{id}`. The parser reads a group; the warning suggests
   writing the whole text in double quotes.
+- `W0109`: a label that holds an arrow, a name and a colon, as in
+  `A -> B: pay -> C: ship`. The parser reads one link with a long label; the
+  warning suggests writing the second link on its own line. A label with an
+  arrow and no colon after it, and a label in double quotes, give no warning.
 - `horsegirl fmt [--check] [FILE]` and `horsegirl_core::format::format` print a
   file in one canonical form: one statement on each line, one space around an
   arrow, the facts of a statement in the order of their keys, and quotes only

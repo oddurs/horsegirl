@@ -3,10 +3,12 @@ id: 163
 uid: bb464413-cece-49df-a742-4568c0e1ac4f
 title: A label that holds a second link gets a warning that splits it
 type: feature
-status: backlog
+status: done
 milestone: v0.1
+assignee: Oddur Sigurdsson
 created: 2026-11-25
-updated: 2026-11-25
+updated: 2026-11-26
+closed_at: 2026-11-26
 priority: p2
 risk: low
 surface: diagnostics
@@ -26,6 +28,10 @@ When a label holds an arrow, then a name, then a colon, as in `pay -> C: ship`, 
 
 ### Acceptance criteria
 
-- [ ] `A -> B: pay -> C: ship` gives one warning with its own code, and its suggested fix gives the lines `A -> B: pay` and `B -> C: ship`.
-- [ ] `A -> B: calls -> returns` gives no diagnostic.
-- [ ] A label in double quotes that holds `-> C: x` gives no diagnostic.
+- [x] `A -> B: pay -> C: ship` gives one warning with its own code, and its suggested fix gives the lines `A -> B: pay` and `B -> C: ship`.
+- [x] `A -> B: calls -> returns` gives no diagnostic.
+- [x] A label in double quotes that holds `-> C: x` gives no diagnostic.
+
+## 2026-11-26
+
+cargo test -p horsegirl-core --test check label: 2 passed. 'A -> B: pay -> C: ship' gives one W0109 with a suggested fix that gives 'A -> B: pay' and 'B -> C: ship', and the result checks clean. 'A -> B: calls -> returns', 'A -> B: "pay -> C: ship"', 'A -> B: "x" -> C' and 'A -> B: pay: ship' give no W0109. scripts/task check exit 0.
