@@ -379,22 +379,36 @@ fn a_text_that_holds_a_double_quote_is_told_to_remove_it() {
     }
 }
 
-// A bare label holds a double quote. Only a `{`, a `}` or a `@` beside one
-// is a mistake, and the message must not say that no label can hold one.
+// A bare text holds a double quote. Only a character that needs quotes beside
+// one is a mistake, and every kind of text gets the one message that says
+// why: a text in double quotes cannot hold a double quote.
 #[test]
-fn a_bare_label_holds_a_double_quote() {
-    for source in ["A -> B: x \"y\"", "A -> C: \"p\" q", "A -x B: say \"hi\""] {
-        let (tree, codes) = read(source);
+fn a_bare_text_holds_a_double_quote() {
+    for source in [
+        "A -> B: x \"y\"",
+        "A -> C: \"p\" q",
+        "A -x B: say \"hi\"",
+        "x\"y\" -> A",
+        "A -> x\"y\"",
+        "A, x\"y\" -> B",
+        "A { note: x\"y\" }",
+    ] {
+        let (_, codes) = read(source);
         assert_eq!(codes, [""; 0], "{source}");
-        assert!(tree.contains("Label"), "{source}: {tree}");
     }
-    for source in ["A -> D: say \"hi\" {x}", "A -> D: say \"hi\" @x"] {
+    for source in [
+        "A -> D: say \"hi\" {x}",
+        "A -> D: say \"hi\" @x",
+        "x\"y\"@z -> A",
+        "A -> x\"y\" {z}",
+        "A { note: x\"y\", z }",
+    ] {
         let error = only(source);
         assert_eq!((error.code, error.fix), ("E0004", None), "{source}");
         assert!(
             error
                 .message
-                .contains("a label in double quotes cannot hold a double quote"),
+                .contains("a text in double quotes cannot hold a double quote"),
             "{}",
             error.message
         );

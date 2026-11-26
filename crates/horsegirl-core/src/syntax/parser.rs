@@ -1458,24 +1458,14 @@ impl<'s> Parser<'s> {
         let what = text.word();
         let text = &self.source[span.clone()];
         // A text in double quotes cannot hold a double quote, so advice to add
-        // quotes would ask for a form the language does not have. A bare label
+        // quotes would ask for a form the language does not have. A bare text
         // holds one, so only the reserved character makes it a mistake.
-        if text.contains('"') && what == "label" {
-            return diagnostic(
-                "E0004",
-                span,
-                format!(
-                    "`{}` holds `{{`, `}}` or `@`, so the label needs double quotes, and a label in double quotes cannot hold a double quote. Remove each double quote from the label, or remove the character that needs the quotes, and run check again.",
-                    quote(text)
-                ),
-            );
-        }
         if text.contains('"') {
             return diagnostic(
                 "E0004",
                 span,
                 format!(
-                    "`{}` holds a double quote, and a {what} cannot hold one. Remove each double quote from the {what}, and run check again.",
+                    "`{}` holds a character that a bare {what} cannot hold, so the {what} needs double quotes, and a text in double quotes cannot hold a double quote. Remove each double quote from the {what}, or remove the character that needs the quotes, and run check again.",
                     quote(text)
                 ),
             );
@@ -1488,7 +1478,7 @@ impl<'s> Parser<'s> {
             .next_back()
             .is_some_and(char::is_alphanumeric);
         let space = if touches { " " } else { "" };
-        let fix = (text.len() <= MAX_FIX && !text.contains('"')).then(|| Fix {
+        let fix = (text.len() <= MAX_FIX).then(|| Fix {
             confidence: Confidence::Safe,
             description: format!("Write the {what} in double quotes."),
             edits: vec![Edit {

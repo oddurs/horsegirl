@@ -160,12 +160,11 @@ the project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   with no arrow, all braces after a name are a group, so
   `Team@x{ A }` and `Team@x {A}` get the quotes around `Team@x` only. Before,
   the fix put such a group inside the quotes and lost its parts.
-- A bare name or value that holds a double quote gives `E0004` with no fix
-  and a message that says to remove the double quote. A name or a value
-  cannot hold one, so the message no longer says to add quotes. A bare label
-  such as `x "y"` still holds a double quote. A label that also holds `{`, `}`
-  or `@`, as in `say "hi" {x}`, gets a message that says a text in double
-  quotes cannot hold a double quote.
+- A bare name, value or label can hold a double quote, as in `x"y" -> A`.
+  A text in double quotes cannot hold one. So a text that holds a double
+  quote and also a character that needs quotes, as in `x"y"@z -> A` or
+  `say "hi" {x}`, gives `E0004` with no fix. The message says that a text in
+  double quotes cannot hold a double quote, and no longer says to add quotes.
 - `horsegirl_core::text::measure` gives the width and height of a label in
   pixels, in Arial metrics, from a table bundled in the core. It gives the same
   result on Linux, macOS and in WebAssembly. A character outside the table
