@@ -26,7 +26,7 @@ An agent writes a horsegirl file, checks it, applies the fixes, and draws a flow
 
 ## later — Later
 
-`··········` 0% · 0 of 24 done
+`··········` 0% · 0 of 25 done
 
 Nothing on a date. Good ideas wait here until a release needs them.
 
@@ -54,6 +54,7 @@ Nothing on a date. Good ideas wait here until a release needs them.
 - [ ] [`BUG-175`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/BUG-175-a-written-against-the-last-word-of-a-label-marks-a-guess-or-says-why-not.md) A ? written against the last word of a label marks a guess, or says why not <sup>bug · p2 · check</sup>
 - [ ] [`BUG-176`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/BUG-176-a-label-has-a-place-that-no-line-crosses-when-two-lines-run-beside-its-path.md) A label has a place that no line crosses when two lines run beside its path <sup>bug · p2 · layout</sup>
 - [ ] [`BUG-178`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/BUG-178-three-or-more-loops-of-one-node-draw-no-line-through-the-label-of-another-loop.md) Three or more loops of one node draw no line through the label of another loop <sup>bug · p3 · layout</sup>
+- [ ] [`0181`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0181-a-host-sets-the-margin-of-a-drawing.md) A host sets the margin of a drawing <sup>feature · p2 · cli</sup>
 
 ## v0.2 — Trot
 

@@ -22,12 +22,12 @@ The SVG of `examples/checkout.horse` has the view box `-1 -1 1082.67 172`. The b
 
 ## Proposal
 
-Add one margin on each side of the view box in the SVG backend. Take its size from the theme tokens, so a host can change it.
+Add one margin on each side of the view box in the SVG backend. Take its size from a named constant in the theme module.
 
 ## Acceptance criteria
 
 - [x] On every golden case that draws, each box, line, arrow head and label is 16 px or more inside the view box. A test holds this.
-- [x] The margin is a theme token, listed in `docs/theme.md`.
+- [x] The margin is a named constant in `theme.rs` (`theme::MARGIN`), listed in `docs/theme.md`.
 - [x] `CHANGELOG.md` states the change to the SVG.
 
 ## 2026-11-26
@@ -37,3 +37,7 @@ Ran scripts/task check: passed. Test every_golden_picture_keeps_the_margin_clear
 ## 2026-11-26
 
 Correction: the 1112.67 wide view box is the 12 px test picture (tests/checkout.svg). The 14 px golden picture is now -16 -16 1225.66 202.
+
+## 2026-11-26
+
+Criterion 2 reworded. A CSS variable cannot move a view box, so the margin is the constant theme::MARGIN and not an --hg- token in theme::TOKENS. docs/theme.md says so. A margin that a host can set through the CLI or MCP is not part of this item.
