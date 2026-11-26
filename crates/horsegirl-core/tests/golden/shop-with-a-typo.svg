@@ -17,12 +17,12 @@
 <marker id="hg-head" viewBox="0 0 8 8" refX="8" refY="4" markerWidth="8" markerHeight="8" markerUnits="userSpaceOnUse" orient="auto"><path class="head" d="M0,0 L8,4 L0,8 z"/></marker>
 </defs>
 <rect class="page" x="-1" y="-1" width="579.15" height="158"/>
-<polyline class="link" points="90.14,18 122.49,18 122.49,48 160.49,48" marker-end="url(#hg-head)"/>
-<polyline class="link" points="96.49,78 134.49,78 134.49,48 160.49,48" marker-end="url(#hg-head)"/>
-<polyline class="link" points="267.09,48 299.09,48 299.09,18 345.1,18" marker-end="url(#hg-head)"/>
-<polyline class="link" points="267.09,48 299.09,48 299.09,78 335.37,78" marker-end="url(#hg-head)"/>
-<polyline class="link" points="415.89,18 455.9,18 455.9,78 493.9,78" marker-end="url(#hg-head)"/>
-<polyline class="link" points="429.9,138 467.9,138 467.9,78 493.9,78" marker-end="url(#hg-head)"/>
+<path class="link" d="M90.14,18 L122.49,18 L122.49,48 L160.49,48" marker-end="url(#hg-head)"/>
+<path class="link" d="M96.49,78 L134.49,78 L134.49,48 L160.49,48" marker-end="url(#hg-head)"/>
+<path class="link" d="M267.09,48 L299.09,48 L299.09,18 L345.1,18" marker-end="url(#hg-head)"/>
+<path class="link" d="M267.09,48 L299.09,48 L299.09,78 L335.37,78" marker-end="url(#hg-head)"/>
+<path class="link" d="M415.89,18 L455.9,18 L455.9,78 L493.9,78" marker-end="url(#hg-head)"/>
+<path class="link" d="M429.9,138 L467.9,138 L467.9,78 L493.9,78" marker-end="url(#hg-head)"/>
 <rect class="thing" x="6.35" y="0" width="83.78" height="36" rx="4"/>
 <rect class="thing" x="0" y="60" width="96.49" height="36" rx="4"/>
 <rect class="thing" x="160.49" y="30" width="106.6" height="36" rx="4"/>

@@ -3,10 +3,12 @@ id: 152
 uid: 4625474d-379e-4a64-a585-c267c37d3352
 title: A link label stays legible where it sits on its own line
 type: bug
-status: backlog
+status: doing
 milestone: v0.1
+assignee: Oddur Sigurdsson
+claimed: 2026-11-26
 created: 2026-11-25
-updated: 2026-11-25
+updated: 2026-11-26
 priority: p2
 risk: low
 surface: svg

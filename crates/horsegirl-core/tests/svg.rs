@@ -212,6 +212,89 @@ fn an_empty_label_has_no_text_length() {
     assert!(!empty.contains("textLength"), "{empty}");
 }
 
+// The layout puts a link label on its own line. Drawn through the text, the
+// line reads as a strike-through (BUG-152).
+#[test]
+fn no_link_line_is_drawn_across_the_text_of_its_own_label() {
+    let scene = scene(CHECKOUT);
+    let svg = draw(&scene, "checkout");
+    let paths: Vec<Vec<Vec<(f64, f64)>>> = svg
+        .lines()
+        .filter(|l| l.starts_with("<path class=\"link"))
+        .map(runs)
+        .collect();
+    let links: Vec<_> = scene
+        .shapes
+        .iter()
+        .filter(|s| s.role == Role::Link)
+        .collect();
+    assert_eq!(paths.len(), links.len());
+    let mut labels = 0;
+    for (link, path) in links.iter().zip(&paths) {
+        // The cut keeps both ends, so the arrow head stays on the box.
+        let first = link.points[0];
+        let last = link.points[link.points.len() - 1];
+        assert_eq!(
+            path[0][0],
+            (round(first.x), round(first.y)),
+            "{:?}",
+            link.of
+        );
+        assert_eq!(
+            *path.last().unwrap().last().unwrap(),
+            (round(last.x), round(last.y)),
+            "{:?}",
+            link.of
+        );
+        let own = scene
+            .shapes
+            .iter()
+            .filter(|s| s.role == Role::Label && s.of == link.of);
+        for label in own {
+            labels += 1;
+            let r = label.rect;
+            for run in path {
+                for pair in run.windows(2) {
+                    let ((ax, ay), (bx, by)) = (pair[0], pair[1]);
+                    let across = ax.min(bx) < r.x + r.width
+                        && ax.max(bx) > r.x
+                        && ay.min(by) < r.y + r.height
+                        && ay.max(by) > r.y;
+                    assert!(
+                        !across,
+                        "link {:?} crosses its label {:?}",
+                        link.of, label.text
+                    );
+                }
+            }
+        }
+    }
+    assert_eq!(labels, 7);
+}
+
+/// The runs of points of a link path as the backend writes it: `M` starts a
+/// run and `L` goes on with it.
+fn runs(line: &str) -> Vec<Vec<(f64, f64)>> {
+    let (_, rest) = line.split_once(" d=\"").expect(line);
+    let d = rest.split_once('"').unwrap().0;
+    let mut runs: Vec<Vec<(f64, f64)>> = Vec::new();
+    for step in d.split(' ') {
+        let (x, y) = step[1..].split_once(',').expect(step);
+        let p = (x.parse().unwrap(), y.parse().unwrap());
+        match &step[..1] {
+            "M" => runs.push(vec![p]),
+            "L" => runs.last_mut().expect(d).push(p),
+            other => panic!("{other} in {d}"),
+        }
+    }
+    runs
+}
+
+/// A coordinate as the SVG writes it: two decimals.
+fn round(v: f64) -> f64 {
+    (v * 100.0).round() / 100.0
+}
+
 #[test]
 fn the_svg_has_a_title_and_a_desc() {
     let svg = checkout();

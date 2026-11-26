@@ -18,9 +18,9 @@
 </defs>
 <rect class="page" x="-1" y="-1" width="530.6" height="82"/>
 <rect class="group" x="147.78" y="0" width="253.03" height="80" rx="4"/>
-<polyline class="link" points="83.78,48 161.78,48" marker-end="url(#hg-head)"/>
-<polyline class="link" points="232.57,48 296.57,48" marker-end="url(#hg-head)"/>
-<polyline class="link" points="386.82,48 464.82,48" marker-end="url(#hg-head)"/>
+<path class="link" d="M83.78,48 L161.78,48" marker-end="url(#hg-head)"/>
+<path class="link" d="M232.57,48 L296.57,48" marker-end="url(#hg-head)"/>
+<path class="link" d="M386.82,48 L464.82,48" marker-end="url(#hg-head)"/>
 <rect class="thing slot-1 owner-commerce" x="161.78" y="30" width="70.79" height="36" rx="4"/>
 <rect class="thing slot-1 owner-commerce" x="296.57" y="30" width="90.25" height="36" rx="4"/>
 <rect class="thing slot-2 owner-growth" x="464.82" y="30" width="63.79" height="36" rx="4"/>

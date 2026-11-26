@@ -12,12 +12,15 @@
 
 use std::fmt::Write as _;
 
-use crate::scene::{Role, Scene, Shape, number};
+use crate::scene::{Point, Rect, Role, Scene, Shape, number};
 use crate::text::{self, Style};
 use crate::theme;
 
 /// The room around the scene, so a stroke on its edge is not cut in half.
 const MARGIN: f64 = 1.0;
+
+/// The room between a link label and the line that stops at it.
+const LABEL_PAD: f64 = 3.0;
 
 /// The style of every picture. Each rule is scoped to the `horsegirl` class,
 /// so a page that holds the SVG inline keeps its own `.label` and `.link`.
@@ -101,13 +104,19 @@ pub fn draw(scene: &Scene, title: &str) -> String {
     let owners = owners(scene);
     let colour = scene.colour.as_deref();
     for shape in &scene.shapes {
-        out.push_str(&element(shape, style, colour, &owners));
+        out.push_str(&element(scene, shape, style, colour, &owners));
     }
     out.push_str("</svg>\n");
     out
 }
 
-fn element(shape: &Shape, style: Style, colour: Option<&str>, owners: &[&str]) -> String {
+fn element(
+    scene: &Scene,
+    shape: &Shape,
+    style: Style,
+    colour: Option<&str>,
+    owners: &[&str],
+) -> String {
     let class = class(shape, colour, owners);
     let r = shape.rect;
     match shape.role {
@@ -118,16 +127,33 @@ fn element(shape: &Shape, style: Style, colour: Option<&str>, owners: &[&str]) -
             number(r.width),
             number(r.height)
         ),
+        // The layout puts a link label on its own line, and the text has no
+        // background: a colour behind it would have to match the page or the
+        // group that it sits on. So the line stops at the label instead, and
+        // the label stays where the layout put it. A label of another link
+        // between the same two things cuts the line too: both name the pair.
         Role::Link => {
-            let points: Vec<String> = shape
-                .points
+            let holes: Vec<Rect> = scene
+                .shapes
                 .iter()
-                .map(|p| format!("{},{}", number(p.x), number(p.y)))
+                .filter(|s| s.role == Role::Label && s.of == shape.of)
+                .map(|s| pad(s.rect))
                 .collect();
-            format!(
-                "<polyline class=\"{class}\" points=\"{}\" marker-end=\"url(#hg-head)\"/>\n",
-                points.join(" ")
-            )
+            let mut d = String::new();
+            for run in cut(&shape.points, &holes) {
+                for (i, p) in run.iter().enumerate() {
+                    let pen = if i == 0 { 'M' } else { 'L' };
+                    write!(
+                        d,
+                        "{}{pen}{},{}",
+                        if d.is_empty() { "" } else { " " },
+                        number(p.x),
+                        number(p.y)
+                    )
+                    .expect("a String takes any write");
+                }
+            }
+            format!("<path class=\"{class}\" d=\"{d}\" marker-end=\"url(#hg-head)\"/>\n")
         }
         // The baseline comes from the measured face, not from
         // `dominant-baseline`, which renderers treat differently.
@@ -158,6 +184,76 @@ fn element(shape: &Shape, style: Style, colour: Option<&str>, owners: &[&str]) -
             )
         }
     }
+}
+
+fn pad(r: Rect) -> Rect {
+    Rect {
+        x: r.x - LABEL_PAD,
+        y: r.y - LABEL_PAD,
+        width: r.width + 2.0 * LABEL_PAD,
+        height: r.height + 2.0 * LABEL_PAD,
+    }
+}
+
+/// The parts of the line through `points` that lie outside every hole, each
+/// as a run of points from its start to its end.
+fn cut(points: &[Point], holes: &[Rect]) -> Vec<Vec<Point>> {
+    let mut runs: Vec<Vec<Point>> = Vec::new();
+    let mut down = false;
+    for pair in points.windows(2) {
+        let (a, b) = (pair[0], pair[1]);
+        let at = |t: f64| Point {
+            x: a.x + (b.x - a.x) * t,
+            y: a.y + (b.y - a.y) * t,
+        };
+        let mut hidden: Vec<(f64, f64)> = holes.iter().filter_map(|h| inside(a, b, *h)).collect();
+        hidden.sort_by(|x, y| x.0.total_cmp(&y.0));
+        let mut shown = Vec::new();
+        let mut t = 0.0;
+        for (t0, t1) in hidden {
+            if t0 > t {
+                shown.push((t, t0));
+            }
+            t = f64::max(t, t1);
+        }
+        if t < 1.0 {
+            shown.push((t, 1.0));
+        }
+        let mut next = false;
+        for (start, end) in shown {
+            match runs.last_mut() {
+                Some(run) if down && start <= 0.0 => run.push(at(end)),
+                _ => runs.push(vec![at(start), at(end)]),
+            }
+            next = end >= 1.0;
+        }
+        down = next;
+    }
+    runs
+}
+
+/// The part of the segment from `a` to `b` inside `r`, as the range of `t`
+/// in `a + (b - a) * t`. `None` when the segment misses `r`.
+fn inside(a: Point, b: Point, r: Rect) -> Option<(f64, f64)> {
+    let (dx, dy) = (b.x - a.x, b.y - a.y);
+    let (mut t0, mut t1) = (0.0_f64, 1.0_f64);
+    for (p, q) in [
+        (-dx, a.x - r.x),
+        (dx, r.x + r.width - a.x),
+        (-dy, a.y - r.y),
+        (dy, r.y + r.height - a.y),
+    ] {
+        if p.abs() < f64::EPSILON {
+            if q < 0.0 {
+                return None;
+            }
+        } else if p < 0.0 {
+            t0 = t0.max(q / p);
+        } else {
+            t1 = t1.min(q / p);
+        }
+    }
+    (t0 < t1).then_some((t0, t1))
 }
 
 /// The role of a shape, the palette slot of its colour fact, then

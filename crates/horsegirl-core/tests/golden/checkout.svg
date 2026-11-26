@@ -18,15 +18,15 @@
 </defs>
 <rect class="page" x="-1" y="-1" width="1082.67" height="172"/>
 <rect class="group" x="380.77" y="18" width="383.63" height="92" rx="4"/>
-<polyline class="link" points="90.14,18 153.33,18 153.33,78 210.17,78" marker-end="url(#hg-head)"/>
-<polyline class="link" points="96.49,78 210.17,78" marker-end="url(#hg-head)"/>
-<polyline class="link" points="316.77,78 348.77,78 348.77,48 504.96,48 504.96,78 532.36,78" marker-end="url(#hg-head)"/>
-<polyline class="link" points="316.77,78 394.77,78" marker-end="url(#hg-head)"/>
-<polyline class="link" points="465.55,78 532.36,78" marker-end="url(#hg-head)"/>
-<polyline class="link" points="465.55,78 492.96,78 492.96,152 535.86,152" marker-end="url(#hg-head)"/>
-<polyline class="link" points="622.61,78 686.61,78" marker-end="url(#hg-head)"/>
-<polyline class="link" points="750.39,78 828.39,78" marker-end="url(#hg-head)"/>
-<polyline class="link" points="899.19,78 963.19,78" marker-end="url(#hg-head)"/>
+<path class="link" d="M90.14,18 L153.33,18 L153.33,37.18 M153.33,58.82 L153.33,78 L210.17,78" marker-end="url(#hg-head)"/>
+<path class="link" d="M96.49,78 L210.17,78" marker-end="url(#hg-head)"/>
+<path class="link" d="M316.77,78 L348.77,78 L348.77,48 L504.96,48 L504.96,78 L532.36,78" marker-end="url(#hg-head)"/>
+<path class="link" d="M316.77,78 L326.31,78 M371.22,78 L394.77,78" marker-end="url(#hg-head)"/>
+<path class="link" d="M465.55,78 L474.55,78 M523.36,78 L532.36,78" marker-end="url(#hg-head)"/>
+<path class="link" d="M465.55,78 L492.96,78 L492.96,110 M492.96,131.64 L492.96,152 L535.86,152" marker-end="url(#hg-head)"/>
+<path class="link" d="M622.61,78 L638.37,78 M670.84,78 L686.61,78" marker-end="url(#hg-head)"/>
+<path class="link" d="M750.39,78 L771.21,78 M821.58,78 L828.39,78" marker-end="url(#hg-head)"/>
+<path class="link" d="M899.19,78 L913.01,78 M949.37,78 L963.19,78" marker-end="url(#hg-head)"/>
 <rect class="thing slot-1 owner-apps" x="6.35" y="0" width="83.78" height="36" rx="4"/>
 <rect class="thing slot-1 owner-apps" x="0" y="60" width="96.49" height="36" rx="4"/>
 <rect class="thing slot-2 owner-platform" x="210.17" y="60" width="106.6" height="36" rx="4"/>
