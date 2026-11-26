@@ -28,3 +28,7 @@ Since item 0123 the flow lens draws a link to a group. In `API gateway -> Servic
 ## 2026-11-26
 
 Watched pass: cargo test -p horsegirl-core --test check printed 41 passed, 0 failed, including a_thing_in_a_linked_group_is_not_alone_at_any_depth (group link, depth two, rule on group) and a_group_needs_no_link_of_its_own_and_its_parts_do (Spare still W0107). scripts/task check passed. W0107 text in codes.rs, docs/diagnostics.md and bench/runs/hand/report.md now states the rule.
+
+## 2026-11-26
+
+Round 1: ancestor walk in orphans now skips links W0110 reports. Test a_link_that_w0110_reports_does_not_reach_the_parts_of_its_group passes; scripts/task check passes.
