@@ -148,11 +148,16 @@ fn typos(source: &str, model: &Model) -> Vec<(ThingId, Diagnostic)> {
 /// A name and the same name with a final `s` (`Agent` and `Agents`) are two
 /// things too: a fix that merged them would be a guess, and the corpus holds
 /// no plural that is a typo.
+/// The exception is a stem that ends in `s`: `Addres` beside `Address` stays a typo.
 fn siblings(a: &str, b: &str) -> bool {
     if a.chars().count() < 3 && b.chars().count() < 3 {
         return true;
     }
-    if a.strip_suffix('s') == Some(b) || b.strip_suffix('s') == Some(a) {
+    // A stem that ends in `s` is excluded: `Addres` beside `Address` is a
+    // dropped letter, not a plural.
+    let plural_of =
+        |long: &str, short: &str| long.strip_suffix('s') == Some(short) && !short.ends_with('s');
+    if plural_of(a, b) || plural_of(b, a) {
         return true;
     }
     let is_marker = |word: &str| {

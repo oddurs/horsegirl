@@ -134,6 +134,14 @@ fn a_plural_beside_its_singular_is_not_a_typo() {
 }
 
 #[test]
+fn a_dropped_final_s_after_an_s_is_still_a_typo() {
+    for (long, short) in [("Address", "Addres"), ("Process", "Proces")] {
+        let source = format!("{long} -> X\nX -> {long}\nY -> {short}\n");
+        assert_eq!(codes(&check(&source)), ["E0412"], "{short} beside {long}");
+    }
+}
+
+#[test]
 fn a_misspelt_name_is_still_a_typo() {
     let source = "A -> Billing\nBilling -> B\nC -> Biling\n";
     assert_eq!(codes(&check(source)), ["E0412"]);

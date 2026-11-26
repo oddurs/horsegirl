@@ -312,7 +312,8 @@ def siblings(a, b):
     # Mirrors check.rs: a numbered or lettered series is not a typo.
     if len(a) < 3 and len(b) < 3:
         return True
-    if a == b + "s" or b == a + "s":
+    # A stem that ends in "s" is a dropped letter, not a plural.
+    if (a == b + "s" and not b.endswith("s")) or (b == a + "s" and not a.endswith("s")):
         return True
 
     def marker(w):
