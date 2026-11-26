@@ -11,7 +11,7 @@
 
 use horsegirl_core::lens::{self, FLOW};
 use horsegirl_core::model::{Model, lower};
-use horsegirl_core::scene::{Role, Scene};
+use horsegirl_core::scene::{HEAD_LENGTH, Point, Rect, Role, Scene};
 use horsegirl_core::svg::draw;
 use horsegirl_core::syntax::parse;
 use horsegirl_core::text::{Style, measure};
@@ -457,4 +457,77 @@ fn only_a_thing_takes_a_palette_slot_for_its_owner() {
     let svg = draw(&scene(source), "owners");
     assert!(svg.contains("class=\"thing slot-1 owner-x\""), "{svg}");
     assert!(svg.contains("class=\"thing slot-2 owner-y\""), "{svg}");
+}
+
+/// The box that the arrow head of a link covers: `HEAD_LENGTH` back from the
+/// last point along the last segment, as wide as the head is long.
+fn head_box(points: &[Point]) -> Rect {
+    let (a, b) = (points[points.len() - 2], points[points.len() - 1]);
+    let (dx, dy) = (b.x - a.x, b.y - a.y);
+    let half = HEAD_LENGTH / 2.0;
+    let (x0, x1) = if dx.abs() > dy.abs() {
+        let tail = b.x - HEAD_LENGTH * dx.signum();
+        (tail.min(b.x), tail.max(b.x))
+    } else {
+        (b.x - half, b.x + half)
+    };
+    let (y0, y1) = if dx.abs() > dy.abs() {
+        (b.y - half, b.y + half)
+    } else {
+        let tail = b.y - HEAD_LENGTH * dy.signum();
+        (tail.min(b.y), tail.max(b.y))
+    };
+    Rect {
+        x: x0,
+        y: y0,
+        width: x1 - x0,
+        height: y1 - y0,
+    }
+}
+
+fn touches(a: Rect, b: Rect) -> bool {
+    a.x < b.x + b.width && b.x < a.x + a.width && a.y < b.y + b.height && b.y < a.y + a.height
+}
+
+/// The arrow heads in `scene` that cover a label, as a message for each.
+fn heads_over_labels(scene: &Scene) -> Vec<String> {
+    let mut found = Vec::new();
+    for link in scene.shapes.iter().filter(|s| s.role == Role::Link) {
+        if link.points.len() < 2 {
+            continue;
+        }
+        let head = head_box(&link.points);
+        for label in scene.shapes.iter().filter(|s| s.role == Role::Label) {
+            if touches(head, label.rect) {
+                found.push(format!(
+                    "the head of {:?} covers the label {:?}",
+                    link.of, label.text
+                ));
+            }
+        }
+    }
+    found
+}
+
+#[test]
+fn no_arrow_head_covers_a_label_in_the_reference_flow() {
+    assert_eq!(heads_over_labels(&scene(CHECKOUT)), Vec::<String>::new());
+}
+
+#[cfg(not(target_family = "wasm"))]
+#[test]
+fn no_arrow_head_covers_a_label_in_any_golden_picture() {
+    let dir = concat!(env!("CARGO_MANIFEST_DIR"), "/tests/golden");
+    let mut seen = 0;
+    for entry in std::fs::read_dir(dir).unwrap() {
+        let path = entry.unwrap().path();
+        if path.extension().is_none_or(|e| e != "horse") || !path.with_extension("svg").exists() {
+            continue;
+        }
+        let source = std::fs::read_to_string(&path).unwrap();
+        let found = heads_over_labels(&scene(&source));
+        assert!(found.is_empty(), "{}: {found:?}", path.display());
+        seen += 1;
+    }
+    assert!(seen > 0, "no golden picture found");
 }

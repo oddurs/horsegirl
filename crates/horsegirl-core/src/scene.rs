@@ -45,6 +45,13 @@ impl Role {
     }
 }
 
+/// The length of an arrow head in pixels. The SVG backend draws the head this
+/// long, and the layout keeps it clear of the label of its link.
+pub const HEAD_LENGTH: f64 = 8.0;
+
+/// The room between a link label and the line that stops at it, in pixels.
+pub const LABEL_CUT: f64 = 3.0;
+
 /// A position in pixels. `x` grows to the right and `y` grows down.
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub struct Point {

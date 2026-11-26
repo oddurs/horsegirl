@@ -136,6 +136,9 @@ the project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Changed
 
+- The flow lens keeps 11 px, not 6 px, between a link label and each end of
+  its corridor. The 8 px arrow head no longer covers the end of the label.
+  A corridor with no label keeps its width.
 - `W0107` no longer warns about a thing inside a group that a link or a rule
   names, at any depth. The picture draws such a thing inside a box that the
   link reaches. A thing in a group that nothing names still gives `W0107`. A link that `W0110` reports does not reach the parts of its group.
