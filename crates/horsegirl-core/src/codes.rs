@@ -100,6 +100,10 @@ pub const CATALOGUE: &[Code] = &[
         code: "W0108",
         summary: "A name that ends in `/` is followed by braces that hold one bare name, as in `GET /users/{id}`. The parser reads a group, and the writer likely meant one name. The suggested fix writes the whole text in double quotes.",
     },
+    Code {
+        code: "W0109",
+        summary: "A label holds an arrow, a name and a colon, as in `A -> B: pay -> C: ship`. The parser reads one link with a long label, and the writer likely meant two links. The suggested fix writes the second link on its own line. A label with an arrow and no colon after it, and a label in double quotes, give no warning.",
+    },
 ];
 
 /// The catalogue as a Markdown table, as `docs/diagnostics.md` holds it.

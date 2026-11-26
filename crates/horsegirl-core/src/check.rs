@@ -9,7 +9,7 @@
 use crate::diagnostic::{Confidence, Diagnostic, Edit, Fix, Fixed, LineIndex, apply_safe};
 use crate::lens::Need;
 use crate::model::{Model, Thing, ThingId, Why, lower};
-use crate::syntax::{Element, Node, NodeKind, parse};
+use crate::syntax::{Element, Node, NodeKind, TokenKind, parse};
 
 /// Every lens that a `show` line can pick, as the language card lists them.
 pub const LENSES: &[&str] = &["flow", "sequence", "lanes", "matrix", "rings", "seams"];
@@ -22,6 +22,7 @@ pub fn check(source: &str) -> Vec<Diagnostic> {
     let mut diagnostics = parse.diagnostics;
     diagnostics.extend(of_model(source, &lower(&parse.tree)));
     diagnostics.extend(paths(&parse.tree));
+    diagnostics.extend(label_links(source, &parse.tree));
     sort(&mut diagnostics);
     diagnostics
 }
@@ -365,6 +366,100 @@ fn path(things: &Node<'_>) -> Option<Diagnostic> {
                 text: format!("\"{text}\""),
             }],
         }),
+    })
+}
+
+/// W0109: a label that holds an arrow, a name and a colon, as in
+/// `A -> B: pay -> C: ship`. The parser keeps the whole text as one label, so
+/// the file passes and draws one link where the writer meant two. A label
+/// with an arrow and no colon after it, as in `calls -> returns`, is common
+/// and stays as it is. The fix is only suggested: it cannot know that the
+/// writer meant a chain. This reads the tree, because the label is one node.
+fn label_links(source: &str, tree: &Node<'_>) -> Vec<Diagnostic> {
+    let mut found = Vec::new();
+    label_link_lines(source, tree, &mut found);
+    found
+}
+
+fn label_link_lines(source: &str, node: &Node<'_>, found: &mut Vec<Diagnostic>) {
+    if node.kind == NodeKind::Link
+        && let Some(diagnostic) = label_link(source, node)
+    {
+        found.push(diagnostic);
+    }
+    for inner in node.children.iter().filter_map(|element| match element {
+        Element::Node(inner) => Some(inner),
+        Element::Token(_) => None,
+    }) {
+        label_link_lines(source, inner, found);
+    }
+}
+
+fn label_link(source: &str, link: &Node<'_>) -> Option<Diagnostic> {
+    let label = child_of(link, NodeKind::Label)?;
+    let tokens: Vec<_> = label
+        .children
+        .iter()
+        .filter_map(|element| match element {
+            Element::Token(token) => Some(token),
+            Element::Node(_) => None,
+        })
+        .collect();
+    // An arrow, then names, then a colon. A quoted label is one token, so a
+    // quoted `-> C: x` never matches.
+    let is_name = |kind: TokenKind| {
+        matches!(
+            kind,
+            TokenKind::Word | TokenKind::Quoted | TokenKind::Comma | TokenKind::Space
+        )
+    };
+    let arrow = (0..tokens.len()).find(|&index| {
+        if tokens[index].kind != TokenKind::Arrow {
+            return false;
+        }
+        let after = &tokens[index + 1..];
+        let names = after.iter().take_while(|t| is_name(t.kind)).count();
+        after[..names]
+            .iter()
+            .any(|t| matches!(t.kind, TokenKind::Word | TokenKind::Quoted))
+            && after.get(names).map(|t| t.kind) == Some(TokenKind::Colon)
+    })?;
+    let arrow_start = tokens[arrow].start;
+    let end = tokens.last().map(|t| t.span().end)?;
+    let span = arrow_start..end;
+    let tail = &source[span.clone()];
+    let first = tokens.first()?.start;
+    let before = source[first..arrow_start].trim_end();
+    let first_label = first..first + before.len();
+    let target = link
+        .children
+        .iter()
+        .filter_map(|element| match element {
+            Element::Node(names) if names.kind == NodeKind::Names => Some(names),
+            _ => None,
+        })
+        .nth(1)?;
+    let target = target.to_string();
+    let target = target.trim();
+    let line_start = source[..first_start(link)?]
+        .rfind('\n')
+        .map_or(0, |n| n + 1);
+    let indent = &source[line_start..first_start(link)?];
+    let fix = indent.chars().all(|c| c == ' ' || c == '\t').then(|| Fix {
+        confidence: Confidence::Suggested,
+        description: format!("Write the second link on its own line, as `{target} {tail}`."),
+        edits: vec![Edit {
+            span: first_label.end..end,
+            text: format!("\n{indent}{target} {tail}"),
+        }],
+    });
+    Some(Diagnostic {
+        code: "W0109",
+        span,
+        message: format!(
+            "The label holds `{tail}`, which reads as a second link. A label keeps arrows and colons as text, so this is one link with a long label. If you mean two links, write each on its own line, the second as `{target} {tail}`. If you mean one label, write it in double quotes."
+        ),
+        fix,
     })
 }
 

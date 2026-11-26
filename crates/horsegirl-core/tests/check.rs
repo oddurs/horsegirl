@@ -468,3 +468,41 @@ fn a_held_name_in_a_link_inside_braces_has_no_fix() {
     assert_eq!(found.len(), 1, "{found:#?}");
     assert_eq!(found[0].0.fix, None);
 }
+
+#[test]
+fn a_label_that_holds_a_second_link_gets_a_warning_that_splits_it() {
+    let source = "A -> B: pay -> C: ship\n";
+    let diagnostics = check(source);
+    let found: Vec<&Diagnostic> = diagnostics.iter().filter(|d| d.code == "W0109").collect();
+    assert_eq!(found.len(), 1, "{diagnostics:#?}");
+    assert_eq!(&source[found[0].span.clone()], "-> C: ship");
+    let fix = found[0].fix.as_ref().expect("the warning carries a fix");
+    assert_eq!(fix.confidence, Confidence::Suggested);
+    let repaired = fix.apply(source);
+    assert_eq!(repaired, "A -> B: pay\nB -> C: ship\n");
+    assert_eq!(codes(&check(&repaired)), Vec::<&str>::new());
+    // The second link keeps the indent of the first.
+    let nested = "G {\n  A -> B: pay -> C: ship\n}\n";
+    let fix = check(nested)
+        .into_iter()
+        .find(|d| d.code == "W0109")
+        .and_then(|d| d.fix)
+        .expect("the nested warning carries a fix");
+    assert_eq!(fix.apply(nested), "G {\n  A -> B: pay\n  B -> C: ship\n}\n");
+}
+
+#[test]
+fn a_label_with_an_arrow_and_no_colon_after_it_gives_no_warning() {
+    for source in [
+        "A -> B: calls -> returns\n",
+        "A -> B: \"pay -> C: ship\"\n",
+        "A -> B: \"x\" -> C\n",
+        "A -> B: pay: ship\n",
+    ] {
+        assert!(
+            !codes(&check(source)).contains(&"W0109"),
+            "{source:?}: {:#?}",
+            check(source)
+        );
+    }
+}

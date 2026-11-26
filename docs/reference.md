@@ -287,6 +287,7 @@ from it.
 | `W0010` | Nothing. This version does not order a story. |
 | `W0107` | Link the thing, or remove it. |
 | `W0108` | Write the whole name in double quotes, as in `"GET /users/{id}"`. |
+| `W0109` | Write the second link on its own line, or write the label in double quotes. The suggested fix writes the two lines. |
 
 These files each show one mistake:
 
