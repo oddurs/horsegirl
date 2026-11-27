@@ -216,6 +216,15 @@ git push -q origin main
 refused ci | grep -q "already exists" || fail "an existing tag at another commit was accepted"
 [ "$(git ls-remote origin refs/tags/v0.1.0 | cut -f 1)" = "$merged" ] || fail "v0.1.0 moved"
 
+# A release title whose Cargo.toml states the version and whose changelog has
+# no section for it is refused.
+sed -i.bak 's/^version = "0.1.0"$/version = "0.2.0"/' Cargo.toml
+rm -f Cargo.toml.bak
+git commit -q -am "chore(release): v0.2.0 (#10)"
+git push -q origin main
+refused ci | grep -q "has no section" || fail "a release with no changelog section was tagged"
+[ -z "$(git ls-remote origin refs/tags/v0.2.0)" ] || fail "v0.2.0 was pushed"
+
 # check-changelog: an item whose surface is not none needs a new entry.
 item() {
   printf -- '---\nid: %s\ntitle: An item\nsurface: %s\n---\n\n## Purpose\n\n---\n\nsurface: none\n' "$1" "$2" \
@@ -243,5 +252,21 @@ git checkout -q CHANGELOG.md
 echo "- A late note." >>CHANGELOG.md
 refused check feat/0007-an-item >/dev/null || fail "an entry outside the Unreleased section passed"
 git checkout -q CHANGELOG.md
+# An entry that the base already holds is not a new entry.
+sed -i.bak 's/^## \[Unreleased\]$/## [Unreleased]\n\n### Added\n\n- The first command./' CHANGELOG.md
+rm -f CHANGELOG.md.bak
+git commit -q -am "docs: an unreleased entry"
+base=$(git rev-parse HEAD)
+refused check feat/0007-an-item | grep -q "surface: cli" || fail "an entry of the base counted as a new entry"
+
+# A crate with its own version is refused before the release commit.
+sed -i.bak 's/^version.workspace = true$/version = "0.0.0"/' crates/two/Cargo.toml
+rm -f crates/two/Cargo.toml.bak
+cargo metadata --format-version 1 --offline >/dev/null
+git commit -q -am "chore: give crate two its own version"
+git push -q origin main
+refused scripts/agent release 0.3.0 | grep -q "do not take the workspace version" ||
+  fail "a crate with its own version was accepted"
+git ls-remote --exit-code origin refs/heads/chore/release-0.3.0 >/dev/null && fail "a refused release was pushed"
 
 echo "tests/release.sh: ok"
