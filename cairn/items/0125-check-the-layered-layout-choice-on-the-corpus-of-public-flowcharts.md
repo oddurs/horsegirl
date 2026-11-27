@@ -9,9 +9,9 @@ assignee: Oddur Sigurdsson
 depends_on:
 - 17
 created: 2026-11-25
-updated: 2026-11-25
+updated: 2026-11-27
 closed_at: 2026-11-25
-priority: p2
+priority: p1
 risk: low
 surface: none
 area: layout
@@ -46,3 +46,11 @@ The check can reopen the choice that item 0032 (p0) builds on, so it must run be
 ## 2026-11-25
 
 Criterion 1: python3 -I mermaid.py ../../corpus/flowcharts target/public printed 'flowcharts 239, converted 216, not converted 23'; every one of the 23 says 'a link ends at a subgraph'. cargo run --release -- draw target/public target/pictures exited 0 and printed one row per candidate for 216 flowcharts. The default 'draw' still prints the spike totals (own 80 crossings, elk 36). Criteria 2 and 3: the note on SPIKE-18 gives own 0 overlaps, 0 group faults, 0 links through a box, 395 crossings; elk 0, 0, 0, 228; ratio 1.7 beside 2.2. Criterion 4: own has no overlap and no group fault and 1.7 is not above 3, so no decision item is needed; none was filed.
+
+## Accepted priority: p1 (Oddur Sigurdsson, 2026-11-27)
+
+Proposed by Oddur Sigurdsson on 2026-11-25.
+
+## 2026-11-27
+
+The priority proposal is accepted after the item closed, so that no stale proposal holds the daily report open.
