@@ -45,3 +45,7 @@ Criterion 2: on PR #97, commit b1c6662 set surface: cli on this item with no cha
 ## 2026-11-27
 
 Criterion 1: proven against a scratch clone with a bare origin, as the item instructions ask; no real tag was pushed. sh tests/release.sh printed 'tests/release.sh: ok'. It runs scripts/agent release 0.1.0-rc.1 and then 0.1.0 (one command each opens one pull request through a stand-in gh), squash-merges each as 'chore(release): v<version> (#N)', and runs scripts/release-tag, the logic of the tag job of release.yml, on a shallow clone of origin. v0.1.0 then points at the merge commit and the job outputs build=true tag=v0.1.0 for the publish job. Refusals checked: no version, '1.0', the current version, an older version, an older pre-release, a dirty tree, a branch other than main, an empty Unreleased section, an existing release branch. Removing each guard made the test fail. scripts/task check exited 0. actionlint 1.7.12 passed. The publish step itself first runs for real on v0.1.0.
+
+## 2026-11-27
+
+After the restore and a rebase, the changelog job on PR #97 passed (run 45958713439, job 140371175616).
