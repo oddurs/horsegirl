@@ -44,7 +44,7 @@ Nothing on a date. Good ideas wait here until a release needs them.
 
 ## v0.2 — Trot
 
-`··········` 0% · 0 of 34 done · due 2027-03-31
+`··········` 0% · 0 of 35 done · due 2027-03-31
 
 Stories draw as sequences and lanes, the agent reads any picture back as text, Mermaid goes in and out, and the playground runs in a browser.
 
@@ -82,6 +82,7 @@ Stories draw as sequences and lanes, the agent reads any picture back as text, M
 - [ ] [`0173`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0173-a-link-to-a-group-that-other-links-split-meets-the-border-of-the-group.md) A link to a group that other links split meets the border of the group <sup>feature · p2 · layout</sup>
 - [ ] [`BUG-177`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/BUG-177-the-svg-of-a-wide-labelled-fan-grows-with-the-square-of-the-fan.md) The SVG of a wide labelled fan grows with the square of the fan <sup>bug · p2 · render</sup>
 - [ ] [`BUG-180`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/BUG-180-each-label-sits-on-a-part-of-the-line-that-only-its-own-link-uses.md) Each label sits on a part of the line that only its own link uses <sup>bug · p1 · layout</sup>
+- [ ] [`0182`](https://github.com/oddurs/horsegirl/blob/main/cairn/items/0182-a-mermaid-header-line-such-as-graph-td-gets-a-note-with-a-fix-that-removes-it.md) A Mermaid header line such as graph TD gets a note with a fix that removes it <sup>feature · p2 · check</sup>
 
 ## v0.3 — Canter
 
