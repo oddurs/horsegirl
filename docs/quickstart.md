@@ -6,7 +6,17 @@ printed.
 
 ## Install
 
-There is no release yet. Build from a checkout:
+On Linux or macOS, on x86_64 or aarch64:
+
+```sh
+curl -fsSL https://raw.githubusercontent.com/oddurs/horsegirl/main/install.sh | sh
+```
+
+The script downloads the archive for your machine from the latest release,
+checks its checksum, and puts `horsegirl` in `~/.local/bin`. Add that
+directory to your `PATH` if the script says it is not there.
+
+To build from a checkout instead:
 
 ```sh
 git clone https://github.com/oddurs/horsegirl
