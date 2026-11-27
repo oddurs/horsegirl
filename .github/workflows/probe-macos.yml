@@ -1,0 +1,30 @@
+name: probe-macos
+on: pull_request
+permissions:
+  contents: read
+jobs:
+  probe:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [macos-latest, macos-15-intel]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: Install the v0.1.0 release with install.sh
+        run: curl -fsSL https://raw.githubusercontent.com/oddurs/horsegirl/main/install.sh | sh
+      - name: Run every command of the release binary
+        run: |
+          set -eux
+          export PATH="$HOME/.local/bin:$PATH"
+          uname -m
+          horsegirl --version
+          horsegirl spec | head -3
+          printf 'Web app --> API\nAPI -> Orders: create\nshow flow\n' > t.horse
+          horsegirl check t.horse
+          horsegirl fix t.horse
+          grep -q 'Web app -> API' t.horse
+          printf 'A->B:  x\nshow   flow\n' > u.horse
+          test "$(horsegirl fmt u.horse)" = "$(printf 'A -> B: x\nshow flow')"
+          horsegirl draw t.horse -o t.svg
+          head -c 60 t.svg
+          echo '{"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":"2025-11-25","capabilities":{},"clientInfo":{"name":"probe","version":"0"}}}' | horsegirl mcp | head -c 200
