@@ -13,7 +13,7 @@ related:
 - 42
 priority: p1
 risk: medium
-surface: none
+surface: cli
 effort: m
 area: workflow
 track:
