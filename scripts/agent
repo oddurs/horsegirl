@@ -361,6 +361,98 @@ cmd_finish() {
   [ -z "$item_body" ] || rm -f "$item_body"
 }
 
+# The version every crate of the workspace inherits.
+workspace_version() { sed -n '/^\[workspace.package\]/,/^\[/s/^version = "\(.*\)"$/\1/p' "$1"; }
+
+# The non-blank lines of the Unreleased section of a changelog.
+unreleased() { awk '/^## \[Unreleased\]/ { on = 1; next } on && /^## / { exit } on && NF { print }' "$1"; }
+
+# Prints 1 when version $1 is newer than version $2 by Semantic Versioning.
+version_newer() {
+  awk -v a="$1" -v b="$2" '
+    function isnum(s) { return s ~ /^[0-9]+$/ }
+    # Compares two identifiers: numbers by value, a number below a word.
+    function cmp(x, y) {
+      if (isnum(x) && isnum(y)) return (x + 0 > y + 0) - (x + 0 < y + 0)
+      if (isnum(x)) return -1
+      if (isnum(y)) return 1
+      return (x > y) - (x < y)
+    }
+    BEGIN {
+      i = index(a, "-"); ca = i ? substr(a, 1, i - 1) : a; pa = i ? substr(a, i + 1) : ""
+      i = index(b, "-"); cb = i ? substr(b, 1, i - 1) : b; pb = i ? substr(b, i + 1) : ""
+      split(ca, x, "."); split(cb, y, ".")
+      for (i = 1; i <= 3; i++) if ((c = cmp(x[i], y[i])) != 0) { print (c > 0); exit }
+      # A pre-release is older than the release of the same number.
+      if (pa == pb) { print 0; exit }
+      if (pa == "") { print 1; exit }
+      if (pb == "") { print 0; exit }
+      n = split(pa, p, "."); m = split(pb, q, ".")
+      for (i = 1; i <= n && i <= m; i++) if ((c = cmp(p[i], q[i])) != 0) { print (c > 0); exit }
+      print (n > m)
+    }'
+}
+
+# Prepare a release on its own branch and open its pull request. The release
+# workflow tags the merge commit, and the tag publishes the release.
+cmd_release() {
+  version=${1:-}
+  version=${version#v}
+  [ -n "$version" ] || die "usage: scripts/agent release <version>, for example: scripts/agent release 0.1.0"
+  echo "$version" | grep -Eq '^[0-9]+\.[0-9]+\.[0-9]+(-[0-9A-Za-z-]+(\.[0-9A-Za-z-]+)*)?$' ||
+    die "'$version' is not a version. Write MAJOR.MINOR.PATCH, for example 0.1.0, or 0.1.0-rc.1 for a pre-release"
+  def=$(default_branch)
+  [ "$(current_branch)" = "$def" ] ||
+    die "a release starts on $def, and this checkout is on $(current_branch). Run the command in $root on $def"
+  [ -z "$(git -C "$here" status --porcelain)" ] ||
+    die "the working tree has uncommitted changes. A release starts from a clean $def"
+  git -C "$here" fetch --quiet origin
+  [ "$(git -C "$here" rev-parse HEAD)" = "$(git -C "$here" rev-parse "origin/$def")" ] ||
+    die "$def is not the same as origin/$def. Run 'git -C $here pull --ff-only', then run this command again"
+  current=$(workspace_version "$here/Cargo.toml")
+  [ -n "$current" ] || die "Cargo.toml states no version under [workspace.package]"
+  [ "$(version_newer "$version" "$current")" = 1 ] ||
+    die "$version is not newer than the current version $current. Choose a higher version"
+  notes=$(unreleased "$here/CHANGELOG.md")
+  [ -n "$notes" ] || die "the Unreleased section of CHANGELOG.md is empty. A release needs at least one entry"
+  [ -z "$(git -C "$here" ls-remote --tags origin "refs/tags/v$version")" ] ||
+    die "the tag v$version already exists on origin. Choose another version"
+
+  branch=chore/release-$version
+  cmd_start "$branch"
+  here=$(worktree_of "$branch")
+  # Only the changelog needs the date; the program output never reads it.
+  date=${RELEASE_DATE:-$(date -u +%Y-%m-%d)}
+  log=$here/CHANGELOG.md
+  awk -v v="$version" -v d="$date" '
+    { print }
+    /^## \[Unreleased\]/ && !done { print ""; print "## [" v "] - " d; done = 1 }
+  ' "$log" >"$log.new"
+  mv "$log.new" "$log"
+  sed -i.bak '/^\[workspace.package\]/,/^\[/s/^version = ".*"$/version = "'"$version"'"/' "$here/Cargo.toml"
+  rm -f "$here/Cargo.toml.bak"
+  if [ -f "$here/docs/quickstart.md" ]; then
+    sed -i.bak "s/^horsegirl $current\$/horsegirl $version/" "$here/docs/quickstart.md"
+    rm -f "$here/docs/quickstart.md.bak"
+  fi
+  # Resolving the workspace writes the new versions into Cargo.lock.
+  (cd "$here" && cargo metadata --format-version 1 --offline >/dev/null)
+  crates=$(cd "$here" && cargo metadata --no-deps --format-version 1 --offline --locked)
+  if stale=$(echo "$crates" | grep -o '"name":"[^"]*","version":"[^"]*"' | grep -v "\"version\":\"$version\""); then
+    die "these crates do not take the workspace version. Set 'version.workspace = true' in each: $stale"
+  fi
+
+  git -C "$here" commit --quiet -a -m "chore(release): v$version" -m "Moves the Unreleased section of CHANGELOG.md under $version and sets every crate of the workspace to $version. When this pull request merges, the release workflow tags the merge commit v$version and publishes the release."
+  body=$(mktemp)
+  {
+    printf 'Releases %s.\n\nWhen this pull request merges, the release workflow tags the merge commit v%s, builds the archives and publishes the release.\n\n## Changes\n\n' "$version" "$version"
+    printf '%s\n' "$notes"
+  } >"$body"
+  cmd_pr --body-file "$body"
+  rm -f "$body"
+  say "merge the pull request after review. Then run: scripts/agent done $branch"
+}
+
 cmd_done() {
   branch=${1:-$(current_branch)}
   def=$(default_branch)
@@ -409,8 +501,9 @@ case "$cmd" in
   done) cmd_done "$@" ;;
   list) cmd_list ;;
   next) cmd_next ;;
+  release) cmd_release "$@" ;;
   *)
-    echo "usage: scripts/agent {doctor|next|take|start|check|commit|finish|pr|sync|land|done|list}" >&2
+    echo "usage: scripts/agent {doctor|next|take|start|check|commit|finish|pr|sync|land|done|list|release}" >&2
     exit 2
     ;;
 esac

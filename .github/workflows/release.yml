@@ -1,11 +1,14 @@
 name: release
 
-# A version tag builds an archive for each target and publishes the archives
-# with SHA256SUMS, a build attestation and install.sh. A manual run builds the
+# A merged release pull request, from `scripts/agent release`, makes the tag
+# job push the tag v<version> at the merge commit. That run and a pushed
+# version tag build an archive for each target and publish the archives with
+# SHA256SUMS, a build attestation and install.sh. A manual run builds the
 # same files and keeps them as workflow artifacts. A manual run publishes only
 # when it runs on a tag and dry-run is off.
 on:
   push:
+    branches: [main]
     tags: ["v*"]
   workflow_dispatch:
     inputs:
@@ -18,7 +21,26 @@ permissions:
   contents: read
 
 jobs:
+  # scripts/release-tag states what each event builds and publishes. On a
+  # push to main that is not a release, every other job is skipped.
+  tag:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    outputs:
+      build: ${{ steps.release.outputs.build }}
+      tag: ${{ steps.release.outputs.tag }}
+    steps:
+      - uses: actions/checkout@v7
+      - name: Tag a merged release commit, and choose what to build
+        id: release
+        env:
+          DRY_RUN: ${{ inputs.dry-run }}
+        run: scripts/release-tag
+
   check:
+    needs: tag
+    if: needs.tag.outputs.build == 'true'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
@@ -31,6 +53,8 @@ jobs:
           CI: ""
 
   build:
+    needs: tag
+    if: needs.tag.outputs.build == 'true'
     strategy:
       matrix:
         include:
@@ -110,8 +134,8 @@ jobs:
           if-no-files-found: error
 
   publish:
-    needs: sums
-    if: github.ref_type == 'tag' && !inputs.dry-run
+    needs: [tag, sums]
+    if: needs.tag.outputs.tag != ''
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -129,7 +153,7 @@ jobs:
       - name: Create the release
         env:
           GH_TOKEN: ${{ github.token }}
-          TAG: ${{ github.ref_name }}
+          TAG: ${{ needs.tag.outputs.tag }}
         run: |
           set -- --prerelease=false
           case "$TAG" in *-*) set -- --prerelease ;; esac

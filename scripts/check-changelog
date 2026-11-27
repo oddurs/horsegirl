@@ -1,0 +1,46 @@
+#!/bin/sh
+# A pull request that changes a public contract must add an entry to the
+# Unreleased section of CHANGELOG.md. The backlog item is the one whose number
+# starts the branch name, and its `surface` field names the contract it
+# changes. Reads BRANCH and BASE, the commit the pull request merges into.
+set -eu
+root=$(cd "$(dirname "$0")/.." && pwd)
+branch=${BRANCH:?set BRANCH to the branch of the pull request}
+base=${BASE:?set BASE to the commit the pull request merges into}
+
+say() { printf 'check-changelog: %s\n' "$*"; }
+die() {
+  printf 'check-changelog: %s\n' "$*" >&2
+  exit 1
+}
+
+number=$(printf '%s\n' "${branch#*/}" | sed -n 's/^0*\([0-9][0-9]*\)-.*/\1/p')
+if [ -z "$number" ]; then
+  say "$branch names no backlog item; nothing to check"
+  exit 0
+fi
+item=$(grep -lx "id: $number" "$root"/cairn/items/*.md | head -n 1)
+[ -n "$item" ] || die "$branch names item $number, and cairn/items has no item $number"
+surface=$(sed -n '/^---$/,/^---$/s/^surface: *//p' "$item" | head -n 1 | tr -d "\"'")
+if [ -z "$surface" ] || [ "$surface" = none ]; then
+  say "item $number changes no public contract; nothing to check"
+  exit 0
+fi
+
+# The non-blank lines of the Unreleased section.
+unreleased() { awk '/^## \[Unreleased\]/ { on = 1; next } on && /^## / { exit } on && NF { print }'; }
+
+git -C "$root" rev-parse --verify --quiet "$base^{commit}" >/dev/null || die "no commit '$base' in $root"
+old=
+if git -C "$root" cat-file -e "$base:CHANGELOG.md" 2>/dev/null; then
+  old=$(git -C "$root" show "$base:CHANGELOG.md" | unreleased)
+fi
+new=$(unreleased <"$root/CHANGELOG.md")
+# A line of the new section that the old section lacks is an entry. A heading
+# such as '### Added' is not.
+if printf '%s\n\001\n%s\n' "$old" "$new" |
+  awk '$0 == "\001" { after = 1; next } !after { seen[$0] = 1; next } NF && !/^#/ && !seen[$0] { found = 1 } END { exit !found }'; then
+  say "item $number changes the $surface contract, and CHANGELOG.md has a new entry"
+  exit 0
+fi
+die "item $number changes the $surface contract (surface: $surface), and the Unreleased section of CHANGELOG.md has no new entry. Add one under '## [Unreleased]' that says what changed for a user."
