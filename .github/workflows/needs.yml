@@ -19,7 +19,7 @@ concurrency:
 
 env:
   CAIRN_VERSION: 1.0.0-alpha.1
-  HARROW_VERSION: 0.2.0-alpha.1
+  HARROW_VERSION: 0.2.0-alpha.2
   ISSUE_TITLE: Backlog needs a person
 
 jobs:
