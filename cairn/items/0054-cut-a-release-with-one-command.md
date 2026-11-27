@@ -49,3 +49,7 @@ Criterion 1: proven against a scratch clone with a bare origin, as the item inst
 ## 2026-11-27
 
 After the restore and a rebase, the changelog job on PR #97 passed (run 45958713439, job 140371175616).
+
+## 2026-11-27
+
+Correction to the criterion 1 note: 'Removing each guard made the test fail' was false for two guards in scripts/agent release, the check that main is the same as origin/main and the check that the tag v<version> exists on origin. tests/release.sh now has a refusal case for each, before the 0.1.0 release: an unpushed commit on main (expects 'not the same as origin/main'), and refs/tags/v0.1.0 pushed to the scratch origin (expects 'already exists on origin'). sh tests/release.sh printed 'tests/release.sh: ok'. With 'true ||' in front of the sync guard in a scratch copy, the test printed 'FAIL: a main ahead of origin/main was accepted' and exited 1. With 'true ||' in front of the tag guard, it printed 'FAIL: a version whose tag exists on origin was accepted' and exited 1.

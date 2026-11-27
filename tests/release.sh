@@ -149,6 +149,16 @@ sed -i.bak 's/^## \[Unreleased\]$/## [Unreleased]\n\n### Fixed\n\n- The second c
 rm -f CHANGELOG.md.bak
 git commit -q -am "fix: the second command"
 git push -q origin main
+
+# The refusals that need a releasable main: a commit origin lacks, and a tag
+# that origin already has.
+git commit -q --allow-empty -m "chore: not pushed"
+refused scripts/agent release 0.1.0 | grep -q "not the same as origin/main" || fail "a main ahead of origin/main was accepted"
+git reset -q --hard origin/main
+git push -q origin HEAD:refs/tags/v0.1.0
+refused scripts/agent release 0.1.0 | grep -q "already exists on origin" || fail "a version whose tag exists on origin was accepted"
+git push -q origin :refs/tags/v0.1.0
+[ ! -e "$tmp/.worktrees/repo/chore/release-0.1.0" ] || fail "a refused release created a worktree"
 : >"$GH_LOG"
 
 # The release: one command opens one pull request.
