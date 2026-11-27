@@ -3,8 +3,10 @@ id: 54
 uid: 64cfa2c0-354e-4ac9-bdd9-0419aa2f6c5c
 title: Cut a release with one command
 type: chore
-status: planned
+status: doing
 milestone: v0.1
+assignee: Oddur Sigurdsson
+claimed: 2026-11-27
 created: 2026-11-25
 updated: 2026-11-27
 related:

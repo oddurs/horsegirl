@@ -132,9 +132,26 @@ jobs:
           PR_BODY: ${{ github.event.pull_request.body }}
         run: scripts/check-pr-title
 
+  # A pull request whose backlog item changes a public contract must add an
+  # entry to CHANGELOG.md. The job always runs, as pr-title does.
+  changelog:
+    runs-on: ubuntu-latest
+    steps:
+      # The merge commit of the pull request and its first parent, the base.
+      - uses: actions/checkout@v7
+        if: github.event_name == 'pull_request'
+        with:
+          fetch-depth: 2
+      - name: Check the changelog
+        if: github.event_name == 'pull_request'
+        env:
+          BRANCH: ${{ github.head_ref }}
+          BASE: HEAD^1
+        run: scripts/check-changelog
+
   required:
     if: always()
-    needs: [check, core-macos, pr-title]
+    needs: [check, core-macos, pr-title, changelog]
     runs-on: ubuntu-latest
     steps:
       - name: Every job passed

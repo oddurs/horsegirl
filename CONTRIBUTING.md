@@ -80,6 +80,36 @@ The command writes every expectation and removes the expectations of a case
 that is gone. Read the diff before you commit it: the diff is what a reviewer
 reads.
 
+## The changelog
+
+`CHANGELOG.md` collects the changes of the next release under
+`## [Unreleased]`. When the backlog item of a branch has a `surface` other
+than `none`, the pull request changes a public contract. The `changelog` job
+of CI then fails until the pull request adds an entry to that section.
+`scripts/check-changelog` makes the check.
+
+## Releases
+
+On `main`, in the primary checkout, run:
+
+```sh
+scripts/agent release 0.1.0
+```
+
+The command refuses a dirty tree, a branch other than `main`, a `main` that
+differs from `origin/main`, a version that is not newer than the current one,
+and an empty Unreleased section. It then makes the branch
+`chore/release-0.1.0` in its own worktree. On that branch it moves the
+Unreleased section under `## [0.1.0] - <date>`, sets the version of every
+crate in the workspace, and opens the pull request
+`chore(release): v0.1.0`.
+
+When that pull request merges, the `tag` job of the release workflow runs
+`scripts/release-tag` on the merge commit. The script pushes the tag `v0.1.0`,
+and the same run builds and publishes the release. A version with a hyphen,
+such as `0.1.0-rc.1`, is a pre-release. After the merge, run
+`scripts/agent done chore/release-0.1.0`.
+
 ## Review
 
 This repository has one maintainer, so a pull request needs zero approvals and

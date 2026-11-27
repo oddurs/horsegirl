@@ -1,0 +1,72 @@
+#!/bin/sh
+# The first job of the release workflow. It decides what the run builds and
+# which tag it publishes, and writes 'build=true|false' and 'tag=<tag>' to
+# GITHUB_OUTPUT when that file is set.
+#
+# On a push to the default branch, HEAD is a release commit when its subject
+# is the title that `scripts/agent release` gives, as in
+# 'chore(release): v0.1.0 (#12)'. The script then pushes the tag v<version> to
+# origin at HEAD. A tag that the workflow token pushes starts no other run, so
+# this run builds and publishes it. Any other commit builds nothing.
+#
+# Reads GITHUB_EVENT_NAME, GITHUB_REF_TYPE and GITHUB_REF_NAME, which Actions
+# sets, and DRY_RUN, the input of a manual run. Without them it acts as on a
+# push to a branch.
+set -eu
+root=$(cd "$(dirname "$0")/.." && pwd)
+event=${GITHUB_EVENT_NAME:-push}
+ref_type=${GITHUB_REF_TYPE:-branch}
+ref_name=${GITHUB_REF_NAME:-}
+
+say() { printf 'release-tag: %s\n' "$*"; }
+die() {
+  printf 'release-tag: %s\n' "$*" >&2
+  exit 1
+}
+decide() {
+  say "build=$1 tag=$2"
+  if [ -n "${GITHUB_OUTPUT:-}" ]; then
+    printf 'build=%s\ntag=%s\n' "$1" "$2" >>"$GITHUB_OUTPUT"
+  fi
+  exit 0
+}
+
+if [ "$event" = push ] && [ "$ref_type" = tag ]; then
+  decide true "$ref_name"
+fi
+if [ "$event" != push ]; then
+  # A manual run publishes only on a tag with dry-run off.
+  if [ "$ref_type" = tag ] && [ "${DRY_RUN:-true}" = false ]; then
+    decide true "$ref_name"
+  fi
+  decide true ""
+fi
+
+subject=$(git -C "$root" log -1 --format=%s HEAD)
+version=$(printf '%s\n' "$subject" |
+  sed -n -E 's/^chore\(release\): v([0-9]+\.[0-9]+\.[0-9]+(-[0-9A-Za-z.-]+)?)( \(#[0-9]+\))?$/\1/p')
+if [ -z "$version" ]; then
+  say "HEAD is not a release commit; nothing to tag"
+  decide false ""
+fi
+
+# The title alone is not enough: the merged files must state the same release.
+current=$(sed -n '/^\[workspace.package\]/,/^\[/s/^version = "\(.*\)"$/\1/p' "$root/Cargo.toml")
+[ "$current" = "$version" ] ||
+  die "the commit releases $version, but Cargo.toml states version '$current'. Nothing was tagged"
+grep -Fq "## [$version] - " "$root/CHANGELOG.md" ||
+  die "CHANGELOG.md has no section '## [$version] - <date>'. Nothing was tagged"
+
+tag=v$version
+sha=$(git -C "$root" rev-parse HEAD)
+remote=$(git -C "$root" ls-remote origin "refs/tags/$tag" "refs/tags/$tag^{}")
+if [ -n "$remote" ]; then
+  # A second run of the same workflow finds its own tag. Any other tag is a mistake.
+  peeled=$(printf '%s\n' "$remote" | tail -n 1 | cut -f 1)
+  [ "$peeled" = "$sha" ] || die "$tag already exists at $peeled, not at $sha. Nothing was tagged"
+  say "$tag already points at $sha"
+else
+  git -C "$root" push --quiet origin "$sha:refs/tags/$tag"
+  say "pushed $tag at $sha"
+fi
+decide true "$tag"
