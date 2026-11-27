@@ -18,7 +18,7 @@ Check that the binary runs:
 
 ```text
 $ horsegirl --version
-horsegirl 0.0.0
+horsegirl 0.1.0
 ```
 
 ## Read the card

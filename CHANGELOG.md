@@ -5,6 +5,8 @@ the project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
 
+## [0.1.0] - 2026-11-27
+
 ### Changed
 
 - The SVG keeps a margin of 16 px on each side. Its view box starts at
