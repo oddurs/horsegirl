@@ -25,7 +25,8 @@ refused() {
   printf '%s\n' "$out"
 }
 
-git init -q --bare "$tmp/origin.git"
+# The bare origin names main as its HEAD, as GitHub does, so a clone checks it out.
+git init -q --bare -b main "$tmp/origin.git"
 git init -q -b main "$tmp/repo"
 cd "$tmp/repo"
 git config user.name test
