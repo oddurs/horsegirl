@@ -3,10 +3,12 @@ id: 52
 uid: 788e9701-2ed3-46e5-912c-af7eb50f5376
 title: A daily report of what the backlog needs from a person
 type: feature
-status: planned
+status: doing
 milestone: v0.1
+assignee: Oddur Sigurdsson
+claimed: 2026-11-27
 created: 2026-11-25
-updated: 2026-11-25
+updated: 2026-11-27
 priority: p2
 risk: low
 surface: none
