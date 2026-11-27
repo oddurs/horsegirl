@@ -3,12 +3,12 @@ id: 52
 uid: 788e9701-2ed3-46e5-912c-af7eb50f5376
 title: A daily report of what the backlog needs from a person
 type: feature
-status: doing
+status: done
 milestone: v0.1
 assignee: Oddur Sigurdsson
-claimed: 2026-11-27
 created: 2026-11-25
 updated: 2026-11-27
+closed_at: 2026-11-27
 priority: p2
 risk: low
 surface: none
@@ -28,8 +28,8 @@ Add a scheduled workflow that runs `harrow --plain --lens needs` and `cairn chec
 
 ## Acceptance criteria
 
-- [ ] A proposal on an item appears in the issue within a day.
-- [ ] An empty list closes the issue.
+- [x] A proposal on an item appears in the issue within a day.
+- [x] An empty list closes the issue.
 - [x] The workflow writes to issues only, and has no other permission.
 
 ## 2026-11-25
@@ -47,3 +47,7 @@ Criteria 1 and 2 stay unticked: they need a real scheduled or dispatched run on 
 ## 2026-11-25
 
 A follow-up check is needed after merge: run the workflow with workflow_dispatch, then tick 1 and 2.
+
+## 2026-11-27
+
+Criterion 1: on 2026-11-25 a dispatched run (45612780890) wrote the three proposals made that day into issue #25 ('Waiting for a decision': 0118, 0125, 0146). Criterion 2: harrow 0.2.0-alpha.2 (oddurs/harrow#130) lists a proposal only while its field differs from the proposed value. With it pinned in needs.yml (#96), the dispatched run 45957167898 on 2026-11-27 ended in success and closed issue #25 with the comment 'Nothing needs a person now.'

@@ -3,12 +3,12 @@ id: 158
 uid: aece6a49-edf2-45e2-be01-d2d400f6f4e9
 title: A label keeps the white space that its measured width counts
 type: bug
-status: doing
+status: done
 milestone: v0.1
 assignee: Oddur Sigurdsson
-claimed: 2026-11-25
 created: 2026-11-25
-updated: 2026-11-25
+updated: 2026-11-27
+closed_at: 2026-11-27
 priority: p1
 risk: low
 surface: svg
@@ -33,7 +33,7 @@ the white space before the measure.
 
 ## Acceptance criteria
 
-- [ ] The drawn width of `"  Wide name  "` and of `"Wide  name"` equals the measured width of the same text within 1 px in Chromium, Firefox and WebKit, with `textLength` removed for the measurement.
+- [x] The drawn width of `"  Wide name  "` and of `"Wide  name"` equals the measured width of the same text within 1 px in Chromium, Firefox and WebKit, with `textLength` removed for the measurement.
 - [x] A test in `crates/horsegirl-core/tests/svg.rs` holds the rule for a label with leading, trailing and repeated spaces.
 - [x] `docs/theme.md` states how a label treats white space.
 - [x] `CHANGELOG.md` has an entry, because the SVG output changes.
@@ -41,3 +41,7 @@ the white space before the measure.
 ## 2026-11-25
 
 Criterion 1 partly watched. Playwright 1.65.1 with textLength removed: Chromium drew '  Wide name  ' at 86.29 px (measured 86.37) and 'Wide  name' at 74.63 px (measured 74.70); Firefox drew 86.33 and 74.68. Without white-space:pre both drew 70.7 px. WebKit could not launch: the host lacks libgtk-4, libgstreamer and others. Left unticked until someone runs WebKit. Criteria 2 to 4: test a_label_keeps_the_white_space_that_its_width_counts passes; docs/theme.md and CHANGELOG.md changed; scripts/task check exits 0.
+
+## 2026-11-27
+
+Criterion 1, WebKit: a probe workflow on a throwaway pull request (#90, closed without a merge; run 45947555131) drew the two labels with textLength removed. Ubuntu with Playwright 1.65.1: Chromium 86.29 and 74.63, Firefox 86.33 and 74.68, WebKit 86.27 and 74.62 against the measured 86.37 and 74.70. macOS WebKit drew 86.37 and 74.70, a difference of 0.00. The largest difference is 0.10 px, inside the 1 px limit.
