@@ -30,7 +30,7 @@ use horsegirl_core::text::Style;
 /// two groups: those files drew clean only because the model dropped the
 /// second group with no word. It rose to 224 when the flow lens drew a
 /// link that starts or ends at a group.
-const BASELINE: usize = 224;
+const BASELINE: usize = 225;
 
 /// The style of `horsegirl draw`, so that the count is of the pictures that
 /// the command line draws.
