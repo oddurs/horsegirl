@@ -3,12 +3,12 @@ id: 54
 uid: 64cfa2c0-354e-4ac9-bdd9-0419aa2f6c5c
 title: Cut a release with one command
 type: chore
-status: doing
+status: done
 milestone: v0.1
 assignee: Oddur Sigurdsson
-claimed: 2026-11-27
 created: 2026-11-25
 updated: 2026-11-27
+closed_at: 2026-11-27
 related:
 - 42
 priority: p1
@@ -31,9 +31,17 @@ Add `scripts/agent release <version>`: it moves the Unreleased section of the ch
 
 ## Acceptance criteria
 
-- [ ] One command and one merged pull request produce a tagged release.
-- [ ] A pull request that changes a public contract (`surface` is not `none`) without a changelog entry fails CI.
+- [x] One command and one merged pull request produce a tagged release.
+- [x] A pull request that changes a public contract (`surface` is not `none`) without a changelog entry fails CI.
 
 ## 2026-11-27
 
 Owner decision: 0054 no longer depends on 0042. The release workflow of 0042 exists and its dry run builds all four archives. The first real tag, v0.1.0, is cut with the command this item builds, and that tag closes the last criterion of 0042 as well.
+
+## 2026-11-27
+
+Criterion 2: on PR #97, commit b1c6662 set surface: cli on this item with no changelog entry. The changelog job (run 45956330483, job 140363537144) failed and printed: 'check-changelog: item 54 changes the cli contract (surface: cli), and the Unreleased section of CHANGELOG.md has no new entry.' The next commit restores surface: none. tests/release.sh also covers: no entry fails, an entry passes, a heading alone fails, a line outside Unreleased fails, surface none passes, a branch with no item passes, a missing item fails.
+
+## 2026-11-27
+
+Criterion 1: proven against a scratch clone with a bare origin, as the item instructions ask; no real tag was pushed. sh tests/release.sh printed 'tests/release.sh: ok'. It runs scripts/agent release 0.1.0-rc.1 and then 0.1.0 (one command each opens one pull request through a stand-in gh), squash-merges each as 'chore(release): v<version> (#N)', and runs scripts/release-tag, the logic of the tag job of release.yml, on a shallow clone of origin. v0.1.0 then points at the merge commit and the job outputs build=true tag=v0.1.0 for the publish job. Refusals checked: no version, '1.0', the current version, an older version, an older pre-release, a dirty tree, a branch other than main, an empty Unreleased section, an existing release branch. Removing each guard made the test fail. scripts/task check exited 0. actionlint 1.7.12 passed. The publish step itself first runs for real on v0.1.0.
